@@ -1,0 +1,485 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: KKL Ligatool\n"
+"POT-Creation-Date: 2015-11-28 17:56+0100\n"
+"PO-Revision-Date: 2015-11-28 18:00+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.6\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-WPHeader: kkl_ligatool.php\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+
+#: KKL/Backend.php:34 KKL/Backend.php:60 KKL/Backend.php:145
+msgid "leagues"
+msgstr "Ligen"
+
+#: KKL/Backend.php:35 KKL/Backend.php:65 KKL/Backend.php:146
+msgid "seasons"
+msgstr "Saisons"
+
+#: KKL/Backend.php:36 KKL/Backend.php:70 KKL/Backend.php:147
+msgid "game_days"
+msgstr "Spieltage"
+
+#: KKL/Backend.php:37 KKL/Backend.php:75 KKL/Backend.php:148
+msgid "matches"
+msgstr "Spiele"
+
+#: KKL/Backend.php:38 KKL/Backend.php:80 KKL/Backend.php:149
+msgid "clubs"
+msgstr "Vereine"
+
+#: KKL/Backend.php:39 KKL/Backend.php:85 KKL/Backend.php:150
+msgid "teams"
+msgstr "Teams"
+
+#: KKL/Backend.php:40 KKL/Backend.php:90 KKL/Backend.php:151
+msgid "locations"
+msgstr "Spielorte"
+
+#: KKL/Backend.php:41 KKL/Backend.php:152
+msgid "stats"
+msgstr "Statistiken"
+
+#: KKL/Backend.php:42 KKL/Backend.php:153
+msgid "settings"
+msgstr "Einstellungen"
+
+#: KKL/Backend.php:55
+msgid "help_common_title"
+msgstr "Allgemein"
+
+#: KKL/Backend.php:56
+msgid "help_common_content"
+msgstr ""
+"Um eine neue Liga zu erstellen und spielbereit zu machen, muss man diverse "
+"Schritte durchführen, im folgenden die Schritte und das \"Vokabular\" der "
+"Ligaverwaltung"
+
+#: KKL/Backend.php:61
+msgid "help_leagues_content"
+msgstr ""
+"Eine Liga ist eine Ansammlung von Saisons die nacheinander durchgeführt "
+"werden, eine einzelne Liga hat immer MAXIMAL EINE aktive Saison. Zum Anlegen "
+"einer Liga auf den oberen Link klicken, auf das grüne Plus klicken und die "
+"Daten eingeben. Der Name sollte sowas sein wie \"Kölner Kickerliga - Erste "
+"Liga\", das URL-Kürzel wird für die URL zur Liga benötigt und könnte sowas "
+"sein wie \"kk_eins\". Das URL-Kürzel MUSS eindeutig sein."
+
+#: KKL/Backend.php:66
+msgid "help_seasons_content"
+msgstr ""
+"Eine Season/Saison ist eine Ansammlung von Spieltagen und hatt immer MAXIMAL "
+"EINEN aktiven Spieltag. Zum Anlegen einer Season auf den oberen Link "
+"klicken, auf das grüne Plus klicken und die Daten eingeben. Hier wird die "
+"Season auch direkt einer der existierenden Ligen zugeordnet. Nach dem "
+"anlegen der Season sollte die neue Season die aktuelle Season in der Liga "
+"werden. Dazu einfach die angelegte Liga nochmal editieren und die gerade "
+"angelegte Season auswählen."
+
+#: KKL/Backend.php:71
+msgid "help_game_days_content"
+msgstr ""
+"Ein Gameday/Spieltag ist eine Ansammlung von mehreren Matches. An einem "
+"Spieltag sollte jedes Team MAXIMAL einmal antreten. Der automatische Wechsel "
+"der Aktuellen Spieltage wird am eingegebenen Startdatum verteilt und hat nur "
+"auf die Anzeige einen Einfluss. Zum Anlegen eines Spieltages auf den oberen "
+"Link klicken, auf das grüne Plus klicken und die Daten eingeben. Hier wird "
+"die Season auch direkt einer der existierenden Season zugeordnet. Die "
+"Spieltagnummer gibt die Reihenfolge vor. Nach dem anlegen der Season sollte "
+"einer der neuen Spieltage der aktuelle in der Season werden. Dazu einfach "
+"die angelegte Season nochmal editieren und einen der gerade angelegten "
+"Spieltage auswählen."
+
+#: KKL/Backend.php:76
+msgid "help_matches_content"
+msgstr ""
+"Ein Match wird zwischen zwei Teams ausgetragen. Zum anlegen der Matches auf "
+"den oberen Link klicken, auf das grüne Plus klicken und die Daten eingeben. "
+"Ein erneuter Klick auf dieses Match (editieren) erlaubt dann die Eingabe der "
+"Daten vom Spielbogen."
+
+#: KKL/Backend.php:81
+msgid "help_clubs_content"
+msgstr ""
+"Ein Club/Verein ist eine Ansammlung von Teams die in einer Saison spielen."
+
+#: KKL/Backend.php:86
+msgid "help_teams_content"
+msgstr ""
+"Ein Team ist eine Mannschaft die in einer Saison für einen Verein antritt."
+
+#: KKL/Backend.php:91
+msgid "help_locations_content"
+msgstr "Ein Spielort ist ein Ort an dem Spiele ausgetragen werden können."
+
+#: KKL/Backend.php:107
+msgid "default league"
+msgstr "Standardliga"
+
+#: KKL/Backend.php:112
+msgid "please select"
+msgstr "Bitte wählen…"
+
+#: KKL/Backend.php:123
+msgid "Apply"
+msgstr "Übernehmen"
+
+#: KKL/Backend/KKL_Admin_Page.php:20
+msgid "save_error"
+msgstr "Fehler beim Speichern"
+
+#: KKL/Backend/KKL_Admin_Page.php:22
+msgid "save_success"
+msgstr "Gespeichert"
+
+#: KKL/Backend/KKL_Club_Admin_Page.php:17
+#: KKL/Backend/KKL_Team_Admin_Page.php:88
+#: KKL/Backend/KKL_Team_List_Table.php:20
+msgid "club"
+msgstr "Verein"
+
+#: KKL/Backend/KKL_Club_Admin_Page.php:34
+#: KKL/Backend/KKL_Club_List_Table.php:16
+#: KKL/Backend/KKL_League_Admin_Page.php:47
+#: KKL/Backend/KKL_League_List_Table.php:20
+#: KKL/Backend/KKL_Location_Admin_Page.php:35
+#: KKL/Backend/KKL_Season_Admin_Page.php:52
+#: KKL/Backend/KKL_Season_List_Table.php:27
+#: KKL/Backend/KKL_Team_Admin_Page.php:66
+#: KKL/Backend/KKL_Team_List_Table.php:21
+msgid "name"
+msgstr "Name"
+
+#: KKL/Backend/KKL_Club_Admin_Page.php:41
+#: KKL/Backend/KKL_Club_List_Table.php:17
+#: KKL/Backend/KKL_League_Admin_Page.php:54
+#: KKL/Backend/KKL_League_List_Table.php:21
+#: KKL/Backend/KKL_Team_Admin_Page.php:73
+#: KKL/Backend/KKL_Team_List_Table.php:23
+msgid "url_code"
+msgstr "URL"
+
+#: KKL/Backend/KKL_Club_Admin_Page.php:48
+#: KKL/Backend/KKL_Match_Admin_Page.php:172
+msgid "description"
+msgstr "Beschreibung"
+
+#: KKL/Backend/KKL_Club_List_Table.php:15
+#: KKL/Backend/KKL_GameDay_List_Table.php:25
+#: KKL/Backend/KKL_League_List_Table.php:19
+#: KKL/Backend/KKL_Location_List_Table.php:19
+#: KKL/Backend/KKL_Season_List_Table.php:25
+#: KKL/Backend/KKL_Team_List_Table.php:19
+msgid "id"
+msgstr "ID"
+
+#: KKL/Backend/KKL_GameDay_Admin_Page.php:17 KKL/Backend/KKL_List_Table.php:343
+#: KKL/Backend/KKL_Match_Admin_Page.php:104
+msgid "game_day"
+msgstr "Spieltag"
+
+#: KKL/Backend/KKL_GameDay_Admin_Page.php:27
+#: KKL/Backend/KKL_GameDay_Admin_Page.php:34
+#: KKL/Backend/KKL_League_Admin_Page.php:30
+#: KKL/Backend/KKL_Season_Admin_Page.php:29
+#: KKL/Backend/KKL_Season_Admin_Page.php:35
+#: KKL/Backend/KKL_Team_Admin_Page.php:32
+#: KKL/Backend/KKL_Team_Admin_Page.php:38
+#: KKL/Backend/KKL_Team_Admin_Page.php:44
+msgid "please_select"
+msgstr "Bitte wählen…"
+
+#: KKL/Backend/KKL_GameDay_Admin_Page.php:46
+#: KKL/Backend/KKL_GameDay_List_Table.php:27
+msgid "number"
+msgstr "Nummer"
+
+#: KKL/Backend/KKL_GameDay_Admin_Page.php:54
+#: KKL/Backend/KKL_GameDay_List_Table.php:26 KKL/Backend/KKL_List_Table.php:328
+#: KKL/Backend/KKL_Season_Admin_Page.php:17
+#: KKL/Backend/KKL_Team_Admin_Page.php:80
+#: KKL/Backend/KKL_Team_List_Table.php:22
+msgid "season"
+msgstr "Saison"
+
+#: KKL/Backend/KKL_GameDay_Admin_Page.php:62
+#: KKL/Backend/KKL_Season_Admin_Page.php:67
+msgid "start_date"
+msgstr "Anfangsdatum"
+
+#: KKL/Backend/KKL_GameDay_Admin_Page.php:69
+#: KKL/Backend/KKL_Season_Admin_Page.php:74
+msgid "end_date"
+msgstr "Enddatum"
+
+#: KKL/Backend/KKL_GameDay_List_Table.php:28
+#: KKL/Backend/KKL_Season_List_Table.php:28
+msgid "start"
+msgstr "Start"
+
+#: KKL/Backend/KKL_GameDay_List_Table.php:29
+#: KKL/Backend/KKL_Season_List_Table.php:29
+msgid "end"
+msgstr "Ende"
+
+#: KKL/Backend/KKL_League_Admin_Page.php:18 KKL/Backend/KKL_List_Table.php:312
+#: KKL/Backend/KKL_Season_Admin_Page.php:59
+#: KKL/Backend/KKL_Season_List_Table.php:26
+msgid "league"
+msgstr "Liga"
+
+#: KKL/Backend/KKL_League_Admin_Page.php:61
+#: KKL/Backend/KKL_Season_Admin_Page.php:88
+msgid "active"
+msgstr "aktiv"
+
+#: KKL/Backend/KKL_League_Admin_Page.php:67
+msgid "current_season"
+msgstr "Aktuelle Saison"
+
+#: KKL/Backend/KKL_League_List_Table.php:22
+#: KKL/Backend/KKL_Season_List_Table.php:30
+msgid "is_active"
+msgstr "aktiv?"
+
+#: KKL/Backend/KKL_List_Table.php:167
+msgid "search"
+msgstr "suchen"
+
+#: KKL/Backend/KKL_List_Table.php:175
+msgid "edit"
+msgstr "beabeiten"
+
+#: KKL/Backend/KKL_List_Table.php:183
+msgid "yes"
+msgstr "Ja"
+
+#: KKL/Backend/KKL_List_Table.php:184
+msgid "no"
+msgstr "nein"
+
+#: KKL/Backend/KKL_List_Table.php:188 KKL/Backend/KKL_List_Table.php:194
+msgid "empty"
+msgstr "leer"
+
+#: KKL/Backend/KKL_List_Table.php:313 KKL/Backend/KKL_List_Table.php:329
+#: KKL/Backend/KKL_List_Table.php:344
+msgid "display_all"
+msgstr "Alle anzeigen"
+
+#: KKL/Backend/KKL_List_Table.php:361 KKL/Backend/KKL_Match_List_Table.php:87
+msgid "create_new"
+msgstr "Neu anlegen"
+
+#: KKL/Backend/KKL_Location_Admin_Page.php:18
+#: KKL/Backend/KKL_Match_Admin_Page.php:132
+#: KKL/Backend/KKL_Team_Admin_Page.php:96
+msgid "location"
+msgstr "Spielort"
+
+#: KKL/Backend/KKL_Location_Admin_Page.php:42
+#: KKL/Backend/KKL_Location_List_Table.php:21
+msgid "address"
+msgstr "Adresse"
+
+#: KKL/Backend/KKL_Location_Admin_Page.php:48
+#: KKL/Backend/KKL_Location_List_Table.php:22
+msgid "latitude"
+msgstr "Latitude"
+
+#: KKL/Backend/KKL_Location_Admin_Page.php:55
+#: KKL/Backend/KKL_Location_List_Table.php:23
+msgid "longitude"
+msgstr "Longitude"
+
+#: KKL/Backend/KKL_Location_List_Table.php:20
+msgid "title"
+msgstr "Titel"
+
+#: KKL/Backend/KKL_Match_Admin_Page.php:37
+msgid "match"
+msgstr "Spiel"
+
+#: KKL/Backend/KKL_Match_Admin_Page.php:85
+msgid "back to overview"
+msgstr "Zurück zur Übersicht"
+
+#: KKL/Backend/KKL_Match_Admin_Page.php:111
+msgid "fixture"
+msgstr "Termin"
+
+#: KKL/Backend/KKL_Match_Admin_Page.php:118
+msgid "team_home"
+msgstr "Heimteam"
+
+#: KKL/Backend/KKL_Match_Admin_Page.php:125
+msgid "team_away"
+msgstr "Auswärtsteam"
+
+#: KKL/Backend/KKL_Match_Admin_Page.php:138
+msgid "goals_home"
+msgstr "Tore Heim"
+
+#: KKL/Backend/KKL_Match_Admin_Page.php:145
+msgid "goals_away"
+msgstr "Tore Auswärts"
+
+#: KKL/Backend/KKL_Match_Admin_Page.php:152
+msgid "score_home"
+msgstr "Punkte Heim"
+
+#: KKL/Backend/KKL_Match_Admin_Page.php:159
+msgid "score_away"
+msgstr "Punkte Auswärts"
+
+#: KKL/Backend/KKL_Match_Admin_Page.php:166
+msgid "final_score"
+msgstr "Endstand"
+
+#: KKL/Backend/KKL_Match_Admin_Page.php:179
+msgid "next_game"
+msgstr "nächstes Spiel"
+
+#: KKL/Backend/KKL_Season_Admin_Page.php:81
+msgid "current_game_day"
+msgstr "Aktueller Spieltag"
+
+#: KKL/Backend/KKL_Team_Admin_Page.php:20
+msgid "team"
+msgstr "Team"
+
+#: KKL/Backend/KKL_Team_Admin_Page.php:103
+msgid "current_league_winner"
+msgstr "Meister"
+
+#: KKL/Backend/KKL_Team_Admin_Page.php:109
+msgid "current_cup_winner"
+msgstr "Pokalsieger"
+
+#: KKL/KKL.php:32
+msgid "kkl_global_sidebar"
+msgstr "Global Sidebar"
+
+#: KKL/KKL.php:34
+msgid ""
+"Widgets in this area will be shown on pages using any kkl page template "
+"below the page sidebar."
+msgstr "Widgets in diesem Bereich werden auf der Seitenleiste angezeigt."
+
+#: KKL/KKL.php:41
+msgid "kkl_table_sidebar"
+msgstr "Table Sidebar"
+
+#: KKL/KKL.php:43
+msgid ""
+"Widgets in this area will be shown on pages using the table page template."
+msgstr ""
+"Widgets in diesem Bereich werden auf einer Seite mit der Seitenvorlage "
+"„Standard Vorlage (mit Sidebar)“ angezeigt."
+
+#: KKL/KKL.php:50
+msgid "kkl_leagues_sidebar"
+msgstr "League Sidebar"
+
+#: KKL/KKL.php:52
+msgid ""
+"Widgets in this area will be shown on pages using the league page template."
+msgstr ""
+"Widgets in diesem Bereich werden auf einer Seite mit der Seitenvorlage "
+"„Standard Vorlage (mit Sidebar)“ angezeigt."
+
+#: KKL/KKL.php:59
+msgid "kkl_schedule_sidebar"
+msgstr "Schedule Sidebar"
+
+#: KKL/KKL.php:61
+msgid ""
+"Widgets in this area will be shown on pages using the schedule page template."
+msgstr ""
+"Widgets in diesem Bereich wird auf den Seiten mit den Zeitplan Seitenvorlage "
+"angezeigt."
+
+#: KKL/KKL.php:68
+msgid "kkl_teamdetail_sidebar"
+msgstr "Teamdetail Sidebar"
+
+#: KKL/KKL.php:70
+msgid ""
+"Widgets in this area will be shown on pages using the team page template."
+msgstr ""
+"Widgets in diesem Bereich wird auf den Seiten mit dem Team-Seite Vorlage "
+"angezeigt."
+
+#: KKL/Widget/OtherLeagues.php:15
+msgid "Shows the inactive leagues"
+msgstr "Zeigt die inaktiven Ligen"
+
+#: KKL/Widget/OtherLeagues.php:59 KKL/Widget/OtherSeasons.php:67
+#: KKL/Widget/UpcomingGames.php:80
+msgid "New title"
+msgstr "Neuer Titel"
+
+#: KKL/Widget/OtherLeagues.php:63 KKL/Widget/OtherSeasons.php:76
+#: KKL/Widget/UpcomingGames.php:89
+msgid "Title:"
+msgstr "Titel:"
+
+#: KKL/Widget/OtherSeasons.php:15
+msgid "Shows the other seasons games for the defined League"
+msgstr "Zeig die anderen Spiele für die ausgewählte Liga"
+
+#: KKL/Widget/OtherSeasons.php:72 KKL/Widget/UpcomingGames.php:85
+msgid "Set League"
+msgstr "Liga"
+
+#: KKL/Widget/OtherSeasons.php:79 KKL/Widget/UpcomingGames.php:92
+msgid "League:"
+msgstr "Liga"
+
+#: KKL/Widget/OtherSeasons.php:81 KKL/Widget/UpcomingGames.php:94
+msgid "get from context"
+msgstr "aus dem Kontext"
+
+#: KKL/Widget/UpcomingGames.php:15
+msgid "Shows the next games for the defined League"
+msgstr "Zeigt den nächsten Spielen für die definierte Liga"
+
+#: scb/AdminPage.php:228
+msgid "Settings <strong>saved</strong>."
+msgstr "Einstellungen <strong>gespeichert</strong>."
+
+#: scb/AdminPage.php:467
+msgid "Settings"
+msgstr "Einstellungen"
+
+#. Plugin Name of the plugin/theme
+msgid "KKL Ligatool"
+msgstr "KKL Ligatool"
+
+#. Plugin URI of the plugin/theme
+msgid "http://liga.kickerliebe.de"
+msgstr "http://liga.kickerliebe.de"
+
+#. Description of the plugin/theme
+msgid "Integration of the KKL Database into Wordpress"
+msgstr "Integration der KKL-Datenbank in Wordpress"
+
+#. Author of the plugin/theme
+msgid "Stephan Maihoefer / Benedikt Scherer"
+msgstr "Stephan Maihoefer / Benedikt Scherer"
+
+#. Author URI of the plugin/theme
+msgid "http://undev.de"
+msgstr "http://undev.de"

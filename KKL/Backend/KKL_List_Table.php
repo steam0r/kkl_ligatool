@@ -22,6 +22,7 @@ abstract class KKL_List_Table extends WP_List_Table {
     abstract public function get_table_name();
 
     function __construct() {
+	parent::__construct();
 
         global $kkl_db;
         $this->db = $kkl_db;

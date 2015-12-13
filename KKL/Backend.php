@@ -314,15 +314,24 @@ class KKL_Backend {
 
     public static function display() {
 
+	// add_action( 'wp_enqueue_scripts', 'enqueue_kkl_backend_scripts');
+
+	self::enqueue_scripts();
+
+        add_action('admin_menu', array(__CLASS__, 'admin_menu'));
+        add_action('set-screen-option', array(__CLASS__, 'set_screen_option'));
+        add_action('admin_init', array(__CLASS__, 'register_settings' ));
+
+    }
+
+    public static function enqueue_scripts() {
+
         wp_enqueue_script( 'kkl_datepicker', plugins_url() . '/kkl_ligatool/js/jquery.datetimepicker.js');
         wp_enqueue_script( 'kkl_backend', plugins_url() . '/kkl_ligatool/js/kkl_backend.js');
 
         wp_enqueue_style( 'kkl_datepicker', plugins_url() . '/kkl_ligatool/css/jquery.datetimepicker.css');
         wp_enqueue_style( 'kkl_backend', plugins_url() . '/kkl_ligatool/css/kkl_backend.css');
 
-        add_action('admin_menu', array(__CLASS__, 'admin_menu'));
-        add_action('set-screen-option', array(__CLASS__, 'set_screen_option'));
-        add_action('admin_init', array(__CLASS__, 'register_settings' ));
 
     }
 

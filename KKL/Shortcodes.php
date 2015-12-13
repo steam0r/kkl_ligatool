@@ -28,13 +28,14 @@ class KKL_Shortcodes {
 			foreach($league->teams as $team) {
 				$club = $db->getClub($team->club_id);
 				if(!$team->logo) {
-					$team->logo = "http://liga.kickerliebe.de/images/club/?name=" . $club->logo . "&cfg=landscape";
-					if(!$team->logo) $team->logo = "http://placehold.it/135x135/";
+					$team->logo = "/images/club/" . $club->logo;
+					if(!$club->logo) {
+						$team->logo = "https://www.kickerligakoeln.de/wp-content/themes/kkl_2/img/kkl-logo_172x172.png";
+					}
 				}else{
-					$team->logo = "http://liga.kickerliebe.de/images/team/?name=" . $team->logo . "&cfg=landscape";
+					$team->logo = "/images/team/" . $team->logo;
 				}
 				// HACK
-				$team->logo = "https://www.kickerligakoeln.de/wp-content/themes/kkl_2/img/kkl-logo_172x172.png";
 				$team->link = KKL::getLink('club', array('club' => $club->short_name));
 			}
 
@@ -162,7 +163,7 @@ class KKL_Shortcodes {
 		$db = new KKL_DB();
 		$context = KKL::getContext();
 		$contextClub = $context['club'];
-		$contextClub->logo = "http://liga.kickerliebe.de/images/club/?name=" . $contextClub->logo . "&cfg=landscape";
+		$contextClub->logo = "http://liga.kickerliebe.de/images/club/" . $contextClub->logo;
 
 		$seasonTeams = $db->getTeamsForClub($contextClub->id);
 		$teams = array();

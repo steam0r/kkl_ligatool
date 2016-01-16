@@ -94,7 +94,7 @@ abstract class KKL_List_Table extends WP_List_Table {
         if(!empty($orderby) & !empty($order)){ $query.=' ORDER BY '.$orderby.' '.$order; }
 
         $perpage = $this->get_items_per_page($this->get_items_per_page(), self::$ITEMS_PER_PAGE);
-        $paged = !empty($_GET["paged"]) ? mysql_real_escape_string($_GET["paged"]) : '';
+        $paged = !empty($_GET["paged"]) ? $_GET["paged"] : '';
         if(empty($paged) || !is_numeric($paged) || $paged<=0 ){ $paged=1; }
 
         if(!empty($paged) && !empty($perpage)){

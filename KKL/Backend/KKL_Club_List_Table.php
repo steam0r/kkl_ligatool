@@ -7,7 +7,7 @@ class KKL_Club_List_Table extends KKL_List_Table {
 	}
 
     function get_search_fields() {
-        return array('name', 'code ');
+        return array('name', 'short_name ');
     }
 
 	function get_display_columns() {

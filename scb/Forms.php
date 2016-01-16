@@ -118,7 +118,7 @@ class scbForms {
 	 * @return string
 	 */
 	static function form_wrap( $content, $nonce = 'update_options' ) {
-		return html( "form method='post' action=''",
+		return html( "form method='post' action='' enctype='multipart/form-data'",
 			$content,
 			wp_nonce_field( $nonce, '_wpnonce', $referer = true, $echo = false )
 		);

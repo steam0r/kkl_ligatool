@@ -840,7 +840,12 @@ class KKL_DB {
                 'short_name' => $club->short_name,
                 'description' => $club->description
               );
-        $result = $this->db->insert('clubs', $values, array('%s','%s','%s'));
+        if($club->logo) {
+        	$values['logo'] = $club->logo;
+		$result = $this->db->insert('clubs', $values, array('%s','%s','%s', '%s'));
+	}else{
+		$result = $this->db->insert('clubs', $values, array('%s','%s','%s'));
+	}
         return $this->getClub($this->db->insert_id);
     }
 
@@ -849,8 +854,13 @@ class KKL_DB {
         $columns['name'] = $club->name;
         $columns['short_name'] = $club->short_name;
         $columns['description'] = $club->description;
+	if($club->logo) {
+        	$columns['logo'] = $club->logo;
+        	$this->db->update('clubs', $columns, array('id' => $club->id), array('%s', '%s', '%s', '%s'), array('%d'));
+	}else{
+        	$this->db->update('clubs', $columns, array('id' => $club->id), array('%s', '%s', '%s'), array('%d'));
+	}
      
-        $this->db->update('clubs', $columns, array('id' => $club->id), array('%s', '%s', '%s'), array('%d'));
         return $this->getClub($club->id);
     }
 

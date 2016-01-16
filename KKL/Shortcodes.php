@@ -28,7 +28,7 @@ class KKL_Shortcodes {
 			foreach($league->teams as $team) {
 				$club = $db->getClub($team->club_id);
 				if(!$team->logo) {
-					$team->logo = "/images/club/" . $club->logo;
+					$team->logo = $club->logo;
 					if(!$club->logo) {
 						$team->logo = "https://www.kickerligakoeln.de/wp-content/themes/kkl_2/img/kkl-logo_172x172.png";
 					}
@@ -163,7 +163,7 @@ class KKL_Shortcodes {
 		$db = new KKL_DB();
 		$context = KKL::getContext();
 		$contextClub = $context['club'];
-		$contextClub->logo = "http://liga.kickerliebe.de/images/club/" . $contextClub->logo;
+		$contextClub->logo = $contextClub->logo;
 
 		$seasonTeams = $db->getTeamsForClub($contextClub->id);
 		$teams = array();

@@ -61,6 +61,7 @@ class KKL_Match_Admin_Page extends KKL_Admin_Page {
                 $db = new KKL_DB();
                 $db_locations = $db->getLocations();
                 $locations = array();
+                $locations[0] = __('unknown location', 'kkl-ligatool');
                 foreach($db_locations as $location) {
                         $locations[$location->id] = $location->title;
                 }
@@ -83,6 +84,7 @@ class KKL_Match_Admin_Page extends KKL_Admin_Page {
                 $db_games = $db->getMatchesByGameDay($current_game_day->id);
                 $games = array();
                 $games[0] = __('back to overview', 'kkl-ligatool');
+                $games[1] = __('create new game', 'kkl-ligatool');
                 foreach($db_games as $game) {
                     $home = $db->getTeam($game->home_team);
                     $away = $db->getTeam($game->away_team);
@@ -94,6 +96,7 @@ class KKL_Match_Admin_Page extends KKL_Admin_Page {
                     $final_checked = true;
                 }
 
+		$fixture = $this->cleanDate($match->fixture);
                 echo $this->form_table( array(
                         array(
                                 'type' => 'hidden',
@@ -111,7 +114,7 @@ class KKL_Match_Admin_Page extends KKL_Admin_Page {
                                 'title' => __('fixture', 'kkl-ligatool'),
                                 'type' => 'text',
                                 'name' => 'fixture',
-                                'value' => $match->fixture,
+                                'value' => $fixture,
                                 'extra' => array('class' => "datetimepicker")
                         ),
                         array(
@@ -200,7 +203,7 @@ class KKL_Match_Admin_Page extends KKL_Admin_Page {
                 $match = new stdClass;
                 $match->id = $_POST['id'];
                 $match->game_day_id =  $_POST['game_day'];
-                $match->fixture = $_POST['fixture'];
+                $match->fixture = $this->cleanDate($_POST['fixture']);
                 $match->home_team = $_POST['team_home'];
                 $match->away_team = $_POST['team_away'];
                 $match->location = $_POST['location'];
@@ -224,9 +227,12 @@ class KKL_Match_Admin_Page extends KKL_Admin_Page {
 
         function redirect_after_save() {
             $next_game = $_POST['next_game'];
-            if($next_game && $next_game != 0) {
+            if($next_game && $next_game > 1) {
                 $page = menu_page_url("kkl_matches_admin_page", false);
                 $page = $page . "&id=" . $next_game; 
+            }else if($next_game && $next_game = 1) {
+                $page = menu_page_url("kkl_matches_admin_page", false);
+                $page = $page . "&gameDayId=" . $this->match->game_day_id; 
             }else{
                 $page = menu_page_url("kkl_ligatool_matches", false);
                 $page = $page . "&game_day_filter=" . $this->match->game_day_id;      

@@ -49,5 +49,13 @@ abstract class KKL_Admin_Page extends scbAdminPage {
     function getItem() {
     	return $this->item;
     }
+	
+    function cleanDate($dateString) {
+	$date = $dateString;
+	if($dateString == '0000-00-00 00:00:00') {
+		$date = null;
+	}
+	return $date;
+    }
 
 }

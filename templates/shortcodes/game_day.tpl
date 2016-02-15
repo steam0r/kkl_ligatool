@@ -22,8 +22,8 @@
     {% for match in schedule.matches %}
     <tr {% if (activeTeam and ((activeTeam == match.home.short_name) or (activeTeam == match.away.short_name))) %}class="active"{% endif %}>
       <td>
-        <span class="hidden-xs">{% if match.fixture %}{{ match.fixture|date('d.m.Y - H:i') }}{% else %}tba{% endif %}</span>
-        <span class="visible-xs">{% if match.fixture %}{{ match.fixture|date('d.m.Y') }}{% else %}tba{% endif %}</span>
+        <span class="hidden-xs">{% if match.fixture %}{% if match.fixture != '0000-00-00 00:00:00'%}{{ match.fixture|date('d.m.Y - H:i') }}{% else %}tba{% endif %}{% endif %}</span>
+        <span class="visible-xs">{% if match.fixture %}{% if match.fixture != '0000-00-00 00:00:00'%}{{ match.fixture|date('d.m.Y') }}{% else %}tba{% endif %}{% endif %}</span>
       </td>
       <td><a href="/team/{{ match.home.link }}">{{ match.home.name }}</a></td>
       <td>gg.</td>

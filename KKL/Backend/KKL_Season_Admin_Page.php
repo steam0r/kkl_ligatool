@@ -60,7 +60,7 @@ class KKL_Season_Admin_Page extends KKL_Admin_Page {
                                 'type' => 'select',
                                 'name' => 'league',
                                 'choices' => $league_options,
-                                'selected' => ($this->errors) ? $_POST['league'] : $season->current_season,
+                                'selected' => ($this->errors) ? $_POST['league'] : $season->league_id,
                                 'extra' => ($this->errors['league']) ? array('style' => "border-color: red;") : array()
                         ),
                         array(

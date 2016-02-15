@@ -210,7 +210,7 @@ class KKL_DB {
     }
 
     public function getGameDays() {
-        $sql = "SELECT * FROM game_days";
+        $sql = "SELECT * FROM game_days ORDER BY fixture ASC, number ASC";
         return $this->db->get_results($sql);
     }
 
@@ -609,6 +609,9 @@ class KKL_DB {
                 'away_team' => $match->away_team,
                 'home_team' => $match->home_team
               );
+	if($values['fixtures']) {
+		$values['fixtures'] = NULL;
+	}
         $result = $this->db->insert('matches', $values, array('%d','%d','%d','%s','%s','%s', '%d','%d','%d'));
         $match_id = $this->db->insert_id;
 

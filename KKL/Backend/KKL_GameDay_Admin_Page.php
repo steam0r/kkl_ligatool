@@ -63,7 +63,7 @@ class KKL_GameDay_Admin_Page extends KKL_Admin_Page {
                             'type' => 'text',
                             'name' => 'start_date',
                             'extra' => array('class' => 'datetimepicker'),
-                            'value' => $day->fixture
+                            'value' => $this->cleanDate($day->fixture)
                     ),
                     array(
                             'title' => __('end_date', 'kkl-ligatool'),

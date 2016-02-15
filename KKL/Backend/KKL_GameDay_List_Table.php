@@ -40,7 +40,11 @@ class KKL_GameDay_List_Table extends KKL_List_Table {
     }
 
     function column_fixture($item) {
-        return $this->column_date($item['fixture']);
+	$fixture = $item['fixture'];
+        if($fixture == '0000-00-00 00:00:00') {
+                $fixture = null;
+        }
+        return $this->column_date($fixture);
     }
 
     function column_end($item) {

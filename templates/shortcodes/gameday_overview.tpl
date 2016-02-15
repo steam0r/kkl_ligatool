@@ -14,10 +14,12 @@
   <tr>
     {% if mark == match.homename %} {% endif %}
       <td class="date">
+        {% if match.fixture != '0000-00-00 00:00:00' %}
         {% if match.fixture %}
           {{ match.fixture|date('d.m.Y') }}
         {% else %}
           -
+        {% endif %}
         {% endif %}
       </td>
 

@@ -3,7 +3,7 @@
 	{% for match in schedule %}
 	<li>
 		{% if mark == match.homename %} {% endif %}
-		<span class="date">{% if match.fixture %}{{ match.fixture|date('d.m.') }} | {% endif %}</span>
+		<span class="date">{% if match.fixture != '0000-00-00 00:00:00' %} {% if match.fixture %}{{ match.fixture|date('d.m.') }} | {% endif %} {% endif %}</span>
 		<span class="home">
 		{% if display_result and (match.score_home > match.score_away) %} 
 			<b>{{ match.homename }}</b>

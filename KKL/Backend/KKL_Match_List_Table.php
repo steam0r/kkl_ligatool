@@ -63,6 +63,12 @@ class KKL_Match_List_Table extends KKL_List_Table {
         return $team->name;
     }
 
+    function column_location($item) {
+	$db = new KKL_DB();
+	$location = $db->getLocation($item['location']);
+	return $location->title;
+    }
+
     function column_goals_home($item) {
         $db = new KKL_DB();
         $match = $db->getMatch($item['id']);

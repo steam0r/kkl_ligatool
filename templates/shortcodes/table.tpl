@@ -11,7 +11,7 @@
         <th class="position">Platz</th>
         <th class="team">Team</th>
         <th class="games">Spiele</th>
-        <th class="">g/u/v</th>
+        <th class="visible-xs">g/u/v</th>
         <th class="win hidden-xs">g.</th>
         <th class="draw hidden-xs">u.</th>
         <th class="loose hidden-xs">v.</th>

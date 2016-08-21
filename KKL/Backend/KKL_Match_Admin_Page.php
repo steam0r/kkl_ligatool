@@ -115,7 +115,7 @@ class KKL_Match_Admin_Page extends KKL_Admin_Page {
                                 'type' => 'text',
                                 'name' => 'fixture',
                                 'value' => $fixture,
-                                'extra' => array('class' => "datetimepicker")
+                                'extra' => array('class' => "pickfixture")
                         ),
                         array(
                                 'title' => __('team_home', 'kkl-ligatool'),

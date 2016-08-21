@@ -4,6 +4,41 @@ $KKL = new KKL();
 Template Name: Liga Übersicht (Teams)
 
 */
+if(isset($wp_query->query_vars['json'])) {
+
+  header('Content-Type: application/json');
+  
+  global $kkl_twig;
+  $db = new KKL_DB();
+  $context = KKL::getContext();
+  $all_leagues = $db->getActiveLeagues();
+  $leagues = array();
+  foreach($all_leagues as $league) {
+    $league->season = $db->getSeason($league->current_season);
+    $league->teams =  $db->getTeamsForSeason($league->season->id);
+      foreach($league->teams as $team) {
+        $club = $db->getClub($team->club_id);
+        if(!$team->logo) {
+          $team->logo = $club->logo;    
+          if(!$club->logo) {
+            $team->logo = "https://www.kickerligakoeln.de/wp-content/themes/kkl_2/img/kkl-logo_172x172.png";
+          }
+        }else{
+          $team->logo = "/images/team/" . $team->logo;
+        }
+        // HACK
+        $team->link = KKL::getLink('club', array('club' => $club->short_name));
+     }
+     
+     $day = $db->getGameDay($league->season->current_game_day);
+     $league->link = KKL::getLink('league', array('league' => $league->code, 'season' => date('Y', strtotime($league->season->start_date)), 'game_day' => $day->number));  
+     $leagues[] = $league;
+  }   
+ 
+  echo json_encode($leagues);
+  die();
+}
+?>
 ?>
 <?php get_header(); ?>
 

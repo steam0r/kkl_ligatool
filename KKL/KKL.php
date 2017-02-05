@@ -78,6 +78,7 @@ class KKL {
 		  $vars[] = "league";
 		  $vars[] = "season";
 		  $vars[] = "game_day";
+		  $vars[] = "match";
 		  $vars[] = "club";
 		  $vars[] = "team";
 		  $vars[] = "json";

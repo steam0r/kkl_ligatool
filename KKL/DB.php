@@ -298,7 +298,13 @@ class KKL_DB {
     public function getMatch($matchId) {
         $sql = "SELECT m.*, s.score_home, s.score_away, g.goals_home, g.goals_away FROM matches as m LEFT JOIN sets as s ON m.id = s.match_id LEFT JOIN games as g ON s.id = g.set_id WHERE m.id = '" . esc_sql($matchId) . "'";
         return $this->db->get_row($sql);
-    }
+		}
+
+		public function getFullMatchInfo($matchId) {
+				$sql = "SELECT m.*, away.name as away_name, home.name as home_name, l.name as league, s.score_home, s.score_away, g.goals_home, g.goals_away FROM matches as m LEFT JOIN sets as s ON m.id = s.match_id LEFT JOIN games as g ON s.id = g.set_id LEFT JOIN teams as away ON away.id = m.away_team LEFT JOIN teams as home on home.id = m.home_team LEFT JOIN game_days as gd ON gd.id = m.game_day_id LEFT JOIN seasons as season on season.id = gd.season_id LEFT JOIN leagues as l ON l.id = season.league_id WHERE m.id = '" . esc_sql($matchId) . "'";
+        return $this->db->get_row($sql);
+		
+		}
 
     public function getMatchesForGameDay($dayId) {
         $sql = "SELECT * FROM game_days WHERE season_id = '" . esc_sql($seasonId) . "' ORDER BY number ASC";
@@ -367,7 +373,6 @@ class KKL_DB {
         "GROUP BY team_id " .
 //      "ORDER BY score DESC, gameDiff DESC, goalDiff DESC, team_scores.goalsFor DESC";
         "ORDER BY score DESC, gameDiff DESC";
-
 
         $ranking = $this->db->get_results($sql);
 

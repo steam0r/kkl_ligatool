@@ -325,6 +325,8 @@ CREATE TABLE `players` (
   `draws` int(11) NOT NULL,
   `first_name` varchar(255) DEFAULT NULL,
   `last_name` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `phone` varchar(255) DEFAULT NULL,
   `logo` varchar(255) DEFAULT NULL,
   `losses` int(11) NOT NULL,
   `nick_name` varchar(255) DEFAULT NULL,

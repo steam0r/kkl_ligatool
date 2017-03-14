@@ -56,7 +56,9 @@ class KKL_Match_Admin_Page extends KKL_Admin_Page {
                 return $score;
         }
 
-        function display_content() {
+				function display_content() {
+
+								$match = $this->get_item();
 
                 $db = new KKL_DB();
                 $db_locations = $db->getLocations();
@@ -64,9 +66,8 @@ class KKL_Match_Admin_Page extends KKL_Admin_Page {
                 $locations[0] = __('unknown location', 'kkl-ligatool');
                 foreach($db_locations as $location) {
                         $locations[$location->id] = $location->title;
-                }
+								}
 
-                $match = $this->get_item();
                 $current_game_day = $this->get_game_day();
                 $db_game_days = $this->get_game_days();
 
@@ -96,7 +97,7 @@ class KKL_Match_Admin_Page extends KKL_Admin_Page {
                     $final_checked = true;
                 }
 
-		$fixture = $this->cleanDate($match->fixture);
+								$fixture = $this->cleanDate($match->fixture);
                 echo $this->form_table( array(
                         array(
                                 'type' => 'hidden',
@@ -135,7 +136,8 @@ class KKL_Match_Admin_Page extends KKL_Admin_Page {
                                 'title' => __('location', 'kkl-ligatool'),
                                 'type' => 'select',
                                 'name' => 'location',
-                                'value' => $locations,
+																'value' => $locations,
+                                'selected' => ($this->errors) ? $_POST['location'] : $match->location,
                         ),
                         array(
                                 'title' => __('goals_home', 'kkl-ligatool'),

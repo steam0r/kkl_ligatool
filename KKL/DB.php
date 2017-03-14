@@ -637,9 +637,10 @@ class KKL_DB {
     public function createPlayer($player) {
         $values = array(  'first_name' => $player->first_name,
                 'last_name' => $player->last_name,
-                'email' => $player->email
+                'email' => $player->email,
+                'phone' => $player->phone
               );
-        $result = $this->db->insert('players', $values, array('%s','%s','%s'));
+        $result = $this->db->insert('players', $values, array('%s','%s','%s', '%s'));
         return $this->getPlayer($this->db->insert_id);
 		}
 
@@ -648,7 +649,8 @@ class KKL_DB {
         $columns['first_name'] = $player->first_name;
         $columns['last_name'] = $player->last_name;
         $columns['email'] = $player->email;
-        $this->db->update('players', $columns, array('id' => $player->id), array('%s', '%s', '%s'), array('%d'));
+        $columns['phone'] = $player->phone;
+        $this->db->update('players', $columns, array('id' => $player->id), array('%s', '%s', '%s', '%s'), array('%d'));
         return $this->getPlayer($player->id);
     }
 

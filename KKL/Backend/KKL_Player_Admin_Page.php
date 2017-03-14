@@ -73,6 +73,13 @@ class KKL_Player_Admin_Page extends KKL_Admin_Page {
                                 'extra' => ($this->errors['email']) ? array('style' => "border-color: red;") : array()
                         ),
 												array(
+                                'title' => __('phone', 'kkl-ligatool'),
+                                'type' => 'text',
+                                'name' => 'phone',
+                                'value' => ($this->errors) ? $_POST['phone'] : $player->phone,
+                                'extra' => ($this->errors['phone']) ? array('style' => "border-color: red;") : array()
+                        ),
+												array(
                                 'title' => __('member_ligaleitung', 'kkl-ligatool'),
                                 'type' => 'checkbox',
                                 'name' => 'member_ligaleitung',
@@ -112,6 +119,7 @@ class KKL_Player_Admin_Page extends KKL_Admin_Page {
                 $player->first_name = $_POST['first_name'];
                 $player->last_name = $_POST['last_name'];
                 $player->email = $_POST['email'];
+                $player->phone = $_POST['phone'];
                
                 $db = new KKL_DB();
                 $player = $db->createOrUpdatePlayer($player);

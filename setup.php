@@ -30,6 +30,7 @@ function scb_framework_init() {
 	require_once('KKL/Backend/KKL_Club_List_Table.php');
 	require_once('KKL/Backend/KKL_Team_List_Table.php');
 	require_once('KKL/Backend/KKL_Location_List_Table.php');
+	require_once('KKL/Backend/KKL_Player_List_Table.php');
 
 	require_once( dirname( __FILE__ ) . '/KKL/Backend/KKL_Admin_Page.php');
 	require_once( dirname( __FILE__ ) . '/KKL/Backend/KKL_League_Admin_Page.php');
@@ -39,16 +40,18 @@ function scb_framework_init() {
 	require_once( dirname( __FILE__ ) . '/KKL/Backend/KKL_Season_Admin_Page.php');
 	require_once( dirname( __FILE__ ) . '/KKL/Backend/KKL_Team_Admin_Page.php');
 	require_once( dirname( __FILE__ ) . '/KKL/Backend/KKL_Location_Admin_Page.php');
+	require_once( dirname( __FILE__ ) . '/KKL/Backend/KKL_Player_Admin_Page.php');
 	require_once( dirname( __FILE__ ) . '/KKL/Tasks/NewGameDay.php');
 
 	$options = array();
-    new KKL_League_Admin_Page( __FILE__, $options );
-    new KKL_Club_Admin_Page( __FILE__, $options );
-    new KKL_GameDay_Admin_Page( __FILE__, $options );
-    new KKL_Match_Admin_Page( __FILE__, $options );
-    new KKL_Season_Admin_Page( __FILE__, $options );
-    new KKL_Team_Admin_Page( __FILE__, $options );
-    new KKL_Location_Admin_Page( __FILE__, $options );
+  new KKL_League_Admin_Page( __FILE__, $options );
+  new KKL_Club_Admin_Page( __FILE__, $options );
+  new KKL_GameDay_Admin_Page( __FILE__, $options );
+  new KKL_Match_Admin_Page( __FILE__, $options );
+  new KKL_Season_Admin_Page( __FILE__, $options );
+  new KKL_Team_Admin_Page( __FILE__, $options );
+  new KKL_Location_Admin_Page( __FILE__, $options );
+  new KKL_Player_Admin_Page( __FILE__, $options );
 }
 
 scb_init( 'scb_framework_init' );

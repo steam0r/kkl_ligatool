@@ -37,6 +37,7 @@ class KKL_Backend {
         self::add_kkl_ligatool_page( NULL, __('matches', 'kkl-ligatool'), __('matches', 'kkl-ligatool'), 'manage_options', 'kkl_ligatool_matches', array(__CLASS__, 'matches_page'));
         self::add_kkl_ligatool_page( NULL, __('clubs', 'kkl-ligatool'), __('clubs', 'kkl-ligatool'), 'manage_options', 'kkl_ligatool_clubs', array(__CLASS__, 'clubs_page'));
         self::add_kkl_ligatool_page( NULL, __('teams', 'kkl-ligatool'), __('teams', 'kkl-ligatool'), 'manage_options', 'kkl_ligatool_teams', array(__CLASS__, 'teams_page'));
+        self::add_kkl_ligatool_page( NULL, __('players', 'kkl-ligatool'), __('players', 'kkl-ligatool'), 'manage_options', 'kkl_ligatool_players', array(__CLASS__, 'players_page'));
         self::add_kkl_ligatool_page( NULL, __('locations', 'kkl-ligatool'), __('locations', 'kkl-ligatool'), 'manage_options', 'kkl_ligatool_locations', array(__CLASS__, 'locations_page'));
         self::add_kkl_ligatool_page( NULL, __('stats', 'kkl-ligatool'), __('stats', 'kkl-ligatool'), 'manage_options', 'kkl_ligatool_stats', array(__CLASS__, 'stats_page'));
         self::add_kkl_ligatool_page( NULL, __('settings', 'kkl-ligatool'), __('settings', 'kkl-ligatool'), 'administrator', 'kkl_ligatool_settings', array(__CLASS__, 'settings_page'));
@@ -90,7 +91,12 @@ class KKL_Backend {
 		'title'    => __( 'locations', 'kkl-ligatool' ),
 		'content'  => __( 'help_locations_content', 'kkl-ligatool' ) 
 	));
-    }
+ 	$screen->add_help_tab( array(
+		'id'       => 'kkl_help_players',
+		'title'    => __( 'players', 'kkl-ligatool' ),
+		'content'  => __( 'help_players_content', 'kkl-ligatool' ) 
+	));
+   }
 
     public static function add_screen_options() {
 
@@ -148,6 +154,7 @@ class KKL_Backend {
             'kkl_ligatool_matches' => __('matches', 'kkl-ligatool'),
             'kkl_ligatool_clubs' => __('clubs', 'kkl-ligatool'),
             'kkl_ligatool_teams' => __('teams', 'kkl-ligatool'),
+            'kkl_ligatool_players' => __('players', 'kkl-ligatool'),
             'kkl_ligatool_locations' => __('locations', 'kkl-ligatool'),
             'kkl_ligatool_stats' => __('stats', 'kkl-ligatool'),
             'kkl_ligatool_settings' => __('settings', 'kkl-ligatool')
@@ -249,6 +256,18 @@ class KKL_Backend {
         self::display_tabs();
 
         $wp_list_table = new KKL_Team_List_Table();
+        $wp_list_table->prepare_items();
+        $wp_list_table->display();
+
+    }
+
+		public static function players_page() {
+
+        global $kkl_twig;
+
+        self::display_tabs();
+
+        $wp_list_table = new KKL_Player_List_Table();
         $wp_list_table->prepare_items();
         $wp_list_table->display();
 

@@ -6,9 +6,13 @@ class KKL_DB {
 
 	private $db;
 
-	public function __construct() {
+	public function __construct($db = false) {
 		global $kkl_db;
-		$this->db = $kkl_db;
+		if($db) {
+			$this->db = $db;
+		}else{
+			$this->db = $kkl_db;
+		}
 	}
 
 
@@ -125,6 +129,16 @@ class KKL_DB {
             $team->properties = $properties;
         }
         return $teams;
+    }
+
+		public function getPlayers() {
+        $sql = "SELECT * FROM players ORDER by first_name, last_name ASC";
+        $players = $this->db->get_results($sql);
+        foreach ($players as $player) {
+            $properties = $this->getPlayerProperties($team->id);
+            $team->properties = $properties;
+        }
+        return $players;
     }
 
     public function getTeamsForSeason($seasonId) {
@@ -326,6 +340,24 @@ class KKL_DB {
 
     public function getTeamProperties($teamId) {
         $sql = "SELECT * FROM team_properties WHERE objectId = '" . esc_sql($teamId) . "'";
+        $results = $this->db->get_results($sql);
+        $properties = array();
+        foreach ($results as $result) {
+            $properties[$result->property_key] = $result->value;
+        }
+        return $properties;
+    }
+
+		public function getPlayer($playerId) {
+        $sql = "SELECT * FROM players WHERE id = '" . esc_sql($playerId) . "'";
+        $player = $this->db->get_row($sql);
+        $properties = $this->getPlayerProperties($player->id);
+				$player->properties = $properties;
+        return $player;
+    }
+
+    public function getPlayerProperties($playerId) {
+        $sql = "SELECT * FROM player_properties WHERE objectId = '" . esc_sql($playerId) . "'";
         $results = $this->db->get_results($sql);
         $properties = array();
         foreach ($results as $result) {
@@ -602,6 +634,33 @@ class KKL_DB {
         return $team;
     }
 
+    public function createPlayer($player) {
+        $values = array(  'first_name' => $player->first_name,
+                'last_name' => $player->last_name,
+                'email' => $player->email
+              );
+        $result = $this->db->insert('players', $values, array('%s','%s','%s'));
+        return $this->getPlayer($this->db->insert_id);
+		}
+
+		public function updatePlayer($player) {
+        $columns = array();
+        $columns['first_name'] = $player->first_name;
+        $columns['last_name'] = $player->last_name;
+        $columns['email'] = $player->email;
+        $this->db->update('players', $columns, array('id' => $player->id), array('%s', '%s', '%s'), array('%d'));
+        return $this->getPlayer($player->id);
+    }
+
+		public function createOrUpdatePlayer($player) {
+        if($player->id) {
+            $player = $this->updatePlayer($player);
+        }else{
+            $player = $this->createPlayer($player);
+        }
+        return $player;
+    }
+
     public function createMatch($match) {
         $values = array(  
                 'game_day_id' => $match->game_day_id,
@@ -746,6 +805,15 @@ class KKL_DB {
             $this->db->delete( 'team_properties', array( 'objectId' => $team->id, 'property_key' => $key ));
             if($value !== false) {
                 $this->db->insert('team_properties', array('objectId' => $team->id, 'property_key' => $key, 'value' => $value), array('%d','%s','%s'));
+            }
+        }
+    }
+
+		public function setPlayerProperties($player, $properties) {
+        foreach($properties as $key => $value) {
+            $this->db->delete( 'player_properties', array( 'objectId' => $player->id, 'property_key' => $key ));
+            if($value !== false) {
+                $this->db->insert('player_properties', array('objectId' => $player->id, 'property_key' => $key, 'value' => $value), array('%d','%s','%s'));
             }
         }
     }

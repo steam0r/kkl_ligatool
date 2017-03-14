@@ -40,6 +40,12 @@ class KKL_Team_Admin_Page extends KKL_Admin_Page {
                         $club_options[$club->id] = $club->name;
                 }
 
+								$players = $db->getPlayers();
+                $captain_options = array("" => __('please_select', 'kkl-ligatool'));
+                foreach($players as $player) {
+                        $captain_options[$player->id] = $player->first_name . " " . $player->last_name . " (" . $player->email . ")";
+                }
+
                 $locations = $db->getLocations();
                 $location_options = array("" => __('please_select', 'kkl-ligatool'));
                 foreach($locations as $location) {
@@ -100,6 +106,22 @@ class KKL_Team_Admin_Page extends KKL_Admin_Page {
                                 'selected' => ($this->errors) ? $_POST['location'] : $team->properties['location']
                         ), 
                         array(
+                                'title' => __('captain', 'kkl-ligatool'),
+                                'type' => 'select',
+                                'name' => 'captain',
+                                'choices' => $captain_options,
+                                'selected' => ($this->errors) ? $_POST['captain'] : $team->properties['captain'],
+                                'extra' => ($this->errors['captain']) ? array('style' => "border-color: red;") : array()
+                        ),
+                        array(
+                                'title' => __('vice-captain', 'kkl-ligatool'),
+                                'type' => 'select',
+                                'name' => 'vice_captain',
+                                'choices' => $captain_options,
+                                'selected' => ($this->errors) ? $_POST['vice_captain'] : $team->properties['vice_captain'],
+                                'extra' => ($this->errors['vice_captain']) ? array('style' => "border-color: red;") : array()
+                        ),
+                        array(
                                 'title' => __('current_league_winner', 'kkl-ligatool'),
                                 'type' => 'checkbox',
                                 'name' => 'current_league_winner',
@@ -111,11 +133,6 @@ class KKL_Team_Admin_Page extends KKL_Admin_Page {
                                 'name' => 'current_cup_winner',
                                 'checked' => $cupwinner_checked
                         )
-                        // array(
-                        //        'title' => __('image', 'kkl-ligatool'),
-                        //        'type' => 'file',
-                        //        'name' => 'image',
-                        // )
                 ) );
         }
 
@@ -146,7 +163,11 @@ class KKL_Team_Admin_Page extends KKL_Admin_Page {
                 $properties['location'] = false;
                 $properties['current_league_winner'] = false;
                 $properties['current_cup_winner'] = false;
+                $properties['captain'] = false;
+                $properties['vice_captain'] = false;
                 if($_POST['location']) $properties['location'] = $_POST['location'];
+                if($_POST['captain']) $properties['captain'] = $_POST['captain'];
+                if($_POST['vice_captain']) $properties['vice_captain'] = $_POST['vice_captain'];
                 if($_POST['current_league_winner']) $properties['current_league_winner'] = "true";
                 if($_POST['current_cup_winner']) $properties['current_cup_winner'] = "true";
 
@@ -154,6 +175,6 @@ class KKL_Team_Admin_Page extends KKL_Admin_Page {
 
                 return $db->getTeam($team->id);
 
-        }
+				}
 
 }

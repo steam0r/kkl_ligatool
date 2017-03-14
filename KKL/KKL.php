@@ -10,6 +10,10 @@ class KKL {
 		$this->db = new KKL_DB();
 	}
 
+	public function getDB() {
+		return $this->db;
+	}
+	
 	public function init() {
 
 

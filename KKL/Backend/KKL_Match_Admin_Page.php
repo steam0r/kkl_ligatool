@@ -230,7 +230,7 @@ class KKL_Match_Admin_Page extends KKL_Admin_Page {
             if($next_game && $next_game > 1) {
                 $page = menu_page_url("kkl_matches_admin_page", false);
                 $page = $page . "&id=" . $next_game; 
-            }else if($next_game && $next_game = 1) {
+            }else if($next_game && $next_game == 1) {
                 $page = menu_page_url("kkl_matches_admin_page", false);
                 $page = $page . "&gameDayId=" . $this->match->game_day_id; 
             }else{

@@ -17,9 +17,9 @@ class KKL_Team_List_Table extends KKL_List_Table {
 	function get_display_columns() {
 		return $columns= array(
 			'id'=> __('id', 'kkl-ligatool'),
-			'club_id'=>__('club', 'kkl-ligatool'),
 			'name'=> __('name', 'kkl-ligatool'),
-            'season_id'=> __('season', 'kkl-ligatool'),
+			'club_id'=>__('club', 'kkl-ligatool'),
+      'season_id'=> __('season', 'kkl-ligatool'),
 			'short_name'=> __('url_code', 'kkl-ligatool'),
 		);
 	}

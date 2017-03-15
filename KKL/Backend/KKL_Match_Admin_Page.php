@@ -67,6 +67,12 @@ class KKL_Match_Admin_Page extends KKL_Admin_Page {
                 foreach($db_locations as $location) {
                         $locations[$location->id] = $location->title;
 								}
+								if(!$match->location && !$_POST['location']) {
+									$home = $db->getTeam($match->home_team);
+									if($home) {
+										$match->location = $home->properties['location'];
+									}
+								}
 
                 $current_game_day = $this->get_game_day();
                 $db_game_days = $this->get_game_days();

@@ -196,8 +196,8 @@ class KKL_Shortcodes {
 
 	}
 
-	public static function gameDayPager( $atts, $content, $tag) {
 
+	public static function gameDayPager( $atts, $content, $tag) {
 		global $kkl_twig;
 		
 		$db = new KKL_DB();
@@ -223,5 +223,22 @@ class KKL_Shortcodes {
 		return $kkl_twig->render('shortcodes/gameday_pager.tpl', array('context' => $context, 'prev' => $prev, 'day' => $day, 'next' => $next));
 
 	}
+
+	public static function contactList( $atts, $content, $tag) {
+		global $kkl_twig;
+		
+		$db = new KKL_DB();
+		$context = KKL::getContext();
+
+		$day = $context['game_day'];
+		$league = $context['league'];
+		$season = $context['season'];
+
+		$players = $db->getPlayers();
+		
+		return $kkl_twig->render('shortcodes/contact_list.tpl', array('context' => $context, 'players' => $players));
+
+	}
+
 
 }

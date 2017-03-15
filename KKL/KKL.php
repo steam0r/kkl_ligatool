@@ -31,6 +31,7 @@ class KKL {
 		add_shortcode( 'club_detail', array('KKL_Shortcodes', 'clubDetail'));
 		add_shortcode( 'gameday_pager', array('KKL_Shortcodes', 'gameDayPager'));
 		add_shortcode( 'season_schedule', array('KKL_Shortcodes', 'seasonSchedule'));
+		add_shortcode( 'contact_list', array('KKL_Shortcodes', 'contactList'));
 
 		register_sidebar(array(
 		  'name' => __( __('kkl_global_sidebar', 'kkl-ligatool') ),

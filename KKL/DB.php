@@ -150,7 +150,8 @@ class KKL_DB {
         $players = $this->db->get_results($sql);
         foreach ($players as $player) {
             $properties = $this->getPlayerProperties($team->id);
-            $player->properties = $properties;
+						$player->properties = $properties;
+						$player->role = 'ligaleitung';
         }
         return $players;
     }
@@ -400,7 +401,52 @@ class KKL_DB {
             $properties[$result->property_key] = $result->value;
         }
         return $properties;
-    }
+		}
+
+		public function getCaptainsContactData() {
+			$sql = "SELECT " . 
+				"p.first_name as first_name, p.last_name as last_name, p.email as email, p.phone as phone, " .
+				"t.name as team, t.short_name as team_short, ".
+				"l.name as league, l.code as league_short, loc.title as location ".
+				"FROM team_properties AS tp ".
+				"JOIN players AS p ON p.id = tp.value ".
+				"JOIN teams AS t ON t.id = tp.objectId ".
+				"JOIN seasons AS s ON s.id = t.season_id AND s.active = '1' ".
+				"JOIN leagues AS l ON l.id = s.league_id ".
+				"LEFT JOIN team_properties AS lp ON t.id = lp.objectId AND lp.property_key = 'location' ".
+				"LEFT JOIN locations AS loc ON loc.id = lp.value ".
+				"WHERE tp.property_key = 'captain' ";
+			$data = $this->db->get_results($sql);
+			$captains = array();
+			foreach($data as $d) {
+				$d->role = 'captain';
+				$captains[] = $d;
+			}
+			return $captains;
+		}
+
+		public function getViceCaptainsContactData() {
+			$sql = "SELECT " . 
+				"p.first_name as first_name, p.last_name as last_name, p.email as email, p.phone as phone, " .
+				"t.name as team, t.short_name as team_short, ".
+				"l.name as league, l.code as league_short, loc.title as location ".
+				"FROM team_properties AS tp ".
+				"JOIN players AS p ON p.id = tp.value ".
+				"JOIN teams AS t ON t.id = tp.objectId ".
+				"JOIN seasons AS s ON s.id = t.season_id AND s.active = '1' ".
+				"JOIN leagues AS l ON l.id = s.league_id ".
+				"LEFT JOIN team_properties AS lp ON t.id = lp.objectId AND lp.property_key = 'location' ".
+				"LEFT JOIN locations AS loc ON loc.id = lp.value ".
+				"WHERE tp.property_key = 'vice_captain' ";
+			$data = $this->db->get_results($sql);
+			$captains = array();
+			foreach($data as $d) {
+				$d->role = 'vice_captain';
+				$captains[] = $d;
+			}
+			return $captains;
+		
+		}
 
     public function getTeamByCode($teamCode) {
         $sql = "SELECT * FROM teams WHERE short_name = '" . esc_sql($teamCode) . "'";

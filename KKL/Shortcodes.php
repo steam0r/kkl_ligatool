@@ -230,14 +230,23 @@ class KKL_Shortcodes {
 		$db = new KKL_DB();
 		$context = KKL::getContext();
 
-		$day = $context['game_day'];
-		$league = $context['league'];
 		$season = $context['season'];
 
-		$players = $db->getPlayers();
+		$players = array();
+		$leagueadmins = $db->getLeagueAdmins();
+		$captains = $db->getCaptainsContactData();
+		$vicecaptains = $db->getViceCaptainsContactData();
+		$players = array_merge($leagueadmins, $captains, $vicecaptains);
+
+		usort($players, array(__CLASS__, "cmp"));
 		
 		return $kkl_twig->render('shortcodes/contact_list.tpl', array('context' => $context, 'players' => $players));
 
+	}
+
+	private static function cmp($a, $b)
+	{
+		    return strcmp($a->team, $b->team);
 	}
 
 

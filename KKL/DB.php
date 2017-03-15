@@ -136,7 +136,21 @@ class KKL_DB {
         $players = $this->db->get_results($sql);
         foreach ($players as $player) {
             $properties = $this->getPlayerProperties($team->id);
-            $team->properties = $properties;
+            $player->properties = $properties;
+        }
+        return $players;
+    }
+
+		public function getLeagueAdmins() {
+			$sql = "SELECT p.* FROM players AS p ".
+				"JOIN player_properties AS pp ON pp.objectId = p.id " .
+				"AND pp.property_key = 'member_ligaleitung' ".
+				"AND pp.value = 'true' ".
+				"ORDER by p.first_name, p.last_name ASC";
+        $players = $this->db->get_results($sql);
+        foreach ($players as $player) {
+            $properties = $this->getPlayerProperties($team->id);
+            $player->properties = $properties;
         }
         return $players;
     }
@@ -200,7 +214,29 @@ class KKL_DB {
 
     public function getSeason($seasonId) {
         $sql = "SELECT * FROM seasons WHERE id = '" . esc_sql($seasonId) . "'";
-        return $this->db->get_row($sql);
+        $season = $this->db->get_row($sql);
+        $properties = $this->getSeasonProperties($season->id);
+        $season->properties = $properties;
+        return $season;
+		}
+
+   public function getSeasonProperties($seasonId) {
+        $sql = "SELECT * FROM season_properties WHERE objectId = '" . esc_sql($seasonId) . "'";
+        $results = $this->db->get_results($sql);
+        $properties = array();
+        foreach ($results as $result) {
+            $properties[$result->property_key] = $result->value;
+        }
+        return $properties;
+    }
+
+		public function setSeasonProperties($season, $properties) {
+        foreach($properties as $key => $value) {
+            $this->db->delete( 'season_properties', array( 'objectId' => $season->id, 'property_key' => $key ));
+            if($value !== false) {
+                $this->db->insert('season_properties', array('objectId' => $season->id, 'property_key' => $key, 'value' => $value), array('%d','%s','%s'));
+            }
+        }
     }
 
     public function getSeasonByLeagueAndYear($league, $year) {
@@ -372,6 +408,16 @@ class KKL_DB {
         $properties = $this->getTeamProperties($team->id);
         $team->properties = $properties;
         return $team;
+    }
+
+		public function getTeamsByName($teamName) {
+			$sql = "SELECT id FROM teams WHERE name = '" . esc_sql($teamName) . "'";
+			$teamIds = $this->db->get_results($sql);
+			$teams = array();
+			foreach($teamIds as $teamId) {
+				$teams[] = $this->getTeam($teamId->id);
+			}
+      return $teams;
     }
 
     public function getClub($clubId) {

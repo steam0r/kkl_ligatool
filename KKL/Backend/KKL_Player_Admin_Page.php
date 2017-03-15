@@ -45,6 +45,15 @@ class KKL_Player_Admin_Page extends KKL_Admin_Page {
                     $slack_alias = $_POST['slack_alias'];
                 } 
 
+								$ligaleitung_address = "";
+								if($player->properties && array_key_exists('ligaleitung_address', $player->properties)) {
+									$ligaleitung_address = $player->properties['ligaleitung_address'];
+								
+								}
+                if($this->errors && $_POST['ligaleitung_address']) {
+                    $ligaleitung_address = $_POST['ligaleitung_address'];
+                } 
+
                 echo $this->form_table( array(
                         array(
                                 'type' => 'hidden',
@@ -93,6 +102,13 @@ class KKL_Player_Admin_Page extends KKL_Admin_Page {
                                 'extra' => ($this->errors['slack_alias']) ? array('style' => "border-color: red;") : array()
                         ),
                         array(
+                                'title' => __('ligaleitung_address', 'kkl-ligatool'),
+                                'type' => 'text',
+                                'name' => 'ligaleitung_address',
+                                'value' => ($this->errors) ? $_POST['ligaleitung_address'] : $ligaleitung_address,
+                                'extra' => ($this->errors['ligaleitung_address']) ? array('style' => "border-color: red;") : array()
+                        ),
+												array(
                                 'title' => __('next_page', 'kkl-ligatool'),
                                 'type' => 'select',
                                 'name' => 'next_page',
@@ -107,7 +123,6 @@ class KKL_Player_Admin_Page extends KKL_Admin_Page {
 
                 if(!$new_data['first_name']) $errors['name'] = true;
                 if(!$new_data['last_name']) $errors['short_name'] = true;
-                if(!$new_data['email']) $errors['season'] = true;
 
                 return $errors;
         }
@@ -127,8 +142,10 @@ class KKL_Player_Admin_Page extends KKL_Admin_Page {
                 $properties = array();
                 $properties['member_ligaleitung'] = false;
                 $properties['slack_alias'] = false;
+                $properties['ligaleitung_address'] = false;
                 if($_POST['member_ligaleitung']) $properties['member_ligaleitung'] = "true";
                 if($_POST['slack_alias']) $properties['slack_alias'] = $_POST['slack_alias'];
+                if($_POST['ligaleitung_address']) $properties['ligaleitung_address'] = $_POST['ligaleitung_address'];
 
                 if(!empty($properties)) $db->setPlayerProperties($player, $properties);
 

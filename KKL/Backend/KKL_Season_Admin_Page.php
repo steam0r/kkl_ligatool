@@ -37,10 +37,16 @@ class KKL_Season_Admin_Page extends KKL_Admin_Page {
                         $day_options[$day->id] = 'Spieltag ' . $day->number;
                 }
 
+								$admins = $db->getLeagueAdmins();
+                $contact_options = array("" => __('please_select', 'kkl-ligatool'));
+                foreach($admins as $admin) {
+                        $contact_options[$admin->id] = $admin->first_name . " " . $admin->last_name;
+                }
+
                 $active_checked = ($season->active == 1);
                 if($this->errors && $_POST['active']) {
                     $active_checked = true;
-                } 
+								} 
 
                 echo $this->form_table( array(
                     array(
@@ -89,7 +95,15 @@ class KKL_Season_Admin_Page extends KKL_Admin_Page {
                                 'type' => 'checkbox',
                                 'name' => 'active',
                                 'checked' => $active_checked
-                        )
+                        ),
+                        array(
+                                'title' => __('season_admin', 'kkl-ligatool'),
+                                'type' => 'select',
+                                'name' => 'season_admin',
+                                'choices' => $contact_options,
+                                'selected' => ($this->errors) ? $_POST['season_admin'] : $season->properties['season_admin'],
+                                'extra' => ($this->errors['season_admin']) ? array('style' => "border-color: red;") : array()
+                        ),
                 ) );
         }
 
@@ -118,6 +132,10 @@ class KKL_Season_Admin_Page extends KKL_Admin_Page {
            
             $db = new KKL_DB();
             $season = $db->createOrUpdateSeason($season);
+
+						$properties['season_admin'] = false;
+						if($_POST['season_admin']) $properties['season_admin'] = $_POST['season_admin'];
+						if(!empty($properties)) $db->setSeasonProperties($season, $properties);
 
             return $season;
 

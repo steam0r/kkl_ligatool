@@ -1,5 +1,5 @@
 <div class="kkl-kontaktliste">
-  <nav class="navbar-pills">
+  <nav class="list-pills">
     <ul>
       <li><a rel="isotope" href="#" data-filter="*">Alle</a></li>
       <li><a rel="isotope" href="#" data-filter=".ligaleitung">Ligaleitung</a></li>

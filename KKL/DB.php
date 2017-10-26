@@ -390,6 +390,8 @@ class KKL_DB {
 					}else{
 						$location = $this->getLocation($result->value);
 						$properties['location_name'] = $location->title;
+						$properties['lat'] = $location->lat;
+						$properties['lng'] = $location->lng;
 					}
         }
         return $properties;

@@ -22,7 +22,7 @@ jQuery(document).ready(function() {
 	jQuery('#toplevel_page_kkl_ligatool a').addClass("current");
 	jQuery('.pickfixture').datetimepicker({
  		dateFormat: "yy-mm-dd",
-    		timeFormat:  "HH:mm",
+    timeFormat:  "HH:mm",
 		defaultTime: "20:00"
  	});
 });

@@ -44,10 +44,10 @@ class KKL_Backend {
 
     }
 
-    public function add_kkl_ligatool_page($parent_slug, $page_title, $page_title, $capability, $menu_slug, $function) {
+    public function add_kkl_ligatool_page($parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function) {
         $hook = add_submenu_page( $parent_slug, $page_title, $page_title, $capability, $menu_slug, $function);
         add_action('manage_'. $hook .'_columns', array(__CLASS__, 'add_screen_options'));
-    }
+		}
 
     public static function add_help_options() {
 	$screen = get_current_screen();

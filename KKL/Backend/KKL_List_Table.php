@@ -43,10 +43,6 @@ abstract class KKL_List_Table extends WP_List_Table {
         return $edit_page;
     }
 
-    public function get_items_per_page() {
-        return self::$ITEMS_PER_PAGE;
-    }
-
     public function get_search_fields() {
         return array();
     }
@@ -93,7 +89,7 @@ abstract class KKL_List_Table extends WP_List_Table {
         $order = !empty($_GET["order"]) ? mysql_real_escape_string($_GET["order"]) : '';
         if(!empty($orderby) & !empty($order)){ $query.=' ORDER BY '.$orderby.' '.$order; }
 
-        $perpage = $this->get_items_per_page($this->get_items_per_page(), self::$ITEMS_PER_PAGE);
+        $perpage = $this->get_items_per_page($this->get_items_per_page(null), self::$ITEMS_PER_PAGE);
         $paged = !empty($_GET["paged"]) ? $_GET["paged"] : '';
         if(empty($paged) || !is_numeric($paged) || $paged<=0 ){ $paged=1; }
 
@@ -148,7 +144,7 @@ abstract class KKL_List_Table extends WP_List_Table {
 
         $this->set_pagination_args( array(
             'total_items' => $this->get_total_items(),
-            'per_page'    => $this->get_items_per_page()
+            'per_page'    => $this->get_items_per_page(null)
         ));
 
         $query = $this->get_query();

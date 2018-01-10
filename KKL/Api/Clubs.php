@@ -68,7 +68,7 @@ class KKL_Api_Clubs extends KKL_Api_Controller {
 
   public function get_current_team_for_club(WP_REST_Request $request) {
     $db = new KKL_DB();
-    $items = $db->getTeamsForClub($request->get_param('id'));
+    $items = array($db->getCurrentTeamForClub($request->get_param('id')));
     return $this->getResponse($request, $items);
   }
 

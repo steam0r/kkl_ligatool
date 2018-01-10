@@ -37,15 +37,6 @@ class KKL_Api_Leagues extends KKL_Api_Controller {
         ),
       )
     ));
-    register_rest_route($this->getNamespace(), '/' . $base . '/(?P<id>[\d]+)/currentgameday', array(
-      'methods' => WP_REST_Server::READABLE,
-      'callback' => array($this, 'get_current_game_day_for_league'),
-      'args' => array(
-        'context' => array(
-          'default' => 'view',
-        ),
-      )
-    ));
   }
 
   /**
@@ -69,12 +60,6 @@ class KKL_Api_Leagues extends KKL_Api_Controller {
   public function get_seasons_for_league(WP_REST_Request $request) {
     $db = new KKL_DB();
     $items = $db->getSeasonsByLeague($request->get_param('id'));
-    return $this->getResponse($request, $items);
-  }
-
-  public function get_current_game_day_for_league(WP_REST_Request $request) {
-    $db = new KKL_DB();
-    $items = array($db->getCurrentGameDayForLeague($request->get_param('id')));
     return $this->getResponse($request, $items);
   }
 

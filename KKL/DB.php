@@ -149,7 +149,7 @@ class KKL_DB {
 				"ORDER by p.first_name, p.last_name ASC";
         $players = $this->db->get_results($sql);
         foreach ($players as $player) {
-            $properties = $this->getPlayerProperties($team->id);
+            $properties = $this->getPlayerProperties($player->id);
 						$player->properties = $properties;
 						$player->role = 'ligaleitung';
         }
@@ -351,13 +351,18 @@ class KKL_DB {
         return $this->db->get_row($sql);
 		}
 
+    public function getMatches() {
+      $sql = "SELECT * FROM matches ORDER BY fixture ASC";
+      return $this->db->get_results($sql);
+    }
+
 		public function getFullMatchInfo($matchId) {
 				$sql = "SELECT m.*, away.name as away_name, home.name as home_name, l.name as league, s.score_home, s.score_away, g.goals_home, g.goals_away, homecaptain.email as home_email, awaycaptain.email as away_email FROM matches as m LEFT JOIN sets as s ON m.id = s.match_id LEFT JOIN games as g ON s.id = g.set_id LEFT JOIN teams as away ON away.id = m.away_team LEFT JOIN team_properties AS ac ON ac.objectId = away.id and ac.property_key = 'captain' LEFT JOIN players AS awaycaptain ON awaycaptain.id = ac.value LEFT JOIN teams as home on home.id = m.home_team LEFT JOIN team_properties as hc ON hc.objectId = home.id AND hc.property_key = 'captain' LEFT JOIN players AS homecaptain ON homecaptain.id = hc.value LEFT JOIN game_days as gd ON gd.id = m.game_day_id LEFT JOIN seasons as season on season.id = gd.season_id LEFT JOIN leagues as l ON l.id = season.league_id WHERE m.id = '" . esc_sql($matchId) . "'";
         return $this->db->get_row($sql);
-		
+
 		}
 
-    public function getMatchesForGameDay($dayId) {
+    public function getMatchesForSeason($seasonId) {
         $sql = "SELECT * FROM game_days WHERE season_id = '" . esc_sql($seasonId) . "' ORDER BY number ASC";
         return $this->db->get_results($sql);
     }
@@ -416,7 +421,7 @@ class KKL_DB {
 		}
 
 		public function getCaptainsContactData() {
-			$sql = "SELECT " . 
+			$sql = "SELECT " .
 				"p.first_name as first_name, p.last_name as last_name, p.email as email, p.phone as phone, " .
 				"t.name as team, t.short_name as team_short, ".
 				"l.name as league, l.code as league_short, loc.title as location ".
@@ -438,7 +443,7 @@ class KKL_DB {
 		}
 
 		public function getViceCaptainsContactData() {
-			$sql = "SELECT " . 
+			$sql = "SELECT " .
 				"p.first_name as first_name, p.last_name as last_name, p.email as email, p.phone as phone, " .
 				"t.name as team, t.short_name as team_short, ".
 				"l.name as league, l.code as league_short, loc.title as location ".
@@ -457,7 +462,7 @@ class KKL_DB {
 				$captains[] = $d;
 			}
 			return $captains;
-		
+
 		}
 
     public function getTeamByCode($teamCode) {
@@ -495,14 +500,14 @@ class KKL_DB {
         "sum(team_scores.win) as wins, " .
         "sum(team_scores.loss) as losses, " .
         "sum(team_scores.draw) as draws, " .
-        "sum(team_scores.goalsFor) as goalsFor, " . 
+        "sum(team_scores.goalsFor) as goalsFor, " .
         "sum(team_scores.goalsAgainst) as goalsAgainst, " .
         "sum(team_scores.goalsFor - team_scores.goalsAgainst) as goalDiff, " .
-        "sum(team_scores.gamesFor) as gamesFor, " . 
+        "sum(team_scores.gamesFor) as gamesFor, " .
         "sum(team_scores.gamesAgainst) as gamesAgainst, " .
         "sum(team_scores.gamesFor - team_scores.gamesAgainst) as gameDiff " .
-        "FROM game_days, " . 
-        "team_scores  " . 
+        "FROM game_days, " .
+        "team_scores  " .
         "WHERE game_days.season_id='" . esc_sql($seasonId) . "' " .
         "AND game_days.number <= '" . esc_sql($dayNumber) . "' " .
         "AND gameDay_id=game_days.id " .
@@ -539,7 +544,7 @@ class KKL_DB {
                             $new_score->gamesFor = 0;
                             $new_score->gamesAgainst = 0;
                             $new_score->gameDiff = 0;
-                            $new_score->score = 0;                          
+                            $new_score->score = 0;
                             $ranking[] = $new_score;
                         }
                     }
@@ -562,7 +567,7 @@ class KKL_DB {
                             $new_score->gamesFor = 0;
                             $new_score->gamesAgainst = 0;
                             $new_score->gameDiff = 0;
-                            $new_score->score = 0;                          
+                            $new_score->score = 0;
                             $ranking[] = $new_score;
                         }
                     }
@@ -587,7 +592,7 @@ class KKL_DB {
                             $new_score->gamesFor = 0;
                             $new_score->gamesAgainst = 0;
                             $new_score->gameDiff = 0;
-                            $new_score->score = 0;                          
+                            $new_score->score = 0;
                             $ranking[] = $new_score;
                     }
                 }
@@ -625,17 +630,17 @@ class KKL_DB {
         $sql = "SELECT " .
                 "team_scores.team_id, " .
                 "sum(team_scores.score) as score, " .
-                "sum(team_scores.win) as wins, " . 
-                "sum(team_scores.loss) as losses, " . 
+                "sum(team_scores.win) as wins, " .
+                "sum(team_scores.loss) as losses, " .
                 "sum(team_scores.draw) as draws, " .
-                "sum(team_scores.goalsFor) as goalsFor, " . 
-                "sum(team_scores.goalsAgainst) as goalsAgainst " . 
+                "sum(team_scores.goalsFor) as goalsFor, " .
+                "sum(team_scores.goalsAgainst) as goalsAgainst " .
                 "FROM game_days, " .
                 "team_scores  " .
-                "WHERE game_days.season_id='" . $day->season_id . "' " . 
+                "WHERE game_days.season_id='" . $day->season_id . "' " .
                 "AND game_days.number <= '" . $day->number . "' " .
                 "AND gameDay_id=game_days.id " .
-                "AND team_id=". $team_id; 
+                "AND team_id=". $team_id;
 
         $scores = $this->db->get_row($sql);
         return $scores;
@@ -700,12 +705,12 @@ class KKL_DB {
 
     public function getAllGoals(){
         $sql = "SELECT SUM( goals_away ) FROM  `games` WHERE goals_away IS NOT NULL";
-        return $this->db->get_row($sql);   
+        return $this->db->get_row($sql);
     }
 
     public function getAllGames(){
         $sql = "SELECT SUM( score_home ) FROM  `sets` WHERE score_home IS NOT NULL";
-        return $this->db->get_row($sql);      
+        return $this->db->get_row($sql);
     }
 
     public function createTeam($team) {
@@ -768,7 +773,7 @@ class KKL_DB {
     }
 
     public function createMatch($match) {
-        $values = array(  
+        $values = array(
                 'game_day_id' => $match->game_day_id,
                 'score_away' => $match->score_away,
                 'score_home' => $match->score_home,
@@ -804,7 +809,7 @@ class KKL_DB {
 
     public function updateMatch($match) {
 
-        $values = array(  
+        $values = array(
                 'game_day_id' => $match->game_day_id,
                 'score_away' => $match->score_away,
                 'score_home' => $match->score_home,
@@ -847,7 +852,7 @@ class KKL_DB {
     }
 
     public function createSet($set) {
-        $values = array(  
+        $values = array(
                 'score_away' => $set->score_away,
                 'score_home' => $set->score_home,
                 'number' => $set->number,
@@ -861,7 +866,7 @@ class KKL_DB {
         if(!$this->getSet($set->match_id)) {
             return $this->createSet($set);
         }
-        $values = array(  
+        $values = array(
                 'score_away' => $set->score_away,
                 'score_home' => $set->score_home,
                 'number' => $set->number,
@@ -877,7 +882,7 @@ class KKL_DB {
     }
 
     public function createGame($game) {
-        $values = array(  
+        $values = array(
                 'goals_away' => $game->goals_away,
                 'goals_home' => $game->goals_home,
                 'number' => $game->number,
@@ -891,7 +896,7 @@ class KKL_DB {
         if(!$this->getGame($game->set_id)) {
             return $this->createGame($game);
         }
-        $values = array(  
+        $values = array(
                 'goals_away' => $game->goals_away,
                 'goals_home' => $game->goals_home,
                 'number' => $game->number,
@@ -905,7 +910,7 @@ class KKL_DB {
         $sql = "SELECT * FROM games WHERE set_id = '" . esc_sql($setId) . "'";
         return $this->db->get_row($sql);
     }
-    
+
     public function setTeamProperties($team, $properties) {
         foreach($properties as $key => $value) {
             $this->db->delete( 'team_properties', array( 'objectId' => $team->id, 'property_key' => $key ));
@@ -969,7 +974,7 @@ class KKL_DB {
         $columns['code'] = $league->code;
         $columns['active'] = $league->active;
         $columns['current_season'] = $league->current_season;
-        
+
         $this->db->update('leagues', $columns, array('id' => $league->id), array('%s', '%s', '%d', '%d'), array('%d'));
         return $this->getLeague($league->id);
     }
@@ -1003,7 +1008,7 @@ class KKL_DB {
         $columns['active'] = $season->active;
         $columns['current_game_day'] = $season->current_game_day;
         $columns['league_id'] = $season->league_id;
-        
+
         $this->db->update('seasons', $columns, array('id' => $season->id), array('%s', '%s', '%s', '%d', '%d', '%d'), array('%d'));
         return $this->getSeason($season->id);
     }
@@ -1042,7 +1047,7 @@ class KKL_DB {
 	}else{
         	$this->db->update('clubs', $columns, array('id' => $club->id), array('%s', '%s', '%s'), array('%d'));
 	}
-     
+
         return $this->getClub($club->id);
     }
 
@@ -1071,7 +1076,7 @@ class KKL_DB {
         $columns['fixture'] = $day->start_date;
         $columns['end'] = $day->end_date;
         $columns['season_id'] = $day->season_id;
-     
+
         $this->db->update('game_days', $columns, array('id' => $day->id), array('%d', '%s', '%s', '%d'), array('%d'));
         return $this->getGameDay($day->id);
     }
@@ -1103,14 +1108,14 @@ class KKL_DB {
                "* " .
                "FROM ".
                "team_scores  " .
-               "WHERE gameDay_id ='" . esc_sql($day->id) . "' " . 
+               "WHERE gameDay_id ='" . esc_sql($day->id) . "' " .
                "AND team_id = '" . esc_sql($team->id) . "';";
 
         $score = $this->db->get_row($sql);
         if($score == null) {
             $score = new stdClass;
             $score->team_id = $team->id;
-            $score->gameDay_id = $day->id;      
+            $score->gameDay_id = $day->id;
         }
 
         $score->win = 0;
@@ -1120,7 +1125,7 @@ class KKL_DB {
         $score->gamesFor = 0;
         $score->goalsAgainst = 0;
         $score->goalsFor = 0;
-        $score->score = 0;      
+        $score->score = 0;
 
         if($match->home_team == $team->id) {
             $score->goalsFor = $this->getGoalsForTeam($match, $match->home_team);

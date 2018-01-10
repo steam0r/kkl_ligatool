@@ -8,14 +8,14 @@ $kdb = new wpdb($options['db_user'], $options['db_pass'], $options['db_name'], $
 $db = new KKL_DB($kdb);
 
 // DATA
-$name = "Saison 2017";
-$start_date = '2017-02-06 00:00:00';
-$end_date = '2017-12-18 00:00:00';
+$name = "Saison 2018";
+$start_date = '2018-01-29 00:00:00';
+$end_date = '2018-12-17 00:00:00';
 
 $slugs = array('koeln1', 'koeln2a', 'koeln2b', 'koeln3a', 'koeln3b', 'koeln4a', 'koeln4b', 'koeln4c');
 
 $days = array();
-$days[] = array('2018-29-01 00:00:00', '2018-02-11 23:59:00');
+$days[] = array('2018-01-29 00:00:00', '2018-02-11 23:59:00');
 $days[] = array('2018-02-19 00:00:00', '2018-03-04 23:59:00');
 $days[] = array('2018-03-12 00:00:00', '2018-03-25 23:59:00');
 $days[] = array('2018-04-03 00:00:00', '2018-04-15 23:59:00');

@@ -8,7 +8,7 @@
 
 abstract class KKL_Api_Controller extends WP_REST_Controller {
 
-  private $reservedQueryParams = array('q', 'sort');
+  private $reservedQueryParams = array('q', 'order', 'jsonp');
 
   public function getNamespace() {
     $version = 1;
@@ -60,7 +60,7 @@ abstract class KKL_Api_Controller extends WP_REST_Controller {
     foreach ($this->filterItemsByRequest($request, $preparedItems) as $item) {
       $data[] = $this->prepare_response_for_collection($item);
     }
-    $sortParam = $request->get_param('sort');
+    $sortParam = $request->get_param('order');
     if($sortParam) {
       $modify = substr($sortParam, 0, 1);
       $order = "ASC";
@@ -83,13 +83,37 @@ abstract class KKL_Api_Controller extends WP_REST_Controller {
         }
       });
     }
-    if (count($data) == 1) {
-      $data = $data[0];
+
+    $reducedItems = array();
+    $fieldsParam = $request->get_param('fields');
+    if($fieldsParam) {
+      $wantedFields = explode(',', $fieldsParam);
+      foreach ($data as $item) {
+        $reducedItem = new stdClass();
+        foreach ($wantedFields as $wantedField) {
+          if(property_exists($item, $wantedField)) {
+            $reducedItem->{$wantedField} = $item->{$wantedField};
+          }
+        }
+        $reducedItems[] = $reducedItem;
+      }
+    }else{
+      $reducedItems = $data;
+    }
+    if (count($reducedItems) == 1) {
+      $reducedItems = $reducedItems[0];
     }
 
     //return a response or error based on some conditional
     if (1 == 1) {
-      return new WP_REST_Response($data, 200);
+      $response = new WP_REST_Response($reducedItems, 200);
+      $response->header('X-Total-Count', sizeof($reducedItems));
+      $response->header('X-Total-Pages', 1);
+      $response->header('X-WP-Total', sizeof($reducedItems));
+      $response->header('X-WP-TotalPages', 1);
+      // $link = '<https://api.github.com/user/repos?page=3&per_page=100>; rel="next", <https://api.github.com/user/repos?page=50&per_page=100>; rel="last"';
+      // $response->header('Link', $link);
+      return $response;
     } else {
       return new WP_Error('code', __('message', 'text-domain'));
     }

@@ -12,57 +12,23 @@ $name = "Saison 2017";
 $start_date = '2017-02-06 00:00:00';
 $end_date = '2017-12-18 00:00:00';
 
-# $slugs = array('koeln1', 'koeln2a', 'koeln2b', 'koeln3a', 'koeln3b', 'koeln4a', 'koeln4b', 'koeln4c');
-$slugs = array('koeln4c');
-$teams[] = array(
-	'name' => 'TFC Hammondbar 05', 
-	'short' => 'tfc05',
-);
-$teams[] = array(
-	'name' => 'Ehrenfeld Asskickers', 
-	'short' => 'asskick',
-);
-$teams[] = array(
-	'name' => 'Heute Steil!?', 
-	'short' => 'steil',
-);
-$teams[] = array(
-	'name' => 'I ́m Chaos & Disaster', 
-	'short' => 'chaos',
-);
-$teams[] = array(
-	'name' => 'Team F.I.K.C', 
-	'short' => 'fikc',
-);
-$teams[] = array(
-	'name' => 'Münze des Schrubbsals', 
-	'short' => 'schrubb',
-);
-$teams[] = array(
-	'name' => 'Dynamo Tresen', 
-	'short' => 'tresen',
-);
-/*
-$teams[] = array(
-	'name' => 'Roter Stern Mülheim III', 
-	'short' => 'rsm3',
-);
- */
+$slugs = array('koeln1', 'koeln2a', 'koeln2b', 'koeln3a', 'koeln3b', 'koeln4a', 'koeln4b', 'koeln4c');
+
 $days = array();
-$days[] = array('2017-02-06 00:00:00', '2017-02-19 23:59:00');
-$days[] = array('2017-02-27 00:00:00', '2017-03-12 23:59:00');
-$days[] = array('2017-03-20 00:00:00', '2017-04-02 23:59:00');
-$days[] = array('2017-04-17 00:00:00', '2017-04-30 23:59:00');
-$days[] = array('2017-05-08 00:00:00', '2017-05-21 23:59:00');
-$days[] = array('2017-05-29 00:00:00', '2017-06-11 23:59:00');
-$days[] = array('2017-06-19 00:00:00', '2017-07-02 23:59:00');
-$days[] = array('2017-07-10 00:00:00', '2017-07-23 23:59:00');
-$days[] = array('2017-08-21 00:00:00', '2017-09-03 23:59:00');
-$days[] = array('2017-09-11 00:00:00', '2017-09-24 23:59:00');
-$days[] = array('2017-10-02 00:00:00', '2017-10-15 23:59:00');
-$days[] = array('2017-10-23 00:00:00', '2017-11-05 23:59:00');
-$days[] = array('2017-11-13 00:00:00', '2017-11-26 23:59:00');
-$days[] = array('2017-12-04 00:00:00', '2017-12-17 23:59:00');
+$days[] = array('2018-29-01 00:00:00', '2018-02-11 23:59:00');
+$days[] = array('2018-02-19 00:00:00', '2018-03-04 23:59:00');
+$days[] = array('2018-03-12 00:00:00', '2018-03-25 23:59:00');
+$days[] = array('2018-04-03 00:00:00', '2018-04-15 23:59:00');
+$days[] = array('2018-04-23 00:00:00', '2018-05-06 23:59:00');
+$days[] = array('2018-05-14 00:00:00', '2018-05-27 23:59:00');
+$days[] = array('2018-06-04 00:00:00', '2018-06-17 23:59:00');
+$days[] = array('2018-07-16 00:00:00', '2018-07-29 23:59:00');
+$days[] = array('2018-08-20 00:00:00', '2018-09-02 23:59:00');
+$days[] = array('2018-09-10 00:00:00', '2018-09-23 23:59:00');
+$days[] = array('2018-10-01 00:00:00', '2018-10-14 23:59:00');
+$days[] = array('2018-10-22 00:00:00', '2018-11-04 23:59:00');
+$days[] = array('2018-11-12 00:00:00', '2018-11-15 23:59:00');
+$days[] = array('2018-12-03 00:00:00', '2018-12-16 23:59:00');
 
 foreach($slugs as $slug) {
 	$league = $db->getLeagueBySlug($slug);
@@ -83,15 +49,8 @@ foreach($slugs as $slug) {
 		$d = $db->createGameDay($d);
 		if($i == 1) {
 			$season->current_game_day = $d->id;
-			$season = $db->updateSeason($season);	
+			$season = $db->updateSeason($season);
 		}
-		$i++;	
-	}
-	foreach($teams as $team) {
-		$t = new stdClass();
-		$t->name  = $team['name'];
-		$t->short_name = $team['short'];
-		$t->season_id = $season->id;
-		$team = $db->createTeam($t);
+		$i++;
 	}
 }

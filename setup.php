@@ -19,6 +19,7 @@ require_once('KKL/Widget/OtherSeasons.php');
 require_once('KKL/Widget/OtherLeagues.php');
 
 require_once('KKL/Backend.php');
+require_once('KKL/Api.php');
 
 function scb_framework_init() {
 
@@ -58,6 +59,8 @@ scb_init( 'scb_framework_init' );
 
 $kkl = new KKL();
 $kkl->init();
+
+KKL_Api::init();
 
 add_action( 'kkl_update_game_days',  array( 'KKL_Tasks_NewGameDay' ,'execute'));
 if (!wp_next_scheduled( 'kkl_update_game_days' ) ) {

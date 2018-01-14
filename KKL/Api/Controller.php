@@ -22,6 +22,26 @@ abstract class KKL_Api_Controller extends WP_REST_Controller {
     return $str;
   }
 
+  private function replaceKeys($item) {
+    if(is_array($item)) {
+      $newItem = array();
+      foreach ($item as $key => $value) {
+        $camelKey = $this->toCamelCase($key);
+        $newItem[$camelKey]= $this->replaceKeys($value);
+      }
+      return $newItem;
+    }else if(is_object($item)) {
+      $newItem = new stdClass();
+      foreach ($item as $key => $value) {
+        $camelKey = $this->toCamelCase($key);
+        $newItem->{$camelKey} = $this->replaceKeys($value);
+      }
+      return $newItem;
+    }else{
+      return $item;
+    }
+  }
+
   /**
    * Prepare the item for the REST response
    *
@@ -30,12 +50,7 @@ abstract class KKL_Api_Controller extends WP_REST_Controller {
    * @return mixed
    */
   public function prepare_item_for_response($item, $request) {
-    $newItem = new stdClass();
-    foreach ($item as $key => $value) {
-      $camelKey = $this->toCamelCase($key);
-      $newItem->{$camelKey} = $value;
-    }
-    return $newItem;
+    return $this->replaceKeys($item);
   }
 
   /**

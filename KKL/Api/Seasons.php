@@ -29,7 +29,7 @@ class KKL_Api_Seasons extends KKL_Api_Controller {
       )
     ));
     register_rest_route($this->getNamespace(), '/' . $base . '/(?P<id>[\d]+)/teams', array(
-      'methods' => 'POST',
+      'methods' => WP_REST_Server::CREATABLE,
       'callback' => array($this, 'add_teams_to_season'),
       'args' => array(
         'context' => array(

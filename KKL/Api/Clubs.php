@@ -19,7 +19,7 @@ class KKL_Api_Clubs extends KKL_Api_Controller {
         ),
       )
     ));
-    register_rest_route($this->getNamespace(), '/' . $base . '/(?P<id>[\d]+)/teams', array(
+    register_rest_route($this->getNamespace(), '/' . $base . '/(?P<id>[\d\w]+)/teams', array(
       'methods' => WP_REST_Server::READABLE,
       'callback' => array($this, 'get_teams_for_club'),
       'args' => array(
@@ -28,7 +28,7 @@ class KKL_Api_Clubs extends KKL_Api_Controller {
         ),
       )
     ));
-    register_rest_route($this->getNamespace(), '/' . $base . '/(?P<id>[\d]+)/currentteam', array(
+    register_rest_route($this->getNamespace(), '/' . $base . '/(?P<id>[\d\w]+)/currentteam', array(
       'methods' => WP_REST_Server::READABLE,
       'callback' => array($this, 'get_current_team_for_club'),
       'args' => array(
@@ -37,7 +37,7 @@ class KKL_Api_Clubs extends KKL_Api_Controller {
         ),
       )
     ));
-    register_rest_route($this->getNamespace(), '/' . $base . '/(?P<id>[\d]+)/info', array(
+    register_rest_route($this->getNamespace(), '/' . $base . '/(?P<id>[\d\w]+)/info', array(
       'methods' => WP_REST_Server::READABLE,
       'callback' => array($this, 'get_info_for_club'),
       'args' => array(

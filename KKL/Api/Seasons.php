@@ -29,8 +29,8 @@ class KKL_Api_Seasons extends KKL_Api_Controller {
       )
     ));
     register_rest_route($this->getNamespace(), '/' . $base . '/(?P<id>[\d]+)/teams', array(
-      'methods' => 'PATCH',
-      'callback' => array($this, 'set_teams_for_season'),
+      'methods' => 'POST',
+      'callback' => array($this, 'add_teams_to_season'),
       'args' => array(
         'context' => array(
           'default' => 'view',
@@ -102,7 +102,7 @@ class KKL_Api_Seasons extends KKL_Api_Controller {
     return $this->getResponse($request, $items);
   }
 
-  public function set_teams_for_season(WP_REST_Request $request) {
+  public function add_teams_to_season(WP_REST_Request $request) {
     $db = new KKL_DB();
     $seasonId = $request->get_param('id');
     foreach (json_decode($request->get_body()) as $newTeam) {

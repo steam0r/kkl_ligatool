@@ -28,6 +28,15 @@ class KKL_Api_Seasons extends KKL_Api_Controller {
         ),
       )
     ));
+    register_rest_route($this->getNamespace(), '/' . $base . '/(?P<id>[\d]+)/teams', array(
+      'methods' => 'PATCH',
+      'callback' => array($this, 'set_teams_for_season'),
+      'args' => array(
+        'context' => array(
+          'default' => 'view',
+        ),
+      )
+    ));
     register_rest_route($this->getNamespace(), '/' . $base . '/(?P<id>[\d]+)/gamedays', array(
       'methods' => WP_REST_Server::READABLE,
       'callback' => array($this, 'get_gamedays_for_season'),
@@ -92,6 +101,24 @@ class KKL_Api_Seasons extends KKL_Api_Controller {
     $items = $db->getTeamsForSeason($request->get_param('id'));
     return $this->getResponse($request, $items);
   }
+
+  public function set_teams_for_season(WP_REST_Request $request) {
+    $db = new KKL_DB();
+    $seasonId = $request->get_param('id');
+    foreach (json_decode($request->get_body()) as $newTeam) {
+      $team = new stdClass();
+      $team->name = $newTeam->name;
+      $team->short_name = $newTeam->short_name;
+      $team->season_id = $seasonId;
+      $club = $db->getClubByCode($newTeam->short_name);
+      if ($club) {
+        $team->club_id = 2;
+      }
+      $db->createTeam($team);
+    }
+    return new WP_REST_Response(array(), 200);
+  }
+
 
   public function get_gamedays_for_season(WP_REST_Request $request) {
     $db = new KKL_DB();

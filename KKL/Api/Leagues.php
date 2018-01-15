@@ -10,7 +10,7 @@ class KKL_Api_Leagues extends KKL_Api_Controller {
         'args' => array(),
       )
     );
-    register_rest_route($this->getNamespace(), '/' . $base . '/(?P<id>[\d]+)', array(
+    register_rest_route($this->getNamespace(), '/' . $base . '/(?P<id>[\d\w]+)', array(
       'methods' => WP_REST_Server::READABLE,
       'callback' => array($this, 'get_league'),
       'args' => array(
@@ -19,7 +19,7 @@ class KKL_Api_Leagues extends KKL_Api_Controller {
         ),
       )
     ));
-    register_rest_route($this->getNamespace(), '/' . $base . '/(?P<id>[\d]+)/seasons', array(
+    register_rest_route($this->getNamespace(), '/' . $base . '/(?P<id>[\d\w]+)/seasons', array(
       'methods' => WP_REST_Server::READABLE,
       'callback' => array($this, 'get_seasons_for_league'),
       'args' => array(
@@ -28,7 +28,7 @@ class KKL_Api_Leagues extends KKL_Api_Controller {
         ),
       )
     ));
-    register_rest_route($this->getNamespace(), '/' . $base . '/(?P<id>[\d]+)/currentseason', array(
+    register_rest_route($this->getNamespace(), '/' . $base . '/(?P<id>[\d\w]+)/currentseason', array(
       'methods' => WP_REST_Server::READABLE,
       'callback' => array($this, 'get_current_season_for_league'),
       'args' => array(
@@ -52,21 +52,32 @@ class KKL_Api_Leagues extends KKL_Api_Controller {
   }
 
   public function get_league(WP_REST_Request $request) {
-    $db = new KKL_DB();
-    $items = array($db->getLeague($request->get_param('id')));
+    $items = array($this->getLeagueFromRequest($request));
     return $this->getResponse($request, $items);
   }
 
   public function get_seasons_for_league(WP_REST_Request $request) {
     $db = new KKL_DB();
-    $items = $db->getSeasonsByLeague($request->get_param('id'));
+    $league = $this->getLeagueFromRequest($request);
+    $items = $db->getSeasonsByLeague($league->id);
     return $this->getResponse($request, $items);
   }
 
   public function get_current_season_for_league(WP_REST_Request $request) {
     $db = new KKL_DB();
-    $items = array($db->getCurrentSeason($request->get_param('id')));
+    $league = $this->getLeagueFromRequest($request);
+    $items = array($db->getCurrentSeason($league->id));
     return $this->getResponse($request, $items);
+  }
+
+  private function getLeagueFromRequest(WP_REST_Request $request) {
+    $db = new KKL_DB();
+    $param = $request->get_param('id');
+    if(is_numeric($param)) {
+      return $db->getLeague($param);
+    }else{
+      return $db->getLeagueBySlug($param);
+    }
   }
 
 }

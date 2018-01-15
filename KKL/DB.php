@@ -473,6 +473,14 @@ class KKL_DB {
         return $team;
     }
 
+    public function getTeamByCodeAndSeason($teamCode, $seasonId) {
+      $sql = "SELECT * FROM teams WHERE short_name = '" . esc_sql($teamCode) . "' AND season_id = '" . esc_sql($seasonId) . "'";
+      $team = $this->db->get_row($sql);
+      $properties = $this->getTeamProperties($team->id);
+      $team->properties = $properties;
+      return $team;
+    }
+
 		public function getTeamsByName($teamName) {
 			$sql = "SELECT id FROM teams WHERE name = '" . esc_sql($teamName) . "'";
 			$teamIds = $this->db->get_results($sql);

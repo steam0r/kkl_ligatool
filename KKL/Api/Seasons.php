@@ -64,6 +64,15 @@ class KKL_Api_Seasons extends KKL_Api_Controller {
         ),
       )
     ));
+    register_rest_route($this->getNamespace(), '/' . $base . '/(?P<id>[\d]+)/schedule', array(
+      'methods' => WP_REST_Server::CREATABLE,
+      'callback' => array($this, 'set_schedule_for_season'),
+      'args' => array(
+        'context' => array(
+          'default' => 'view',
+        ),
+      )
+    ));
     register_rest_route($this->getNamespace(), '/' . $base . '/(?P<id>[\d]+)/ranking', array(
       'methods' => WP_REST_Server::READABLE,
       'callback' => array($this, 'get_ranking_for_season'),
@@ -112,13 +121,31 @@ class KKL_Api_Seasons extends KKL_Api_Controller {
       $team->season_id = $seasonId;
       $club = $db->getClubByCode($newTeam->short_name);
       if ($club) {
-        $team->club_id = 2;
+        $team->club_id = $club->id;
       }
       $db->createTeam($team);
     }
     return new WP_REST_Response(array(), 200);
   }
 
+  public function set_schedule_for_season(WP_REST_Request $request) {
+    $db = new KKL_DB();
+    $seasonId = $request->get_param('id');
+    foreach (json_decode($request->get_body()) as $gamedayData) {
+      $gameday = $db->getGameDayBySeasonAndPosition($seasonId, $gamedayData->number);
+      foreach($gamedayData->matches as $matchData) {
+        $awayTeam = $db->getTeamByCodeAndSeason($matchData->home->short_name, $seasonId);
+        $homeTeam = $db->getTeamByCodeAndSeason($matchData->away->short_name, $seasonId);
+        $match = new stdClass();
+        $match->game_day_id = $gameday->id;
+        $match->status = -1;
+        $match->away_team = $awayTeam->id;
+        $match->home_team = $homeTeam->id;
+        $db->createMatch($match);
+      }
+    }
+    return new WP_REST_Response(array(), 200);
+  }
 
   public function get_gamedays_for_season(WP_REST_Request $request) {
     $db = new KKL_DB();

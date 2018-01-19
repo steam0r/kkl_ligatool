@@ -61,7 +61,7 @@ class KKL_Api_Seasons extends KKL_Api_Controller {
       'args' => array(
         'context' => array(
           'default' => 'view',
-        ),
+        )
       )
     ));
     register_rest_route($this->getNamespace(), '/' . $base . '/(?P<id>[\d]+)/schedule', array(
@@ -117,9 +117,9 @@ class KKL_Api_Seasons extends KKL_Api_Controller {
     foreach (json_decode($request->get_body()) as $newTeam) {
       $team = new stdClass();
       $team->name = $newTeam->name;
-      $team->short_name = $newTeam->short_name;
+      $team->short_name = $newTeam->shortName;
       $team->season_id = $seasonId;
-      $club = $db->getClubByCode($newTeam->short_name);
+      $club = $db->getClubByCode($newTeam->shortName);
       if ($club) {
         $team->club_id = $club->id;
       }

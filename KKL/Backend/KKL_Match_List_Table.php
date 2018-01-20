@@ -64,19 +64,19 @@ class KKL_Match_List_Table extends KKL_List_Table {
     }
 
     function column_location($item) {
-	$db = new KKL_DB();
+	$db = new KKL_DB_Wordpress();
 	$location = $db->getLocation($item['location']);
 	return $location->title;
     }
 
     function column_goals_home($item) {
-        $db = new KKL_DB();
+        $db = new KKL_DB_Wordpress();
         $match = $db->getMatch($item['id']);
         return $match->goals_home;
     }
 
     function column_goals_away($item) {
-        $db = new KKL_DB();
+        $db = new KKL_DB_Wordpress();
         $match = $db->getMatch($item['id']);
         return $match->goals_away;
     }

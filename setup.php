@@ -11,6 +11,8 @@ Twig_Autoloader::register();
 $kkl_twig = new Twig_Environment(new Twig_Loader_Filesystem(dirname(__FILE__) . '/templates/'));
 
 require_once('KKL/DB.php');
+require_once('KKL/DB/Wordpress.php');
+require_once('KKL/DB/Api.php');
 require_once('KKL/KKL.php');
 require_once('KKL/Shortcodes.php');
 

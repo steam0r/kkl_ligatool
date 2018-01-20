@@ -7,7 +7,7 @@ class KKL_Player_Admin_Page extends KKL_Admin_Page {
         function get_item() {
                 if($this->item) return $this->item;
                 if($_GET['id']) {
-                        $db = new KKL_DB();
+                        $db = new KKL_DB_Wordpress();
                         $this->setItem($db->getPlayer($_GET['id']));
                 }
                 return $this->item;
@@ -19,7 +19,7 @@ class KKL_Player_Admin_Page extends KKL_Admin_Page {
                 $this->args = array(
                         'page_title' => __('player', 'kkl-ligatool'),
                         'page_slug' => 'kkl_players_admin_page',
-                        'parent' => NULL                    
+                        'parent' => NULL
                 );
         }
 
@@ -34,25 +34,25 @@ class KKL_Player_Admin_Page extends KKL_Admin_Page {
                 $ligaleitung_checked = ($player->properties && array_key_exists('member_ligaleitung', $player->properties));
                 if($this->errors && $_POST['member_ligaleitung']) {
                     $ligaleitung_checked = true;
-                } 
+                }
 
 								$slack_alias = "";
 								if($player->properties && array_key_exists('slack_alias', $player->properties)) {
 									$slack_alias = $player->properties['slack_alias'];
-								
+
 								}
                 if($this->errors && $_POST['slack_alias']) {
                     $slack_alias = $_POST['slack_alias'];
-                } 
+                }
 
 								$ligaleitung_address = "";
 								if($player->properties && array_key_exists('ligaleitung_address', $player->properties)) {
 									$ligaleitung_address = $player->properties['ligaleitung_address'];
-								
+
 								}
                 if($this->errors && $_POST['ligaleitung_address']) {
                     $ligaleitung_address = $_POST['ligaleitung_address'];
-                } 
+                }
 
                 echo $this->form_table( array(
                         array(
@@ -135,8 +135,8 @@ class KKL_Player_Admin_Page extends KKL_Admin_Page {
                 $player->last_name = $_POST['last_name'];
                 $player->email = $_POST['email'];
                 $player->phone = $_POST['phone'];
-               
-                $db = new KKL_DB();
+
+                $db = new KKL_DB_Wordpress();
                 $player = $db->createOrUpdatePlayer($player);
 
                 $properties = array();

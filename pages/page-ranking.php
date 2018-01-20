@@ -23,7 +23,7 @@ if(isset($wp_query->query_vars['json'])) {
   header('Content-Type: application/json');
 
   global $kkl_twig;
-  $db = new KKL_DB();
+  $db = new KKL_DB_Wordpress();
 
   $context = KKL::getContext();
   $rankings = array();
@@ -91,9 +91,9 @@ Template Name: Tabelle
 <section class="kkl-content">
   <div class="container">
     <div class="row">
-      
+
       <div class="col-md-9">
-        <?php 
+        <?php
           if(!$overview) {
             get_template_part( 'loop', 'page' );
           } else {
@@ -101,7 +101,7 @@ Template Name: Tabelle
           }
         ?>
       </div>
-      
+
       <aside class="col-md-3 hidden-xs hidden-sm">
         <ul><?php dynamic_sidebar( 'kkl_leagues_sidebar' ); ?></ul>
         <ul><?php dynamic_sidebar( 'kkl_global_sidebar' ); ?></ul>

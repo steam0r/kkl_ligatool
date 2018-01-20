@@ -8,7 +8,12 @@
 
 abstract class KKL_Api_Controller extends WP_REST_Controller {
 
-  private $reservedQueryParams = array('q', 'order', 'jsonp');
+  private $page = 1;
+  private $per_page = 100;
+  private $offset = 0;
+  private $reservedQueryParams = array('q', 'fields', 'order', 'orderby', 'jsonp', 'page', 'per_page', 'offset', 'embed');
+
+  protected abstract function getBaseName();
 
   public function getNamespace() {
     $version = 1;
@@ -16,30 +21,16 @@ abstract class KKL_Api_Controller extends WP_REST_Controller {
     return $namespace;
   }
 
-  protected function toCamelCase($string) {
-    $str = str_replace('_', '', ucwords($string, '_'));
-    $str = lcfirst($str);
-    return $str;
+  protected function getFullBaseUrl() {
+    return $this->getFullBaseUrlFor($this->getBaseName());
   }
 
-  private function replaceKeys($item) {
-    if(is_array($item)) {
-      $newItem = array();
-      foreach ($item as $key => $value) {
-        $camelKey = $this->toCamelCase($key);
-        $newItem[$camelKey]= $this->replaceKeys($value);
-      }
-      return $newItem;
-    }else if(is_object($item)) {
-      $newItem = new stdClass();
-      foreach ($item as $key => $value) {
-        $camelKey = $this->toCamelCase($key);
-        $newItem->{$camelKey} = $this->replaceKeys($value);
-      }
-      return $newItem;
-    }else{
-      return $item;
-    }
+  protected function getFullBaseUrlFor($basename) {
+    return get_site_url() . '/wp-json/' . $this->getNamespace() . '/' . $basename;
+  }
+
+  protected function getLinks() {
+    return array();
   }
 
   /**
@@ -58,42 +49,40 @@ abstract class KKL_Api_Controller extends WP_REST_Controller {
    * @param array $items
    * @return WP_Error|WP_REST_Response
    */
-  protected function getResponse($request, $items) {
+  protected function getResponse($request, $items, $hideLinks = false) {
 
-    if(!$items || !is_array($items) || empty($items)) {
+    if (!$items || !is_array($items) || empty($items)) {
       return new WP_REST_Response(array(), 404);
-    }elseif(!$items[0]) {
+    } elseif (count($items) == 0) {
       return new WP_REST_Response(array(), 404);
     }
+
 
     $data = [];
     $preparedItems = array();
-    foreach ($items as $item) {
-      $preparedItems[] = $this->prepare_item_for_response($item, $request);
+    foreach ($items as $key => $item) {
+      $preparedItems[$key] = $this->prepare_item_for_response($item, $request);
     }
 
-    foreach ($this->filterItemsByRequest($request, $preparedItems) as $item) {
-      $data[] = $this->prepare_response_for_collection($item);
+    foreach ($this->filterItemsByRequest($request, $preparedItems) as $key => $item) {
+      $data[$key] = $this->prepare_response_for_collection($item);
     }
-    $sortParam = $request->get_param('order');
-    if($sortParam) {
-      $modify = substr($sortParam, 0, 1);
-      $order = "ASC";
-      if($modify === "-") {
-        $order = "DESC";
-        $sortParam = substr($sortParam, 1);
-      }
-      usort($data, function($a, $b) use ($sortParam, $order) {
-        if(property_exists($a, $sortParam) && property_exists($b, $sortParam)) {
+
+    $sortParam = $request->get_param('orderby');
+    $orderParam = $request->get_param('order');
+    if ($sortParam) {
+      $order = strtoupper($orderParam);
+      usort($data, function ($a, $b) use ($sortParam, $order) {
+        if (property_exists($a, $sortParam) && property_exists($b, $sortParam)) {
           if ($a->{$sortParam} == $b->{$sortParam}) {
             return 0;
           }
-          if($order == "DESC") {
+          if ($order == "DESC") {
             return ($a->{$sortParam} > $b->{$sortParam}) ? -1 : 1;
-          }else{
+          } else {
             return ($a->{$sortParam} < $b->{$sortParam}) ? -1 : 1;
           }
-        }else{
+        } else {
           return 0;
         }
       });
@@ -101,18 +90,18 @@ abstract class KKL_Api_Controller extends WP_REST_Controller {
 
     $reducedItems = array();
     $fieldsParam = $request->get_param('fields');
-    if($fieldsParam) {
+    if ($fieldsParam) {
       $wantedFields = explode(',', $fieldsParam);
       foreach ($data as $item) {
         $reducedItem = new stdClass();
         foreach ($wantedFields as $wantedField) {
-          if(property_exists($item, $wantedField)) {
+          if (property_exists($item, $wantedField)) {
             $reducedItem->{$wantedField} = $item->{$wantedField};
           }
         }
         $reducedItems[] = $reducedItem;
       }
-    }else{
+    } else {
       $reducedItems = $data;
     }
     if (count($reducedItems) == 1) {
@@ -121,11 +110,45 @@ abstract class KKL_Api_Controller extends WP_REST_Controller {
 
     //return a response or error based on some conditional
     if (1 == 1) {
+      $totalPages = $this->page;
+      $totalItems = count($reducedItems);
+      if (is_array($reducedItems)) {
+        $reqPage = $request->get_param('page');
+        $reqPerPage = $request->get_param('per_page');
+        $reqOffset = $request->get_param('offset');
+        if (is_numeric($reqPage) && $reqPage > 0) {
+          $this->page = $reqPage;
+        }
+        if (is_numeric($reqPerPage) && $reqPage > 0) {
+          $this->per_page = $reqPerPage;
+        }
+        if (is_numeric($reqOffset) && $reqOffset > 0) {
+          $this->offset = $reqOffset;
+        }
+        $reducedItems = array_slice($reducedItems, $this->offset);
+        $reducedItems = array_slice($reducedItems, ($this->per_page * ($this->page - 1)), $this->per_page);
+        $totalPages = ceil($totalItems / $this->per_page);
+
+        if (!$hideLinks && (!$fieldsParam || strpos($fieldsParam, '_links') === false)) {
+          foreach ($reducedItems as $key => $reducedItem) {
+            if (is_object($reducedItem)) {
+              $reducedItems[$key] = $this->addLinks($reducedItem);
+            } else {
+              $reducedItems[$key] = $reducedItem;
+            }
+          }
+        }
+      } else {
+        if (!$hideLinks && (!$fieldsParam || strpos($fieldsParam, '_links') === false)) {
+          $reducedItems = $this->addLinks($reducedItems);
+        }
+      }
+
       $response = new WP_REST_Response($reducedItems, 200);
-      $response->header('X-Total-Count', sizeof($reducedItems));
-      $response->header('X-Total-Pages', 1);
-      $response->header('X-WP-Total', sizeof($reducedItems));
-      $response->header('X-WP-TotalPages', 1);
+      $response->header('X-Total-Count', $totalItems);
+      $response->header('X-Total-Pages', $totalPages);
+      $response->header('X-WP-Total', $totalItems);
+      $response->header('X-WP-TotalPages', $totalPages);
       // $link = '<https://api.github.com/user/repos?page=3&per_page=100>; rel="next", <https://api.github.com/user/repos?page=50&per_page=100>; rel="last"';
       // $response->header('Link', $link);
       return $response;
@@ -145,7 +168,7 @@ abstract class KKL_Api_Controller extends WP_REST_Controller {
       return !in_array($k, $this->reservedQueryParams);
     }, ARRAY_FILTER_USE_KEY);
     $filtredItems = array();
-    foreach ($items as $item) {
+    foreach ($items as $key => $item) {
       $keepItem = true;
       foreach ($searchParams as $searchParam => $search) {
         if ($keepItem && (property_exists($item, $searchParam) && $item->{$searchParam} != $search)) {
@@ -153,10 +176,68 @@ abstract class KKL_Api_Controller extends WP_REST_Controller {
         }
       }
       if ($keepItem) {
-        $filtredItems[] = $item;
+        $filtredItems[$key] = $item;
       }
     }
     return $filtredItems;
   }
 
+  private function toCamelCase($string) {
+    $str = str_replace('_', '', ucwords($string, '_'));
+    $str = lcfirst($str);
+    return $str;
+  }
+
+  private function replaceKeys($item) {
+    if (is_array($item)) {
+      $newItem = array();
+      foreach ($item as $key => $value) {
+        $camelKey = $this->toCamelCase($key);
+        $newItem[$camelKey] = $this->replaceKeys($value);
+      }
+      return $newItem;
+    } else if (is_object($item)) {
+      $newItem = new stdClass();
+      foreach ($item as $key => $value) {
+        $camelKey = $this->toCamelCase($key);
+        $newItem->{$camelKey} = $this->replaceKeys($value);
+      }
+      return $newItem;
+    } else {
+      return $item;
+    }
+  }
+
+  private function addLinks($item) {
+    if (!is_object($item)) {
+      return $item;
+    }
+    $links = array(
+      'self' => array(
+        'href' => $this->getFullBaseUrl() . '/' . $item->id
+      ),
+      'collection' => array(
+        'href' => $this->getFullBaseUrl()
+      )
+    );
+    foreach ($this->getLinks() as $key => $value) {
+      $href = str_replace('<id>', $item->id, $value['href']);
+      $idFields = $value['idFields'];
+      if (isset($idFields) && is_array($idFields)) {
+        foreach ($idFields as $idField) {
+          if (property_exists($item, $idField)) {
+            $href = str_replace('<propertyid>', $item->{$idField}, $href);
+          }
+        }
+      }
+      $href = str_replace('<propertyid>', $item->{$key}, $href);
+      $embeddable = $value['embeddable'];
+      $links[$key] = array(
+        'href' => $href,
+        'embeddable' => $embeddable
+      );
+    }
+    $item->_links = $links;
+    return $item;
+  }
 }

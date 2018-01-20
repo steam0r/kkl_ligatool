@@ -8,7 +8,7 @@ class KKL_Match_Admin_Page extends KKL_Admin_Page {
         function get_item() {
                 if($this->match) return $this->match;
                 if($_GET['id']) {
-                        $db = new KKL_DB();
+                        $db = new KKL_DB_Wordpress();
                         $this->match = $db->getMatch($_GET['id']);
                 }
                 return $this->match;
@@ -18,17 +18,17 @@ class KKL_Match_Admin_Page extends KKL_Admin_Page {
                 if($this->game_day) return $this->game_day;
                 $item = $this->get_item();
                 if($item) {
-                        $db = new KKL_DB();
+                        $db = new KKL_DB_Wordpress();
                         $this->game_day = $db->getGameDay($item->game_day_id);
                 }else if($_GET['gameDayId']) {
-                        $db = new KKL_DB();
+                        $db = new KKL_DB_Wordpress();
                         $this->game_day = $db->getGameDay($_GET['gameDayId']);
                 }
                 return $this->game_day;
         }
 
         function get_game_days() {
-                $db = new KKL_DB();
+                $db = new KKL_DB_Wordpress();
                 return $db->getGameDaysForSeason($this->get_game_day()->season_id);
         }
 
@@ -36,7 +36,7 @@ class KKL_Match_Admin_Page extends KKL_Admin_Page {
                 $this->args = array(
                         'page_title' => __('match', 'kkl-ligatool'),
                         'page_slug' => 'kkl_matches_admin_page',
-                        'parent' => NULL                    
+                        'parent' => NULL
                 );
         }
 
@@ -60,7 +60,7 @@ class KKL_Match_Admin_Page extends KKL_Admin_Page {
 
 								$match = $this->get_item();
 
-                $db = new KKL_DB();
+                $db = new KKL_DB_Wordpress();
                 $db_locations = $db->getLocations();
                 $locations = array();
                 $locations[0] = __('unknown location', 'kkl-ligatool');
@@ -225,8 +225,8 @@ class KKL_Match_Admin_Page extends KKL_Admin_Page {
                 }else{
                     $match->status = -1;
                 }
-               
-                $db = new KKL_DB();
+
+                $db = new KKL_DB_Wordpress();
                 $this->match = $db->createOrUpdateMatch($match);
 
                 return $this->match;
@@ -237,13 +237,13 @@ class KKL_Match_Admin_Page extends KKL_Admin_Page {
             $next_game = $_POST['next_game'];
             if($next_game && $next_game > 1) {
                 $page = menu_page_url("kkl_matches_admin_page", false);
-                $page = $page . "&id=" . $next_game; 
+                $page = $page . "&id=" . $next_game;
             }else if($next_game && $next_game == 1) {
                 $page = menu_page_url("kkl_matches_admin_page", false);
-                $page = $page . "&gameDayId=" . $this->match->game_day_id; 
+                $page = $page . "&gameDayId=" . $this->match->game_day_id;
             }else{
                 $page = menu_page_url("kkl_ligatool_matches", false);
-                $page = $page . "&game_day_filter=" . $this->match->game_day_id;      
+                $page = $page . "&game_day_filter=" . $this->match->game_day_id;
             }
 
             wp_redirect($page);

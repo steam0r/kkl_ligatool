@@ -1,11 +1,11 @@
 <?php
 class KKL_Shortcodes {
-	
+
 	public static function getClub($atts, $content, $tag) {
-		
+
 		global $kkl_twig;
 
-		$db = new KKL_DB();
+		$db = new KKL_DB_Wordpress();
 
 		$context = KKL::getContext();
 		$club = $db->getClubData($atts['id']);
@@ -17,7 +17,7 @@ class KKL_Shortcodes {
 	public static function leagueOverview($attrs, $content, $tag) {
 
 		global $kkl_twig;
-		$db = new KKL_DB();
+		$db = new KKL_DB_Wordpress();
 
 		$context = KKL::getContext();
 		$all_leagues = $db->getActiveLeagues();
@@ -41,7 +41,7 @@ class KKL_Shortcodes {
 
 			$day = $db->getGameDay($league->season->current_game_day);
 			$league->link = KKL::getLink('league', array('league' => $league->code, 'season' => date('Y', strtotime($league->season->start_date)), 'game_day' => $day->number));
-			$leagues[] = $league;			
+			$leagues[] = $league;
 		}
 
 		return $kkl_twig->render('shortcodes/league_overview.tpl', array('context' => $context, 'leagues' => $leagues));
@@ -51,7 +51,7 @@ class KKL_Shortcodes {
 	public static function leagueTable( $atts, $content, $tag ) {
 
 		global $kkl_twig;
-		$db = new KKL_DB();
+		$db = new KKL_DB_Wordpress();
 
 		$context = KKL::getContext();
 		$rankings = array();
@@ -73,7 +73,7 @@ class KKL_Shortcodes {
 	public static function tableOverview( $atts, $content, $tag ) {
 
 		global $kkl_twig;
-		$db = new KKL_DB();
+		$db = new KKL_DB_Wordpress();
 
 		$context = KKL::getContext();
 		$rankings = array();
@@ -99,7 +99,7 @@ class KKL_Shortcodes {
 	public static function gameDayTable( $atts, $content, $tag ) {
 
 		global $kkl_twig;
-		$db = new KKL_DB();
+		$db = new KKL_DB_Wordpress();
 
 		$context = KKL::getContext();
 		$schedules = array();
@@ -120,7 +120,7 @@ class KKL_Shortcodes {
 	public static function gameDayOverview( $atts, $content, $tag ) {
 
 		global $kkl_twig;
-		$db = new KKL_DB();
+		$db = new KKL_DB_Wordpress();
 
 		$data = $db->getAllUpcomingGames();
 		$games = array();
@@ -138,7 +138,7 @@ class KKL_Shortcodes {
 	public static function seasonSchedule( $atts, $content, $tag ) {
 
 		global $kkl_twig;
-		$db = new KKL_DB();
+		$db = new KKL_DB_Wordpress();
 
 		$activeTeam = $_GET['team'];
 
@@ -157,10 +157,10 @@ class KKL_Shortcodes {
 	}
 
 	public static function clubDetail( $atts, $content, $tag) {
-	
+
 		global $kkl_twig;
 
-		$db = new KKL_DB();
+		$db = new KKL_DB_Wordpress();
 		$context = KKL::getContext();
 		$contextClub = $context['club'];
 		$contextClub->logo = $contextClub->logo;
@@ -199,8 +199,8 @@ class KKL_Shortcodes {
 
 	public static function gameDayPager( $atts, $content, $tag) {
 		global $kkl_twig;
-		
-		$db = new KKL_DB();
+
+		$db = new KKL_DB_Wordpress();
 		$context = KKL::getContext();
 
 		$day = $context['game_day'];
@@ -226,8 +226,8 @@ class KKL_Shortcodes {
 
 	public static function contactList( $atts, $content, $tag) {
 		global $kkl_twig;
-		
-		$db = new KKL_DB();
+
+		$db = new KKL_DB_Wordpress();
 		$context = KKL::getContext();
 
 		$season = $context['season'];
@@ -239,7 +239,7 @@ class KKL_Shortcodes {
 		$players = array_merge($leagueadmins, $captains, $vicecaptains);
 
 		usort($players, array(__CLASS__, "cmp"));
-		
+
 		return $kkl_twig->render('shortcodes/contact_list.tpl', array('context' => $context, 'players' => $players));
 
 	}

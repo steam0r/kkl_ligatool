@@ -1,10 +1,12 @@
 <?php
 require_once('../KKL/DB.php');
-  
+require_once('../KKL/DB/Wordpress.php');
+require_once('../KKL/DB/Api.php');
+
 $options = get_option('kkl_ligatool');
 $kdb = new wpdb($options['db_user'], $options['db_pass'], $options['db_name'], $options['db_host']);
-  
-$db = new KKL_DB($kdb);
+
+$db = new KKL_DB_Wordpress($kdb);
 $players = $db->getPlayers();
 foreach($players as $player) {
 	$api_request    = 'https://www.kickerligakoeln.de/wp-kkl/mailinfo.php?q=' . $player->email;

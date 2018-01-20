@@ -6,7 +6,7 @@ class KKL_League_Admin_Page extends KKL_Admin_Page {
         function get_item() {
                 if($this->item) return $this->item;
                 if($_GET['id']) {
-                        $db = new KKL_DB();
+                        $db = new KKL_DB_Wordpress();
                         $this->setItem($db->getLeague($_GET['id']));
                 }
                 return $this->item;
@@ -17,7 +17,7 @@ class KKL_League_Admin_Page extends KKL_Admin_Page {
                 $this->args = array(
                         'page_title' => __('league', 'kkl-ligatool'),
                         'page_slug' => 'kkl_leagues_admin_page',
-                        'parent' => NULL                    
+                        'parent' => NULL
                 );
         }
 
@@ -25,7 +25,7 @@ class KKL_League_Admin_Page extends KKL_Admin_Page {
 
                 $league = $this->get_item();
 
-                $db = new KKL_DB();
+                $db = new KKL_DB_Wordpress();
                 $seasons = $db->getSeasons();
                 $season_options = array("" => __('please_select', 'kkl-ligatool'));
                 foreach($seasons as $season) {
@@ -35,7 +35,7 @@ class KKL_League_Admin_Page extends KKL_Admin_Page {
                 $active_checked = ($league->active == 1);
                 if($this->errors && $_POST['active']) {
                     $active_checked = true;
-                } 
+                }
 
                 echo $this->form_table( array(
                         array(
@@ -92,8 +92,8 @@ class KKL_League_Admin_Page extends KKL_Admin_Page {
                 $league->code = $_POST['url_code'];
                 $league->active = ($_POST['active']) ? 1 : 0;
                 $league->current_season = $_POST['season'];
-               
-                $db = new KKL_DB();
+
+                $db = new KKL_DB_Wordpress();
                 $league = $db->createOrUpdateLeague($league);
 
                 return $league;

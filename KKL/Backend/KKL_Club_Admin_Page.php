@@ -5,7 +5,7 @@ class KKL_Club_Admin_Page extends KKL_Admin_Page {
         function get_item() {
                 if($this->item) return $this->item;
                 if($_GET['id']) {
-                        $db = new KKL_DB();
+                        $db = new KKL_DB_Wordpress();
                         $this->setItem($db->getClub($_GET['id']));
                 }
                 return $this->item;
@@ -16,7 +16,7 @@ class KKL_Club_Admin_Page extends KKL_Admin_Page {
                 $this->args = array(
                         'page_title' => __('club', 'kkl-ligatool'),
                         'page_slug' => 'kkl_clubs_admin_page',
-                        'parent' => NULL                    
+                        'parent' => NULL
                 );
         }
 
@@ -92,8 +92,8 @@ class KKL_Club_Admin_Page extends KKL_Admin_Page {
 		if($_FILES['logo']['name']) {
 			$club->logo = $this->handleLogoChange();
 		}
-	
-                $db = new KKL_DB();
+
+                $db = new KKL_DB_Wordpress();
                 $club = $db->createOrUpdateClub($club);
 
                 return $club;
@@ -101,13 +101,13 @@ class KKL_Club_Admin_Page extends KKL_Admin_Page {
         }
 
 	function handleLogoChange() {
-		
+
 		$uploadedfile = $_FILES['logo'];
-		
+
 		$upload_overrides = array( 'test_form' => false, 'action' => 'logo_upload' );
-		
+
 		$movefile = wp_handle_upload( $uploadedfile, $upload_overrides );
-		
+
 		if ( $movefile && !isset( $movefile['error'] ) ) {
 	 	    return wp_make_link_relative($movefile['url']);
 		} else {

@@ -54,47 +54,47 @@ class KKL_Backend {
 	$screen->add_help_tab( array(
 		'id'       => 'kkl_help_common',
 		'title'    => __( 'help_common_title', 'kkl-ligatool' ),
-		'content'  => __( 'help_common_content', 'kkl-ligatool' ) 
+		'content'  => __( 'help_common_content', 'kkl-ligatool' )
 	));
     	$screen->add_help_tab( array(
 		'id'       => 'kkl_help_leagues',
 		'title'    => __( 'leagues', 'kkl-ligatool' ),
-		'content'  => __( 'help_leagues_content', 'kkl-ligatool' ) 
+		'content'  => __( 'help_leagues_content', 'kkl-ligatool' )
 	));
 	$screen->add_help_tab( array(
 		'id'       => 'kkl_help_seasons',
 		'title'    => __( 'seasons', 'kkl-ligatool' ),
-		'content'  => __( 'help_seasons_content', 'kkl-ligatool' ) 
+		'content'  => __( 'help_seasons_content', 'kkl-ligatool' )
 	));
 	$screen->add_help_tab( array(
 		'id'       => 'kkl_help_game_days',
 		'title'    => __( 'game_days', 'kkl-ligatool' ),
-		'content'  => __( 'help_game_days_content', 'kkl-ligatool' ) 
+		'content'  => __( 'help_game_days_content', 'kkl-ligatool' )
 	));
 	$screen->add_help_tab( array(
 		'id'       => 'kkl_help_matches',
 		'title'    => __( 'matches', 'kkl-ligatool' ),
-		'content'  => __( 'help_matches_content', 'kkl-ligatool' ) 
+		'content'  => __( 'help_matches_content', 'kkl-ligatool' )
 	));
 	$screen->add_help_tab( array(
 		'id'       => 'kkl_help_clubs',
 		'title'    => __( 'clubs', 'kkl-ligatool' ),
-		'content'  => __( 'help_clubs_content', 'kkl-ligatool' ) 
+		'content'  => __( 'help_clubs_content', 'kkl-ligatool' )
 	));
 	$screen->add_help_tab( array(
 		'id'       => 'kkl_help_teams',
 		'title'    => __( 'teams', 'kkl-ligatool' ),
-		'content'  => __( 'help_teams_content', 'kkl-ligatool' ) 
+		'content'  => __( 'help_teams_content', 'kkl-ligatool' )
 	));
 	$screen->add_help_tab( array(
 		'id'       => 'kkl_help_locations',
 		'title'    => __( 'locations', 'kkl-ligatool' ),
-		'content'  => __( 'help_locations_content', 'kkl-ligatool' ) 
+		'content'  => __( 'help_locations_content', 'kkl-ligatool' )
 	));
  	$screen->add_help_tab( array(
 		'id'       => 'kkl_help_players',
 		'title'    => __( 'players', 'kkl-ligatool' ),
-		'content'  => __( 'help_players_content', 'kkl-ligatool' ) 
+		'content'  => __( 'help_players_content', 'kkl-ligatool' )
 	));
    }
 
@@ -113,7 +113,7 @@ class KKL_Backend {
         $html .= '<div class="screen-options"><label for="kkl_ligatool_default_league">' . __('default league', 'kkl-ligatool') . ':</label>';
 
         $html .= '<select id="kkl_ligatool_default_league" name="wp_screen_options[value][kkl_ligatool_default_league]" value="'. $default_league .'">';
-        $db = new KKL_DB();
+        $db = new KKL_DB_Wordpress();
         $leagues = $db->getLeagues();
         $html .= '<option value="0">' . __('please select', 'kkl-ligatool') . '</option>';
         foreach($leagues as $league) {
@@ -137,7 +137,7 @@ class KKL_Backend {
 		return $_POST['wp_screen_options']['value']['kkl_ligatool_default_league'];
 	}else{
 		return $value;
-	} 
+	}
     }
 
     public static function add_help_screen($help_content) {

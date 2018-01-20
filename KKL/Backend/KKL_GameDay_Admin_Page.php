@@ -5,7 +5,7 @@ class KKL_GameDay_Admin_Page extends KKL_Admin_Page {
         function get_item() {
                 if($this->item) return $this->item;
                 if($_GET['id']) {
-                        $db = new KKL_DB();
+                        $db = new KKL_DB_Wordpress();
                         $this->setItem($db->getGameDay($_GET['id']));
                 }
                 return $this->item;
@@ -16,7 +16,7 @@ class KKL_GameDay_Admin_Page extends KKL_Admin_Page {
                 $this->args = array(
                         'page_title' => __('game_day', 'kkl-ligatool'),
                         'page_slug' => 'kkl_game_days_admin_page',
-                        'parent' => NULL                    
+                        'parent' => NULL
                 );
         }
 
@@ -29,7 +29,7 @@ class KKL_GameDay_Admin_Page extends KKL_Admin_Page {
                 $number_options[$i] = $i;
             }
 
-            $db = new KKL_DB();
+            $db = new KKL_DB_Wordpress();
             $seasons = $db->getSeasons();
             $season_options = array("" => __('please_select', 'kkl-ligatool'));
             foreach($seasons as $season) {
@@ -95,8 +95,8 @@ class KKL_GameDay_Admin_Page extends KKL_Admin_Page {
             $day->start_date =  $start_date;
             $day->end_date = $end_date;
             $day->season_id = $_POST['season'];
-           
-            $db = new KKL_DB();
+
+            $db = new KKL_DB_Wordpress();
             $day = $db->createOrUpdateGameDay($day);
 
             return $day;

@@ -7,9 +7,9 @@ Template Name: Liga Übersicht (Teams)
 if(isset($wp_query->query_vars['json'])) {
 
   header('Content-Type: application/json');
-  
+
   global $kkl_twig;
-  $db = new KKL_DB();
+  $db = new KKL_DB_Wordpress();
   $context = KKL::getContext();
   $all_leagues = $db->getActiveLeagues();
   $leagues = array();
@@ -19,7 +19,7 @@ if(isset($wp_query->query_vars['json'])) {
       foreach($league->teams as $team) {
         $club = $db->getClub($team->club_id);
         if(!$team->logo) {
-          $team->logo = $club->logo;    
+          $team->logo = $club->logo;
           if(!$club->logo) {
             $team->logo = "https://www.kickerligakoeln.de/wp-content/themes/kkl_2/img/kkl-logo_172x172.png";
           }
@@ -29,12 +29,12 @@ if(isset($wp_query->query_vars['json'])) {
         // HACK
         $team->link = KKL::getLink('club', array('club' => $club->short_name));
      }
-     
+
      $day = $db->getGameDay($league->season->current_game_day);
-     $league->link = KKL::getLink('league', array('league' => $league->code, 'season' => date('Y', strtotime($league->season->start_date)), 'game_day' => $day->number));  
+     $league->link = KKL::getLink('league', array('league' => $league->code, 'season' => date('Y', strtotime($league->season->start_date)), 'game_day' => $day->number));
      $leagues[] = $league;
-  }   
- 
+  }
+
   echo json_encode($leagues);
   die();
 }
@@ -45,7 +45,7 @@ if(isset($wp_query->query_vars['json'])) {
 <section class="kkl-content">
 		<div class="container">
 			<div class="row">
-				
+
 				<div class="col-md-9">
 					<div class="row">
 						<div class="col-xs-12">
@@ -73,7 +73,7 @@ if(isset($wp_query->query_vars['json'])) {
 						?>
 					</div>
 				</div>
-				
+
 				<aside class="col-md-3 hidden-xs hidden-sm">
 	        <ul><?php dynamic_sidebar( 'kkl_leagues_sidebar' ); ?></ul>
   				<ul><?php dynamic_sidebar( 'kkl_global_sidebar' ); ?></ul>

@@ -6,7 +6,7 @@ class KKL_Widget_OtherLeagues extends WP_Widget {
 	private $tpl;
 
 	public function __construct() {
-		
+
 		global $kkl_twig;
 
 		parent::__construct(
@@ -23,7 +23,7 @@ class KKL_Widget_OtherLeagues extends WP_Widget {
 		extract( $args );
 
 
-		$db = new KKL_DB();
+		$db = new KKL_DB_Wordpress();
 
 		$leagues = $db->getInactiveLeagues();
 		foreach($leagues as $league) {
@@ -34,9 +34,9 @@ class KKL_Widget_OtherLeagues extends WP_Widget {
 			$title = apply_filters( 'widget_title', $instance['title'] );
 
 			echo $before_widget;
-			if ( ! empty( $title ) ) echo $before_title . $title . $after_title;	
+			if ( ! empty( $title ) ) echo $before_title . $title . $after_title;
 			echo $this->tpl->render('widgets/other_leagues.tpl', array('leagues' => $leagues));
-			echo $after_widget;	
+			echo $after_widget;
 		}
 
 	}
@@ -49,7 +49,7 @@ class KKL_Widget_OtherLeagues extends WP_Widget {
 	}
 
 	public function form( $instance ) {
-		$db = new KKL_DB();
+		$db = new KKL_DB_Wordpress();
 		$leagues = $db->getLeagues();
 
 		if ( isset( $instance[ 'title' ] ) ) {
@@ -60,10 +60,10 @@ class KKL_Widget_OtherLeagues extends WP_Widget {
 		}
 		?>
 		<p>
-		<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label> 
-		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />		
+		<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label>
+		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
 		</p>
-		<?php 
+		<?php
 	}
-	
+
 }

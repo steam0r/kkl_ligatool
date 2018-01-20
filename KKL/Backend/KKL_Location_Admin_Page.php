@@ -7,7 +7,7 @@ class KKL_Location_Admin_Page extends KKL_Admin_Page {
         function get_item() {
                 if($this->item) return $this->item;
                 if($_GET['id']) {
-                        $db = new KKL_DB();
+                        $db = new KKL_DB_Wordpress();
                         $this->setItem($db->getLocation($_GET['id']));
                 }
                 return $this->item;
@@ -17,7 +17,7 @@ class KKL_Location_Admin_Page extends KKL_Admin_Page {
                 $this->args = array(
                         'page_title' => __('location', 'kkl-ligatool'),
                         'page_slug' => 'kkl_locations_admin_page',
-                        'parent' => NULL                    
+                        'parent' => NULL
                 );
         }
 
@@ -79,8 +79,8 @@ class KKL_Location_Admin_Page extends KKL_Admin_Page {
                 $location->description = $_POST['description'];
                 $location->lat = $_POST['lat'];
                 $location->lng = $_POST['lng'];
-               
-                $db = new KKL_DB();
+
+                $db = new KKL_DB_Wordpress();
                 return $db->createOrUpdateLocation($location);
 
         }

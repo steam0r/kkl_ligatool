@@ -6,11 +6,11 @@ class KKL_Tasks_NewGameDay {
 
 		error_log("RUNNING GAMEDAY CHECKER:");
 
-		$db = new KKL_DB();		
+		$db = new KKL_DB_Wordpress();
 
 		$leagues = $db->getLeagues();
 		foreach($leagues as $league) {
-			error_log("checking league: " . utf8_decode($league->name)); 
+			error_log("checking league: " . utf8_decode($league->name));
 			$current_season = $db->getSeason($league->current_season);
 			if($current_season && $current_season->active) {
 				error_log("- current season is " . utf8_decode($current_season->name));

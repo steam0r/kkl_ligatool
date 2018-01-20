@@ -1,6 +1,6 @@
 <?php
 $KKL = new KKL();
-$db = new KKL_DB();
+$db = new KKL_DB_Wordpress();
 
 $currentGameDay = $db->getCurrentGameDayForLeague(1);
 /*
@@ -12,7 +12,7 @@ Template Name: Spieltag Übersicht
 <section class="kkl-content">
   <div class="container">
     <div class="row">
-      
+
       <div class="col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
         <?php if ( have_posts() ) while ( have_posts() ) : the_post(); ?>
 

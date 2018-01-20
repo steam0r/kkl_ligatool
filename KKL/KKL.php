@@ -7,13 +7,13 @@ class KKL {
 	private $db;
 
 	public function __construct() {
-		$this->db = new KKL_DB();
+		$this->db = new KKL_DB_Wordpress();
 	}
 
 	public function getDB() {
 		return $this->db;
 	}
-	
+
 	public function init() {
 
 
@@ -91,7 +91,7 @@ class KKL {
 	}
 
 	public function add_rewrite_rules() {
-		
+
 		$pages = get_pages(array(
 			'meta_key' => '_wp_page_template',
 			'meta_value' => 'page-ranking.php'
@@ -138,13 +138,13 @@ class KKL {
 		}
 
     	flush_rewrite_rules(true);
-    	
+
 	}
 
 	public function getContextByLeagueAndSeasonAndGameDay($league, $season, $game_day) {
 
 		$data = array();
-		
+
 		$league = $this->db->getLeagueBySlug($league);
 		$season = $this->db->getSeasonByLeagueAndYear($league->id, $season);
 		$game_day = $this->db->getGameDayBySeasonAndPosition($season->id, $game_day);
@@ -158,7 +158,7 @@ class KKL {
 
 	public function getContextByLeagueAndSeason($league, $season) {
 		$data = array();
-		
+
 		$league = $this->db->getLeagueBySlug($league);
 		$season = $this->db->getSeasonByLeagueAndYear($league->id, $season);
 		$game_day = $this->db->getGameDay($season->current_game_day);
@@ -173,7 +173,7 @@ class KKL {
 	public function getContextByLeague($league) {
 
 		$data = array();
-		
+
 		$league = $this->db->getLeagueBySlug($league);
 		$season = $this->db->getSeason($league->current_season);
 		$game_day = $this->db->getGameDay($season->current_game_day);

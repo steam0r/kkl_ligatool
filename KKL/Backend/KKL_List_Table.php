@@ -170,7 +170,7 @@ abstract class KKL_List_Table extends WP_List_Table {
         $page = $this->get_edit_page();
         $id = $item['id'];
         return '<a href="' . add_query_arg(compact('page', 'id'), admin_url('admin.php')) . '">' . __('edit', 'kkl-ligatool') .'</a>';
-    } 
+    }
 
     public function column_default($item, $column_name) {
         return $item[ $column_name ];
@@ -195,7 +195,7 @@ abstract class KKL_List_Table extends WP_List_Table {
 
     function get_leagues() {
         if($this->leagues) return $this->leagues;
-        $db = new KKL_DB();
+        $db = new KKL_DB_Wordpress();
         $leagues = $db->getLeagues();
         $keyed = array();
         foreach($leagues as $league) {
@@ -207,7 +207,7 @@ abstract class KKL_List_Table extends WP_List_Table {
 
     function get_seasons() {
         if($this->seasons) return $this->seasons;
-        $db = new KKL_DB();
+        $db = new KKL_DB_Wordpress();
         $seasons = $db->getSeasons();
         $keyed = array();
         foreach($seasons as $season) {
@@ -219,7 +219,7 @@ abstract class KKL_List_Table extends WP_List_Table {
 
     function get_game_days() {
         if($this->gamedays) return $this->gamedays;
-        $db = new KKL_DB();
+        $db = new KKL_DB_Wordpress();
         $days = $db->getGameDays();
         $keyed = array();
         foreach($days as $day) {
@@ -231,7 +231,7 @@ abstract class KKL_List_Table extends WP_List_Table {
 
     function get_clubs() {
         if($this->clubs) return $this->clubs;
-        $db = new KKL_DB();
+        $db = new KKL_DB_Wordpress();
         $clubs = $db->getClubs();
         $keyed = array();
         foreach($clubs as $club) {
@@ -243,7 +243,7 @@ abstract class KKL_List_Table extends WP_List_Table {
 
     function get_teams() {
         if($this->teams) return $this->teams;
-        $db = new KKL_DB();
+        $db = new KKL_DB_Wordpress();
         $teams = $db->getTeams();
         $keyed = array();
         foreach($teams as $team) {
@@ -256,7 +256,7 @@ abstract class KKL_List_Table extends WP_List_Table {
     function get_current_league() {
         if($this->currentLeague) return $this->currentLeague;
         $league = null;
-        $db = new KKL_DB();
+        $db = new KKL_DB_Wordpress();
         if($_GET['game_day_filter']) {
             $league = $db->getLeagueForGameday($_GET['game_day_filter']);
         }elseif($_GET['season_filter']) {
@@ -276,7 +276,7 @@ abstract class KKL_List_Table extends WP_List_Table {
     function get_current_season() {
         if($this->currentSeason) return $this->currentSeason;
         $season = null;
-        $db = new KKL_DB();
+        $db = new KKL_DB_Wordpress();
         if($_GET['game_day_filter']) {
             $season = $db->getSeasonForGameday($_GET['game_day_filter']);
         }elseif($_GET['season_filter']) {
@@ -291,7 +291,7 @@ abstract class KKL_List_Table extends WP_List_Table {
     function get_current_game_day() {
         if($this->currentGameDay) return $this->currentGameDay;
         $day = null;
-        $db = new KKL_DB();
+        $db = new KKL_DB_Wordpress();
         if($_GET['game_day_filter']) {
             $day = $db->getGameday($_GET['game_day_filter']);
         }elseif($this->get_current_season()) {

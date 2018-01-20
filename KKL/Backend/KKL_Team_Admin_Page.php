@@ -7,7 +7,7 @@ class KKL_Team_Admin_Page extends KKL_Admin_Page {
         function get_item() {
                 if($this->item) return $this->item;
                 if($_GET['id']) {
-                        $db = new KKL_DB();
+                        $db = new KKL_DB_Wordpress();
                         $this->setItem($db->getTeam($_GET['id']));
                 }
                 return $this->item;
@@ -19,7 +19,7 @@ class KKL_Team_Admin_Page extends KKL_Admin_Page {
                 $this->args = array(
                         'page_title' => __('team', 'kkl-ligatool'),
                         'page_slug' => 'kkl_teams_admin_page',
-                        'parent' => NULL                    
+                        'parent' => NULL
                 );
         }
 
@@ -27,7 +27,7 @@ class KKL_Team_Admin_Page extends KKL_Admin_Page {
 
                 $team = $this->get_item();
 
-                $db = new KKL_DB();
+                $db = new KKL_DB_Wordpress();
                 $seasons = $db->getSeasons();
                 $season_options = array("" => __('please_select', 'kkl-ligatool'));
                 foreach($seasons as $season) {
@@ -55,12 +55,12 @@ class KKL_Team_Admin_Page extends KKL_Admin_Page {
                 $leaguewinner_checked = ($team->properties && array_key_exists('current_league_winner', $team->properties));
                 if($this->errors && $_POST['current_league_winner']) {
                     $leaguewinner_checked = true;
-                } 
+                }
 
                 $cupwinner_checked = ($team->properties && array_key_exists('current_cup_winner', $team->properties));
                 if($this->errors && $_POST['current_cup_winner']) {
                     $cupwinner_checked = true;
-                } 
+                }
 
                 echo $this->form_table( array(
                         array(
@@ -104,7 +104,7 @@ class KKL_Team_Admin_Page extends KKL_Admin_Page {
                                 'name' => 'location',
                                 'choices' => $location_options,
                                 'selected' => ($this->errors) ? $_POST['location'] : $team->properties['location']
-                        ), 
+                        ),
                         array(
                                 'title' => __('captain', 'kkl-ligatool'),
                                 'type' => 'select',
@@ -155,8 +155,8 @@ class KKL_Team_Admin_Page extends KKL_Admin_Page {
                 $team->short_name = $_POST['short_name'];
                 $team->season_id = $_POST['season'];
                 $team->club_id = $_POST['club'];
-               
-                $db = new KKL_DB();
+
+                $db = new KKL_DB_Wordpress();
                 $team = $db->createOrUpdateTeam($team);
 
                 $properties = array();

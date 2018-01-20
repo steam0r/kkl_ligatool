@@ -363,7 +363,7 @@ class KKL_DB {
 		}
 
     public function getMatchesForSeason($seasonId) {
-        $sql = "SELECT * FROM game_days WHERE season_id = '" . esc_sql($seasonId) . "' ORDER BY number ASC";
+        $sql = "SELECT * FROM game_days AS d JOIN matches AS m ON m.game_day_id = d.id WHERE d.season_id = '" . esc_sql($seasonId) . "' ORDER BY m.id ASC";
         return $this->db->get_results($sql);
     }
 

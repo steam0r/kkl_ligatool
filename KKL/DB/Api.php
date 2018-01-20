@@ -21,4 +21,14 @@ class KKL_DB_Api extends KKL_DB {
     return $players;
   }
 
+  public function getEmbeddable($table, $field, $id) {
+    $sql = "SELECT * FROM " . esc_sql($table) . " WHERE " . esc_sql($field) . " = '" . esc_sql($id) . "'";
+    return $this->getDb()->get_results($sql);
+  }
+
+  //public function getTeam($teamId) {
+  //  $sql = "SELECT * FROM teams WHERE id = '" . esc_sql($teamId) . "'";
+  //  return $this->getDb()->get_row($sql);
+  //}
+
 }

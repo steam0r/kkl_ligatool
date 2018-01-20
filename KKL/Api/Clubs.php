@@ -60,19 +60,30 @@ class KKL_Api_Clubs extends KKL_Api_Controller {
     ));
   }
 
-  protected function getLinks() {
+  protected function getLinks($itemId) {
     return array(
       "awards" => array(
         "href" => $this->getFullBaseUrl() . '/<id>/awards',
-        "embeddable" => true
+        "embeddable" => array(
+          "callback" => function () use ($itemId) {
+            $db = new KKL_DB_Api();
+            return $db->getAwardsForClub($itemId);
+          },
+        )
       ),
       "teams" => array(
         "href" => $this->getFullBaseUrl() . '/<id>/teams',
-        "embeddable" => true
+        "embeddable" => array(
+          "table" => "teams",
+          "field" => "club_id"
+        )
       ),
       "properties" => array(
         "href" => $this->getFullBaseUrl() . '/<id>/properties',
-        "embeddable" => true
+        "embeddable" => array(
+          "table" => "club_properties",
+          "field" => "objectId"
+        )
       )
     );
   }
@@ -121,9 +132,9 @@ class KKL_Api_Clubs extends KKL_Api_Controller {
   private function getClubFromRequest(WP_REST_Request $request) {
     $db = new KKL_DB_Api();
     $param = $request->get_param('id');
-    if(is_numeric($param)) {
+    if (is_numeric($param)) {
       return $db->getClub($param);
-    }else{
+    } else {
       return $db->getClubByCode($param);
     }
   }

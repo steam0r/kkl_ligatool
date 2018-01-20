@@ -51,19 +51,30 @@ class KKL_Api_Leagues extends KKL_Api_Controller {
     ));
   }
 
-  protected function getLinks() {
+  protected function getLinks($itemId) {
     return array(
       "currentseason" => array(
         "href" => $this->getFullBaseUrl() . '/<id>/currentseason',
-        "embeddable" => false
+        "embeddable" => array(
+          "callback" => function () use ($itemId) {
+            $db = new KKL_DB_Api();
+            return $db->getCurrentSeason($itemId);
+          }
+        )
       ),
       "seasons" => array(
         "href" => $this->getFullBaseUrl() . '/<id>/seasons',
-        "embeddable" => true
+        "embeddable" => array(
+          "table" => "seasons",
+          "field" => "league_id"
+        ),
       ),
       "properties" => array(
         "href" => $this->getFullBaseUrl() . '/<id>/properties',
-        "embeddable" => true
+        "embeddable" => array(
+          "table" => "league_properties",
+          "field" => "objectId"
+        )
       )
     );
   }
@@ -111,9 +122,9 @@ class KKL_Api_Leagues extends KKL_Api_Controller {
   private function getLeagueFromRequest(WP_REST_Request $request) {
     $db = new KKL_DB_Api();
     $param = $request->get_param('id');
-    if(is_numeric($param)) {
+    if (is_numeric($param)) {
       return $db->getLeague($param);
-    }else{
+    } else {
       return $db->getLeagueBySlug($param);
     }
   }

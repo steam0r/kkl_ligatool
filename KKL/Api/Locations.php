@@ -33,15 +33,6 @@ class KKL_Api_Locations extends KKL_Api_Controller {
     ));
   }
 
-  protected function getLinks() {
-    return array(
-      "teams" => array(
-        "href" => $this->getFullBaseUrl() . '/<id>/teams',
-        "embeddable" => true
-      )
-    );
-  }
-
   public function get_locations(WP_REST_Request $request) {
     $db = new KKL_DB_Api();
     $items = $db->getLocations();

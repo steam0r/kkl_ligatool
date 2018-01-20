@@ -51,17 +51,23 @@ class KKL_Api_GameDays extends KKL_Api_Controller {
     ));
   }
 
-  protected function getLinks() {
+  protected function getLinks($itemId) {
     $seasonEndpoint = new KKL_Api_Seasons();
     return array(
       "season" => array(
         "href" => $seasonEndpoint->getFullBaseUrl() . '/<propertyid>',
-        "embeddable" => true,
+        "embeddable" => array(
+          "table" => "seasons",
+          "field" => "id"
+        ),
         "idFields" => array("seasonId")
       ),
       "matches" => array(
         "href" => $this->getFullBaseUrl() . '/<id>/matches',
-        "embeddable" => true
+        "embeddable" => array(
+          "table" => "matches",
+          "field" => "game_day_id"
+        )
       )
     );
   }

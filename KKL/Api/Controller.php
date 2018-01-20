@@ -49,7 +49,7 @@ abstract class KKL_Api_Controller extends WP_REST_Controller {
    * @param array $items
    * @return WP_Error|WP_REST_Response
    */
-  protected function getResponse($request, $items, $hideLinks = false) {
+  protected function getResponse($request, $items) {
 
     if (!$items || !is_array($items) || empty($items)) {
       return new WP_REST_Response(array(), 404);
@@ -129,7 +129,7 @@ abstract class KKL_Api_Controller extends WP_REST_Controller {
         $reducedItems = array_slice($reducedItems, ($this->per_page * ($this->page - 1)), $this->per_page);
         $totalPages = ceil($totalItems / $this->per_page);
 
-        if (!$hideLinks && (!$fieldsParam || strpos($fieldsParam, '_links') === false)) {
+        if (!$fieldsParam || strpos($fieldsParam, '_links') !== false) {
           foreach ($reducedItems as $key => $reducedItem) {
             if (is_object($reducedItem)) {
               $reducedItems[$key] = $this->addLinks($reducedItem);
@@ -139,7 +139,7 @@ abstract class KKL_Api_Controller extends WP_REST_Controller {
           }
         }
       } else {
-        if (!$hideLinks && (!$fieldsParam || strpos($fieldsParam, '_links') === false)) {
+        if (!$fieldsParam || strpos($fieldsParam, '_links') !== false) {
           $reducedItems = $this->addLinks($reducedItems);
         }
       }

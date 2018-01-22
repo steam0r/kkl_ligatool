@@ -33,11 +33,14 @@ class KKL_Api_Players extends KKL_Api_Controller {
     ));
   }
 
-  protected function getLinks() {
+  protected function getLinks($itemId) {
     return array(
       "properties" => array(
         "href" => $this->getFullBaseUrl() . '/<id>/properties',
-        "embeddable" => true
+        "embeddable" => array(
+          "table" => "player_properties",
+          "field" => "objectId"
+        )
       )
     );
   }

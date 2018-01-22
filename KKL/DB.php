@@ -435,6 +435,16 @@ abstract class KKL_DB {
     return $properties;
   }
 
+  public function getMatchProperties($matchId) {
+    $sql = "SELECT * FROM match_properties WHERE objectId = '" . esc_sql($matchId) . "'";
+    $results = $this->getDb()->get_results($sql);
+    $properties = array();
+    foreach ($results as $result) {
+      $properties[$result->property_key] = $result->value;
+    }
+    return $properties;
+  }
+
   public function getCaptainsContactData() {
     $sql = "SELECT " .
       "p.first_name as first_name, p.last_name as last_name, p.email as email, p.phone as phone, " .

@@ -14,7 +14,8 @@ $name = "Saison 2018";
 $start_date = '2018-01-29 00:00:00';
 $end_date = '2018-12-17 00:00:00';
 
-$slugs = array('koeln1', 'koeln2a', 'koeln2b', 'koeln3a', 'koeln3b', 'koeln4a', 'koeln4b', 'koeln4c');
+//$slugs = array('koeln1', 'koeln2a', 'koeln2b', 'koeln3a', 'koeln3b', 'koeln4a', 'koeln4b', 'koeln4c');
+$slugs = array('koeln4d');
 
 $days = array();
 $days[] = array('2018-01-29 00:00:00', '2018-02-11 23:59:00');

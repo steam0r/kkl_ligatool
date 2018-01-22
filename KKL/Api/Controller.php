@@ -11,7 +11,15 @@ abstract class KKL_Api_Controller extends WP_REST_Controller {
   private $page = 1;
   private $per_page = 100;
   private $offset = 0;
-  private $reservedQueryParams = array('q', 'fields', 'order', 'orderby', 'jsonp', 'page', 'per_page', 'offset', 'embed');
+  private $reservedQueryParams = array(
+    'fields',
+    'order',
+    'orderby',
+    'page',
+    'per_page',
+    'offset',
+    'embed'
+  );
 
   protected abstract function getBaseName();
 
@@ -29,7 +37,7 @@ abstract class KKL_Api_Controller extends WP_REST_Controller {
     return get_site_url() . '/wp-json/' . $this->getNamespace() . '/' . $basename;
   }
 
-  protected function getLinks() {
+  protected function getLinks($itemId) {
     return array();
   }
 
@@ -52,11 +60,10 @@ abstract class KKL_Api_Controller extends WP_REST_Controller {
   protected function getResponse($request, $items, $hideLinks = false) {
 
     if (!$items || !is_array($items) || empty($items)) {
-      return new WP_REST_Response(array(), 404);
+      return new WP_Error( 'not_found', 'Could not find any matching items for your request', array( 'status' => 404 ) );
     } elseif (count($items) == 0) {
-      return new WP_REST_Response(array(), 404);
-    }
-
+      return new WP_Error( 'not_found', 'Could not find any matching items for your request', array( 'status' => 404 ) );
+      }
 
     $data = [];
     $preparedItems = array();
@@ -129,7 +136,7 @@ abstract class KKL_Api_Controller extends WP_REST_Controller {
         $reducedItems = array_slice($reducedItems, ($this->per_page * ($this->page - 1)), $this->per_page);
         $totalPages = ceil($totalItems / $this->per_page);
 
-        if (!$hideLinks && (!$fieldsParam || strpos($fieldsParam, '_links') === false)) {
+        if (!$hideLinks && (!$fieldsParam || strpos($fieldsParam, '_links') !== false)) {
           foreach ($reducedItems as $key => $reducedItem) {
             if (is_object($reducedItem)) {
               $reducedItems[$key] = $this->addLinks($reducedItem);
@@ -138,9 +145,25 @@ abstract class KKL_Api_Controller extends WP_REST_Controller {
             }
           }
         }
+        $reqEmbeds = $request->get_param('embed');
+        if($reqEmbeds) {
+          $embeds = explode(',', $reqEmbeds);
+          foreach ($reducedItems as $key => $reducedItem) {
+            if (is_object($reducedItem)) {
+              $reducedItems[$key] = $this->addEmbeddables($reducedItem, $embeds);
+            } else {
+              $reducedItems[$key] = $reducedItem;
+            }
+          }
+        }
       } else {
-        if (!$hideLinks && (!$fieldsParam || strpos($fieldsParam, '_links') === false)) {
+        if (!$hideLinks && (!$fieldsParam || strpos($fieldsParam, '_links') !== false)) {
           $reducedItems = $this->addLinks($reducedItems);
+        }
+        $reqEmbeds = $request->get_param('embed');
+        if($reqEmbeds) {
+          $embeds = explode(',', $reqEmbeds);
+          $reducedItems = $this->addEmbeddables($reducedItems, $embeds);
         }
       }
 
@@ -220,7 +243,7 @@ abstract class KKL_Api_Controller extends WP_REST_Controller {
         'href' => $this->getFullBaseUrl()
       )
     );
-    foreach ($this->getLinks() as $key => $value) {
+    foreach ($this->getLinks($item->id) as $key => $value) {
       $href = str_replace('<id>', $item->id, $value['href']);
       $idFields = $value['idFields'];
       if (isset($idFields) && is_array($idFields)) {
@@ -234,10 +257,41 @@ abstract class KKL_Api_Controller extends WP_REST_Controller {
       $embeddable = $value['embeddable'];
       $links[$key] = array(
         'href' => $href,
-        'embeddable' => $embeddable
+        'embeddable' => is_array($embeddable)
       );
     }
     $item->_links = $links;
+    return $item;
+  }
+
+  private function addEmbeddables($item, $wantedEmbeds) {
+    $links = $this->getLinks($item->id);
+    if(empty($links)) {
+      return $item;
+    }
+    $db = new KKL_DB_Api();
+    $embeddables = array();
+    foreach ($wantedEmbeds as $wantedEmbed) {
+      if(isset($links[$wantedEmbed]) && isset($links[$wantedEmbed]['embeddable']) && is_array($links[$wantedEmbed]['embeddable'])) {
+        $config = $links[$wantedEmbed]['embeddable'];
+        if($config['callback'] && is_callable($config['callback'])) {
+          $embeddables[$wantedEmbed] = $config['callback']();
+        }else{
+          $id = $item->id;
+          if($links[$wantedEmbed]['idFields'] && is_array($links[$wantedEmbed]['idFields'])) {
+            foreach ($links[$wantedEmbed]['idFields'] as $idField) {
+              if (property_exists($item, $idField)) {
+                $id = $item->{$idField};
+              }
+            }
+          }
+          $embeddables[$wantedEmbed] = $db->getEmbeddable($config['table'], $config['field'], $id);
+        }
+      }
+    }
+    if(!empty($embeddables)) {
+      $item->_embedded = $embeddables;
+    }
     return $item;
   }
 }

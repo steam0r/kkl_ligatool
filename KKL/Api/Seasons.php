@@ -33,6 +33,9 @@ class KKL_Api_Seasons extends KKL_Api_Controller {
     ));
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/teams', array(
       'methods' => WP_REST_Server::CREATABLE,
+      'permission_callback' => function () {
+        return is_user_logged_in();
+      },
       'callback' => array($this, 'add_teams_to_season'),
       'args' => array(
         'context' => array(
@@ -69,6 +72,9 @@ class KKL_Api_Seasons extends KKL_Api_Controller {
     ));
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/schedule', array(
       'methods' => WP_REST_Server::CREATABLE,
+      'permission_callback' => function () {
+        return is_user_logged_in();
+      },
       'callback' => array($this, 'set_schedule_for_season'),
       'args' => array(
         'context' => array(
@@ -96,37 +102,52 @@ class KKL_Api_Seasons extends KKL_Api_Controller {
     ));
   }
 
-  protected function getLinks() {
+  protected function getLinks($itemId) {
     $leagueEndpoint = new KKL_Api_Leagues();
     return array(
       "gameDays" => array(
         "href" => $this->getFullBaseUrl() . '/<id>/gamedays',
-        "embeddable" => true
+        "embeddable" => array(
+          "table" => "game_days",
+          "field" => "season_id"
+        )
       ),
       "teams" => array(
         "href" => $this->getFullBaseUrl() . '/<id>/teams',
-        "embeddable" => true
+        "embeddable" => array(
+          "table" => "teams",
+          "field" => "season_id"
+        )
       ),
       "league" => array(
         "href" => $leagueEndpoint->getFullBaseUrl() . '/<propertyid>',
-        "embeddable" => true,
-        "idField" => array("leagueId")
+        "embeddable" => array(
+          "table" => "leagues",
+          "field" => "id"
+        ),
+        "idFields" => array("leagueId")
       ),
       "currentGameDay" => array(
         "href" => $this->getFullBaseUrl() . '/<id>/currentgameday',
-        "embeddable" => true
+        "embeddable" => array(
+          "callback" => function () use ($itemId) {
+            $db = new KKL_DB_Api();
+            return $db->getCurrentGameDayForSeason($itemId);
+          }
+        ),
       ),
       "schedule" => array(
-        "href" => $this->getFullBaseUrl() . '/<id>/schedule',
-        "embeddable" => false
+        "href" => $this->getFullBaseUrl() . '/<id>/schedule'
       ),
       "ranking" => array(
-        "href" => $this->getFullBaseUrl() . '/<id>/ranking',
-        "embeddable" => false
+        "href" => $this->getFullBaseUrl() . '/<id>/ranking'
       ),
       "properties" => array(
         "href" => $this->getFullBaseUrl() . '/<id>/properties',
-        "embeddable" => true
+        "embeddable" => array(
+          "table" => "season_properties",
+          "field" => "objectId"
+        )
       ),
     );
   }
@@ -164,7 +185,9 @@ class KKL_Api_Seasons extends KKL_Api_Controller {
       }
       $db->createTeam($team);
     }
-    return new WP_REST_Response(array(), 200);
+    $items = $db->getTeamsForSeason($request->get_param('id'));
+    $teamEndpoint = new KKL_Api_Teams();
+    return $teamEndpoint->getResponse($request, $items);
   }
 
   public function set_schedule_for_season(WP_REST_Request $request) {
@@ -172,7 +195,7 @@ class KKL_Api_Seasons extends KKL_Api_Controller {
     $seasonId = $request->get_param('id');
     foreach (json_decode($request->get_body()) as $gamedayData) {
       $gameday = $db->getGameDayBySeasonAndPosition($seasonId, $gamedayData->number);
-      foreach($gamedayData->matches as $matchData) {
+      foreach ($gamedayData->matches as $matchData) {
         $awayTeam = $db->getTeamByCodeAndSeason($matchData->home->short_name, $seasonId);
         $homeTeam = $db->getTeamByCodeAndSeason($matchData->away->short_name, $seasonId);
         $match = new stdClass();
@@ -183,7 +206,8 @@ class KKL_Api_Seasons extends KKL_Api_Controller {
         $db->createMatch($match);
       }
     }
-    return new WP_REST_Response(array(), 200);
+    $items = $db->getScheduleForSeason($db->getSeason($request->get_param('id')));
+    return $this->getResponse($request, $items, true);
   }
 
   public function get_gamedays_for_season(WP_REST_Request $request) {
@@ -209,7 +233,7 @@ class KKL_Api_Seasons extends KKL_Api_Controller {
   public function get_schedule_for_season(WP_REST_Request $request) {
     $db = new KKL_DB_Api();
     $items = $db->getScheduleForSeason($db->getSeason($request->get_param('id')));
-    return $this->getResponse($request, $items);
+    return $this->getResponse($request, $items, true);
   }
 
   public function get_ranking_for_season(WP_REST_Request $request) {
@@ -217,7 +241,7 @@ class KKL_Api_Seasons extends KKL_Api_Controller {
     $db = new KKL_DB_Api();
     $gameDay = $db->getCurrentGameDayForSeason($seasonId);
     $items = $db->getRankingForLeagueAndSeasonAndGameDay(null, $seasonId, $gameDay->id);
-    return $this->getResponse($request, $items);
+    return $this->getResponse($request, $items, true);
   }
 
 }

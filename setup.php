@@ -11,11 +11,18 @@ Twig_Autoloader::register();
 $kkl_twig = new Twig_Environment(new Twig_Loader_Filesystem(dirname(__FILE__) . '/templates/'));
 $kkl_twig->addExtension(new Twig_Extension_Debug());
 
+require_once('KKL/Events/Event.php');
+require_once('KKL/Events/MatchFixtureUpdatedEvent.php');
+require_once('KKL/Events/Service.php');
+
+require_once('KKL/Slack/Slack.php');
+require_once('KKL/Slack/EventListener.php');
 require_once('KKL/DB.php');
 require_once('KKL/DB/Wordpress.php');
 require_once('KKL/DB/Api.php');
 require_once('KKL/KKL.php');
 require_once('KKL/Shortcodes.php');
+
 
 require_once('KKL/Widget/UpcomingGames.php');
 require_once('KKL/Widget/OtherSeasons.php');
@@ -63,6 +70,8 @@ scb_init( 'scb_framework_init' );
 $kkl = new KKL();
 $kkl->init();
 
+$slackIntegration = new KKL_Slack_EventListener();
+$slackIntegration->init();
 KKL_Api::init();
 
 add_action( 'kkl_update_game_days',  array( 'KKL_Tasks_NewGameDay' ,'execute'));

@@ -42,27 +42,41 @@ class KKL_Api_Teams extends KKL_Api_Controller {
     ));
   }
 
-  protected function getLinks() {
+  protected function getLinks($itemId) {
     $clubEndpoint = new KKL_Api_Clubs();
     $seasonEndpoint = new KKL_Api_Seasons();
     return array(
       "matches" => array(
         "href" => $this->getFullBaseUrl() . '/<id>/matches',
-        "embeddable" => true
+        "embeddable" => array(
+          "callback" => function() use ($itemId) {
+            $db = new KKL_DB_Api();
+            return $db->getMatchesForTeam($itemId);
+          }
+        )
       ),
       "club" => array(
         "href" => $clubEndpoint->getFullBaseUrl() . '/<propertyid>',
-        "embeddable" => true,
+        "embeddable" => array(
+          "table" => "clubs",
+          "field" => "id"
+        ),
         "idFields" => array("clubId")
       ),
       "season" => array(
         "href" => $seasonEndpoint->getFullBaseUrl() . '/<propertyid>',
-        "embeddable" => true,
+        "embeddable" => array(
+          "table" => "seasons",
+          "field" => "id"
+        ),
         "idFields" => array("seasonId")
       ),
       "properties" => array(
         "href" => $this->getFullBaseUrl() . '/<id>/properties',
-        "embeddable" => true
+        "embeddable" => array(
+          "table" => "team_properties",
+          "field" => "objectId"
+        )
       ),
     );
   }

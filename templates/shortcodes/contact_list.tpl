@@ -11,10 +11,10 @@
         </ul>
     </nav>
 
-    <div class="isotope-grid kkl-kontaktliste--wrapper">
+    <div class="isotope-grid kontakte-wrapper">
 
         {% for player in players %}
-            <div class="kkl-kontaktliste--item  isotope-item  {{ player.league_short }} {{ player.role }} {{ player.team_short }}">
+            <div class="kontakte-item  isotope-item  {{ player.league_short }} {{ player.role }} {{ player.team_short }}">
 
                 <h3>
                     {{ player.first_name }} {{ player.last_name }}<br/>

@@ -2,10 +2,10 @@
 <table class="table table-striped kkl-table">
   <thead>
     <tr>
-      <th>Datum</th>
-      <th>Heim</th>
-      <th></th>
-      <th>Gast</th>
+      <th class="date">Datum</th>
+      <th class="home">Heim</th>
+      <th class="divider"></th>
+      <th class="guest">Gast</th>
     </tr>
   </thead>
   <tbody>
@@ -31,7 +31,7 @@
       {% endif %}
       </td>
 
-      <td></td>
+      <td class="divider"></td>
 
       <td class="guest">
       {% if display_result and (match.score_home < match.score_away) %} 

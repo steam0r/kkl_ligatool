@@ -11,24 +11,24 @@
 <table class="table table-striped kkl-table">
   <thead>
     <tr>
-      <th>Datum</th>
-      <th>Heim</th>
-      <th></th>
-      <th>Gast</th>
-      <th>Ergebnis</th>
+      <th class="date">Datum</th>
+      <th class="home">Heim</th>
+      <th class="divider"></th>
+      <th class="guest">Gast</th>
+      <th class="score">Ergebnis</th>
     </tr>
   </thead>
   <tbody>
     {% for match in schedule.matches %}
     <tr {% if (activeTeam and ((activeTeam == match.home.short_name) or (activeTeam == match.away.short_name))) %}class="active"{% endif %}>
-      <td>
+      <td class="date">
         <span class="hidden-xs">{% if match.fixture %}{% if match.fixture != '0000-00-00 00:00:00'%}{{ match.fixture|date('d.m.Y - H:i') }}{% else %}tba{% endif %}{% endif %}</span>
         <span class="visible-xs">{% if match.fixture %}{% if match.fixture != '0000-00-00 00:00:00'%}{{ match.fixture|date('d.m.Y') }}{% else %}tba{% endif %}{% endif %}</span>
       </td>
-      <td><a href="/team/{{ match.home.link }}">{{ match.home.name }}</a></td>
-      <td>gg.</td>
-      <td><a href="/team/{{ match.away.link }}">{{ match.away.name }}</a></td>
-      <td>
+      <td class="home"><a href="/team/{{ match.home.link }}">{{ match.home.name }}</a></td>
+      <td class="divider">gg.</td>
+      <td class="guest"><a href="/team/{{ match.away.link }}">{{ match.away.name }}</a></td>
+      <td class="score">
         {% if match.status != 3 and (match.score_home == false and match.score_away == false) %}
           -:-
         {% else %}

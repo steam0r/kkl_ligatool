@@ -9,6 +9,7 @@ require dirname( __FILE__ ) . '/scb/load.php';
 require_once('Twig/Autoloader.php');
 Twig_Autoloader::register();
 $kkl_twig = new Twig_Environment(new Twig_Loader_Filesystem(dirname(__FILE__) . '/templates/'));
+$kkl_twig->addExtension(new Twig_Extension_Debug());
 
 require_once('KKL/Events/Event.php');
 require_once('KKL/Events/MatchFixtureUpdatedEvent.php');

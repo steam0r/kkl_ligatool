@@ -415,6 +415,14 @@ abstract class KKL_DB {
     return $player;
   }
 
+  public function getPlayerByMailAddress($mailAddress) {
+    $sql = "SELECT * FROM players WHERE email = '" . esc_sql($mailAddress) . "'";
+    $player = $this->getDb()->get_row($sql);
+    $properties = $this->getPlayerProperties($player->id);
+    $player->properties = $properties;
+    return $player;
+  }
+
   public function getPlayerProperties($playerId) {
     $sql = "SELECT * FROM player_properties WHERE objectId = '" . esc_sql($playerId) . "'";
     $results = $this->getDb()->get_results($sql);
@@ -1247,7 +1255,7 @@ abstract class KKL_DB {
   /**
    * @return wpdb
    */
-  protected function getDb() {
+  public function getDb() {
     return $this->db;
   }
 

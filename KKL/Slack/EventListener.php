@@ -8,8 +8,13 @@
 
 class KKL_Slack_EventListener {
 
+  private static $TEST_CHANNEL = '#test';
+  private static $LEAGUE_CHANNEL = '#spielbetrieb';
+
   public function init() {
     KKL_Events_Service::registerCallback(KKL_Events_Service::$MATCH_FIXTURE_SET, array($this, 'post_new_fixture'));
+    KKL_Events_Service::registerCallback(KKL_Events_Service::$NEW_GAMEDAY_UPCOMING, array($this, 'post_new_upcoming_gameday'));
+
   }
 
   private function getSlack() {
@@ -28,10 +33,11 @@ class KKL_Slack_EventListener {
     $attachment = array();
     $attachment['title'] = $league->name . ': ' . $home->name . ' gegen ' . $away->name;
     $time = strtotime($match->fixture);
+    setlocale(LC_TIME, 'de_DE');
     $text = strftime("%d. %B %Y %H:%M:%S", $time);
-    if($match->location) {
+    if ($match->location) {
       $location = $db->getLocation($match->location);
-      if($location) {
+      if ($location) {
         $text .= ", Spielort: " . $location->title;
       }
     }
@@ -42,10 +48,46 @@ class KKL_Slack_EventListener {
     $slack->call('chat.postMessage', array(
       "icon_emoji" => ":robot_face:",
       "username" => "Mr. Robot",
-      "channel" => "#test",
+      "channel" => static::$TEST_CHANNEL,
       "text" => $event->getActorEmail() . " hat gerade einen Spieltermin eingetragen",
       "attachments" => json_encode(array($attachment))
     ));
+  }
+
+  public function post_new_gameday(KKL_Events_GameDayReminderEvent $event) {
+
+    $topMatches = $event->getTopMatches();
+    $attachments = array();
+    $attachment['title'] = "@benedikt: Zeit die Erinnerungsmail zu verschicken!";
+    $attachment['text'] = "Mit Klick auf den Link, kommst du zu der vorformatierten Mail.";
+    $attachment['title_link'] = "https://www.kickerligakoeln.de/wp-kkl/reminder.php?offset=" . $event->getOffset() . "&echo=true";
+    $attachment['color'] = "#FF0000";
+    $attachments[] = $attachment;
+    foreach ($topMatches as $leagueName => $topMatch) {
+      $a = array();
+      $title = "@" . $topMatch['contact'] . ": ";
+      if ($topMatch['type'] == "top") {
+        $title .= "Topspiel";
+        $a['color'] = "#88AF7C";
+      } else {
+        $title .= "Abstiegskampf";
+        $a['color'] = "#AB4D47";
+      }
+      $title .= " in " . $leagueName;
+      $a['title'] = $title;
+      $a['title_link'] = "https://www.kickerligakoeln.de/tabelle/" . $topMatch['leaguecode'] . "/";
+      $a['text'] = $topMatch['home'] . " gegen " . $topMatch['away'];
+      $attachments[] = $a;
+    }
+    $slack = $this->getSlack();
+    $slack->call('chat.postMessage', array(
+      "icon_emoji" => ":robot_face:",
+      "username" => "Mr. Robot",
+      "channel" => static::$TEST_CHANNEL,
+      "text" => "Ein neuer Spieltag steht an:",
+      "attachments" => json_encode($attachments)
+    ));
+
   }
 
 }

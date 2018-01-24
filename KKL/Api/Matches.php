@@ -130,21 +130,25 @@ class KKL_Api_Matches extends KKL_Api_Controller {
     $db = new KKL_DB_Api();
     $match = $db->getMatch($request->get_param('id'));
     $body = json_decode($request->get_body());
-    if (!property_exists($body, 'fixture')) {
+    if (!property_exists($body, 'match')) {
+      return new WP_Error( 'missing_match', 'Could not find matchdata in request', array( 'status' => 400 ) );
+    }
+    $patch = $body->match;
+    if (!property_exists($patch, 'fixture')) {
       return new WP_Error( 'invalid_date', 'Could not find or parse the given date', array( 'status' => 400 ) );
     }
-    $date = strtotime($body->fixture);
+    $date = strtotime($patch->fixture);
     if (!$date) {
       return new WP_Error( 'invalid_date', 'Could not find or parse the given date', array( 'status' => 400 ) );
     }
     $fixure = strftime('%Y-%m-%d %H:%M:%S', $date);
     $match->fixture = $fixure;
-    if(property_exists($body, 'location') && is_numeric($body->location)) {
-      $location = $db->getLocation($body->location);
+    if(property_exists($patch, 'location') && is_numeric($patch->location)) {
+      $location = $db->getLocation($patch->location);
       if(!$location) {
         return new WP_Error( 'invalid_location', 'Location with the given ID is unknown', array( 'status' => 400 ) );
       }
-      $match->location = $body->location;
+      $match->location = $patch->location;
     }
     $db->updateMatch($match);
     KKL_Events_Service::fireEvent(
@@ -153,7 +157,7 @@ class KKL_Api_Matches extends KKL_Api_Controller {
     );
 
     $items = array($db->getMatch($request->get_param('id')));
-    return $this->getResponse($request, $items);
+    return $this->getResponse($request, $items, true);
   }
 
   public function is_valid_email_for_match(WP_REST_Request $request) {

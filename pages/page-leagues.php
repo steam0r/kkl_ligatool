@@ -1,4 +1,6 @@
 <?php
+namespace KKL\Ligatool;
+
 $KKL = new KKL();
 /*
 Template Name: Liga Übersicht (Teams)
@@ -9,7 +11,7 @@ if (isset($wp_query->query_vars['json'])) {
   header('Content-Type: application/json');
 
   global $kkl_twig;
-  $db = new KKL_DB_Wordpress();
+  $db = new DB\Wordpress();
   $context = KKL::getContext();
   $all_leagues = $db->getActiveLeagues();
   $leagues = array();

@@ -3,9 +3,7 @@
 namespace KKL\Ligatool\Api;
 
 use KKL\Ligatool\DB;
-use WP_Error;
 use WP_REST_Request;
-use WP_REST_Response;
 use WP_REST_Server;
 
 class Leagues extends Controller {
@@ -59,18 +57,59 @@ class Leagues extends Controller {
     return 'leagues';
   }
 
-  /**
-   * Get a collection of items
-   *
-   * @param WP_REST_Request $request Full data about the request.
-   * @return WP_Error|WP_REST_Response
-   */
+
+    /**
+     * @SWG\Get(
+     *     path="/leagues",
+     *     summary="Find all Leagues",
+     *     description="Returns a list of all leagues",
+     *     operationId="getLeagues",
+     *     tags={"league"},
+     *     produces={"application/json"},
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @SWG\Schema(type="array", ref="#/definitions/League")
+     *     )
+     * )
+     */
   public function get_leagues(WP_REST_Request $request) {
     $db = new DB\Api();
     $items = $db->getLeagues();
     return $this->getResponse($request, $items);
   }
 
+    /**
+     * @SWG\Get(
+     *     path="/leagues/{leagueId}",
+     *     summary="Find league by ID",
+     *     description="Returns a single league",
+     *     operationId="getLegueById",
+     *     tags={"league"},
+     *     produces={"application/json"},
+     *     @SWG\Parameter(
+     *         description="ID of league to return",
+     *         in="path",
+     *         name="leagueId",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @SWG\Schema(ref="#/definitions/League")
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Invalid ID supplied"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="League not found"
+     *     )
+     * )
+     */
   public function get_league(WP_REST_Request $request) {
     $items = array($this->getLeagueFromRequest($request));
     return $this->getResponse($request, $items);

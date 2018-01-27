@@ -9,6 +9,12 @@ use WP_REST_Controller;
 use WP_REST_Request;
 use WP_REST_Response;
 
+/**
+ * @SWG\Info(
+ *     title="My First API",
+ *     version="0.1"
+ * )
+ */
 abstract class Controller extends WP_REST_Controller {
 
   private $page = 1;

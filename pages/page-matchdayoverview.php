@@ -1,6 +1,8 @@
 <?php
+namespace KKL\Ligatool;
+
 $KKL = new KKL();
-$db = new KKL_DB_Wordpress();
+$db = new DB\Wordpress();
 
 $currentGameDay = $db->getCurrentGameDayForLeague(1);
 /*

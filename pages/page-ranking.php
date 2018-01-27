@@ -1,4 +1,5 @@
 <?php
+namespace KKL\Ligatool;
 
 $overview = false;
 $league = get_query_var('league');
@@ -23,7 +24,7 @@ if (isset($wp_query->query_vars['json'])) {
   header('Content-Type: application/json');
 
   global $kkl_twig;
-  $db = new KKL_DB_Wordpress();
+	$db = new DB\Wordpress();
 
   $context = KKL::getContext();
   $rankings = array();

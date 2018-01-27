@@ -1,13 +1,10 @@
 <?php
+namespace KKL\Ligatool;
 
-require_once('../KKL/DB.php');
-require_once('../KKL/DB/Wordpress.php');
-require_once('../KKL/DB/Api.php');
+use stdClass;
 
-$options = get_option('kkl_ligatool');
-$kdb = new wpdb($options['db_user'], $options['db_pass'], $options['db_name'], $options['db_host']);
-
-$db = new KKL_DB_Wordpress($kdb);
+require __DIR__ . '../vendor/autoload.php';
+$db = new DB\Wordpress();
 
 // DATA
 $name = "Saison 2018";

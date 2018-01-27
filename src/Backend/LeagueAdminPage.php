@@ -98,7 +98,7 @@ class LeagueAdminPage extends AdminPage {
     $league->active = ($_POST['active']) ? 1 : 0;
     $league->current_season = $_POST['season'];
 
-    $db = new KKL_DB_Wordpress();
+    $db = new DB\Wordpress();
     $league = $db->createOrUpdateLeague($league);
 
     return $league;

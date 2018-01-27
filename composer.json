@@ -1,0 +1,22 @@
+{
+  "name": "kkl/ligatool",
+  "description": "Tool to manage the Kölner Kickerliga",
+  "authors": [
+    {
+      "name": "Stephan Maihofer"
+    },
+    {
+      "name": "Benedikt Scherer"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "KKL\\Ligatool\\": ["src/"]
+    }
+  },
+  "require": {
+    "twig/twig": "1.13.0",
+    "scribu/scb-framework": "dev-master",
+    "tigokr/slack-api": "1.0"
+  }
+}

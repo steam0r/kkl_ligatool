@@ -51,7 +51,6 @@ class KKL {
 
   public function init() {
 
-
     $this->addPageTemplates();
 
     add_filter('query_vars', array($this, 'add_query_vars_filter'));
@@ -112,6 +111,13 @@ class KKL {
       'before_title' => '<h4>',
       'after_title' => '</h4>'
     ));
+
+    $slackIntegration = new Slack\EventListener();
+    $slackIntegration->init();
+
+    $mailIntegration = new Mail\EventListener();
+    $mailIntegration->init();
+
   }
 
   private function addPageTemplates() {

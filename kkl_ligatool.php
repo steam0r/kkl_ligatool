@@ -1,7 +1,4 @@
 <?php
-
-namespace KKL\Ligatool;
-
 /*
 Plugin Name: KKL Ligatool
 Plugin URI: http://liga.kickerliebe.de
@@ -12,11 +9,9 @@ Author URI: http://undev.de
 License: MIT
 */
 
-use KKL\Ligatool\Mail;
-use KKL\Ligatool\Slack;
-use Twig_Environment;
-use Twig_Extension_Debug;
-use Twig_Loader_Filesystem;
+use KKL\Ligatool\Api;
+use KKL\Ligatool\Backend;
+use KKL\Ligatool\KKL;
 
 require __DIR__ . '/vendor/autoload.php';
 
@@ -39,12 +34,6 @@ scb_init('scb_framework_init');
 
 $kkl = new KKL();
 $kkl->init();
-
-$slackIntegration = new Slack\EventListener();
-$slackIntegration->init();
-
-$mailIntegration = new Mail\EventListener();
-$mailIntegration->init();
 
 Api::init();
 

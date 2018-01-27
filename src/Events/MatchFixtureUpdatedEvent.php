@@ -1,13 +1,16 @@
 <?php
+
 namespace KKL\Ligatool\Events;
 
-class KKL_Events_MatchFixtureUpdatedEvent implements KKL_Event {
+class MatchFixtureUpdatedEvent implements Event {
 
   private $match;
   private $actorEmail;
 
   /**
    * KKL_Events_MatchFixtureUpdatedEvent constructor.
+   * @param $match
+   * @param $actorEmail
    */
   public function __construct($match, $actorEmail) {
     $this->match = $match;

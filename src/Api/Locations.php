@@ -6,11 +6,7 @@ use KKL\Ligatool\DB;
 use WP_REST_Request;
 use WP_REST_Server;
 
-class KKL_Api_Locations extends KKL_Api_Controller {
-
-  public function getBaseName() {
-    return 'locations';
-  }
+class Locations extends Controller {
 
   public function register_routes() {
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName(), array(
@@ -39,20 +35,24 @@ class KKL_Api_Locations extends KKL_Api_Controller {
     ));
   }
 
+  public function getBaseName() {
+    return 'locations';
+  }
+
   public function get_locations(WP_REST_Request $request) {
-    $db = new DB\KKL_DB_Api();
+    $db = new DB\Api();
     $items = $db->getLocations();
     return $this->getResponse($request, $items);
   }
 
   public function get_location(WP_REST_Request $request) {
-    $db = new DB\KKL_DB_Api();
+    $db = new DB\Api();
     $items = array($db->getLocation($request->get_param('id')));
     return $this->getResponse($request, $items);
   }
 
   public function get_teams_for_location(WP_REST_Request $request) {
-    $db = new DB\KKL_DB_Api();
+    $db = new DB\Api();
     $items = $db->getTeamsForLocation($request->get_param('id'));
     return $this->getResponse($request, $items);
   }

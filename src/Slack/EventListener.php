@@ -1,30 +1,25 @@
 <?php
+
 namespace KKL\Ligatool\Slack;
 
-use KKL\Ligatool\Events;
 use KKL\Ligatool\DB;
+use KKL\Ligatool\Events;
 use tigokr\Slack\Slack;
 
-class KKL_Slack_EventListener {
+class EventListener {
 
   private static $TEST_CHANNEL = '#test';
   private static $LEAGUE_CHANNEL = '#spielbetrieb';
 
   public function init() {
-    Events\KKL_Events_Service::registerCallback(Events\KKL_Events_Service::$MATCH_FIXTURE_SET, array($this, 'post_new_fixture'));
-    Events\KKL_Events_Service::registerCallback(Events\KKL_Events_Service::$NEW_GAMEDAY_UPCOMING, array($this, 'post_new_upcoming_gameday'));
+    Events\Service::registerCallback(Events\Service::$MATCH_FIXTURE_SET, array($this, 'post_new_fixture'));
+    Events\Service::registerCallback(Events\Service::$NEW_GAMEDAY_UPCOMING, array($this, 'post_new_upcoming_gameday'));
 
   }
 
-  private function getSlack() {
-    $options = get_option('kkl_ligatool');
-    $slack = new Slack($options['slackid']);
-    return $slack;
-  }
-
-  public function post_new_fixture(Events\KKL_Events_MatchFixtureUpdatedEvent $event) {
+  public function post_new_fixture(Events\MatchFixtureUpdatedEvent $event) {
     $slack = $this->getSlack();
-    $db = new DB\KKL_DB_Wordpress();
+    $db = new DB\Wordpress();
     $match = $event->getMatch();
     $home = $db->getTeam($match->home_team);
     $away = $db->getTeam($match->away_team);
@@ -53,7 +48,13 @@ class KKL_Slack_EventListener {
     ));
   }
 
-  public function post_new_gameday(Events\KKL_Events_GameDayReminderEvent $event) {
+  private function getSlack() {
+    $options = get_option('kkl_ligatool');
+    $slack = new Slack($options['slackid']);
+    return $slack;
+  }
+
+  public function post_new_gameday(Events\GameDayReminderEvent $event) {
 
     $topMatches = $event->getTopMatches();
     $attachments = array();

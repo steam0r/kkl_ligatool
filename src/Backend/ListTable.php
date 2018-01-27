@@ -5,11 +5,10 @@ namespace KKL\Ligatool\Backend;
 use KKL\Ligatool\DB;
 use WP_List_Table;
 
-abstract class KKL_List_Table extends WP_List_Table {
+abstract class ListTable extends WP_List_Table {
 
-  public $_args = array();
   public static $ITEMS_PER_PAGE = 10;
-
+  public $_args = array();
   private $db;
   private $total_items = null;
 
@@ -23,8 +22,6 @@ abstract class KKL_List_Table extends WP_List_Table {
   private $currentSeason;
   private $currentGameDay;
 
-  abstract public function get_table_name();
-
   function __construct() {
     parent::__construct();
 
@@ -37,22 +34,55 @@ abstract class KKL_List_Table extends WP_List_Table {
 
   }
 
-  public function get_create_page() {
-    $edit_page = "kkl_" . $this->get_table_name() . "_admin_page";
-    return $edit_page;
+  /**
+   * Prepare the table with different parameters, pagination, columns and table elements
+   */
+  function prepare_items() {
+
+    $columns = $this->get_columns();
+    $hidden = array();
+    $sortable = $this->get_sortable_columns();
+
+    $this->_column_headers = array($columns, $hidden, $sortable);
+
+    $this->set_pagination_args(array(
+      'total_items' => $this->get_total_items(),
+      'per_page' => $this->get_items_per_page(null)
+    ));
+
+    $query = $this->get_query();
+    $this->items = $this->db->get_results($query, ARRAY_A);
   }
 
-  public function get_edit_page() {
-    $edit_page = "kkl_" . $this->get_table_name() . "_admin_page";
-    return $edit_page;
+  public function get_columns() {
+    $default_cols = array('actions' => '');
+    $custom_cols = $this->get_display_columns();
+    return array_merge($default_cols, $custom_cols);
   }
 
-  public function get_search_fields() {
+  public function get_display_columns() {
     return array();
   }
 
-  public function get_filter_sql() {
-    return "";
+  public function get_sortable_columns() {
+    $sortables = array();
+    foreach ($this->get_columns() as $key => $value) {
+      if ($key == 'id') {
+        $sortables[$key] = array($key, true);
+      } else {
+        $sortables[$key] = array($key, false);
+      }
+    }
+    return $sortables;
+  }
+
+  protected function get_total_items() {
+    if ($this->total_items != null) return $this->total_items;
+    $results = $this->db->get_results($this->get_count_query(), ARRAY_A);
+    if ($results) {
+      $this->total_items = $results[0]['count'];
+    }
+    return $this->total_items;
   }
 
   protected function get_count_query() {
@@ -71,6 +101,16 @@ abstract class KKL_List_Table extends WP_List_Table {
       if ($this->get_filter_sql()) $query .= ")";
     }
     return $query;
+  }
+
+  abstract public function get_table_name();
+
+  public function get_filter_sql() {
+    return "";
+  }
+
+  public function get_search_fields() {
+    return array();
   }
 
   protected function get_query() {
@@ -108,57 +148,6 @@ abstract class KKL_List_Table extends WP_List_Table {
     return $query;
   }
 
-  protected function get_total_items() {
-    if ($this->total_items != null) return $this->total_items;
-    $results = $this->db->get_results($this->get_count_query(), ARRAY_A);
-    if ($results) {
-      $this->total_items = $results[0]['count'];
-    }
-    return $this->total_items;
-  }
-
-  public function get_sortable_columns() {
-    $sortables = array();
-    foreach ($this->get_columns() as $key => $value) {
-      if ($key == 'id') {
-        $sortables[$key] = array($key, true);
-      } else {
-        $sortables[$key] = array($key, false);
-      }
-    }
-    return $sortables;
-  }
-
-  public function get_display_columns() {
-    return array();
-  }
-
-  public function get_columns() {
-    $default_cols = array('actions' => '');
-    $custom_cols = $this->get_display_columns();
-    return array_merge($default_cols, $custom_cols);
-  }
-
-  /**
-   * Prepare the table with different parameters, pagination, columns and table elements
-   */
-  function prepare_items() {
-
-    $columns = $this->get_columns();
-    $hidden = array();
-    $sortable = $this->get_sortable_columns();
-
-    $this->_column_headers = array($columns, $hidden, $sortable);
-
-    $this->set_pagination_args(array(
-      'total_items' => $this->get_total_items(),
-      'per_page' => $this->get_items_per_page(null)
-    ));
-
-    $query = $this->get_query();
-    $this->items = $this->db->get_results($query, ARRAY_A);
-  }
-
   public function display() {
     $this->display_search_field();
     parent::display();
@@ -178,6 +167,11 @@ abstract class KKL_List_Table extends WP_List_Table {
     $page = $this->get_edit_page();
     $id = $item['id'];
     return '<a href="' . add_query_arg(compact('page', 'id'), admin_url('admin.php')) . '">' . __('edit', 'kkl-ligatool') . '</a>';
+  }
+
+  public function get_edit_page() {
+    $edit_page = "kkl_" . $this->get_table_name() . "_admin_page";
+    return $edit_page;
   }
 
   public function column_default($item, $column_name) {
@@ -201,45 +195,9 @@ abstract class KKL_List_Table extends WP_List_Table {
     return strftime("%d. %B %Y %H:%M:%S", $time);
   }
 
-  function get_leagues() {
-    if ($this->leagues) return $this->leagues;
-    $db = new KKL_DB_Wordpress();
-    $leagues = $db->getLeagues();
-    $keyed = array();
-    foreach ($leagues as $league) {
-      $keyed[$league->id] = $league;
-    }
-    $this->leagues = $keyed;
-    return $keyed;
-  }
-
-  function get_seasons() {
-    if ($this->seasons) return $this->seasons;
-    $db = new DB\KKL_DB_Wordpress();
-    $seasons = $db->getSeasons();
-    $keyed = array();
-    foreach ($seasons as $season) {
-      $keyed[$season->id] = $season;
-    }
-    $this->seasons = $keyed;
-    return $keyed;
-  }
-
-  function get_game_days() {
-    if ($this->gamedays) return $this->gamedays;
-    $db = new DB\KKL_DB_Wordpress();
-    $days = $db->getGameDays();
-    $keyed = array();
-    foreach ($days as $day) {
-      $keyed[$day->id] = $day;
-    }
-    $this->gamedays = $keyed;
-    return $keyed;
-  }
-
   function get_clubs() {
     if ($this->clubs) return $this->clubs;
-    $db = new DB\KKL_DB_Wordpress();
+    $db = new DB\Wordpress();
     $clubs = $db->getClubs();
     $keyed = array();
     foreach ($clubs as $club) {
@@ -251,7 +209,7 @@ abstract class KKL_List_Table extends WP_List_Table {
 
   function get_teams() {
     if ($this->teams) return $this->teams;
-    $db = new DB\KKL_DB_Wordpress();
+    $db = new DB\Wordpress();
     $teams = $db->getTeams();
     $keyed = array();
     foreach ($teams as $team) {
@@ -259,56 +217,6 @@ abstract class KKL_List_Table extends WP_List_Table {
     }
     $this->teams = $keyed;
     return $keyed;
-  }
-
-  function get_current_league() {
-    if ($this->currentLeague) return $this->currentLeague;
-    $league = null;
-    $db = new DB\KKL_DB_Wordpress();
-    if ($_GET['game_day_filter']) {
-      $league = $db->getLeagueForGameday($_GET['game_day_filter']);
-    } elseif ($_GET['season_filter']) {
-      $league = $db->getLeagueForSeason($_GET['season_filter']);
-    } elseif ($_GET['league_filter']) {
-      $league = $db->getLeague($_GET['league_filter']);
-    } else {
-      $default_league = get_user_option('kkl_ligatool_default_league');
-      if ($default_league) {
-        $league = $db->getLeague($default_league);
-      }
-    }
-    $this->currentLeague = $league;
-    return $league;
-  }
-
-  function get_current_season() {
-    if ($this->currentSeason) return $this->currentSeason;
-    $season = null;
-    $db = new DB\KKL_DB_Wordpress();
-    if ($_GET['game_day_filter']) {
-      $season = $db->getSeasonForGameday($_GET['game_day_filter']);
-    } elseif ($_GET['season_filter']) {
-      $season = $db->getSeason($_GET['season_filter']);
-    } elseif ($this->get_current_league()) {
-      $season = $db->getCurrentSeason($this->get_current_league()->id);
-    }
-    $this->currentSeason = $season;
-    return $season;
-  }
-
-  function get_current_game_day() {
-    if ($this->currentGameDay) return $this->currentGameDay;
-    $day = null;
-    $db = new DB\KKL_DB_Wordpress();
-    if ($_GET['game_day_filter']) {
-      $day = $db->getGameday($_GET['game_day_filter']);
-    } elseif ($this->get_current_season()) {
-      $day = $db->getCurrentGameDayForSeason($this->get_current_season()->id);
-    } elseif ($this->get_current_league()) {
-      $day = $db->getCurrentGameDayForLeague($this->get_current_league()->id);
-    }
-    $this->currentGameDay = $day;
-    return $day;
   }
 
   function display_league_filter() {
@@ -327,6 +235,38 @@ abstract class KKL_List_Table extends WP_List_Table {
     return $filter;
   }
 
+  function get_leagues() {
+    if ($this->leagues) return $this->leagues;
+    $db = new KKL_DB_Wordpress();
+    $leagues = $db->getLeagues();
+    $keyed = array();
+    foreach ($leagues as $league) {
+      $keyed[$league->id] = $league;
+    }
+    $this->leagues = $keyed;
+    return $keyed;
+  }
+
+  function get_current_league() {
+    if ($this->currentLeague) return $this->currentLeague;
+    $league = null;
+    $db = new DB\Wordpress();
+    if ($_GET['game_day_filter']) {
+      $league = $db->getLeagueForGameday($_GET['game_day_filter']);
+    } elseif ($_GET['season_filter']) {
+      $league = $db->getLeagueForSeason($_GET['season_filter']);
+    } elseif ($_GET['league_filter']) {
+      $league = $db->getLeague($_GET['league_filter']);
+    } else {
+      $default_league = get_user_option('kkl_ligatool_default_league');
+      if ($default_league) {
+        $league = $db->getLeague($default_league);
+      }
+    }
+    $this->currentLeague = $league;
+    return $league;
+  }
+
   function display_season_filter() {
     $league = $this->get_current_league();
     $filter = '<div class="filter_container"><label for="season_filter">' . __('season', 'kkl-ligatool') . ':</label><br/><select id="season_filter" name="season_filter" onchange="window.location.href = kkl_backend_addFilter(window.location.href, \'season_filter\', this.value);">';
@@ -341,6 +281,33 @@ abstract class KKL_List_Table extends WP_List_Table {
     }
     $filter .= "</select></div>";
     return $filter;
+  }
+
+  function get_seasons() {
+    if ($this->seasons) return $this->seasons;
+    $db = new DB\Wordpress();
+    $seasons = $db->getSeasons();
+    $keyed = array();
+    foreach ($seasons as $season) {
+      $keyed[$season->id] = $season;
+    }
+    $this->seasons = $keyed;
+    return $keyed;
+  }
+
+  function get_current_season() {
+    if ($this->currentSeason) return $this->currentSeason;
+    $season = null;
+    $db = new DB\Wordpress();
+    if ($_GET['game_day_filter']) {
+      $season = $db->getSeasonForGameday($_GET['game_day_filter']);
+    } elseif ($_GET['season_filter']) {
+      $season = $db->getSeason($_GET['season_filter']);
+    } elseif ($this->get_current_league()) {
+      $season = $db->getCurrentSeason($this->get_current_league()->id);
+    }
+    $this->currentSeason = $season;
+    return $season;
   }
 
   function display_game_day_filter() {
@@ -359,11 +326,43 @@ abstract class KKL_List_Table extends WP_List_Table {
     return $filter;
   }
 
+  function get_game_days() {
+    if ($this->gamedays) return $this->gamedays;
+    $db = new DB\Wordpress();
+    $days = $db->getGameDays();
+    $keyed = array();
+    foreach ($days as $day) {
+      $keyed[$day->id] = $day;
+    }
+    $this->gamedays = $keyed;
+    return $keyed;
+  }
+
+  function get_current_game_day() {
+    if ($this->currentGameDay) return $this->currentGameDay;
+    $day = null;
+    $db = new DB\Wordpress();
+    if ($_GET['game_day_filter']) {
+      $day = $db->getGameday($_GET['game_day_filter']);
+    } elseif ($this->get_current_season()) {
+      $day = $db->getCurrentGameDayForSeason($this->get_current_season()->id);
+    } elseif ($this->get_current_league()) {
+      $day = $db->getCurrentGameDayForLeague($this->get_current_league()->id);
+    }
+    $this->currentGameDay = $day;
+    return $day;
+  }
+
   function display_create_link() {
     $page = $this->get_create_page();
     $link = add_query_arg(compact('page', 'id'), admin_url('admin.php'));
     $html = '<a href="' . $link . '">' . __('create_new', 'kkl-ligatool') . '</a>';
     return $html;
+  }
+
+  public function get_create_page() {
+    $edit_page = "kkl_" . $this->get_table_name() . "_admin_page";
+    return $edit_page;
   }
 
 }

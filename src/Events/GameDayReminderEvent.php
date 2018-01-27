@@ -1,7 +1,8 @@
 <?php
+
 namespace KKL\Ligatool\Events;
 
-class KKL_Events_GameDayReminderEvent implements KKL_Event {
+class GameDayReminderEvent implements Event {
 
   /**
    * @var array

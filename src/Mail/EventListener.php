@@ -1,17 +1,18 @@
 <?php
+
 namespace KKL\Ligatool\Mail;
 
-use KKL\Ligatool\Events;
 use KKL\Ligatool\DB;
+use KKL\Ligatool\Events;
 
-class KKL_Mail_EventListener {
+class EventListener {
 
   public function init() {
-    Events\KKL_Events_Service::registerCallback(Events\KKL_Events_Service::$MATCH_FIXTURE_SET, array($this, 'post_new_fixture'));
+    Events\Service::registerCallback(Events\Service::$MATCH_FIXTURE_SET, array($this, 'post_new_fixture'));
   }
 
-  public function post_new_fixture(Events\KKL_Events_MatchFixtureUpdatedEvent $event) {
-    $db = new DB\KKL_DB_Wordpress();
+  public function post_new_fixture(Events\MatchFixtureUpdatedEvent $event) {
+    $db = new DB\Wordpress();
     $match = $event->getMatch();
     $home = $db->getTeam($match->home_team);
     $away = $db->getTeam($match->away_team);
@@ -72,7 +73,7 @@ class KKL_Mail_EventListener {
       $headers[] = 'Cc: ' . $cc;
     }
 
-    $message = $kkl_twig->render('mails/new_fixture_mail.tpl', $data);
+    $message = $kkl_twig->render('mails/new_fixture_mail.twig', $data);
     wp_mail($to, $subject, $message, $headers);
   }
 

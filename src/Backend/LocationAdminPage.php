@@ -5,18 +5,9 @@ namespace KKL\Ligatool\Backend;
 use KKL\Ligatool\DB;
 use stdClass;
 
-class KKL_Location_Admin_Page extends KKL_Admin_Page {
+class LocationAdminPage extends AdminPage {
 
   private $team;
-
-  function get_item() {
-    if ($this->item) return $this->item;
-    if ($_GET['id']) {
-      $db = new DB\KKL_DB_Wordpress();
-      $this->setItem($db->getLocation($_GET['id']));
-    }
-    return $this->item;
-  }
 
   function setup() {
     $this->args = array(
@@ -66,6 +57,15 @@ class KKL_Location_Admin_Page extends KKL_Admin_Page {
     ));
   }
 
+  function get_item() {
+    if ($this->item) return $this->item;
+    if ($_GET['id']) {
+      $db = new DB\Wordpress();
+      $this->setItem($db->getLocation($_GET['id']));
+    }
+    return $this->item;
+  }
+
   function validate($new_data, $old_data) {
     $errors = array();
 
@@ -85,7 +85,7 @@ class KKL_Location_Admin_Page extends KKL_Admin_Page {
     $location->lat = $_POST['lat'];
     $location->lng = $_POST['lng'];
 
-    $db = new DB\KKL_DB_Wordpress();
+    $db = new DB\Wordpress();
     return $db->createOrUpdateLocation($location);
 
   }

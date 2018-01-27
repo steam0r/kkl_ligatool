@@ -2,50 +2,48 @@
 
 namespace KKL\Ligatool;
 
-use KKL\Ligatool\Api;
-
-class KKL_Api {
+class Api {
 
   public static function init() {
     add_action('rest_api_init', function () {
       {
-        $controller = new Api\KKL_Api_Documentation();
+        $controller = new Api\Documentation();
         $controller->register_routes();
       }
       {
-        $controller = new Api\KKL_Api_Clubs();
+        $controller = new Api\Clubs();
         $controller->register_routes();
       }
       {
-        $controller = new Api\KKL_Api_GameDays();
+        $controller = new Api\GameDays();
         $controller->register_routes();
       }
       {
-        $controller = new Api\KKL_Api_Leagues();
+        $controller = new Api\Leagues();
         $controller->register_routes();
       }
       {
-        $controller = new Api\KKL_Api_Locations();
+        $controller = new Api\Locations();
         $controller->register_routes();
       }
       {
-        $controller = new Api\KKL_Api_Matches();
+        $controller = new Api\Matches();
         $controller->register_routes();
       }
       {
-        $controller = new Api\KKL_Api_Players();
+        $controller = new Api\Players();
         $controller->register_routes();
       }
       {
-        $controller = new Api\KKL_Api_Seasons();
+        $controller = new Api\Seasons();
         $controller->register_routes();
       }
       {
-        $controller = new Api\KKL_Api_Teams();
+        $controller = new Api\Teams();
         $controller->register_routes();
       }
       {
-        $controller = new Api\KKL_Api_Admins();
+        $controller = new Api\Admins();
         $controller->register_routes();
       }
     });

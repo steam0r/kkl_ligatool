@@ -2,9 +2,9 @@
 
 namespace KKL\Ligatool\DB;
 
-use KKL\Ligatool\KKL_DB;
+use KKL\Ligatool\DB;
 
-class KKL_DB_Wordpress extends KKL_DB {
+class Wordpress extends DB {
 
   public function getLeagueAdmins() {
     $sql = "SELECT p.* FROM players AS p " .

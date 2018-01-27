@@ -4,7 +4,7 @@ namespace KKL\Ligatool\Backend;
 
 use KKL\Ligatool\DB;
 
-class KKL_Match_List_Table extends KKL_List_Table {
+class MatchListTable extends ListTable {
 
   function get_table_name() {
     return "matches";
@@ -69,19 +69,19 @@ class KKL_Match_List_Table extends KKL_List_Table {
   }
 
   function column_location($item) {
-    $db = new DB\KKL_DB_Wordpress();
+    $db = new DB\Wordpress();
     $location = $db->getLocation($item['location']);
     return $location->title;
   }
 
   function column_goals_home($item) {
-    $db = new DB\KKL_DB_Wordpress();
+    $db = new DB\Wordpress();
     $match = $db->getMatch($item['id']);
     return $match->goals_home;
   }
 
   function column_goals_away($item) {
-    $db = new DB\KKL_DB_Wordpress();
+    $db = new DB\Wordpress();
     $match = $db->getMatch($item['id']);
     return $match->goals_away;
   }
@@ -102,6 +102,7 @@ class KKL_Match_List_Table extends KKL_List_Table {
       $html = '<a href="' . $link . '">' . __('create_new', 'kkl-ligatool') . '</a>';
       return $html;
     }
+    return "";
   }
 
 }

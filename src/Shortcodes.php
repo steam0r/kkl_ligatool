@@ -2,28 +2,27 @@
 
 namespace KKL\Ligatool;
 
-use KKL\Ligatool\DB;
 use stdClass;
 
-class KKL_Shortcodes {
+class Shortcodes {
 
   public static function getClub($atts, $content, $tag) {
 
     global $kkl_twig;
 
-    $db = new DB\KKL_DB_Wordpress();
+    $db = new DB\Wordpress();
 
     $context = KKL::getContext();
     $club = $db->getClubData($atts['id']);
 
-    return $kkl_twig->render('shortcodes/club.tpl', array('context' => $context, 'club' => $club));
+    return $kkl_twig->render('shortcodes/club.twig', array('context' => $context, 'club' => $club));
 
   }
 
   public static function leagueOverview($attrs, $content, $tag) {
 
     global $kkl_twig;
-    $db = new DB\KKL_DB_Wordpress();
+    $db = new DB\Wordpress();
 
     $context = KKL::getContext();
     $all_leagues = $db->getActiveLeagues();
@@ -54,7 +53,7 @@ class KKL_Shortcodes {
       $leagues[] = $league;
     }
 
-    return $kkl_twig->render('shortcodes/league_overview.tpl', array(
+    return $kkl_twig->render('shortcodes/league_overview.twig', array(
       'context' => $context,
       'leagues' => $leagues,
       'all_leagues' => $all_leagues
@@ -64,7 +63,7 @@ class KKL_Shortcodes {
   public static function leagueTable($atts, $content, $tag) {
 
     global $kkl_twig;
-    $db = new DB\KKL_DB_Wordpress();
+    $db = new DB\Wordpress();
 
     $context = KKL::getContext();
     $rankings = array();
@@ -80,13 +79,13 @@ class KKL_Shortcodes {
 
     $rankings[] = $ranking;
 
-    return $kkl_twig->render('shortcodes/table.tpl', array('context' => $context, 'rankings' => $rankings));
+    return $kkl_twig->render('shortcodes/table.twig', array('context' => $context, 'rankings' => $rankings));
   }
 
   public static function tableOverview($atts, $content, $tag) {
 
     global $kkl_twig;
-    $db = new DB\KKL_DB_Wordpress();
+    $db = new DB\Wordpress();
 
     $context = KKL::getContext();
     $rankings = array();
@@ -105,14 +104,14 @@ class KKL_Shortcodes {
       $rankings[] = $ranking;
     }
 
-    return $kkl_twig->render('shortcodes/table.tpl', array('context' => $context, 'rankings' => $rankings));
+    return $kkl_twig->render('shortcodes/table.twig', array('context' => $context, 'rankings' => $rankings));
   }
 
 
   public static function gameDayTable($atts, $content, $tag) {
 
     global $kkl_twig;
-    $db = new DB\KKL_DB_Wordpress();
+    $db = new DB\Wordpress();
 
     $context = KKL::getContext();
     $schedules = array();
@@ -127,13 +126,13 @@ class KKL_Shortcodes {
 
     $schedules[] = $schedule;
 
-    return $kkl_twig->render('shortcodes/game_day.tpl', array('context' => $context, 'schedules' => $schedules, 'view' => 'current'));
+    return $kkl_twig->render('shortcodes/game_day.twig', array('context' => $context, 'schedules' => $schedules, 'view' => 'current'));
   }
 
   public static function gameDayOverview($atts, $content, $tag) {
 
     global $kkl_twig;
-    $db = new DB\KKL_DB_Wordpress();
+    $db = new DB\Wordpress();
 
     $data = $db->getAllUpcomingGames();
     $games = array();
@@ -144,14 +143,14 @@ class KKL_Shortcodes {
     }
     foreach (array_keys($leagues) as $league_id) {
       $league = $db->getLeague($league_id);
-      echo $kkl_twig->render('shortcodes/gameday_overview.tpl', array('schedule' => $games[$league_id], 'league' => $league));
+      echo $kkl_twig->render('shortcodes/gameday_overview.twig', array('schedule' => $games[$league_id], 'league' => $league));
     }
   }
 
   public static function seasonSchedule($atts, $content, $tag) {
 
     global $kkl_twig;
-    $db = new DB\KKL_DB_Wordpress();
+    $db = new DB\Wordpress();
 
     $activeTeam = $_GET['team'];
 
@@ -166,14 +165,14 @@ class KKL_Shortcodes {
       }
     }
 
-    return $kkl_twig->render('shortcodes/game_day.tpl', array('context' => $context, 'schedules' => $schedules, 'view' => 'all', 'activeTeam' => $activeTeam));
+    return $kkl_twig->render('shortcodes/game_day.twig', array('context' => $context, 'schedules' => $schedules, 'view' => 'all', 'activeTeam' => $activeTeam));
   }
 
   public static function clubDetail($atts, $content, $tag) {
 
     global $kkl_twig;
 
-    $db = new DB\KKL_DB_Wordpress();
+    $db = new DB\Wordpress();
     $context = KKL::getContext();
     $contextClub = $context['club'];
 
@@ -204,7 +203,7 @@ class KKL_Shortcodes {
 
     $currentTeam = $db->getCurrentTeamForClub($contextClub->id);
     $currentLocation = $db->getLocation($currentTeam->properties['location']);
-    return $kkl_twig->render('shortcodes/club_detail.tpl', array('context' => $context, 'club' => $contextClub, 'teams' => $teams, 'current_location' => $currentLocation));
+    return $kkl_twig->render('shortcodes/club_detail.twig', array('context' => $context, 'club' => $contextClub, 'teams' => $teams, 'current_location' => $currentLocation));
 
   }
 
@@ -212,7 +211,7 @@ class KKL_Shortcodes {
   public static function gameDayPager($atts, $content, $tag) {
     global $kkl_twig;
 
-    $db = new DB\KKL_DB_Wordpress();
+    $db = new DB\Wordpress();
     $context = KKL::getContext();
 
     $day = $context['game_day'];
@@ -232,14 +231,14 @@ class KKL_Shortcodes {
       $next->link = KKL::getLink('league', array('league' => $league->code, 'season' => date('Y', strtotime($season->start_date)), 'game_day' => $next->number));
     }
 
-    return $kkl_twig->render('shortcodes/gameday_pager.tpl', array('context' => $context, 'prev' => $prev, 'day' => $day, 'next' => $next));
+    return $kkl_twig->render('shortcodes/gameday_pager.twig', array('context' => $context, 'prev' => $prev, 'day' => $day, 'next' => $next));
 
   }
 
   public static function contactList($atts, $content, $tag) {
     global $kkl_twig;
 
-    $db = new DB\KKL_DB_Wordpress();
+    $db = new DB\Wordpress();
     $context = KKL::getContext();
 
     $season = $context['season'];
@@ -256,7 +255,7 @@ class KKL_Shortcodes {
       "cmp"
     ));
 
-    return $kkl_twig->render('shortcodes/contact_list.tpl', array(
+    return $kkl_twig->render('shortcodes/contact_list.twig', array(
       'context' => $context,
       'leagues' => $leagues,
       'players' => $players

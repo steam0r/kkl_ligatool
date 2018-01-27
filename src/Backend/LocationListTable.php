@@ -2,14 +2,14 @@
 
 namespace KKL\Ligatool\Backend;
 
-class KKL_League_List_Table extends KKL_List_Table {
+class LocationListTable extends ListTable {
 
   function get_table_name() {
-    return "leagues";
+    return "locations";
   }
 
   function get_search_fields() {
-    return array('name', 'code ');
+    return array('title', 'description');
   }
 
   /**
@@ -17,15 +17,13 @@ class KKL_League_List_Table extends KKL_List_Table {
    * @return array $columns, the array of columns to use with the table
    */
   function get_display_columns() {
-    return array(
+    return $columns = array(
       'id' => __('id', 'kkl-ligatool'),
-      'name' => __('name', 'kkl-ligatool'),
-      'code' => __('url_code', 'kkl-ligatool'),
-      'active' => __('is_active', 'kkl-ligatool'));
-  }
-
-  function column_active($item) {
-    return $this->column_boolean($item['active']);
+      'title' => __('title', 'kkl-ligatool'),
+      'description' => __('address', 'kkl-ligatool'),
+      'lat' => __('latitude', 'kkl-ligatool'),
+      'lng' => __('longitude', 'kkl-ligatool'),
+    );
   }
 
   function display() {

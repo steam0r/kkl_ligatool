@@ -9,7 +9,7 @@ use WP_REST_Controller;
 use WP_REST_Request;
 use WP_REST_Response;
 
-abstract class KKL_Api_Controller extends WP_REST_Controller {
+abstract class Controller extends WP_REST_Controller {
 
   private $page = 1;
   private $per_page = 100;
@@ -24,40 +24,10 @@ abstract class KKL_Api_Controller extends WP_REST_Controller {
     'embed'
   );
 
-  protected abstract function getBaseName();
-
-  public function getNamespace() {
-    $version = 1;
-    $namespace = 'kkl' . '/v' . $version;
-    return $namespace;
-  }
-
-  protected function getFullBaseUrl() {
-    return $this->getFullBaseUrlFor($this->getBaseName());
-  }
-
-  protected function getFullBaseUrlFor($basename) {
-    return get_site_url() . '/wp-json/' . $this->getNamespace() . '/' . $basename;
-  }
-
-  protected function getLinks($itemId) {
-    return array();
-  }
-
-  /**
-   * Prepare the item for the REST response
-   *
-   * @param mixed $item WordPress representation of the item.
-   * @param WP_REST_Request $request Request object.
-   * @return mixed
-   */
-  public function prepare_item_for_response($item, $request) {
-    return $this->replaceKeys($item);
-  }
-
   /**
    * @param WP_REST_Request $request
    * @param array $items
+   * @param bool $hideLinks
    * @return WP_Error|WP_REST_Response
    */
   protected function getResponse($request, $items, $hideLinks = false) {
@@ -185,6 +155,43 @@ abstract class KKL_Api_Controller extends WP_REST_Controller {
   }
 
   /**
+   * Prepare the item for the REST response
+   *
+   * @param mixed $item WordPress representation of the item.
+   * @param WP_REST_Request $request Request object.
+   * @return mixed
+   */
+  public function prepare_item_for_response($item, $request) {
+    return $this->replaceKeys($item);
+  }
+
+  private function replaceKeys($item) {
+    if (is_array($item)) {
+      $newItem = array();
+      foreach ($item as $key => $value) {
+        $camelKey = $this->toCamelCase($key);
+        $newItem[$camelKey] = $this->replaceKeys($value);
+      }
+      return $newItem;
+    } else if (is_object($item)) {
+      $newItem = new stdClass();
+      foreach ($item as $key => $value) {
+        $camelKey = $this->toCamelCase($key);
+        $newItem->{$camelKey} = $this->replaceKeys($value);
+      }
+      return $newItem;
+    } else {
+      return $item;
+    }
+  }
+
+  private function toCamelCase($string) {
+    $str = str_replace('_', '', ucwords($string, '_'));
+    $str = lcfirst($str);
+    return $str;
+  }
+
+  /**
    * @param WP_REST_Request $request
    * @param array $items
    * @return array
@@ -206,32 +213,6 @@ abstract class KKL_Api_Controller extends WP_REST_Controller {
       }
     }
     return $filtredItems;
-  }
-
-  private function toCamelCase($string) {
-    $str = str_replace('_', '', ucwords($string, '_'));
-    $str = lcfirst($str);
-    return $str;
-  }
-
-  private function replaceKeys($item) {
-    if (is_array($item)) {
-      $newItem = array();
-      foreach ($item as $key => $value) {
-        $camelKey = $this->toCamelCase($key);
-        $newItem[$camelKey] = $this->replaceKeys($value);
-      }
-      return $newItem;
-    } else if (is_object($item)) {
-      $newItem = new stdClass();
-      foreach ($item as $key => $value) {
-        $camelKey = $this->toCamelCase($key);
-        $newItem->{$camelKey} = $this->replaceKeys($value);
-      }
-      return $newItem;
-    } else {
-      return $item;
-    }
   }
 
   private function addLinks($item) {
@@ -267,12 +248,32 @@ abstract class KKL_Api_Controller extends WP_REST_Controller {
     return $item;
   }
 
+  protected function getFullBaseUrl() {
+    return $this->getFullBaseUrlFor($this->getBaseName());
+  }
+
+  protected function getFullBaseUrlFor($basename) {
+    return get_site_url() . '/wp-json/' . $this->getNamespace() . '/' . $basename;
+  }
+
+  public function getNamespace() {
+    $version = 1;
+    $namespace = 'kkl' . '/v' . $version;
+    return $namespace;
+  }
+
+  protected abstract function getBaseName();
+
+  protected function getLinks($itemId) {
+    return array();
+  }
+
   private function addEmbeddables($item, $wantedEmbeds) {
     $links = $this->getLinks($item->id);
     if (empty($links)) {
       return $item;
     }
-    $db = new DB\KKL_DB_Api();
+    $db = new DB\Api();
     $embeddables = array();
     foreach ($wantedEmbeds as $wantedEmbed) {
       if (isset($links[$wantedEmbed]) && isset($links[$wantedEmbed]['embeddable']) && is_array($links[$wantedEmbed]['embeddable'])) {

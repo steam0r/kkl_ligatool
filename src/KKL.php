@@ -2,8 +2,6 @@
 
 namespace KKL\Ligatool;
 
-use KKL\Ligatool\DB;
-
 class KKL {
 
   public static $context = array();
@@ -11,7 +9,40 @@ class KKL {
   private $db;
 
   public function __construct() {
-    $this->db = new DB\KKL_DB_Wordpress();
+    $this->db = new DB\Wordpress();
+  }
+
+  public static function getContext() {
+    return self::$context;
+  }
+
+  public static function setContext($context) {
+    self::$context = $context;
+  }
+
+  public static function getLink($type, $values) {
+
+    $link = "";
+
+    if ($type == "club") {
+      $link = $values['club'];
+      $link .= "/";
+    }
+
+    if ($type == "league") {
+      $link = $values['league'];
+      if ($values['season']) $link .= "/" . $values['season'];
+      if ($values['game_day']) $link .= "/" . $values['game_day'];
+      $link .= "/";
+    }
+
+    if ($type == "schedule") {
+      $link = $values['league'] . "/" . $values['season'] . "/";
+      if ($values['team']) $link .= "?team=" . $values['team'];
+    }
+
+    return $link;
+
   }
 
   public function getDB() {
@@ -81,6 +112,16 @@ class KKL {
       'before_title' => '<h4>',
       'after_title' => '</h4>'
     ));
+  }
+
+  private function addPageTemplates() {
+    /*
+    add_action( 'template_include', array($this, 'addPageMatchDayOveriew' ));
+    add_action( 'template_include', array($this, 'addPageLeagues' ));
+    add_action( 'template_include', array($this, 'addSchedule' ));
+    add_action( 'template_include', array($this, 'addRanking' ));
+    add_action( 'template_include', array($this, 'addPageTeam' ));
+    */
   }
 
   public function add_query_vars_filter($vars) {
@@ -195,49 +236,6 @@ class KKL {
     $data['club'] = $this->db->getClubByCode($clubCode);
     return $data;
 
-  }
-
-  public static function getContext() {
-    return self::$context;
-  }
-
-  public static function setContext($context) {
-    self::$context = $context;
-  }
-
-  public static function getLink($type, $values) {
-
-    $link = "";
-
-    if ($type == "club") {
-      $link = $values['club'];
-      $link .= "/";
-    }
-
-    if ($type == "league") {
-      $link = $values['league'];
-      if ($values['season']) $link .= "/" . $values['season'];
-      if ($values['game_day']) $link .= "/" . $values['game_day'];
-      $link .= "/";
-    }
-
-    if ($type == "schedule") {
-      $link = $values['league'] . "/" . $values['season'] . "/";
-      if ($values['team']) $link .= "?team=" . $values['team'];
-    }
-
-    return $link;
-
-  }
-
-  private function addPageTemplates() {
-    /*
-    add_action( 'template_include', array($this, 'addPageMatchDayOveriew' ));
-    add_action( 'template_include', array($this, 'addPageLeagues' ));
-    add_action( 'template_include', array($this, 'addSchedule' ));
-    add_action( 'template_include', array($this, 'addRanking' ));
-    add_action( 'template_include', array($this, 'addPageTeam' ));
-    */
   }
 
   /*

@@ -5,17 +5,7 @@ namespace KKL\Ligatool\Backend;
 use KKL\Ligatool\DB;
 use stdClass;
 
-class KKL_GameDay_Admin_Page extends KKL_Admin_Page {
-
-  function get_item() {
-    if ($this->item) return $this->item;
-    if ($_GET['id']) {
-      $db = new DB\KKL_DB_Wordpress();
-      $this->setItem($db->getGameDay($_GET['id']));
-    }
-    return $this->item;
-
-  }
+class GameDayAdminPage extends AdminPage {
 
   function setup() {
     $this->args = array(
@@ -34,7 +24,7 @@ class KKL_GameDay_Admin_Page extends KKL_Admin_Page {
       $number_options[$i] = $i;
     }
 
-    $db = new DB\KKL_DB_Wordpress();
+    $db = new DB\Wordpress();
     $seasons = $db->getSeasons();
     $season_options = array("" => __('please_select', 'kkl-ligatool'));
     foreach ($seasons as $season) {
@@ -80,6 +70,16 @@ class KKL_GameDay_Admin_Page extends KKL_Admin_Page {
     ));
   }
 
+  function get_item() {
+    if ($this->item) return $this->item;
+    if ($_GET['id']) {
+      $db = new DB\Wordpress();
+      $this->setItem($db->getGameDay($_GET['id']));
+    }
+    return $this->item;
+
+  }
+
   function validate($new_data, $old_data) {
     $errors = array();
 
@@ -101,7 +101,7 @@ class KKL_GameDay_Admin_Page extends KKL_Admin_Page {
     $day->end_date = $end_date;
     $day->season_id = $_POST['season'];
 
-    $db = new DB\KKL_DB_Wordpress();
+    $db = new DB\Wordpress();
     $day = $db->createOrUpdateGameDay($day);
 
     return $day;

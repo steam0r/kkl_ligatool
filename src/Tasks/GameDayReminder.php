@@ -1,26 +1,26 @@
 <?php
 namespace KKL\Ligatool\Tasks;
 
-use KKL\Ligatool\Events;
 use KKL\Ligatool\DB;
+use KKL\Ligatool\Events;
 
-class KKL_Tasks_GameDayReminder {
+class GameDayReminder {
 
   public static function execute() {
     $offset = 6;
     $matches = static::getMatches(6);
     if (!empty($matches)) {
       $topMatches = static::getTopMatches($matches);
-      Events\KKL_Events_Service::fireEvent(
-        Events\KKL_Events_Service::$NEW_GAMEDAY_UPCOMING,
-        new Events\KKL_Events_GameDayReminderEvent($matches, $topMatches, $offset)
+      Events\Service::fireEvent(
+        Events\Service::$NEW_GAMEDAY_UPCOMING,
+        new Events\GameDayReminderEvent($matches, $topMatches, $offset)
       );
     }
   }
 
   private static function getMatches($days_off) {
 
-    $kkl_db_tool = new DB\KKL_DB_Wordpress();
+    $kkl_db_tool = new DB\Wordpress();
 
     $sql = "select l.name as league, s.id as season_id, g.number as day_number, l.code as leaguecode, home.name as home, away.name as away, home.id as home_id, away.id as away_id, loc.title as location, CONCAT(home.name,' gg. ', away.name) as title, slack.value as slack " .
       "from leagues as l " .
@@ -45,7 +45,7 @@ class KKL_Tasks_GameDayReminder {
 
   private static function getTopMatches($matches) {
 
-    $kkl_db_tool = new DB\KKL_DB_Wordpress();
+    $kkl_db_tool = new DB\Wordpress();
 
     $seasons = array();
     $days = array();
@@ -115,5 +115,3 @@ class KKL_Tasks_GameDayReminder {
   }
 
 }
-
-?>

@@ -5,19 +5,9 @@ namespace KKL\Ligatool\Backend;
 use KKL\Ligatool\DB;
 use stdClass;
 
-class KKL_Player_Admin_Page extends KKL_Admin_Page {
+class PlayerAdminPage extends AdminPage {
 
   private $team;
-
-  function get_item() {
-    if ($this->item) return $this->item;
-    if ($_GET['id']) {
-      $db = new DB\KKL_DB_Wordpress();
-      $this->setItem($db->getPlayer($_GET['id']));
-    }
-    return $this->item;
-
-  }
 
   function setup() {
 
@@ -123,6 +113,16 @@ class KKL_Player_Admin_Page extends KKL_Admin_Page {
     ));
   }
 
+  function get_item() {
+    if ($this->item) return $this->item;
+    if ($_GET['id']) {
+      $db = new DB\Wordpress();
+      $this->setItem($db->getPlayer($_GET['id']));
+    }
+    return $this->item;
+
+  }
+
   function validate($new_data, $old_data) {
     $errors = array();
 
@@ -141,7 +141,7 @@ class KKL_Player_Admin_Page extends KKL_Admin_Page {
     $player->email = $_POST['email'];
     $player->phone = $_POST['phone'];
 
-    $db = new DB\KKL_DB_Wordpress();
+    $db = new DB\Wordpress();
     $player = $db->createOrUpdatePlayer($player);
 
     $properties = array();

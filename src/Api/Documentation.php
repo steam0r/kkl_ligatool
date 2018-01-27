@@ -6,11 +6,7 @@ use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
 
-class KKL_Api_Documentation extends KKL_Api_Controller {
-
-  public function getBaseName() {
-    return 'doc';
-  }
+class Documentation extends Controller {
 
   public function register_routes() {
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/swagger.json', array(
@@ -19,6 +15,10 @@ class KKL_Api_Documentation extends KKL_Api_Controller {
         'args' => array(),
       )
     );
+  }
+
+  public function getBaseName() {
+    return 'doc';
   }
 
   public function get_swagger_json(WP_REST_Request $request) {

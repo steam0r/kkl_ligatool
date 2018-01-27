@@ -16,7 +16,6 @@ leagues, seasons, matches, locations...
 
 this is a very rough first version, needs changes.
 
-
 == Installation ==
 
 1. Upload `kickerliebe_ligatool/` to the `/wp-content/plugins/` directory

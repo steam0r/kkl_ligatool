@@ -2,65 +2,7 @@
 
 namespace KKL\Ligatool;
 
-use KKL\Ligatool\Backend;
-use KKL\Ligatool\DB;
-
-class KKL_Backend {
-
-  public function validate_setting($plugin_options) {
-    return $plugin_options;
-  }
-
-  public function section_cb() {
-  }
-
-  public function host_setting() {
-    $options = get_option('kkl_ligatool');
-    echo "<input name='kkl_ligatool[db_host]' type='text' value='{$options['db_host']}' />";
-  }
-
-  public function name_setting() {
-    $options = get_option('kkl_ligatool');
-    echo "<input name='kkl_ligatool[db_name]' type='text' value='{$options['db_name']}' />";
-  }
-
-  public function user_setting() {
-    $options = get_option('kkl_ligatool');
-    echo "<input name='kkl_ligatool[db_user]' type='text' value='{$options['db_user']}' />";
-  }
-
-  public function pass_setting() {
-    $options = get_option('kkl_ligatool');
-    echo "<input name='kkl_ligatool[db_pass]' type='password' value='{$options['db_pass']}' />";
-  }
-
-  public function slackid_setting() {
-    $options = get_option('kkl_ligatool');
-    echo "<input name='kkl_ligatool[slackid]' type='text' value='{$options['slackid']}' />";
-  }
-
-  public function admin_menu() {
-    $hook = add_menu_page('KKL Ligatool', 'KKL Ligatool', 'manage_options', 'kkl_ligatool', array(__CLASS__, 'plugin_page'));
-    add_action('manage_' . $hook . '_columns', array(__CLASS__, 'add_screen_options'));
-    add_action('load-' . $hook, array(__CLASS__, 'add_help_options'));
-
-    self::add_kkl_ligatool_page(NULL, __('leagues', 'kkl-ligatool'), __('leagues', 'kkl-ligatool'), 'manage_options', 'kkl_ligatool_leagues', array(__CLASS__, 'leagues_page'));
-    self::add_kkl_ligatool_page(NULL, __('seasons', 'kkl-ligatool'), __('seasons', 'kkl-ligatool'), 'manage_options', 'kkl_ligatool_seasons', array(__CLASS__, 'seasons_page'));
-    self::add_kkl_ligatool_page(NULL, __('game_days', 'kkl-ligatool'), __('game_days', 'kkl-ligatool'), 'manage_options', 'kkl_ligatool_gamedays', array(__CLASS__, 'gamedays_page'));
-    self::add_kkl_ligatool_page(NULL, __('matches', 'kkl-ligatool'), __('matches', 'kkl-ligatool'), 'manage_options', 'kkl_ligatool_matches', array(__CLASS__, 'matches_page'));
-    self::add_kkl_ligatool_page(NULL, __('clubs', 'kkl-ligatool'), __('clubs', 'kkl-ligatool'), 'manage_options', 'kkl_ligatool_clubs', array(__CLASS__, 'clubs_page'));
-    self::add_kkl_ligatool_page(NULL, __('teams', 'kkl-ligatool'), __('teams', 'kkl-ligatool'), 'manage_options', 'kkl_ligatool_teams', array(__CLASS__, 'teams_page'));
-    self::add_kkl_ligatool_page(NULL, __('players', 'kkl-ligatool'), __('players', 'kkl-ligatool'), 'manage_options', 'kkl_ligatool_players', array(__CLASS__, 'players_page'));
-    self::add_kkl_ligatool_page(NULL, __('locations', 'kkl-ligatool'), __('locations', 'kkl-ligatool'), 'manage_options', 'kkl_ligatool_locations', array(__CLASS__, 'locations_page'));
-    self::add_kkl_ligatool_page(NULL, __('stats', 'kkl-ligatool'), __('stats', 'kkl-ligatool'), 'manage_options', 'kkl_ligatool_stats', array(__CLASS__, 'stats_page'));
-    self::add_kkl_ligatool_page(NULL, __('settings', 'kkl-ligatool'), __('settings', 'kkl-ligatool'), 'administrator', 'kkl_ligatool_settings', array(__CLASS__, 'settings_page'));
-
-  }
-
-  public function add_kkl_ligatool_page($parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function) {
-    $hook = add_submenu_page($parent_slug, $page_title, $page_title, $capability, $menu_slug, $function);
-    add_action('manage_' . $hook . '_columns', array(__CLASS__, 'add_screen_options'));
-  }
+class Backend {
 
   public static function add_help_options() {
     $screen = get_current_screen();
@@ -126,7 +68,7 @@ class KKL_Backend {
     $html .= '<div class="screen-options"><label for="kkl_ligatool_default_league">' . __('default league', 'kkl-ligatool') . ':</label>';
 
     $html .= '<select id="kkl_ligatool_default_league" name="wp_screen_options[value][kkl_ligatool_default_league]" value="' . $default_league . '">';
-    $db = new DB\KKL_DB_Wordpress();
+    $db = new DB\Wordpress();
     $leagues = $db->getLeagues();
     $html .= '<option value="0">' . __('please select', 'kkl-ligatool') . '</option>';
     foreach ($leagues as $league) {
@@ -157,6 +99,16 @@ class KKL_Backend {
     $help_content['toplevel_page_kkl_ligatool'] = array('title' => 'test', "content" => 'Help for plugin settings page'); // using self::$plugin_page_id as array key adds your text only to plugin settings page.
 
     return $help_content;
+  }
+
+  public static function plugin_page() {
+
+    global $kkl_twig;
+
+    self::display_tabs();
+
+    echo $kkl_twig->render('admin/home.twig');
+
   }
 
   public static function display_tabs() {
@@ -192,23 +144,13 @@ class KKL_Backend {
     echo $content;
   }
 
-  public static function plugin_page() {
-
-    global $kkl_twig;
-
-    self::display_tabs();
-
-    echo $kkl_twig->render('admin/home.tpl');
-
-  }
-
   public static function leagues_page() {
 
     global $kkl_twig;
 
     self::display_tabs();
 
-    $wp_list_table = new Backend\KKL_League_List_Table();
+    $wp_list_table = new Backend\LeagueListTable();
     $wp_list_table->prepare_items();
     $wp_list_table->display();
 
@@ -218,7 +160,7 @@ class KKL_Backend {
 
     self::display_tabs();
 
-    $wp_list_table = new Backend\KKL_Season_List_Table();
+    $wp_list_table = new Backend\SeasonListTable();
     $wp_list_table->prepare_items();
     $wp_list_table->display();
 
@@ -228,18 +170,17 @@ class KKL_Backend {
 
     self::display_tabs();
 
-    $wp_list_table = new Backend\KKL_GameDay_List_Table();
+    $wp_list_table = new Backend\GameDayListTable();
     $wp_list_table->prepare_items();
     $wp_list_table->display();
 
   }
 
-
   public static function matches_page() {
 
     self::display_tabs();
 
-    $wp_list_table = new Backend\KKL_Match_List_Table();
+    $wp_list_table = new Backend\MatchListTable();
     $wp_list_table->prepare_items();
     $wp_list_table->display();
 
@@ -249,7 +190,7 @@ class KKL_Backend {
 
     self::display_tabs();
 
-    $wp_list_table = new Backend\KKL_Club_List_Table();
+    $wp_list_table = new Backend\ClubListTable();
     $wp_list_table->prepare_items();
     $wp_list_table->display();
 
@@ -259,7 +200,7 @@ class KKL_Backend {
 
     self::display_tabs();
 
-    $wp_list_table = new Backend\KKL_Team_List_Table();
+    $wp_list_table = new Backend\TeamListTable();
     $wp_list_table->prepare_items();
     $wp_list_table->display();
 
@@ -269,17 +210,17 @@ class KKL_Backend {
 
     self::display_tabs();
 
-    $wp_list_table = new Backend\KKL_Player_List_Table();
+    $wp_list_table = new Backend\PlayerListTable();
     $wp_list_table->prepare_items();
     $wp_list_table->display();
 
   }
 
   public static function locations_page() {
-    
+
     self::display_tabs();
 
-    $wp_list_table = new Backend\KKL_Location_List_Table();
+    $wp_list_table = new Backend\LocationListTable();
     $wp_list_table->prepare_items();
     $wp_list_table->display();
 
@@ -291,7 +232,7 @@ class KKL_Backend {
 
     self::display_tabs();
 
-    echo $kkl_twig->render('admin/stats.tpl');
+    echo $kkl_twig->render('admin/stats.twig');
 
   }
 
@@ -315,7 +256,7 @@ class KKL_Backend {
 
     $vars['save'] = esc_attr('Save Changes');
 
-    echo $kkl_twig->render('admin/settings.tpl', $vars);
+    echo $kkl_twig->render('admin/settings.twig', $vars);
 
   }
 
@@ -353,6 +294,61 @@ class KKL_Backend {
     wp_enqueue_style('kkl_backend', plugins_url() . '/kkl_ligatool/css/kkl_backend.css');
 
 
+  }
+
+  public function validate_setting($plugin_options) {
+    return $plugin_options;
+  }
+
+  public function section_cb() {
+  }
+
+  public function host_setting() {
+    $options = get_option('kkl_ligatool');
+    echo "<input name='kkl_ligatool[db_host]' type='text' value='{$options['db_host']}' />";
+  }
+
+  public function name_setting() {
+    $options = get_option('kkl_ligatool');
+    echo "<input name='kkl_ligatool[db_name]' type='text' value='{$options['db_name']}' />";
+  }
+
+  public function user_setting() {
+    $options = get_option('kkl_ligatool');
+    echo "<input name='kkl_ligatool[db_user]' type='text' value='{$options['db_user']}' />";
+  }
+
+  public function pass_setting() {
+    $options = get_option('kkl_ligatool');
+    echo "<input name='kkl_ligatool[db_pass]' type='password' value='{$options['db_pass']}' />";
+  }
+
+  public function slackid_setting() {
+    $options = get_option('kkl_ligatool');
+    echo "<input name='kkl_ligatool[slackid]' type='text' value='{$options['slackid']}' />";
+  }
+
+  public function admin_menu() {
+    $hook = add_menu_page('KKL Ligatool', 'KKL Ligatool', 'manage_options', 'kkl_ligatool', array(__CLASS__, 'plugin_page'));
+    add_action('manage_' . $hook . '_columns', array(__CLASS__, 'add_screen_options'));
+    add_action('load-' . $hook, array(__CLASS__, 'add_help_options'));
+
+    self::add_kkl_ligatool_page(NULL, __('leagues', 'kkl-ligatool'), __('leagues', 'kkl-ligatool'), 'manage_options', 'kkl_ligatool_leagues', array(__CLASS__, 'leagues_page'));
+    self::add_kkl_ligatool_page(NULL, __('seasons', 'kkl-ligatool'), __('seasons', 'kkl-ligatool'), 'manage_options', 'kkl_ligatool_seasons', array(__CLASS__, 'seasons_page'));
+    self::add_kkl_ligatool_page(NULL, __('game_days', 'kkl-ligatool'), __('game_days', 'kkl-ligatool'), 'manage_options', 'kkl_ligatool_gamedays', array(__CLASS__, 'gamedays_page'));
+    self::add_kkl_ligatool_page(NULL, __('matches', 'kkl-ligatool'), __('matches', 'kkl-ligatool'), 'manage_options', 'kkl_ligatool_matches', array(__CLASS__, 'matches_page'));
+    self::add_kkl_ligatool_page(NULL, __('clubs', 'kkl-ligatool'), __('clubs', 'kkl-ligatool'), 'manage_options', 'kkl_ligatool_clubs', array(__CLASS__, 'clubs_page'));
+    self::add_kkl_ligatool_page(NULL, __('teams', 'kkl-ligatool'), __('teams', 'kkl-ligatool'), 'manage_options', 'kkl_ligatool_teams', array(__CLASS__, 'teams_page'));
+    self::add_kkl_ligatool_page(NULL, __('players', 'kkl-ligatool'), __('players', 'kkl-ligatool'), 'manage_options', 'kkl_ligatool_players', array(__CLASS__, 'players_page'));
+    self::add_kkl_ligatool_page(NULL, __('locations', 'kkl-ligatool'), __('locations', 'kkl-ligatool'), 'manage_options', 'kkl_ligatool_locations', array(__CLASS__, 'locations_page'));
+    self::add_kkl_ligatool_page(NULL, __('stats', 'kkl-ligatool'), __('stats', 'kkl-ligatool'), 'manage_options', 'kkl_ligatool_stats', array(__CLASS__, 'stats_page'));
+    self::add_kkl_ligatool_page(NULL, __('settings', 'kkl-ligatool'), __('settings', 'kkl-ligatool'), 'administrator', 'kkl_ligatool_settings', array(__CLASS__, 'settings_page'));
+
+  }
+
+  public function add_kkl_ligatool_page($parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function) {
+    $hook = add_submenu_page($parent_slug, $page_title, $page_title, $capability, $menu_slug, $function);
+    add_action('manage_' . $hook . '_columns', array(__CLASS__, 'add_screen_options'));
   }
 
 

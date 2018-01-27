@@ -5,7 +5,7 @@ namespace KKL\Ligatool;
 $options = get_option('kkl_ligatool');
 $kkl_db = new \wpdb($options['db_user'], $options['db_pass'], $options['db_name'], $options['db_host']);
 
-abstract class KKL_DB {
+abstract class DB {
 
   private $db;
 
@@ -26,6 +26,13 @@ abstract class KKL_DB {
 
     return $result;
 
+  }
+
+  /**
+   * @return \wpdb
+   */
+  public function getDb() {
+    return $this->db;
   }
 
   public function getUpcomingGames($league_id) {
@@ -134,6 +141,51 @@ abstract class KKL_DB {
     return $teams;
   }
 
+  public function getTeamProperties($teamId) {
+    $sql = "SELECT * FROM team_properties WHERE objectId = '" . esc_sql($teamId) . "'";
+    $results = $this->getDb()->get_results($sql);
+    $properties = array();
+    foreach ($results as $result) {
+      $properties[$result->property_key] = $result->value;
+      if ($result->property_key == 'captain') {
+        $player = $this->getPlayer($result->value);
+        $properties['captain_email'] = $player->email;
+      } else if ($result->property_key == 'vice_captain') {
+        $player = $this->getPlayer($result->value);
+        $properties['vice_captain_email'] = $player->email;
+      } else {
+        $location = $this->getLocation($result->value);
+        $properties['location_name'] = $location->title;
+        $properties['lat'] = $location->lat;
+        $properties['lng'] = $location->lng;
+      }
+    }
+    return $properties;
+  }
+
+  public function getPlayer($playerId) {
+    $sql = "SELECT * FROM players WHERE id = '" . esc_sql($playerId) . "'";
+    $player = $this->getDb()->get_row($sql);
+    $properties = $this->getPlayerProperties($player->id);
+    $player->properties = $properties;
+    return $player;
+  }
+
+  public function getPlayerProperties($playerId) {
+    $sql = "SELECT * FROM player_properties WHERE objectId = '" . esc_sql($playerId) . "'";
+    $results = $this->getDb()->get_results($sql);
+    $properties = array();
+    foreach ($results as $result) {
+      $properties[$result->property_key] = $result->value;
+    }
+    return $properties;
+  }
+
+  public function getLocation($location_id) {
+    $sql = "SELECT * FROM locations WHERE id = '" . esc_sql($location_id) . "'";
+    return $this->getDb()->get_row($sql);
+  }
+
   public function getPlayers() {
     $sql = "SELECT * FROM players ORDER BY first_name, last_name ASC";
     $players = $this->getDb()->get_results($sql);
@@ -142,16 +194,6 @@ abstract class KKL_DB {
       $player->properties = $properties;
     }
     return $players;
-  }
-
-  public function getTeamsForSeason($seasonId) {
-    $sql = "SELECT * FROM teams WHERE season_id = '" . esc_sql($seasonId) . "'";
-    $teams = $this->getDb()->get_results($sql);
-    foreach ($teams as $team) {
-      $properties = $this->getTeamProperties($team->id);
-      $team->properties = $properties;
-    }
-    return $teams;
   }
 
   public function getCurrentTeamForClub($clubId) {
@@ -204,24 +246,6 @@ abstract class KKL_DB {
   public function getSeasons() {
     $sql = "SELECT * FROM seasons ORDER BY start_date ASC, name ASC";
     return $this->getDb()->get_results($sql);
-  }
-
-  public function getSeason($seasonId) {
-    $sql = "SELECT * FROM seasons WHERE id = '" . esc_sql($seasonId) . "'";
-    $season = $this->getDb()->get_row($sql);
-    $properties = $this->getSeasonProperties($season->id);
-    $season->properties = $properties;
-    return $season;
-  }
-
-  public function getSeasonProperties($seasonId) {
-    $sql = "SELECT * FROM season_properties WHERE objectId = '" . esc_sql($seasonId) . "'";
-    $results = $this->getDb()->get_results($sql);
-    $properties = array();
-    foreach ($results as $result) {
-      $properties[$result->property_key] = $result->value;
-    }
-    return $properties;
   }
 
   public function getLeagueProperties($leagueId) {
@@ -281,11 +305,6 @@ abstract class KKL_DB {
     return $this->getDb()->get_row($sql);
   }
 
-  public function getGameDaysForSeason($seasonId) {
-    $sql = "SELECT * FROM game_days WHERE season_id = '" . esc_sql($seasonId) . "' ORDER BY number ASC";
-    return $this->getDb()->get_results($sql);
-  }
-
   public function getGameDayBySeasonAndPosition($seasonId, $position) {
     $sql = "SELECT * FROM game_days WHERE season_id = '" . esc_sql($seasonId) . "' AND number = '" . esc_sql($position) . "'";
     return $this->getDb()->get_row($sql);
@@ -326,20 +345,8 @@ abstract class KKL_DB {
     return $league;
   }
 
-  public function getLeague($leagueId) {
-    $sql = "SELECT * FROM leagues WHERE id = '" . esc_sql($leagueId) . "'";
-    $league = $this->getDb()->get_row($sql);
-    $league->active = ord($league->active);
-    return $league;
-  }
-
   public function getSeasonForGameday($dayId) {
     $sql = "SELECT * FROM seasons WHERE id = (SELECT season_id AS id FROM game_days WHERE id = '" . esc_sql($dayId) . "')";
-    return $this->getDb()->get_row($sql);
-  }
-
-  public function getGameDay($dayId) {
-    $sql = "SELECT * FROM game_days WHERE id = '" . esc_sql($dayId) . "'";
     return $this->getDb()->get_row($sql);
   }
 
@@ -347,11 +354,6 @@ abstract class KKL_DB {
     $columns = array();
     $columns['current_game_day'] = $day->id;
     $this->getDb()->update('seasons', $columns, array('id' => $season->id));
-  }
-
-  public function getMatch($matchId) {
-    $sql = "SELECT m.*, s.score_home, s.score_away, g.goals_home, g.goals_away FROM matches AS m LEFT JOIN sets AS s ON m.id = s.match_id LEFT JOIN games AS g ON s.id = g.set_id WHERE m.id = '" . esc_sql($matchId) . "'";
-    return $this->getDb()->get_row($sql);
   }
 
   public function getMatches() {
@@ -380,60 +382,12 @@ abstract class KKL_DB {
     return $this->getDb()->get_results($sql);
   }
 
-  public function getTeam($teamId) {
-    $sql = "SELECT * FROM teams WHERE id = '" . esc_sql($teamId) . "'";
-    $team = $this->getDb()->get_row($sql);
-    $properties = $this->getTeamProperties($team->id);
-    $team->properties = $properties;
-    return $team;
-  }
-
-  public function getTeamProperties($teamId) {
-    $sql = "SELECT * FROM team_properties WHERE objectId = '" . esc_sql($teamId) . "'";
-    $results = $this->getDb()->get_results($sql);
-    $properties = array();
-    foreach ($results as $result) {
-      $properties[$result->property_key] = $result->value;
-      if ($result->property_key == 'captain') {
-        $player = $this->getPlayer($result->value);
-        $properties['captain_email'] = $player->email;
-      } else if ($result->property_key == 'vice_captain') {
-        $player = $this->getPlayer($result->value);
-        $properties['vice_captain_email'] = $player->email;
-      } else {
-        $location = $this->getLocation($result->value);
-        $properties['location_name'] = $location->title;
-        $properties['lat'] = $location->lat;
-        $properties['lng'] = $location->lng;
-      }
-    }
-    return $properties;
-  }
-
-  public function getPlayer($playerId) {
-    $sql = "SELECT * FROM players WHERE id = '" . esc_sql($playerId) . "'";
-    $player = $this->getDb()->get_row($sql);
-    $properties = $this->getPlayerProperties($player->id);
-    $player->properties = $properties;
-    return $player;
-  }
-
   public function getPlayerByMailAddress($mailAddress) {
     $sql = "SELECT * FROM players WHERE email = '" . esc_sql($mailAddress) . "'";
     $player = $this->getDb()->get_row($sql);
     $properties = $this->getPlayerProperties($player->id);
     $player->properties = $properties;
     return $player;
-  }
-
-  public function getPlayerProperties($playerId) {
-    $sql = "SELECT * FROM player_properties WHERE objectId = '" . esc_sql($playerId) . "'";
-    $results = $this->getDb()->get_results($sql);
-    $properties = array();
-    foreach ($results as $result) {
-      $properties[$result->property_key] = $result->value;
-    }
-    return $properties;
   }
 
   public function getClubProperties($clubId) {
@@ -527,9 +481,12 @@ abstract class KKL_DB {
     return $teams;
   }
 
-  public function getClub($clubId) {
-    $sql = "SELECT * FROM clubs WHERE id = '" . esc_sql($clubId) . "'";
-    return $this->getDb()->get_row($sql);
+  public function getTeam($teamId) {
+    $sql = "SELECT * FROM teams WHERE id = '" . esc_sql($teamId) . "'";
+    $team = $this->getDb()->get_row($sql);
+    $properties = $this->getTeamProperties($team->id);
+    $team->properties = $properties;
+    return $team;
   }
 
   public function getClubByCode($clubCode) {
@@ -667,6 +624,16 @@ abstract class KKL_DB {
 
   }
 
+  public function getTeamsForSeason($seasonId) {
+    $sql = "SELECT * FROM teams WHERE season_id = '" . esc_sql($seasonId) . "'";
+    $teams = $this->getDb()->get_results($sql);
+    foreach ($teams as $team) {
+      $properties = $this->getTeamProperties($team->id);
+      $team->properties = $properties;
+    }
+    return $teams;
+  }
+
   public function getTeamScoreForGameDay($team_id, $game_day_id) {
 
     $day = $this->getGameDay($game_day_id);
@@ -691,6 +658,26 @@ abstract class KKL_DB {
 
   }
 
+  public function getGameDay($dayId) {
+    $sql = "SELECT * FROM game_days WHERE id = '" . esc_sql($dayId) . "'";
+    return $this->getDb()->get_row($sql);
+  }
+
+  public function getScheduleForSeason($season) {
+
+    $days = $this->getGameDaysForSeason($season->id);
+    $schedules = array();
+    foreach ($days as $day) {
+      $schedules[] = $this->getScheduleForGameDay($day);
+    }
+
+    return $schedules;
+  }
+
+  public function getGameDaysForSeason($seasonId) {
+    $sql = "SELECT * FROM game_days WHERE season_id = '" . esc_sql($seasonId) . "' ORDER BY number ASC";
+    return $this->getDb()->get_results($sql);
+  }
 
   public function getScheduleForGameDay($day) {
     $sql = "SELECT * FROM matches WHERE game_day_id = '" . esc_sql($day->id) . "'";
@@ -703,17 +690,6 @@ abstract class KKL_DB {
       $match->away = $this->getTeam($match->away_team);
     }
     return $schedule;
-  }
-
-  public function getScheduleForSeason($season) {
-
-    $days = $this->getGameDaysForSeason($season->id);
-    $schedules = array();
-    foreach ($days as $day) {
-      $schedules[] = $this->getScheduleForGameDay($day);
-    }
-
-    return $schedules;
   }
 
   public function getAllLocations() {
@@ -742,11 +718,6 @@ abstract class KKL_DB {
     return $this->getDb()->get_results($sql);
   }
 
-  public function getLocation($location_id) {
-    $sql = "SELECT * FROM locations WHERE id = '" . esc_sql($location_id) . "'";
-    return $this->getDb()->get_row($sql);
-  }
-
   public function getAllGoals() {
     $sql = "SELECT SUM( goals_away ) FROM  `games` WHERE goals_away IS NOT NULL";
     return $this->getDb()->get_row($sql);
@@ -755,6 +726,25 @@ abstract class KKL_DB {
   public function getAllGames() {
     $sql = "SELECT SUM( score_home ) FROM  `sets` WHERE score_home IS NOT NULL";
     return $this->getDb()->get_row($sql);
+  }
+
+  public function createOrUpdateTeam($team) {
+    if ($team->id) {
+      $team = $this->updateTeam($team);
+    } else {
+      $team = $this->createTeam($team);
+    }
+    return $team;
+  }
+
+  public function updateTeam($team) {
+    $columns = array();
+    $columns['name'] = $team->name;
+    $columns['short_name'] = $team->short_name;
+    $columns['season_id'] = $team->season_id;
+    $columns['club_id'] = $team->club_id;
+    $this->getDb()->update('teams', $columns, array('id' => $team->id), array('%s', '%s', '%d', '%d'), array('%d'));
+    return $this->getTeam($team->id);
   }
 
   public function createTeam($team) {
@@ -768,33 +758,13 @@ abstract class KKL_DB {
     return $this->getTeam($this->getDb()->insert_id);
   }
 
-  public function updateTeam($team) {
-    $columns = array();
-    $columns['name'] = $team->name;
-    $columns['short_name'] = $team->short_name;
-    $columns['season_id'] = $team->season_id;
-    $columns['club_id'] = $team->club_id;
-    $this->getDb()->update('teams', $columns, array('id' => $team->id), array('%s', '%s', '%d', '%d'), array('%d'));
-    return $this->getTeam($team->id);
-  }
-
-  public function createOrUpdateTeam($team) {
-    if ($team->id) {
-      $team = $this->updateTeam($team);
+  public function createOrUpdatePlayer($player) {
+    if ($player->id) {
+      $player = $this->updatePlayer($player);
     } else {
-      $team = $this->createTeam($team);
+      $player = $this->createPlayer($player);
     }
-    return $team;
-  }
-
-  public function createPlayer($player) {
-    $values = array('first_name' => $player->first_name,
-      'last_name' => $player->last_name,
-      'email' => $player->email,
-      'phone' => $player->phone
-    );
-    $this->getDb()->insert('players', $values, array('%s', '%s', '%s', '%s'));
-    return $this->getPlayer($this->getDb()->insert_id);
+    return $player;
   }
 
   public function updatePlayer($player) {
@@ -807,13 +777,123 @@ abstract class KKL_DB {
     return $this->getPlayer($player->id);
   }
 
-  public function createOrUpdatePlayer($player) {
-    if ($player->id) {
-      $player = $this->updatePlayer($player);
+  public function createPlayer($player) {
+    $values = array('first_name' => $player->first_name,
+      'last_name' => $player->last_name,
+      'email' => $player->email,
+      'phone' => $player->phone
+    );
+    $this->getDb()->insert('players', $values, array('%s', '%s', '%s', '%s'));
+    return $this->getPlayer($this->getDb()->insert_id);
+  }
+
+  public function createOrUpdateMatch($match) {
+    if ($match->id) {
+      $match = $this->updateMatch($match);
     } else {
-      $player = $this->createPlayer($player);
+      $match = $this->createMatch($match);
     }
-    return $player;
+    if ($match->status == 3) {
+      $this->calculateScores($match);
+    }
+    return $match;
+  }
+
+  public function updateMatch($match) {
+
+    $values = array(
+      'game_day_id' => $match->game_day_id,
+      'score_away' => $match->score_away,
+      'score_home' => $match->score_home,
+      'fixture' => $match->fixture,
+      'location' => $match->location,
+      'notes' => $match->notes,
+      'status' => $match->status,
+      'away_team' => $match->away_team,
+      'home_team' => $match->home_team
+    );
+    $this->getDb()->update('matches', $values, array('id' => $match->id), array('%d', '%d', '%d', '%s', '%s', '%s', '%d', '%d', '%d'), array('%d'));
+
+    $set = new \stdClass;
+    $set->score_away = $match->score_away;
+    $set->score_home = $match->score_home;
+    $set->number = 1;
+    $set->match_id = $match->id;
+    $set = $this->updateSet($set);
+
+    $game = new \stdClass;
+    $game->goals_home = $match->goals_home;
+    $game->goals_away = $match->goals_away;
+    $game->number = 1;
+    $game->set_id = $set->id;
+    $this->updateGame($game);
+
+    return $this->getMatch($match->id);
+  }
+
+  public function updateSet($set) {
+    if (!$this->getSet($set->match_id)) {
+      return $this->createSet($set);
+    }
+    $values = array(
+      'score_away' => $set->score_away,
+      'score_home' => $set->score_home,
+      'number' => $set->number,
+      'match_id' => $set->match_id
+    );
+    $this->getDb()->update('sets', $values, array('match_id' => $set->match_id), array('%d', '%d', '%d', '%d'), array('%d'));
+    return $this->getSet($set->match_id);
+  }
+
+  public function getSet($matchId) {
+    $sql = "SELECT * FROM sets WHERE match_id = '" . esc_sql($matchId) . "'";
+    return $this->getDb()->get_row($sql);
+  }
+
+  public function createSet($set) {
+    $values = array(
+      'score_away' => $set->score_away,
+      'score_home' => $set->score_home,
+      'number' => $set->number,
+      'match_id' => $set->match_id
+    );
+    $this->getDb()->insert('sets', $values, array('%d', '%d', '%d', '%d'));
+    return $this->getSet($set->match_id);
+  }
+
+  public function updateGame($game) {
+    if (!$this->getGame($game->set_id)) {
+      return $this->createGame($game);
+    }
+    $values = array(
+      'goals_away' => $game->goals_away,
+      'goals_home' => $game->goals_home,
+      'number' => $game->number,
+      'set_id' => $game->set_id
+    );
+    $this->getDb()->update('games', $values, array('set_id' => $game->set_id), array('%d', '%d', '%d', '%d'), array('%d'));
+    return $this->getGame($game->match_id);
+  }
+
+  public function getGame($setId) {
+    $sql = "SELECT * FROM games WHERE set_id = '" . esc_sql($setId) . "'";
+    return $this->getDb()->get_row($sql);
+  }
+
+  public function createGame($game) {
+    $values = array(
+      'goals_away' => $game->goals_away,
+      'goals_home' => $game->goals_home,
+      'number' => $game->number,
+      'set_id' => $game->set_id
+    );
+    $this->getDb()->insert('games', $values, array('%d', '%d', '%d', '%d'));
+    return $this->getGame($game->set_id);
+  }
+
+  public function getMatch($matchId) {
+    $sql = "SELECT m.*, s.score_home, s.score_away, g.goals_home, g.goals_away FROM matches AS m LEFT JOIN sets AS s ON m.id = s.match_id LEFT JOIN games AS g ON s.id = g.set_id WHERE m.id = '" . esc_sql($matchId) . "'";
+    return $this->getDb()->get_row($sql);
   }
 
   public function createMatch($match) {
@@ -849,289 +929,6 @@ abstract class KKL_DB {
     $this->createGame($game);
 
     return $this->getMatch($match_id);
-  }
-
-  public function updateMatch($match) {
-
-    $values = array(
-      'game_day_id' => $match->game_day_id,
-      'score_away' => $match->score_away,
-      'score_home' => $match->score_home,
-      'fixture' => $match->fixture,
-      'location' => $match->location,
-      'notes' => $match->notes,
-      'status' => $match->status,
-      'away_team' => $match->away_team,
-      'home_team' => $match->home_team
-    );
-    $this->getDb()->update('matches', $values, array('id' => $match->id), array('%d', '%d', '%d', '%s', '%s', '%s', '%d', '%d', '%d'), array('%d'));
-
-    $set = new \stdClass;
-    $set->score_away = $match->score_away;
-    $set->score_home = $match->score_home;
-    $set->number = 1;
-    $set->match_id = $match->id;
-    $set = $this->updateSet($set);
-
-    $game = new \stdClass;
-    $game->goals_home = $match->goals_home;
-    $game->goals_away = $match->goals_away;
-    $game->number = 1;
-    $game->set_id = $set->id;
-    $this->updateGame($game);
-
-    return $this->getMatch($match->id);
-  }
-
-  public function createOrUpdateMatch($match) {
-    if ($match->id) {
-      $match = $this->updateMatch($match);
-    } else {
-      $match = $this->createMatch($match);
-    }
-    if ($match->status == 3) {
-      $this->calculateScores($match);
-    }
-    return $match;
-  }
-
-  public function createSet($set) {
-    $values = array(
-      'score_away' => $set->score_away,
-      'score_home' => $set->score_home,
-      'number' => $set->number,
-      'match_id' => $set->match_id
-    );
-    $this->getDb()->insert('sets', $values, array('%d', '%d', '%d', '%d'));
-    return $this->getSet($set->match_id);
-  }
-
-  public function updateSet($set) {
-    if (!$this->getSet($set->match_id)) {
-      return $this->createSet($set);
-    }
-    $values = array(
-      'score_away' => $set->score_away,
-      'score_home' => $set->score_home,
-      'number' => $set->number,
-      'match_id' => $set->match_id
-    );
-    $this->getDb()->update('sets', $values, array('match_id' => $set->match_id), array('%d', '%d', '%d', '%d'), array('%d'));
-    return $this->getSet($set->match_id);
-  }
-
-  public function getSet($matchId) {
-    $sql = "SELECT * FROM sets WHERE match_id = '" . esc_sql($matchId) . "'";
-    return $this->getDb()->get_row($sql);
-  }
-
-  public function createGame($game) {
-    $values = array(
-      'goals_away' => $game->goals_away,
-      'goals_home' => $game->goals_home,
-      'number' => $game->number,
-      'set_id' => $game->set_id
-    );
-    $this->getDb()->insert('games', $values, array('%d', '%d', '%d', '%d'));
-    return $this->getGame($game->set_id);
-  }
-
-  public function updateGame($game) {
-    if (!$this->getGame($game->set_id)) {
-      return $this->createGame($game);
-    }
-    $values = array(
-      'goals_away' => $game->goals_away,
-      'goals_home' => $game->goals_home,
-      'number' => $game->number,
-      'set_id' => $game->set_id
-    );
-    $this->getDb()->update('games', $values, array('set_id' => $game->set_id), array('%d', '%d', '%d', '%d'), array('%d'));
-    return $this->getGame($game->match_id);
-  }
-
-  public function getGame($setId) {
-    $sql = "SELECT * FROM games WHERE set_id = '" . esc_sql($setId) . "'";
-    return $this->getDb()->get_row($sql);
-  }
-
-  public function setTeamProperties($team, $properties) {
-    foreach ($properties as $key => $value) {
-      $this->getDb()->delete('team_properties', array('objectId' => $team->id, 'property_key' => $key));
-      if ($value !== false) {
-        $this->getDb()->insert('team_properties', array('objectId' => $team->id, 'property_key' => $key, 'value' => $value), array('%d', '%s', '%s'));
-      }
-    }
-  }
-
-  public function setPlayerProperties($player, $properties) {
-    foreach ($properties as $key => $value) {
-      $this->getDb()->delete('player_properties', array('objectId' => $player->id, 'property_key' => $key));
-      if ($value !== false) {
-        $this->getDb()->insert('player_properties', array('objectId' => $player->id, 'property_key' => $key, 'value' => $value), array('%d', '%s', '%s'));
-      }
-    }
-  }
-
-  public function createLocation($location) {
-    $values = array('title' => $location->title,
-      'description' => $location->description,
-      'lat' => $location->lat,
-      'lng' => $location->lng
-    );
-    $this->getDb()->insert('locations', $values, array('%s', '%s', '%s', '%s'));
-    return $this->getLocation($this->getDb()->insert_id);
-  }
-
-  public function updateLocation($location) {
-    $columns = array();
-    $columns['title'] = $location->title;
-    $columns['description'] = $location->description;
-    $columns['lat'] = $location->lat;
-    $columns['lng'] = $location->lng;
-    $this->getDb()->update('locations', $columns, array('id' => $location->id), array('%s', '%s', '%s', '%s'), array('%d'));
-    return $this->getLocation($location->id);
-  }
-
-  public function createOrUpdateLocation($location) {
-    if ($location->id) {
-      $location = $this->updateLocation($location);
-    } else {
-      $location = $this->createLocation($location);
-    }
-    return $location;
-  }
-
-  public function createLeague($league) {
-    $values = array('name' => $league->name,
-      'code' => $league->code,
-      'active' => $league->active,
-      'current_season' => $league->current_season
-    );
-    $this->getDb()->insert('leagues', $values, array('%s', '%s', '%s'));
-    return $this->getLeague($this->getDb()->insert_id);
-  }
-
-  public function updateLeague($league) {
-    $columns = array();
-    $columns['name'] = $league->name;
-    $columns['code'] = $league->code;
-    $columns['active'] = $league->active;
-    $columns['current_season'] = $league->current_season;
-
-    $this->getDb()->update('leagues', $columns, array('id' => $league->id), array('%s', '%s', '%d', '%d'), array('%d'));
-    return $this->getLeague($league->id);
-  }
-
-  public function createOrUpdateLeague($league) {
-    if ($league->id) {
-      $league = $this->updateLeague($league);
-    } else {
-      $league = $this->createLeague($league);
-    }
-    return $league;
-  }
-
-  public function createSeason($season) {
-    $values = array('name' => $season->name,
-      'start_date' => $season->start_date,
-      'end_date' => $season->end_date,
-      'active' => $season->active,
-      'current_game_day' => $season->current_game_day,
-      'league_id' => $season->league_id
-    );
-    $this->getDb()->insert('seasons', $values, array('%s', '%s', '%s', '%d', '%d', '%d'));
-    return $this->getSeason($this->getDb()->insert_id);
-  }
-
-  public function updateSeason($season) {
-    $columns = array();
-    $columns['name'] = $season->name;
-    $columns['start_date'] = $season->start_date;
-    $columns['end_date'] = $season->end_date;
-    $columns['active'] = $season->active;
-    $columns['current_game_day'] = $season->current_game_day;
-    $columns['league_id'] = $season->league_id;
-
-    $this->getDb()->update('seasons', $columns, array('id' => $season->id), array('%s', '%s', '%s', '%d', '%d', '%d'), array('%d'));
-    return $this->getSeason($season->id);
-  }
-
-  public function createOrUpdateSeason($season) {
-    if ($season->id) {
-      $season = $this->updateSeason($season);
-    } else {
-      $season = $this->createSeason($season);
-    }
-    return $season;
-  }
-
-  public function createClub($club) {
-    $values = array('name' => $club->name,
-      'short_name' => $club->short_name,
-      'description' => $club->description
-    );
-    if ($club->logo) {
-      $values['logo'] = $club->logo;
-      $this->getDb()->insert('clubs', $values, array('%s', '%s', '%s', '%s'));
-    } else {
-      $this->getDb()->insert('clubs', $values, array('%s', '%s', '%s'));
-    }
-    return $this->getClub($this->getDb()->insert_id);
-  }
-
-  public function updateClub($club) {
-    $columns = array();
-    $columns['name'] = $club->name;
-    $columns['short_name'] = $club->short_name;
-    $columns['description'] = $club->description;
-    if ($club->logo) {
-      $columns['logo'] = $club->logo;
-      $this->getDb()->update('clubs', $columns, array('id' => $club->id), array('%s', '%s', '%s', '%s'), array('%d'));
-    } else {
-      $this->getDb()->update('clubs', $columns, array('id' => $club->id), array('%s', '%s', '%s'), array('%d'));
-    }
-
-    return $this->getClub($club->id);
-  }
-
-  public function createOrUpdateClub($club) {
-    if ($club->id) {
-      $club = $this->updateClub($club);
-    } else {
-      $club = $this->createClub($club);
-    }
-    return $club;
-  }
-
-  public function createGameDay($day) {
-    $values = array('number' => $day->number,
-      'fixture' => $day->start_date,
-      'end' => $day->end_date,
-      'season_id' => $day->season_id,
-    );
-    $this->getDb()->insert('game_days', $values, array('%d', '%s', '%s', '%d'));
-    return $this->getGameDay($this->getDb()->insert_id);
-  }
-
-  public function updateGameDay($day) {
-    $columns = array();
-    $columns['number'] = $day->number;
-    $columns['fixture'] = $day->start_date;
-    $columns['end'] = $day->end_date;
-    $columns['season_id'] = $day->season_id;
-
-    $this->getDb()->update('game_days', $columns, array('id' => $day->id), array('%d', '%s', '%s', '%d'), array('%d'));
-    return $this->getGameDay($day->id);
-  }
-
-  public function createOrUpdateGameDay($day) {
-    if ($day->id) {
-      $day = $this->updateGameDay($day);
-    } else {
-      $day = $this->createGameDay($day);
-    }
-    return $day;
   }
 
   public function calculateScores($match) {
@@ -1213,26 +1010,6 @@ abstract class KKL_DB {
 
   }
 
-  public function getScore($key) {
-    // TODO: maybe store this in database on a per season base, to make 3 point per win possible...
-    $score = 0;
-    switch ($key) {
-      case "win":
-        $score = 2;
-        break;
-
-      case "draw":
-        $score = 1;
-        break;
-
-      case "loss":
-      default:
-        $score = 0;
-        break;
-    }
-    return $score;
-  }
-
   private function getGoalsForTeam($match, $team_id) {
 
     $sql = "SELECT sum(`goals_away`) AS goals_away, sum(goals_home) AS goals_home FROM matches AS m " .
@@ -1255,11 +1032,233 @@ abstract class KKL_DB {
     }
   }
 
-  /**
-   * @return \wpdb
-   */
-  public function getDb() {
-    return $this->db;
+  public function getScore($key) {
+    // TODO: maybe store this in database on a per season base, to make 3 point per win possible...
+    $score = 0;
+    switch ($key) {
+      case "win":
+        $score = 2;
+        break;
+
+      case "draw":
+        $score = 1;
+        break;
+
+      case "loss":
+      default:
+        $score = 0;
+        break;
+    }
+    return $score;
+  }
+
+  public function setTeamProperties($team, $properties) {
+    foreach ($properties as $key => $value) {
+      $this->getDb()->delete('team_properties', array('objectId' => $team->id, 'property_key' => $key));
+      if ($value !== false) {
+        $this->getDb()->insert('team_properties', array('objectId' => $team->id, 'property_key' => $key, 'value' => $value), array('%d', '%s', '%s'));
+      }
+    }
+  }
+
+  public function setPlayerProperties($player, $properties) {
+    foreach ($properties as $key => $value) {
+      $this->getDb()->delete('player_properties', array('objectId' => $player->id, 'property_key' => $key));
+      if ($value !== false) {
+        $this->getDb()->insert('player_properties', array('objectId' => $player->id, 'property_key' => $key, 'value' => $value), array('%d', '%s', '%s'));
+      }
+    }
+  }
+
+  public function createOrUpdateLocation($location) {
+    if ($location->id) {
+      $location = $this->updateLocation($location);
+    } else {
+      $location = $this->createLocation($location);
+    }
+    return $location;
+  }
+
+  public function updateLocation($location) {
+    $columns = array();
+    $columns['title'] = $location->title;
+    $columns['description'] = $location->description;
+    $columns['lat'] = $location->lat;
+    $columns['lng'] = $location->lng;
+    $this->getDb()->update('locations', $columns, array('id' => $location->id), array('%s', '%s', '%s', '%s'), array('%d'));
+    return $this->getLocation($location->id);
+  }
+
+  public function createLocation($location) {
+    $values = array('title' => $location->title,
+      'description' => $location->description,
+      'lat' => $location->lat,
+      'lng' => $location->lng
+    );
+    $this->getDb()->insert('locations', $values, array('%s', '%s', '%s', '%s'));
+    return $this->getLocation($this->getDb()->insert_id);
+  }
+
+  public function createOrUpdateLeague($league) {
+    if ($league->id) {
+      $league = $this->updateLeague($league);
+    } else {
+      $league = $this->createLeague($league);
+    }
+    return $league;
+  }
+
+  public function updateLeague($league) {
+    $columns = array();
+    $columns['name'] = $league->name;
+    $columns['code'] = $league->code;
+    $columns['active'] = $league->active;
+    $columns['current_season'] = $league->current_season;
+
+    $this->getDb()->update('leagues', $columns, array('id' => $league->id), array('%s', '%s', '%d', '%d'), array('%d'));
+    return $this->getLeague($league->id);
+  }
+
+  public function getLeague($leagueId) {
+    $sql = "SELECT * FROM leagues WHERE id = '" . esc_sql($leagueId) . "'";
+    $league = $this->getDb()->get_row($sql);
+    $league->active = ord($league->active);
+    return $league;
+  }
+
+  public function createLeague($league) {
+    $values = array('name' => $league->name,
+      'code' => $league->code,
+      'active' => $league->active,
+      'current_season' => $league->current_season
+    );
+    $this->getDb()->insert('leagues', $values, array('%s', '%s', '%s'));
+    return $this->getLeague($this->getDb()->insert_id);
+  }
+
+  public function createOrUpdateSeason($season) {
+    if ($season->id) {
+      $season = $this->updateSeason($season);
+    } else {
+      $season = $this->createSeason($season);
+    }
+    return $season;
+  }
+
+  public function updateSeason($season) {
+    $columns = array();
+    $columns['name'] = $season->name;
+    $columns['start_date'] = $season->start_date;
+    $columns['end_date'] = $season->end_date;
+    $columns['active'] = $season->active;
+    $columns['current_game_day'] = $season->current_game_day;
+    $columns['league_id'] = $season->league_id;
+
+    $this->getDb()->update('seasons', $columns, array('id' => $season->id), array('%s', '%s', '%s', '%d', '%d', '%d'), array('%d'));
+    return $this->getSeason($season->id);
+  }
+
+  public function getSeason($seasonId) {
+    $sql = "SELECT * FROM seasons WHERE id = '" . esc_sql($seasonId) . "'";
+    $season = $this->getDb()->get_row($sql);
+    $properties = $this->getSeasonProperties($season->id);
+    $season->properties = $properties;
+    return $season;
+  }
+
+  public function getSeasonProperties($seasonId) {
+    $sql = "SELECT * FROM season_properties WHERE objectId = '" . esc_sql($seasonId) . "'";
+    $results = $this->getDb()->get_results($sql);
+    $properties = array();
+    foreach ($results as $result) {
+      $properties[$result->property_key] = $result->value;
+    }
+    return $properties;
+  }
+
+  public function createSeason($season) {
+    $values = array('name' => $season->name,
+      'start_date' => $season->start_date,
+      'end_date' => $season->end_date,
+      'active' => $season->active,
+      'current_game_day' => $season->current_game_day,
+      'league_id' => $season->league_id
+    );
+    $this->getDb()->insert('seasons', $values, array('%s', '%s', '%s', '%d', '%d', '%d'));
+    return $this->getSeason($this->getDb()->insert_id);
+  }
+
+  public function createOrUpdateClub($club) {
+    if ($club->id) {
+      $club = $this->updateClub($club);
+    } else {
+      $club = $this->createClub($club);
+    }
+    return $club;
+  }
+
+  public function updateClub($club) {
+    $columns = array();
+    $columns['name'] = $club->name;
+    $columns['short_name'] = $club->short_name;
+    $columns['description'] = $club->description;
+    if ($club->logo) {
+      $columns['logo'] = $club->logo;
+      $this->getDb()->update('clubs', $columns, array('id' => $club->id), array('%s', '%s', '%s', '%s'), array('%d'));
+    } else {
+      $this->getDb()->update('clubs', $columns, array('id' => $club->id), array('%s', '%s', '%s'), array('%d'));
+    }
+
+    return $this->getClub($club->id);
+  }
+
+  public function getClub($clubId) {
+    $sql = "SELECT * FROM clubs WHERE id = '" . esc_sql($clubId) . "'";
+    return $this->getDb()->get_row($sql);
+  }
+
+  public function createClub($club) {
+    $values = array('name' => $club->name,
+      'short_name' => $club->short_name,
+      'description' => $club->description
+    );
+    if ($club->logo) {
+      $values['logo'] = $club->logo;
+      $this->getDb()->insert('clubs', $values, array('%s', '%s', '%s', '%s'));
+    } else {
+      $this->getDb()->insert('clubs', $values, array('%s', '%s', '%s'));
+    }
+    return $this->getClub($this->getDb()->insert_id);
+  }
+
+  public function createOrUpdateGameDay($day) {
+    if ($day->id) {
+      $day = $this->updateGameDay($day);
+    } else {
+      $day = $this->createGameDay($day);
+    }
+    return $day;
+  }
+
+  public function updateGameDay($day) {
+    $columns = array();
+    $columns['number'] = $day->number;
+    $columns['fixture'] = $day->start_date;
+    $columns['end'] = $day->end_date;
+    $columns['season_id'] = $day->season_id;
+
+    $this->getDb()->update('game_days', $columns, array('id' => $day->id), array('%d', '%s', '%s', '%d'), array('%d'));
+    return $this->getGameDay($day->id);
+  }
+
+  public function createGameDay($day) {
+    $values = array('number' => $day->number,
+      'fixture' => $day->start_date,
+      'end' => $day->end_date,
+      'season_id' => $day->season_id,
+    );
+    $this->getDb()->insert('game_days', $values, array('%d', '%s', '%s', '%d'));
+    return $this->getGameDay($this->getDb()->insert_id);
   }
 
 }

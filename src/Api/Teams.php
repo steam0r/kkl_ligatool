@@ -48,18 +48,62 @@ class Teams extends Controller {
     return 'teams';
   }
 
+    /**
+     * @SWG\Get(
+     *     path="/teams",
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @SWG\Schema(type="array", ref="#/definitions/Team")
+     *     )
+     * )
+     */
   public function get_teams(WP_REST_Request $request) {
     $db = new DB\Api();
     $items = $db->getTeams();
     return $this->getResponse($request, $items);
   }
 
+    /**
+     * @SWG\Get(
+     *     path="/teams/{seasonId}",
+     *     @SWG\Parameter(
+     *         in="path",
+     *         name="teamId",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @SWG\Schema(ref="#/definitions/Team")
+     *     )
+     * )
+     */
   public function get_team(WP_REST_Request $request) {
     $db = new DB\Api();
     $items = array($db->getTeam($request->get_param('id')));
     return $this->getResponse($request, $items);
   }
 
+    /**
+     * @SWG\Get(
+     *     path="/teams/{teamId}/matches",
+     *     @SWG\Parameter(
+     *         in="path",
+     *         name="teamId",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @SWG\Schema(type="array", ref="#/definitions/Match")
+     *     )
+     * )
+     */
   public function get_matches_for_team(WP_REST_Request $request) {
     $db = new DB\Api();
     $items = $db->getMatchesForTeam($request->get_param('id'));
@@ -67,6 +111,23 @@ class Teams extends Controller {
     return $matchesEndpoint->getResponse($request, $items);
   }
 
+    /**
+     * @SWG\Get(
+     *     path="/teams/{teamId}/info",
+     *     @SWG\Parameter(
+     *         in="path",
+     *         name="teamId",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @SWG\Schema(type="array", ref="#/definitions/Property")
+     *     )
+     * )
+     */
   public function get_info_for_team(WP_REST_Request $request) {
     $db = new DB\Api();
     $items = $db->getTeamProperties($request->get_param('id'));

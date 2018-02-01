@@ -67,7 +67,8 @@ class EventListener {
     $headers = array(
       'From: Ligaleitung <ligaleitung@kickerligakoeln.de>',
       'Reply-To: ligaleitung@kickerligakoeln.de',
-      'Content-type: text/html'
+      'MIME-Version: 1.0',
+      'Content-type: text/html; charset=utf-8'
     );
     if ($cc != null) {
       $headers[] = 'Cc: ' . $cc;

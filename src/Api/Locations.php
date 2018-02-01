@@ -39,18 +39,62 @@ class Locations extends Controller {
     return 'locations';
   }
 
+    /**
+     * @SWG\Get(
+     *     path="/locations",
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @SWG\Schema(type="array", ref="#/definitions/Location")
+     *     )
+     * )
+     */
   public function get_locations(WP_REST_Request $request) {
     $db = new DB\Api();
     $items = $db->getLocations();
     return $this->getResponse($request, $items);
   }
 
+    /**
+     * @SWG\Get(
+     *     path="/locations/{locationId}",
+     *     @SWG\Parameter(
+     *         in="path",
+     *         name="locationId",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @SWG\Schema(ref="#/definitions/Location")
+     *     )
+     * )
+     */
   public function get_location(WP_REST_Request $request) {
     $db = new DB\Api();
     $items = array($db->getLocation($request->get_param('id')));
     return $this->getResponse($request, $items);
   }
 
+    /**
+     * @SWG\Get(
+     *     path="/locations/{locationId}/teams",
+     *     @SWG\Parameter(
+     *         in="path",
+     *         name="locationId",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @SWG\Schema(type="array", ref="#/definitions/Team")
+     *     )
+     * )
+     */
   public function get_teams_for_location(WP_REST_Request $request) {
     $db = new DB\Api();
     $items = $db->getTeamsForLocation($request->get_param('id'));

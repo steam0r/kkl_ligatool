@@ -60,24 +60,86 @@ class Matches extends Controller {
     return 'matches';
   }
 
+    /**
+     * @SWG\Get(
+     *     path="/matches",
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @SWG\Schema(type="array", ref="#/definitions/Match")
+     *     )
+     * )
+     */
   public function get_matches(WP_REST_Request $request) {
     $db = new DB\Api();
     $items = $db->getMatches();
     return $this->getResponse($request, $items);
   }
 
+    /**
+     * @SWG\Get(
+     *     path="/matches/{matchId}",
+     *     @SWG\Parameter(
+     *         in="path",
+     *         name="matchId",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @SWG\Schema(ref="#/definitions/Match")
+     *     )
+     * )
+     */
   public function get_match(WP_REST_Request $request) {
     $db = new DB\Api();
     $items = array($db->getMatch($request->get_param('id')));
     return $this->getResponse($request, $items);
   }
 
+
+    /**
+     * @SWG\Get(
+     *     path="/matches/{matchId}/properties",
+     *     @SWG\Parameter(
+     *         in="path",
+     *         name="matchId",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @SWG\Schema(type="array", ref="#/definitions/Property")
+     *     )
+     * )
+     */
   public function get_properties_for_match(WP_REST_Request $request) {
     $db = new DB\Api();
     $items = $db->getMatchProperties($request->get_param('id'));
     return $this->getResponse($request, $items);
   }
 
+    /**
+     * @SWG\Get(
+     *     path="/matches/{matchId}/info",
+     *     @SWG\Parameter(
+     *         in="path",
+     *         name="matchId",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @SWG\Schema(type="array", ref="#/definitions/Property")
+     *     )
+     * )
+     */
   public function get_info_for_match(WP_REST_Request $request) {
     $db = new DB\Api();
     $items = array($db->getFullMatchInfo($request->get_param('id')));

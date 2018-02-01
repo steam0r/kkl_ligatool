@@ -39,18 +39,62 @@ class Admins extends Controller {
     return 'admins';
   }
 
+    /**
+     * @SWG\Get(
+     *     path="/admins",
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @SWG\Schema(type="array", ref="#/definitions/Player")
+     *     )
+     * )
+     */
   public function get_admins(WP_REST_Request $request) {
     $db = new DB\Api();
     $items = $db->getLeagueAdmins();
     return $this->getResponse($request, $items);
   }
 
+    /**
+     * @SWG\Get(
+     *     path="/admins/{playerId}",
+     *     @SWG\Parameter(
+     *         in="path",
+     *         name="playerId",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @SWG\Schema(ref="#/definitions/Player")
+     *     )
+     * )
+     */
   public function get_admin(WP_REST_Request $request) {
     $db = new DB\Api();
     $items = array($db->getPlayer($request->get_param('id')));
     return $this->getResponse($request, $items);
   }
 
+    /**
+     * @SWG\Get(
+     *     path="/admins/{playerId}/info",
+     *     @SWG\Parameter(
+     *         in="path",
+     *         name="playerId",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @SWG\Schema(type="array", ref="#/definitions/Property")
+     *     )
+     * )
+     */
   public function get_info_for_admin(WP_REST_Request $request) {
     $db = new DB\Api();
     $items = $db->getPlayerProperties($request->get_param('id'));

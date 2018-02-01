@@ -66,12 +66,39 @@ class Clubs extends Controller {
     return 'clubs';
   }
 
+    /**
+     * @SWG\Get(
+     *     path="/clubs",
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @SWG\Schema(type="array", ref="#/definitions/Club")
+     *     )
+     * )
+     */
   public function get_clubs(WP_REST_Request $request) {
     $db = new DB\Api();
     $items = $db->getClubs();
     return $this->getResponse($request, $items);
   }
 
+    /**
+     * @SWG\Get(
+     *     path="/club/{clubId}",
+     *     @SWG\Parameter(
+     *         in="path",
+     *         name="clubId",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @SWG\Schema(ref="#/definitions/Club")
+     *     )
+     * )
+     */
   public function get_club(WP_REST_Request $request) {
     $items = array($this->getClubFromRequest($request));
     return $this->getResponse($request, $items);
@@ -87,6 +114,23 @@ class Clubs extends Controller {
     }
   }
 
+    /**
+     * @SWG\Get(
+     *     path="/club/{clubId}/teams",
+     *     @SWG\Parameter(
+     *         in="path",
+     *         name="clubId",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @SWG\Schema(type="array", ref="#/definitions/Team")
+     *     )
+     * )
+     */
   public function get_teams_for_club(WP_REST_Request $request) {
     $db = new DB\Api();
     $club = $this->getClubFromRequest($request);
@@ -95,6 +139,23 @@ class Clubs extends Controller {
     return $teamsEndpoint->getResponse($request, $items);
   }
 
+    /**
+     * @SWG\Get(
+     *     path="/club/{clubId}/awards",
+     *     @SWG\Parameter(
+     *         in="path",
+     *         name="clubId",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @SWG\Schema(type="array", ref="#/definitions/Award")
+     *     )
+     * )
+     */
   public function get_awards_for_club(WP_REST_Request $request) {
     $db = new DB\Api();
     $club = $this->getClubFromRequest($request);
@@ -102,6 +163,23 @@ class Clubs extends Controller {
     return $this->getResponse($request, $items);
   }
 
+    /**
+     * @SWG\Get(
+     *     path="/club/{clubId}/currentteam",
+     *     @SWG\Parameter(
+     *         in="path",
+     *         name="clubId",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @SWG\Schema(ref="#/definitions/Team")
+     *     )
+     * )
+     */
   public function get_current_team_for_club(WP_REST_Request $request) {
     $db = new DB\Api();
     $club = $this->getClubFromRequest($request);
@@ -110,6 +188,23 @@ class Clubs extends Controller {
     return $teamsEndpoint->getResponse($request, $items);
   }
 
+    /**
+     * @SWG\Get(
+     *     path="/club/{clubId}/info",
+     *     @SWG\Parameter(
+     *         in="path",
+     *         name="clubId",
+     *         required=true,
+     *         type="integer",
+     *         format="int64"
+     *     ),
+     *     @SWG\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @SWG\Schema(type="array", ref="#/definitions/Property")
+     *     )
+     * )
+     */
   public function get_info_for_club(WP_REST_Request $request) {
     $db = new DB\Api();
     $club = $this->getClubFromRequest($request);

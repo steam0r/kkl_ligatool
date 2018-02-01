@@ -10,9 +10,14 @@ use WP_REST_Request;
 use WP_REST_Response;
 
 /**
- * @SWG\Info(
- *     title="My First API",
- *     version="0.1"
+ * @SWG\Swagger(
+ *   schemes={"http"},
+ *   host="www.kickerligakoeln.de",
+ *   basePath="/wp-json/kkl/v1",
+ *   @SWG\Info(
+ *     title="RESTful API für die Kölner Kickerliga",
+ *     version="1.0.0"
+ *   )
  * )
  */
 abstract class Controller extends WP_REST_Controller {

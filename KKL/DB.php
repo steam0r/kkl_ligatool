@@ -589,7 +589,7 @@ abstract class KKL_DB {
                 $ranking[] = $new_score;
               }
             }
-          } else if ($original_size == (i + 1)) {
+          } else if ($original_size == ($i + 1)) {
             // last element, add scores here
             foreach ($teams as $team) {
               $has_score = false;

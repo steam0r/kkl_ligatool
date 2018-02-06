@@ -206,9 +206,12 @@ abstract class KKL_Api_Controller extends WP_REST_Controller {
   }
 
   private function toCamelCase($string) {
-    $str = str_replace('_', '', ucwords($string, '_'));
-    $str = lcfirst($str);
-    return $str;
+    if('_embedded' != $string && '_links' != $string) {
+        $str = str_replace('_', '', ucwords($string, '_'));
+        $str = lcfirst($str);
+        return $str;
+    }
+    return $string;
   }
 
   private function replaceKeys($item) {

@@ -241,6 +241,17 @@ class KKL_Api_Seasons extends KKL_Api_Controller {
     $db = new KKL_DB_Api();
     $gameDay = $db->getCurrentGameDayForSeason($seasonId);
     $items = $db->getRankingForLeagueAndSeasonAndGameDay(null, $seasonId, $gameDay->id);
+    $url = $this->getFullBaseUrl() . '/ranking';
+    $teamEndpoint = new KKL_Api_Teams();
+    foreach ($items as $item) {
+        $item->_embedded = new stdClass();
+        $item->_embedded->team = $item->team;
+        unset($item->_embedded->team->properties);
+        unset($item->team);
+        $item->_links = array();
+        $item->_links['team'] = array('href' => $teamEndpoint->getFullBaseUrl() . '/' . $item->teamId, 'embeddable' => true);
+        $item->_links['self'] = array('href' => $url);
+    }
     return $this->getResponse($request, $items, true);
   }
 

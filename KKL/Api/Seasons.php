@@ -91,6 +91,15 @@ class KKL_Api_Seasons extends KKL_Api_Controller {
         ),
       )
     ));
+      register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/liveranking', array(
+              'methods' => WP_REST_Server::READABLE,
+              'callback' => array($this, 'get_live_ranking_for_season'),
+              'args' => array(
+                      'context' => array(
+                              'default' => 'view',
+                      ),
+              )
+      ));
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/info', array(
       'methods' => WP_REST_Server::READABLE,
       'callback' => array($this, 'get_info_for_season'),
@@ -254,5 +263,24 @@ class KKL_Api_Seasons extends KKL_Api_Controller {
     }
     return $this->getResponse($request, $items, true);
   }
+
+    public function get_live_ranking_for_season(WP_REST_Request $request) {
+        $seasonId = $request->get_param('id');
+        $db = new KKL_DB_Api();
+        $gameDay = $db->getCurrentGameDayForSeason($seasonId);
+        $items = $db->getRankingForLeagueAndSeasonAndGameDay(null, $seasonId, $gameDay->id, true);
+        $url = $this->getFullBaseUrl() . '/ranking';
+        $teamEndpoint = new KKL_Api_Teams();
+        foreach ($items as $item) {
+            $item->_embedded = new stdClass();
+            $item->_embedded->team = $item->team;
+            unset($item->_embedded->team->properties);
+            unset($item->team);
+            $item->_links = array();
+            $item->_links['team'] = array('href' => $teamEndpoint->getFullBaseUrl() . '/' . $item->teamId, 'embeddable' => true);
+            $item->_links['self'] = array('href' => $url);
+        }
+        return $this->getResponse($request, $items, true);
+    }
 
 }

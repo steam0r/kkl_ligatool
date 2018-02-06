@@ -26,7 +26,7 @@ class KKL_DB_Api extends KKL_DB {
     return $this->getDb()->get_results($sql);
   }
 
-    public function getRankingForLeagueAndSeasonAndGameDay($leagueId, $seasonId, $dayNumber) {
+    public function getRankingForLeagueAndSeasonAndGameDay($leagueId, $seasonId, $dayNumber, $live = false) {
         $sql = "SELECT " .
                 "team_scores.team_id, " .
                 "sum(team_scores.score) as score, " .
@@ -49,6 +49,10 @@ class KKL_DB_Api extends KKL_DB {
                 "ORDER BY score DESC, gameDiff DESC";
 
         $ranking = $this->getDb()->get_results($sql);
+
+        if($live) {
+            $ranking = $this->addLiveScores($ranking, $leagueId, $seasonId, $dayNumber);
+        }
 
         $original_size = count($ranking);
         $teams = $this->getTeamsForSeason($seasonId);
@@ -154,6 +158,136 @@ class KKL_DB_Api extends KKL_DB {
 
         return $ranking;
 
+    }
+
+    public function getScoresForTeamAndMatch($match, $team) {
+
+        $day = $this->getGameDay($match->game_day_id);
+
+        $sql = "SELECT ".
+                "* ".
+                "FROM ".
+                "team_scores  ".
+                "WHERE gameDay_id ='".esc_sql($day->id)."' ".
+                "AND team_id = '".esc_sql($team->id)."';";
+
+        $score = $this->getDb()->get_row($sql);
+        if ($score == null) {
+            $score = new stdClass;
+            $score->team_id = $team->id;
+            $score->gameDay_id = $day->id;
+            $score->final = false;
+        }else{
+            $score->final = true;
+        }
+
+        $score->win = 0;
+        $score->draw = 0;
+        $score->loss = 0;
+        $score->gamesAgainst = 0;
+        $score->gamesFor = 0;
+        $score->goalsAgainst = 0;
+        $score->goalsFor = 0;
+        $score->score = 0;
+
+        if ($match->home_team == $team->id) {
+            $score->goalsFor = $this->getGoalsForTeam($match, $match->home_team);
+            $score->goalsAgainst = $this->getGoalsForTeam($match, $match->away_team);
+            $score->gamesFor = $match->score_home;
+            $score->gamesAgainst = $match->score_away;
+            if ($match->score_home > $match->score_away) {
+                $score->score = $this->getScore("win");
+                $score->win = 1;
+            } elseif ($match->score_home < $match->score_away) {
+                $score->score = $this->getScore("loss");
+                $score->loss = 1;
+            } else {
+                $score->score = $this->getScore("draw");
+                $score->draw = 1;
+            }
+        }
+
+        if ($match->away_team == $team->id) {
+            $score->goalsFor = $this->getGoalsForTeam($match, $match->away_team);
+            $score->goalsAgainst = $this->getGoalsForTeam($match, $match->home_team);
+            $score->gamesFor = $match->score_away;
+            $score->gamesAgainst = $match->score_home;
+            if ($match->score_home > $match->score_away) {
+                $score->score = $this->getScore("loss");
+                $score->loss = 1;
+            } elseif ($match->score_home < $match->score_away) {
+                $score->score = $this->getScore("win");
+                $score->win = 1;
+            } else {
+                $score->score = $this->getScore("draw");
+                $score->draw = 1;
+            }
+        }
+
+        return $score;
+    }
+
+
+    private function addLiveScores($ranking, $leagueId, $seasonId, $dayNumber) {
+      $day = $this->getGameDay($dayNumber);
+      $prevDay = $this->getPreviousGameDay($day);
+      $matches = $this->getMatchesByGameDay($day->id);
+      $scores = array();
+      foreach ($matches as $match) {
+          $home = $this->getTeam($match->home_team);
+          $away = $this->getTeam($match->away_team);
+          $scores[$match->home_team] = $this->getScoresForTeamAndMatch($match, $home);
+          $scores[$match->away_team] = $this->getScoresForTeamAndMatch($match, $away);
+      }
+      foreach ($scores as $teamId => $score) {
+          if(!$score->final && !($score->goalsFor == 0 && $score->goalsAgainst == 0)) {
+              $scorePlus = 0;
+              if($score->draw) {
+                  $scorePlus = 1;
+              }elseif ($score->win){
+                  $scorePlus = 2;
+              }
+            $rank = new stdClass();
+            $rank->team_id = $teamId;
+            $rank->running = true;
+              if($prevDay) {
+                  $prevScore = $this->getTeamScoreForGameDay($teamId, $prevDay);
+                  $rank->score = $prevScore->score + $scorePlus;
+                  $rank->wins = $prevScore->score + $score->win;
+                  $rank->losses = $prevScore->score + $score->loss;
+                  $rank->draws = $prevScore->score + $score->draw;
+                  $rank->goalsFor = $prevScore->score + $score->goalsFor;
+                  $rank->goalsAgainst = $prevScore->score + $score->goalsAgainst;
+                  $rank->goalDiff = $prevScore->score + ($score->goalsFor - $score->goalsAgainst);
+                  $rank->gamesFor = $prevScore->score + $score->gamesFor;
+                  $rank->gamesAgainst = $prevScore->score + $score->gamesAgainst;
+                  $rank->gameDiff = $prevScore->score + ($score->gamesFor - $score->gamesAgainst);
+              }else{
+                  $rank->score = $scorePlus;
+                  $rank->wins = $score->win;
+                  $rank->losses = $score->loss;
+                  $rank->draws = $score->draw;
+                  $rank->goalsFor = $score->goalsFor;
+                  $rank->goalsAgainst = $score->goalsAgainst;
+                  $rank->goalDiff = ($score->goalsFor - $score->goalsAgainst);
+                  $rank->gamesFor = $score->gamesFor;
+                  $rank->gamesAgainst = $score->gamesAgainst;
+                  $rank->gameDiff = ($score->gamesFor - $score->gamesAgainst);
+              }
+              $ranking[] = $rank;
+          }
+      }
+      uasort($ranking, function($first, $second) {
+          if($first->score == $second->score) {
+              if($first->gameDiff == $second->gameDiff) {
+                  return 0;
+              }
+              return ($first->gameDiff > $second->gameDiff) ? -1 : 1;
+          }
+          return ($first->score > $second->score) ? -1 : 1;
+      });
+
+      return $ranking;
     }
 
 }

@@ -1,6 +1,6 @@
 {
   "name": "kkl/ligatool",
-  "version": "2.0.1-1",
+  "version": "v2.0.0",
   "type": "wordpress-plugin",
   "description": "Tool to manage the Kölner Kickerliga",
   "keywords": [
@@ -38,9 +38,11 @@
           "reference": "v61"
         },
         "autoload": {
-          "classmap": [
-            "."
-          ]
+          "psr-4": {
+            "KKL\\Ligatool\\": [
+              "."
+            ]
+          }
         }
       }
     }

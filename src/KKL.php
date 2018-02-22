@@ -2,6 +2,8 @@
 
 namespace KKL\Ligatool;
 
+use scbLoad4;
+
 class KKL {
 
   public static $context = array();
@@ -120,7 +122,7 @@ class KKL {
     Tasks\Service::init();
 
     if (is_admin()) {
-      scb_init(function () {
+      scbLoad4::init(function () {
         $options = array();
         new Backend\LeagueAdminPage(__FILE__, $options);
         new Backend\ClubAdminPage(__FILE__, $options);
@@ -136,7 +138,7 @@ class KKL {
     }
 
     add_action('plugins_loaded', function () {
-      load_plugin_textdomain('kkl-ligatool', false, dirname(plugin_basename(__FILE__)) . '/../lang/');
+      load_plugin_textdomain('kkl-ligatool', false, dirname(plugin_basename(__FILE__)).'/../lang/');
     });
   }
 

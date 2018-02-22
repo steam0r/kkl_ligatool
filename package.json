@@ -1,12 +1,12 @@
 {
   "name": "kkl_ligatool",
-  "version": "2.0.0-rc.1",
+  "version": "2.0.0-rc.3",
   "license": "MIT",
   "devDependencies": {
     "grunt": "1.0.2",
     "grunt-cli": "1.2.0",
     "grunt-composer": "0.4.5",
-    "grunt-release": "0.14.0"
+    "grunt-release-it": "1.0.1"
   },
   "engines": {
     "yarn": ">= 1.0.0"

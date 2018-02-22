@@ -18,11 +18,30 @@
       "KKL\\Ligatool\\": ["src/"]
     }
   },
+  "repositories": [
+    {
+      "type": "package",
+      "package": {
+        "name": "scribu/scb-framework",
+        "version": "v61",
+        "dist": {
+          "type": "zip",
+          "url": "https://codeload.github.com/scribu/wp-scb-framework/zip/r61",
+          "reference": "v61"
+        },
+        "autoload": {
+          "classmap": [
+            "."
+          ]
+        }
+      }
+    }
+  ],
   "require": {
     "php": ">=5.6.32",
     "composer/installers": "v1.5.0",
     "twig/twig": "1.13.0",
-    "scribu/scb-framework": "dev-master",
+    "scribu/scb-framework": "v61",
     "tigokr/slack-api": "1.0",
     "zircote/swagger-php": "^2.0"
   }

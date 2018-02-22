@@ -1,49 +1,49 @@
 <?php
 
-namespace KKL\Ligatool;
+namespace KKL\Ligatool\Api;
 
-class Api {
+class Service {
 
   public static function init() {
     add_action('rest_api_init', function () {
       {
-        $controller = new Api\Documentation();
+        $controller = new Documentation();
         $controller->register_routes();
       }
       {
-        $controller = new Api\Clubs();
+        $controller = new Clubs();
         $controller->register_routes();
       }
       {
-        $controller = new Api\GameDays();
+        $controller = new GameDays();
         $controller->register_routes();
       }
       {
-        $controller = new Api\Leagues();
+        $controller = new Leagues();
         $controller->register_routes();
       }
       {
-        $controller = new Api\Locations();
+        $controller = new Locations();
         $controller->register_routes();
       }
       {
-        $controller = new Api\Matches();
+        $controller = new Matches();
         $controller->register_routes();
       }
       {
-        $controller = new Api\Players();
+        $controller = new Players();
         $controller->register_routes();
       }
       {
-        $controller = new Api\Seasons();
+        $controller = new Seasons();
         $controller->register_routes();
       }
       {
-        $controller = new Api\Teams();
+        $controller = new Teams();
         $controller->register_routes();
       }
       {
-        $controller = new Api\Admins();
+        $controller = new Admins();
         $controller->register_routes();
       }
     });

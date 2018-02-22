@@ -1,8 +1,10 @@
 <?php
+namespace KKL\Ligatool;
+
 $kkl = new KKL();
 
 $team = get_query_var('team');
-$context = $kkl->getContextByTeamCode($team);
+$context = $kkl->getContextByClubCode($team);
 KKL::setContext($context);
 
 /*

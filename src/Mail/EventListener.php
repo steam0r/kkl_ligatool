@@ -4,6 +4,7 @@ namespace KKL\Ligatool\Mail;
 
 use KKL\Ligatool\DB;
 use KKL\Ligatool\Events;
+use KKL\Ligatool\Template;
 
 class EventListener {
 
@@ -23,7 +24,7 @@ class EventListener {
     if ($match->location) {
       $location = $db->getLocation($match->location);
       if ($location) {
-        $text .= ", Spielort: " . $location->title;
+        $text .= ", Spielort: ".$location->title;
       }
     }
 
@@ -31,22 +32,22 @@ class EventListener {
     if (!$actor) {
       $actor = $event->getActorEmail();
     } else {
-      $actor = $actor->first_name . " " . $actor->last_name;
+      $actor = $actor->first_name." ".$actor->last_name;
     }
 
     $data = array(
-      "mail" => array(
-        "to" => array(
-          "name" => ""
+        "mail"  => array(
+            "to"    => array(
+                "name" => "",
+            ),
+            "actor" => array(
+                "name" => $actor,
+            ),
         ),
-        "actor" => array(
-          "name" => $actor
-        )
-      ),
-      "match" => array(
-        "text" => $league->name . ': ' . $home->name . ' gegen ' . $away->name,
-        "fixture" => $text
-      )
+        "match" => array(
+            "text"    => $league->name.': '.$home->name.' gegen '.$away->name,
+            "fixture" => $text,
+        ),
     );
 
     $data['mail']['to']['name'] = 'Ligaleitung';
@@ -60,18 +61,18 @@ class EventListener {
 
   private function sendMail($to, $cc, $data) {
 
-    global $kkl_twig;
+    $kkl_twig = Template\Service::getTemplateEngine();
 
-    $to = $data['mail']['to']['name'] . "<" . $to . ">";
-    $subject = '[kkl] Spieltermin ' . $data['match']['text'];
+    $to = $data['mail']['to']['name']."<".$to.">";
+    $subject = '[kkl] Spieltermin '.$data['match']['text'];
     $headers = array(
-      'From: Ligaleitung <ligaleitung@kickerligakoeln.de>',
-      'Reply-To: ligaleitung@kickerligakoeln.de',
-      'MIME-Version: 1.0',
-      'Content-type: text/html; charset=utf-8'
+        'From: Ligaleitung <ligaleitung@kickerligakoeln.de>',
+        'Reply-To: ligaleitung@kickerligakoeln.de',
+        'MIME-Version: 1.0',
+        'Content-type: text/html; charset=utf-8',
     );
     if ($cc != null) {
-      $headers[] = 'Cc: ' . $cc;
+      $headers[] = 'Cc: '.$cc;
     }
 
     $message = $kkl_twig->render('mails/new_fixture_mail.twig', $data);

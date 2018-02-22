@@ -9,10 +9,10 @@ $game_day = get_query_var('game_day');
 $KKL = new KKL();
 if ($league && $season && $game_day) {
   $context = $KKL->getContextByLeagueAndSeasonAndGameDay($league, $season, $game_day);
-} else if ($league && $season) {
-  $context = $KKL->getContextByLeagueAndSeason($league, $season, $game_day);
-} else if ($league) {
-  $context = $KKL->getContextByLeague($league, $season, $game_day);
+} elseif ($league && $season) {
+  $context = $KKL->getContextByLeagueAndSeason($league, $season);
+} elseif ($league) {
+  $context = $KKL->getContextByLeague($league);
 } else {
   $context = null;
   $overview = true;
@@ -23,8 +23,7 @@ if (isset($wp_query->query_vars['json'])) {
 
   header('Content-Type: application/json');
 
-  global $kkl_twig;
-	$db = new DB\Wordpress();
+  $db = new DB\Wordpress();
 
   $context = KKL::getContext();
   $rankings = array();
@@ -38,7 +37,7 @@ if (isset($wp_query->query_vars['json'])) {
     foreach ($ranking->ranks as $rank) {
       $team = $db->getTeam($rank->team_id);
       $club = $db->getClub($team->club_id);
-      $rank->team->link = get_site_url() . '/team/' . KKL::getLink('club', array('club' => $club->short_name));
+      $rank->team->link = get_site_url().'/team/'.KKL::getLink('club', array('club' => $club->short_name));
     }
 
     $rankings[] = $ranking;
@@ -49,10 +48,10 @@ if (isset($wp_query->query_vars['json'])) {
     foreach ($schedule->matches as $match) {
       $home_club = $db->getClub($match->home->club_id);
       $away_club = $db->getClub($match->away->club_id);
-      $match->home->link = get_site_url() . '/team/' . KKL::getLink('club', array('club' => $home_club->short_name));
-      $match->away->link = get_site_url() . '/team/' . KKL::getLink('club', array('club' => $away_club->short_name));
+      $match->home->link = get_site_url().'/team/'.KKL::getLink('club', array('club' => $home_club->short_name));
+      $match->away->link = get_site_url().'/team/'.KKL::getLink('club', array('club' => $away_club->short_name));
     }
-    $schedule->link = get_site_url() . '/spielplan/' . KKL::getLink('schedule', array('league' => $context['league']->code, 'season' => date('Y', strtotime($context['season']->start_date))));
+    $schedule->link = get_site_url().'/spielplan/'.KKL::getLink('schedule', array('league' => $context['league']->code, 'season' => date('Y', strtotime($context['season']->start_date))));
 
     $schedules[] = $schedule;
 
@@ -70,9 +69,9 @@ if (isset($wp_query->query_vars['json'])) {
       foreach ($ranking->ranks as $rank) {
         $team = $db->getTeam($rank->team_id);
         $club = $db->getClub($team->club_id);
-        $rank->team->link = get_site_url() . '/team/' . KKL::getLink('club', array('club' => $club->short_name));
+        $rank->team->link = get_site_url().'/team/'.KKL::getLink('club', array('club' => $club->short_name));
       }
-      $ranking->league->link = get_site_url() . '/spielplan/' . KKL::getLink('league', array('league' => $league->code, 'season' => date('Y', strtotime($season->start_date)), 'game_day' => $day->number));
+      $ranking->league->link = get_site_url().'/spielplan/'.KKL::getLink('league', array('league' => $league->code, 'season' => date('Y', strtotime($season->start_date)), 'game_day' => $day->number));
       $rankings[] = $ranking;
     }
     $output['rankings'] = $rankings;

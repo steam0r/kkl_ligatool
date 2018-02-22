@@ -4,6 +4,7 @@ namespace KKL\Ligatool\Widget;
 
 use KKL\Ligatool\DB;
 use KKL\Ligatool\KKL;
+use KKL\Ligatool\Template;
 use WP_Widget;
 
 add_action('widgets_init', create_function('', 'register_widget( "KKL_Widget_OtherSeasons" );'));
@@ -14,12 +15,12 @@ class OtherSeasons extends WP_Widget {
 
   public function __construct() {
 
-    global $kkl_twig;
+    $kkl_twig = Template\Service::getTemplateEngine();
 
     parent::__construct(
-      'KKL_Widget_OtherSeasons', // Base ID
-      'KKL Other Seasons', // Name
-      array('description' => __('Shows the other seasons games for the defined League', 'kkl-ligatool'),) // Args
+        'KKL_Widget_OtherSeasons', // Base ID
+        'KKL Other Seasons', // Name
+        array('description' => __('Shows the other seasons games for the defined League', 'kkl-ligatool'),) // Args
     );
 
     $this->tpl = $kkl_twig;
@@ -48,7 +49,7 @@ class OtherSeasons extends WP_Widget {
       $title = apply_filters('widget_title', $instance['title']);
 
       echo $before_widget;
-      if (!empty($title)) echo $before_title . $title . $after_title;
+      if (!empty($title)) echo $before_title.$title.$after_title;
       echo $this->tpl->render('widgets/other_seasons.twig', array('seasons' => $seasons));
       echo $after_widget;
     }

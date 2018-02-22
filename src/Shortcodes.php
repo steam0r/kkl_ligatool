@@ -8,7 +8,7 @@ class Shortcodes {
 
   public static function getClub($atts, $content, $tag) {
 
-    global $kkl_twig;
+    $kkl_twig = Template\Service::getTemplateEngine();
 
     $db = new DB\Wordpress();
 
@@ -21,7 +21,7 @@ class Shortcodes {
 
   public static function leagueOverview($attrs, $content, $tag) {
 
-    global $kkl_twig;
+    $kkl_twig = Template\Service::getTemplateEngine();
     $db = new DB\Wordpress();
 
     $context = KKL::getContext();
@@ -38,7 +38,7 @@ class Shortcodes {
             $team->logo = "";
           }
         } else {
-          $team->logo = "/images/team/" . $team->logo;
+          $team->logo = "/images/team/".$team->logo;
         }
         // HACK
         $team->link = KKL::getLink('club', array('club' => $club->short_name));
@@ -46,23 +46,23 @@ class Shortcodes {
 
       $day = $db->getGameDay($league->season->current_game_day);
       $league->link = KKL::getLink('league', array(
-        'league' => $league->code,
-        'season' => date('Y', strtotime($league->season->start_date)),
-        'game_day' => $day->number
+          'league'   => $league->code,
+          'season'   => date('Y', strtotime($league->season->start_date)),
+          'game_day' => $day->number,
       ));
       $leagues[] = $league;
     }
 
     return $kkl_twig->render('shortcodes/league_overview.twig', array(
-      'context' => $context,
-      'leagues' => $leagues,
-      'all_leagues' => $all_leagues
+        'context'     => $context,
+        'leagues'     => $leagues,
+        'all_leagues' => $all_leagues,
     ));
   }
 
   public static function leagueTable($atts, $content, $tag) {
 
-    global $kkl_twig;
+    $kkl_twig = Template\Service::getTemplateEngine();
     $db = new DB\Wordpress();
 
     $context = KKL::getContext();
@@ -84,7 +84,7 @@ class Shortcodes {
 
   public static function tableOverview($atts, $content, $tag) {
 
-    global $kkl_twig;
+    $kkl_twig = Template\Service::getTemplateEngine();
     $db = new DB\Wordpress();
 
     $context = KKL::getContext();
@@ -110,7 +110,7 @@ class Shortcodes {
 
   public static function gameDayTable($atts, $content, $tag) {
 
-    global $kkl_twig;
+    $kkl_twig = Template\Service::getTemplateEngine();
     $db = new DB\Wordpress();
 
     $context = KKL::getContext();
@@ -131,7 +131,7 @@ class Shortcodes {
 
   public static function gameDayOverview($atts, $content, $tag) {
 
-    global $kkl_twig;
+    $kkl_twig = Template\Service::getTemplateEngine();
     $db = new DB\Wordpress();
 
     $data = $db->getAllUpcomingGames();
@@ -149,7 +149,7 @@ class Shortcodes {
 
   public static function seasonSchedule($atts, $content, $tag) {
 
-    global $kkl_twig;
+    $kkl_twig = Template\Service::getTemplateEngine();
     $db = new DB\Wordpress();
 
     $activeTeam = $_GET['team'];
@@ -170,7 +170,7 @@ class Shortcodes {
 
   public static function clubDetail($atts, $content, $tag) {
 
-    global $kkl_twig;
+    $kkl_twig = Template\Service::getTemplateEngine();
 
     $db = new DB\Wordpress();
     $context = KKL::getContext();
@@ -203,13 +203,14 @@ class Shortcodes {
 
     $currentTeam = $db->getCurrentTeamForClub($contextClub->id);
     $currentLocation = $db->getLocation($currentTeam->properties['location']);
+
     return $kkl_twig->render('shortcodes/club_detail.twig', array('context' => $context, 'club' => $contextClub, 'teams' => $teams, 'current_location' => $currentLocation));
 
   }
 
 
   public static function gameDayPager($atts, $content, $tag) {
-    global $kkl_twig;
+    $kkl_twig = Template\Service::getTemplateEngine();
 
     $db = new DB\Wordpress();
     $context = KKL::getContext();
@@ -236,7 +237,7 @@ class Shortcodes {
   }
 
   public static function contactList($atts, $content, $tag) {
-    global $kkl_twig;
+    $kkl_twig = Template\Service::getTemplateEngine();
 
     $db = new DB\Wordpress();
     $context = KKL::getContext();
@@ -251,14 +252,14 @@ class Shortcodes {
     $players = array_merge($leagueadmins, $captains, $vicecaptains);
 
     usort($players, array(
-      __CLASS__,
-      "cmp"
+        __CLASS__,
+        "cmp",
     ));
 
     return $kkl_twig->render('shortcodes/contact_list.twig', array(
-      'context' => $context,
-      'leagues' => $leagues,
-      'players' => $players
+        'context' => $context,
+        'leagues' => $leagues,
+        'players' => $players,
     ));
 
   }

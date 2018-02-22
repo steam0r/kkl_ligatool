@@ -4,6 +4,7 @@ namespace KKL\Ligatool\Widget;
 
 use KKL\Ligatool\DB;
 use KKL\Ligatool\KKL;
+use KKL\Ligatool\Template;
 use WP_Widget;
 
 add_action('widgets_init', create_function('', 'register_widget( "KKL_Widget_OtherLeagues" );'));
@@ -14,12 +15,12 @@ class OtherLeagues extends WP_Widget {
 
   public function __construct() {
 
-    global $kkl_twig;
+    $kkl_twig = Template\Service::getTemplateEngine();
 
     parent::__construct(
-      'KKL_Widget_OtherLeagues', // Base ID
-      'KKL Inactive Leagues', // Name
-      array('description' => __('Shows the inactive leagues', 'kkl-ligatool'),) // Args
+        'KKL_Widget_OtherLeagues', // Base ID
+        'KKL Inactive Leagues', // Name
+        array('description' => __('Shows the inactive leagues', 'kkl-ligatool'),) // Args
     );
 
     $this->tpl = $kkl_twig;
@@ -40,7 +41,7 @@ class OtherLeagues extends WP_Widget {
     if (!empty($leagues)) {
       $title = apply_filters('widget_title', $instance['title']);
       echo $before_widget;
-      if (!empty($title)) echo $before_title . $title . $after_title;
+      if (!empty($title)) echo $before_title.$title.$after_title;
       echo $this->tpl->render('widgets/other_leagues.twig', array('leagues' => $leagues));
       echo $after_widget;
     }

@@ -1,7 +1,6 @@
 <?php
 namespace KKL\Ligatool;
 
-$KKL = new KKL();
 /*
 Template Name: Liga Übersicht (Teams)
 
@@ -10,9 +9,7 @@ if (isset($wp_query->query_vars['json'])) {
 
   header('Content-Type: application/json');
 
-  global $kkl_twig;
   $db = new DB\Wordpress();
-  $context = KKL::getContext();
   $all_leagues = $db->getActiveLeagues();
   $leagues = array();
   foreach ($all_leagues as $league) {
@@ -26,7 +23,7 @@ if (isset($wp_query->query_vars['json'])) {
           $team->logo = "https://www.kickerligakoeln.de/wp-content/themes/kkl_2/img/kkl-logo_172x172.png";
         }
       } else {
-        $team->logo = "/images/team/" . $team->logo;
+        $team->logo = "/images/team/".$team->logo;
       }
       // HACK
       $team->link = KKL::getLink('club', array('club' => $club->short_name));

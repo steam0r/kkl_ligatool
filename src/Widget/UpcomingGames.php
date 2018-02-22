@@ -4,6 +4,7 @@ namespace KKL\Ligatool\Widget;
 
 use KKL\Ligatool\DB;
 use KKL\Ligatool\KKL;
+use KKL\Ligatool\Template;
 use WP_Widget;
 
 add_action('widgets_init', create_function('', 'register_widget( "KKL_Widget_UpcomingGames" );'));
@@ -14,7 +15,7 @@ class UpcomingGames extends WP_Widget {
 
   public function __construct() {
 
-    global $kkl_twig;
+    $kkl_twig = Template\Service::getTemplateEngine();
 
     parent::__construct(
       'KKL_Widget_UpcomingGames', // Base ID

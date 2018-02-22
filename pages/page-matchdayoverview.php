@@ -1,9 +1,7 @@
 <?php
 namespace KKL\Ligatool;
 
-$KKL = new KKL();
 $db = new DB\Wordpress();
-
 $currentGameDay = $db->getCurrentGameDayForLeague(1);
 /*
 Template Name: Spieltag Übersicht
@@ -33,7 +31,8 @@ Template Name: Spieltag Übersicht
                       </div><!-- .entry-content -->
                   </article><!-- #post-## -->
 
-              <?php endwhile; // end of the loop. ?>
+              <?php endwhile; // end of the loop.
+              ?>
             </div>
 
         </div>

@@ -1,6 +1,6 @@
 <?php
+namespace KKL\Ligatool;
 
-$overview = false;
 $league = get_query_var('league');
 $season = get_query_var('season');
 $game_day = get_query_var('game_day');
@@ -8,12 +8,10 @@ $game_day = get_query_var('game_day');
 $KKL = new KKL();
 if ($league && $season && $game_day) {
   $context = $KKL->getContextByLeagueAndSeasonAndGameDay($league, $season, $game_day);
-} else if ($league && $season) {
-  $context = $KKL->getContextByLeagueAndSeason($league, $season, $game_day);
-} else if ($league) {
-  $context = $KKL->getContextByLeague($league, $season, $game_day);
-} else {
-  $overview = true;
+} elseif ($league && $season) {
+  $context = $KKL->getContextByLeagueAndSeason($league, $season);
+} elseif ($league) {
+  $context = $KKL->getContextByLeague($league);
 }
 $KKL->setContext($context);
 

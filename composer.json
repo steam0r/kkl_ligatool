@@ -1,9 +1,15 @@
 {
   "name": "kkl/ligatool",
-  "version": "2.0.0",
+  "version": "2.0.1-1",
   "type": "wordpress-plugin",
   "description": "Tool to manage the Kölner Kickerliga",
-  "keywords": ["wordpress", "plugin", "foosball", "sports", "leagues"],
+  "keywords": [
+    "wordpress",
+    "plugin",
+    "foosball",
+    "sports",
+    "leagues"
+  ],
   "homepage": "https://www.kickerligakoeln.de",
   "authors": [
     {
@@ -15,7 +21,9 @@
   ],
   "autoload": {
     "psr-4": {
-      "KKL\\Ligatool\\": ["src/"]
+      "KKL\\Ligatool\\": [
+        "src/"
+      ]
     }
   },
   "repositories": [

@@ -2,22 +2,10 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
         pkg: grunt.file.readJSON("package.json"),
-
-        "release-it": {
+        release: {
             options: {
-                pkgFiles: ['package.json'],
-                src: {
-                    commitMessage: 'Release %s',
-                    tagName: '%s',
-                    tagAnnotation: 'Release %s'
-                },
-                npm: {
-                    publish: false
-                },
-                github: {
-                    release: true,
-                    assets: "vendor"
-                }
+                additionalFiles: ['composer.json'],
+                npm: false
             }
         }
     });
@@ -29,5 +17,5 @@ module.exports = function (grunt) {
 
     // needed modules
     grunt.loadNpmTasks('grunt-composer');
-    grunt.loadNpmTasks('grunt-release-it');
+    grunt.loadNpmTasks('grunt-release');
 }

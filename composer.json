@@ -1,6 +1,10 @@
 {
   "name": "kkl/ligatool",
+  "version": "2.0.0",
+  "type": "wordpress-plugin",
   "description": "Tool to manage the Kölner Kickerliga",
+  "keywords": ["wordpress", "plugin", "foosball", "sports", "leagues"],
+  "homepage": "https://www.kickerligakoeln.de",
   "authors": [
     {
       "name": "Stephan Maihofer"
@@ -15,6 +19,8 @@
     }
   },
   "require": {
+    "php": ">=5.6.32",
+    "composer/installers": "v1.5.0",
     "twig/twig": "1.13.0",
     "scribu/scb-framework": "dev-master",
     "tigokr/slack-api": "1.0",

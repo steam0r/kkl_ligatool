@@ -67,7 +67,7 @@ class Updater {
       }
 
       // Plugin object
-      $obj = new stdClass();
+      $obj = new \stdClass();
       $obj->slug = $this->slug;
       $obj->new_version = $this->githubAPIResult->tag_name;
       $obj->url = $this->pluginData["PluginURI"];

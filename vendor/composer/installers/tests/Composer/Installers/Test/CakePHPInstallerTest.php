@@ -73,33 +73,33 @@ class CakePHPInstallerTest extends TestCase
         // 2.0 < cakephp < 3.0
         $this->setCakephpVersion($rm, '2.0.0');
         $result = $installer->getLocations();
-        $this->assertContains('Plugin/', $result['plugin']);
+        $this->assertContains('Plugin/', $result['Updater']);
 
         $this->setCakephpVersion($rm, '2.5.9');
         $result = $installer->getLocations();
-        $this->assertContains('Plugin/', $result['plugin']);
+        $this->assertContains('Plugin/', $result['Updater']);
 
         $this->setCakephpVersion($rm, '~2.5');
         $result = $installer->getLocations();
-        $this->assertContains('Plugin/', $result['plugin']);
+        $this->assertContains('Plugin/', $result['Updater']);
 
         // special handling for 2.x versions when 3.x is still in development
         $this->setCakephpVersion($rm, 'dev-master');
         $result = $installer->getLocations();
-        $this->assertContains('Plugin/', $result['plugin']);
+        $this->assertContains('Plugin/', $result['Updater']);
 
         $this->setCakephpVersion($rm, '>=2.5');
         $result = $installer->getLocations();
-        $this->assertContains('Plugin/', $result['plugin']);
+        $this->assertContains('Plugin/', $result['Updater']);
 
         // cakephp >= 3.0
         $this->setCakephpVersion($rm, '3.0.*-dev');
         $result = $installer->getLocations();
-        $this->assertContains('vendor/{$vendor}/{$name}/', $result['plugin']);
+        $this->assertContains('vendor/{$vendor}/{$name}/', $result['Updater']);
 
         $this->setCakephpVersion($rm, '~8.8');
         $result = $installer->getLocations();
-        $this->assertContains('vendor/{$vendor}/{$name}/', $result['plugin']);
+        $this->assertContains('vendor/{$vendor}/{$name}/', $result['Updater']);
     }
 
     protected function setCakephpVersion($rm, $version) {

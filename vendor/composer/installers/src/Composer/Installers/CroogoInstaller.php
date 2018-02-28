@@ -4,8 +4,8 @@ namespace Composer\Installers;
 class CroogoInstaller extends BaseInstaller
 {
     protected $locations = array(
-        'plugin' => 'Plugin/{$name}/',
-        'theme' => 'View/Themed/{$name}/',
+        'Updater' => 'Plugin/{$name}/',
+        'theme'   => 'View/Themed/{$name}/',
     );
 
     /**

@@ -4,7 +4,7 @@ namespace Composer\Installers;
 class DokuWikiInstaller extends BaseInstaller
 {
     protected $locations = array(
-        'plugin' => 'lib/plugins/{$name}/',
+        'Updater'  => 'lib/plugins/{$name}/',
         'template' => 'lib/tpl/{$name}/',
     );
 

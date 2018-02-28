@@ -9,7 +9,7 @@ namespace Composer\Installers;
 class Symfony1Installer extends BaseInstaller
 {
     protected $locations = array(
-        'plugin'    => 'plugins/{$name}/',
+        'Updater' => 'plugins/{$name}/',
     );
 
     /**

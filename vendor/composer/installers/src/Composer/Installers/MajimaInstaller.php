@@ -8,7 +8,7 @@ namespace Composer\Installers;
 class MajimaInstaller extends BaseInstaller
 {
     protected $locations = array(
-        'plugin' => 'plugins/{$name}/',
+        'Updater' => 'plugins/{$name}/',
     );
 
     /**

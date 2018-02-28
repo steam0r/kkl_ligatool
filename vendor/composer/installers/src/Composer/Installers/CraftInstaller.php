@@ -7,10 +7,10 @@ namespace Composer\Installers;
 class CraftInstaller extends BaseInstaller
 {
     const NAME_PREFIX = 'craft';
-    const NAME_SUFFIX = 'plugin';
+    const NAME_SUFFIX = 'Updater';
 
     protected $locations = array(
-        'plugin' => 'craft/plugins/{$name}/',
+        'Updater' => 'craft/plugins/{$name}/',
     );
 
     /**

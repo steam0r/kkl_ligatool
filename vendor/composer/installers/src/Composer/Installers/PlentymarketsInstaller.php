@@ -4,7 +4,7 @@ namespace Composer\Installers;
 class PlentymarketsInstaller extends BaseInstaller
 {
     protected $locations = array(
-        'plugin'   => '{$name}/'
+        'Updater' => '{$name}/'
     );
 
     /**

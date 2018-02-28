@@ -6,7 +6,7 @@ use Composer\DependencyResolver\Pool;
 class CakePHPInstaller extends BaseInstaller
 {
     protected $locations = array(
-        'plugin' => 'Plugin/{$name}/',
+        'Updater' => 'Plugin/{$name}/',
     );
 
     /**
@@ -35,7 +35,7 @@ class CakePHPInstaller extends BaseInstaller
     public function getLocations()
     {
         if ($this->matchesCakeVersion('>=', '3.0.0')) {
-            $this->locations['plugin'] =  $this->composer->getConfig()->get('vendor-dir') . '/{$vendor}/{$name}/';
+            $this->locations['Updater'] =  $this->composer->getConfig()->get('vendor-dir') . '/{$vendor}/{$name}/';
         }
         return $this->locations;
     }

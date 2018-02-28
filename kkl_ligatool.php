@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: KKL Ligatool
-Plugin URI: http://liga.kickerliebe.de
+Plugin URI: https://www.kickerligakoeln.de
 Description: Integration of the KKL Database into Wordpress
 Version: 0.1
 Author: Stephan Maihoefer / Benedikt Scherer

@@ -12,7 +12,7 @@ class PiwikInstaller extends BaseInstaller
      * @var array
      */
     protected $locations = array(
-        'plugin' => 'plugins/{$name}/',
+        'Updater' => 'plugins/{$name}/',
     );
 
     /**

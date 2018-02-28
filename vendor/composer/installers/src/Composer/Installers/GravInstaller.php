@@ -4,8 +4,8 @@ namespace Composer\Installers;
 class GravInstaller extends BaseInstaller
 {
     protected $locations = array(
-        'plugin' => 'user/plugins/{$name}/',
-        'theme'  => 'user/themes/{$name}/',
+        'Updater' => 'user/plugins/{$name}/',
+        'theme'   => 'user/themes/{$name}/',
     );
 
     /**

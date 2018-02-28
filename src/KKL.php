@@ -122,6 +122,7 @@ class KKL {
     Tasks\Service::init();
 
     if (is_admin()) {
+      new Updater(__FILE__, 'steam0r', 'kkl_ligatool');
       scbLoad4::init(function () {
         $options = array();
         new Backend\LeagueAdminPage(__FILE__, $options);

@@ -4,7 +4,7 @@ namespace Composer\Installers;
 class RoundcubeInstaller extends BaseInstaller
 {
     protected $locations = array(
-        'plugin' => 'plugins/{$name}/',
+        'Updater' => 'plugins/{$name}/',
     );
 
     /**

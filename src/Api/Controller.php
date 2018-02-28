@@ -26,19 +26,20 @@ abstract class Controller extends WP_REST_Controller {
   private $per_page = 100;
   private $offset = 0;
   private $reservedQueryParams = array(
-    'fields',
-    'order',
-    'orderby',
-    'page',
-    'per_page',
-    'offset',
-    'embed'
+      'fields',
+      'order',
+      'orderby',
+      'page',
+      'per_page',
+      'offset',
+      'embed',
   );
 
   /**
    * @param WP_REST_Request $request
-   * @param array $items
-   * @param bool $hideLinks
+   * @param array           $items
+   * @param bool            $hideLinks
+   *
    * @return WP_Error|WP_REST_Response
    */
   protected function getResponse($request, $items, $hideLinks = false) {
@@ -168,8 +169,9 @@ abstract class Controller extends WP_REST_Controller {
   /**
    * Prepare the item for the REST response
    *
-   * @param mixed $item WordPress representation of the item.
+   * @param mixed           $item    WordPress representation of the item.
    * @param WP_REST_Request $request Request object.
+   *
    * @return mixed
    */
   public function prepare_item_for_response($item, $request) {
@@ -183,13 +185,15 @@ abstract class Controller extends WP_REST_Controller {
         $camelKey = $this->toCamelCase($key);
         $newItem[$camelKey] = $this->replaceKeys($value);
       }
+
       return $newItem;
-    } else if (is_object($item)) {
+    } elseif (is_object($item)) {
       $newItem = new stdClass();
       foreach ($item as $key => $value) {
         $camelKey = $this->toCamelCase($key);
         $newItem->{$camelKey} = $this->replaceKeys($value);
       }
+
       return $newItem;
     } else {
       return $item;
@@ -197,14 +201,20 @@ abstract class Controller extends WP_REST_Controller {
   }
 
   private function toCamelCase($string) {
-    $str = str_replace('_', '', ucwords($string, '_'));
-    $str = lcfirst($str);
-    return $str;
+    if ('_embedded' != $string && '_links' != $string) {
+      $str = str_replace('_', '', ucwords($string, '_'));
+      $str = lcfirst($str);
+
+      return $str;
+    }
+
+    return $string;
   }
 
   /**
    * @param WP_REST_Request $request
-   * @param array $items
+   * @param array           $items
+   *
    * @return array
    */
   private function filterItemsByRequest($request, $items) {
@@ -223,6 +233,7 @@ abstract class Controller extends WP_REST_Controller {
         $filtredItems[$key] = $item;
       }
     }
+
     return $filtredItems;
   }
 
@@ -231,12 +242,12 @@ abstract class Controller extends WP_REST_Controller {
       return $item;
     }
     $links = array(
-      'self' => array(
-        'href' => $this->getFullBaseUrl() . '/' . $item->id
-      ),
-      'collection' => array(
-        'href' => $this->getFullBaseUrl()
-      )
+        'self'       => array(
+            'href' => $this->getFullBaseUrl().'/'.$item->id,
+        ),
+        'collection' => array(
+            'href' => $this->getFullBaseUrl(),
+        ),
     );
     foreach ($this->getLinks($item->id) as $key => $value) {
       $href = str_replace('<id>', $item->id, $value['href']);
@@ -251,11 +262,12 @@ abstract class Controller extends WP_REST_Controller {
       $href = str_replace('<propertyid>', $item->{$key}, $href);
       $embeddable = $value['embeddable'];
       $links[$key] = array(
-        'href' => $href,
-        'embeddable' => is_array($embeddable)
+          'href'       => $href,
+          'embeddable' => is_array($embeddable),
       );
     }
     $item->_links = $links;
+
     return $item;
   }
 
@@ -264,12 +276,13 @@ abstract class Controller extends WP_REST_Controller {
   }
 
   protected function getFullBaseUrlFor($basename) {
-    return get_site_url() . '/wp-json/' . $this->getNamespace() . '/' . $basename;
+    return get_site_url().'/wp-json/'.$this->getNamespace().'/'.$basename;
   }
 
   public function getNamespace() {
     $version = 1;
-    $namespace = 'kkl' . '/v' . $version;
+    $namespace = 'kkl'.'/v'.$version;
+
     return $namespace;
   }
 
@@ -307,6 +320,7 @@ abstract class Controller extends WP_REST_Controller {
     if (!empty($embeddables)) {
       $item->_embedded = $embeddables;
     }
+
     return $item;
   }
 }

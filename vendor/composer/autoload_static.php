@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitc54cb908d901dfe4d993fdb32fd841b4
+class ComposerStaticInit1ebae0664bd6d962c682a00c832642b8
 {
     public static $files = array (
         '0ccdf99b8f62f02c52cba55802e0c2e7' => __DIR__ . '/..' . '/zircote/swagger-php/src/functions.php',
@@ -104,10 +104,10 @@ class ComposerStaticInitc54cb908d901dfe4d993fdb32fd841b4
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitc54cb908d901dfe4d993fdb32fd841b4::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitc54cb908d901dfe4d993fdb32fd841b4::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitc54cb908d901dfe4d993fdb32fd841b4::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInitc54cb908d901dfe4d993fdb32fd841b4::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit1ebae0664bd6d962c682a00c832642b8::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit1ebae0664bd6d962c682a00c832642b8::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit1ebae0664bd6d962c682a00c832642b8::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit1ebae0664bd6d962c682a00c832642b8::$classMap;
 
         }, null, ClassLoader::class);
     }

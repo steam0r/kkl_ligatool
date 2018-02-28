@@ -53,6 +53,6 @@
     "twig/twig": "1.13.0",
     "scribu/scb-framework": "v61",
     "tigokr/slack-api": "1.0",
-    "zircote/swagger-php": "^2.0"
+    "zircote/swagger-php": "2.0.13"
   }
 }

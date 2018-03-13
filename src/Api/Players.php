@@ -27,6 +27,8 @@ class Players extends Controller {
    *         @SWG\Schema(type="array", ref="#/definitions/Player")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_players(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -50,6 +52,8 @@ class Players extends Controller {
    *         @SWG\Schema(ref="#/definitions/Player")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_player(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -73,6 +77,8 @@ class Players extends Controller {
    *         @SWG\Schema(ref="#/definitions/Property")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_info_for_player(WP_REST_Request $request) {
     $db = new DB\Api();

@@ -978,7 +978,7 @@ abstract class DB {
     
   }
   
-  private function getGoalsForTeam($match, $team_id) {
+  protected function getGoalsForTeam($match, $team_id) {
     
     $sql = "SELECT sum(`goals_away`) AS goals_away, sum(goals_home) AS goals_home FROM matches AS m " . "JOIN sets AS s ON s.match_id = m.id " . "JOIN games AS g ON g.set_id = s.id " . "WHERE m.id = " . esc_sql($match->id);
     

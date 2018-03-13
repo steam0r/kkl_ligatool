@@ -2,6 +2,8 @@
 
 namespace KKL\Ligatool;
 
+use stdClass;
+
 class Updater {
   
   private $slug;

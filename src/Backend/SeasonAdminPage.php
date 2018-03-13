@@ -17,7 +17,7 @@ class SeasonAdminPage extends AdminPage {
     
     $db = new DB\Wordpress();
     $leagues = $db->getLeagues();
-    $season_options = array("" => __('please_select', 'kkl-ligatool'));
+    $league_options = array();
     foreach($leagues as $league) {
       $league_options[$league->id] = $league->name;
     }

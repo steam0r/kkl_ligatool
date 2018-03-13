@@ -31,6 +31,8 @@ class Matches extends Controller {
    *         @SWG\Schema(type="array", ref="#/definitions/Match")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return WP_Error|\WP_REST_Response
    */
   public function get_matches(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -54,6 +56,8 @@ class Matches extends Controller {
    *         @SWG\Schema(ref="#/definitions/Match")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return WP_Error|\WP_REST_Response
    */
   public function get_match(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -78,6 +82,8 @@ class Matches extends Controller {
    *         @SWG\Schema(type="array", ref="#/definitions/Property")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return WP_Error|\WP_REST_Response
    */
   public function get_properties_for_match(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -101,6 +107,8 @@ class Matches extends Controller {
    *         @SWG\Schema(type="array", ref="#/definitions/Property")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return WP_Error|\WP_REST_Response
    */
   public function get_info_for_match(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -108,6 +116,10 @@ class Matches extends Controller {
     return $this->getResponse($request, $items);
   }
   
+  /**
+   * @param WP_REST_Request $request
+   * @return WP_Error|\WP_REST_Response
+   */
   public function set_match_fixture(WP_REST_Request $request) {
     $db = new DB\Api();
     $match = $db->getMatch($request->get_param('id'));

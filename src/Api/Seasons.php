@@ -40,6 +40,8 @@ class Seasons extends Controller {
    *         @SWG\Schema(type="array", ref="#/definitions/Season")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_seasons(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -64,6 +66,8 @@ class Seasons extends Controller {
    *         @SWG\Schema(ref="#/definitions/Season")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_season(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -88,6 +92,8 @@ class Seasons extends Controller {
    *         @SWG\Schema(type="array", ref="#/definitions/Team")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_teams_for_season(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -97,6 +103,10 @@ class Seasons extends Controller {
     return $teamEndpoint->getResponse($request, $items);
   }
   
+  /**
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
+   */
   public function add_teams_to_season(WP_REST_Request $request) {
     $db = new DB\Api();
     $seasonId = $request->get_param('id');
@@ -154,6 +164,8 @@ class Seasons extends Controller {
    *         @SWG\Schema(type="array", ref="#/definitions/GameDay")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_gamedays_for_season(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -179,6 +191,8 @@ class Seasons extends Controller {
    *         @SWG\Schema(type="array", ref="#/definitions/GameDay")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_current_game_day_for_season(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -204,6 +218,8 @@ class Seasons extends Controller {
    *         @SWG\Schema(type="array", ref="#/definitions/Property")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_info_for_season(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -228,6 +244,8 @@ class Seasons extends Controller {
    *         @SWG\Schema(type="array", ref="#/definitions/Schedule")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_schedule_for_season(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -252,6 +270,8 @@ class Seasons extends Controller {
    *         @SWG\Schema(type="array", ref="#/definitions/Ranking")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_ranking_for_season(WP_REST_Request $request) {
     $seasonId = $request->get_param('id');

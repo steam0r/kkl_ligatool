@@ -27,7 +27,7 @@ class Api extends DB {
     $ranking = $this->getDb()->get_results($sql);
     
     if($live) {
-      $ranking = $this->addLiveScores($ranking, $leagueId, $seasonId, $dayNumber);
+      $ranking = $this->addLiveScores($ranking, $dayNumber);
     }
     
     $original_size = count($ranking);
@@ -47,7 +47,7 @@ class Api extends DB {
                   $has_score = true;
               }
               if(!$has_score) {
-                $new_score = new stdClass;
+                $new_score = new \stdClass;
                 $new_score->team_id = $team->id;
                 $new_score->wins = 0;
                 $new_score->draws = 0;
@@ -71,7 +71,7 @@ class Api extends DB {
                   $has_score = true;
               }
               if(!$has_score) {
-                $new_score = new stdClass;
+                $new_score = new \stdClass;
                 $new_score->team_id = $team->id;
                 $new_score->wins = 0;
                 $new_score->draws = 0;
@@ -97,7 +97,7 @@ class Api extends DB {
               $has_score = true;
           }
           if(!$has_score) {
-            $new_score = new stdClass;
+            $new_score = new \stdClass;
             $new_score->team_id = $team->id;
             $new_score->wins = 0;
             $new_score->draws = 0;
@@ -139,7 +139,7 @@ class Api extends DB {
     
   }
   
-  private function addLiveScores($ranking, $leagueId, $seasonId, $dayNumber) {
+  private function addLiveScores($ranking, $dayNumber) {
     $day = $this->getGameDay($dayNumber);
     $prevDay = $this->getPreviousGameDay($day);
     $matches = $this->getMatchesByGameDay($day->id);
@@ -158,7 +158,7 @@ class Api extends DB {
         } elseif($score->win) {
           $scorePlus = 2;
         }
-        $rank = new stdClass();
+        $rank = new \stdClass();
         $rank->team_id = $teamId;
         $rank->running = true;
         if($prevDay) {
@@ -209,7 +209,7 @@ class Api extends DB {
     
     $score = $this->getDb()->get_row($sql);
     if($score == null) {
-      $score = new stdClass;
+      $score = new \stdClass;
       $score->team_id = $team->id;
       $score->gameDay_id = $day->id;
       $score->final = false;

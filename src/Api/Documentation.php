@@ -26,6 +26,8 @@ class Documentation extends Controller {
    *          description="Fetch a Swagger 2.0 specification for this API"
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return WP_REST_Response
    */
   public function get_swagger_json(WP_REST_Request $request) {
     $controller = dirname(__FILE__);

@@ -30,6 +30,8 @@ class Clubs extends Controller {
    *         @SWG\Schema(type="array", ref="#/definitions/Club")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_clubs(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -53,6 +55,8 @@ class Clubs extends Controller {
    *         @SWG\Schema(ref="#/definitions/Club")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_club(WP_REST_Request $request) {
     $items = array($this->getClubFromRequest($request));
@@ -85,6 +89,8 @@ class Clubs extends Controller {
    *         @SWG\Schema(type="array", ref="#/definitions/Team")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_teams_for_club(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -110,6 +116,8 @@ class Clubs extends Controller {
    *         @SWG\Schema(type="array", ref="#/definitions/Award")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_awards_for_club(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -134,6 +142,8 @@ class Clubs extends Controller {
    *         @SWG\Schema(ref="#/definitions/Team")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_current_team_for_club(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -159,6 +169,8 @@ class Clubs extends Controller {
    *         @SWG\Schema(type="array", ref="#/definitions/Property")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_info_for_club(WP_REST_Request $request) {
     $db = new DB\Api();

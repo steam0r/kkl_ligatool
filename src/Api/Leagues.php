@@ -35,6 +35,8 @@ class Leagues extends Controller {
    *         @SWG\Schema(type="array", ref="#/definitions/League")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_leagues(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -73,6 +75,8 @@ class Leagues extends Controller {
    *         description="League not found"
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_league(WP_REST_Request $request) {
     $items = array($this->getLeagueFromRequest($request));
@@ -120,6 +124,8 @@ class Leagues extends Controller {
    *         description="League not found"
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_properties_for_league(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -159,6 +165,8 @@ class Leagues extends Controller {
    *         description="League not found"
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_seasons_for_league(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -199,6 +207,8 @@ class Leagues extends Controller {
    *         description="League not found"
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_current_season_for_league(WP_REST_Request $request) {
     $db = new DB\Api();

@@ -234,9 +234,6 @@ class Shortcodes {
     $db = new DB\Wordpress();
     $context = KKL::getContext();
     
-    $season = $context['season'];
-    
-    $players = array();
     $leagues = $db->getActiveLeagues();
     $leagueadmins = $db->getLeagueAdmins();
     $captains = $db->getCaptainsContactData();

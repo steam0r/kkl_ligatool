@@ -28,6 +28,8 @@ class Teams extends Controller {
    *         @SWG\Schema(type="array", ref="#/definitions/Team")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_teams(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -51,6 +53,8 @@ class Teams extends Controller {
    *         @SWG\Schema(ref="#/definitions/Team")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_team(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -74,6 +78,8 @@ class Teams extends Controller {
    *         @SWG\Schema(type="array", ref="#/definitions/Match")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_matches_for_team(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -98,6 +104,8 @@ class Teams extends Controller {
    *         @SWG\Schema(type="array", ref="#/definitions/Property")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_info_for_team(WP_REST_Request $request) {
     $db = new DB\Api();

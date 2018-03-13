@@ -94,7 +94,6 @@ abstract class Controller extends WP_REST_Controller {
     }
     
     //return a response or error based on some conditional
-    $totalPages = $this->page;
     $totalItems = count($reducedItems);
     if(is_array($reducedItems)) {
       $reqPage = $request->get_param('page');

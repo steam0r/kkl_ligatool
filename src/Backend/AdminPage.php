@@ -7,6 +7,8 @@ use scbAdminPage;
 abstract class AdminPage extends scbAdminPage {
   
   protected $item;
+  protected $success;
+  protected $errors;
   
   public function page_content() {
     if($this->errors) {

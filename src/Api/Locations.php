@@ -27,6 +27,8 @@ class Locations extends Controller {
    *         @SWG\Schema(type="array", ref="#/definitions/Location")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_locations(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -50,6 +52,8 @@ class Locations extends Controller {
    *         @SWG\Schema(ref="#/definitions/Location")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_location(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -73,6 +77,8 @@ class Locations extends Controller {
    *         @SWG\Schema(type="array", ref="#/definitions/Team")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_teams_for_location(WP_REST_Request $request) {
     $db = new DB\Api();

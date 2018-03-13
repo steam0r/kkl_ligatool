@@ -27,6 +27,8 @@ class Admins extends Controller {
    *         @SWG\Schema(type="array", ref="#/definitions/Player")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_admins(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -50,6 +52,8 @@ class Admins extends Controller {
    *         @SWG\Schema(ref="#/definitions/Player")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_admin(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -73,6 +77,8 @@ class Admins extends Controller {
    *         @SWG\Schema(type="array", ref="#/definitions/Property")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_info_for_admin(WP_REST_Request $request) {
     $db = new DB\Api();

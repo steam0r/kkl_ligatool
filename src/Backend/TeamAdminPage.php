@@ -7,8 +7,6 @@ use stdClass;
 
 class TeamAdminPage extends AdminPage {
   
-  private $team;
-  
   function setup() {
     
     $this->args = array('page_title' => __('team', 'kkl-ligatool'), 'page_slug' => 'kkl_teams_admin_page', 'parent' => null);

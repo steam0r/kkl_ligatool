@@ -7,8 +7,6 @@ use stdClass;
 
 class LocationAdminPage extends AdminPage {
   
-  private $team;
-  
   function setup() {
     $this->args = array('page_title' => __('location', 'kkl-ligatool'), 'page_slug' => 'kkl_locations_admin_page', 'parent' => null);
   }

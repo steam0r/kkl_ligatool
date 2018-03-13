@@ -29,6 +29,8 @@ class GameDays extends Controller {
    *         @SWG\Schema(type="array", ref="#/definitions/GameDay")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_gamedays(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -52,6 +54,8 @@ class GameDays extends Controller {
    *         @SWG\Schema(ref="#/definitions/GameDay")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_gameday(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -75,6 +79,8 @@ class GameDays extends Controller {
    *         @SWG\Schema(type="array", ref="#/definitions/Matches")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_matches_for_gameday(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -99,6 +105,8 @@ class GameDays extends Controller {
    *         @SWG\Schema(ref="#/definitions/GameDay")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_next_gameday(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -122,6 +130,8 @@ class GameDays extends Controller {
    *         @SWG\Schema(ref="#/definitions/GameDay")
    *     )
    * )
+   * @param WP_REST_Request $request
+   * @return \WP_Error|\WP_REST_Response
    */
   public function get_previous_gameday(WP_REST_Request $request) {
     $db = new DB\Api();

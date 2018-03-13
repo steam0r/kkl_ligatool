@@ -135,12 +135,7 @@ abstract class Controller extends WP_REST_Controller {
       if(!$hideLinks && (!$fieldsParam || strpos($fieldsParam, '_links') !== false)) {
         $reducedItems = $this->addLinks($reducedItems);
       }
-      $reqEmbeds = $request->get_param('embed');
-      if($reqEmbeds) {
-        $embeds = explode(',', $reqEmbeds);
-        $reducedItems = $this->addEmbeddables($reducedItems, $embeds);
-      }
-      
+  
       $response = new WP_REST_Response($reducedItems, 200);
       $response->header('X-Total-Count', $totalItems);
       $response->header('X-Total-Pages', $totalPages);
@@ -175,7 +170,11 @@ abstract class Controller extends WP_REST_Controller {
         if(in_array($camelKey, $this->privateFields)) {
           continue;
         }
-        $newItem[$camelKey] = $this->replaceKeys($value);
+        if(stripos($camelKey, "name") === false) {
+          $newItem[$camelKey] = $this->replaceKeys($value);
+        }else{
+          $newItem[$camelKey] = $value;
+        }
       }
       return $newItem;
     } elseif(is_object($item)) {
@@ -185,7 +184,11 @@ abstract class Controller extends WP_REST_Controller {
         if(in_array($camelKey, $this->privateFields)) {
           continue;
         }
-        $newItem->{$camelKey} = $this->replaceKeys($value);
+        if(stripos($camelKey, "name") === false) {
+          $newItem->{$camelKey} = $this->replaceKeys($value);
+        }else{
+          $newItem->{$camelKey} = $value;
+        }
       }
       return $newItem;
     } elseif(is_numeric($item)) {
@@ -289,7 +292,7 @@ abstract class Controller extends WP_REST_Controller {
       if(isset($links[$wantedEmbed]) && isset($links[$wantedEmbed]['embeddable']) && is_array($links[$wantedEmbed]['embeddable'])) {
         $config = $links[$wantedEmbed]['embeddable'];
         if($config['callback'] && is_callable($config['callback'])) {
-          $embeddables[$wantedEmbed] = $config['callback']();
+          $thisEmbed = $config['callback']();
         } else {
           $id = $item->id;
           if($links[$wantedEmbed]['idFields'] && is_array($links[$wantedEmbed]['idFields'])) {
@@ -299,14 +302,28 @@ abstract class Controller extends WP_REST_Controller {
               }
             }
           }
-          $embeddables[$wantedEmbed] = $db->getEmbeddable($config['table'], $config['field'], $id);
+          $dbEmbeddable = $db->getEmbeddable($config['table'], $config['field'], $id);
+          if(is_array($dbEmbeddable) && count($dbEmbeddable) == 1) {
+            $thisEmbed = $dbEmbeddable[0];
+          }else{
+            $thisEmbed = $dbEmbeddable;
+          }
         }
       }
+      $preparedEmbed = array();
+      if(is_array($thisEmbed)) {
+        foreach($thisEmbed as $key => $wantedItem) {
+          $preparedEmbed[$key] = $this->replaceKeys($wantedItem);
+        }
+      }else{
+        $preparedEmbed = $this->replaceKeys($thisEmbed);
+      }
+    
+      $embeddables[$wantedEmbed] = $preparedEmbed;
     }
     if(!empty($embeddables)) {
       $item->_embedded = $embeddables;
     }
-    
     return $item;
   }
 }

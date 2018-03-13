@@ -34,8 +34,12 @@ abstract class Controller extends WP_REST_Controller {
       'offset',
       'embed',
   );
+  private $privateFields = array(
+      'createdAt',
+      'updatedAt'
+  );
 
-  /**
+    /**
    * @param WP_REST_Request $request
    * @param array           $items
    * @param bool            $hideLinks
@@ -183,18 +187,25 @@ abstract class Controller extends WP_REST_Controller {
       $newItem = array();
       foreach ($item as $key => $value) {
         $camelKey = $this->toCamelCase($key);
+        if(in_array($camelKey, $this->privateFields)) {
+         continue;
+        }
         $newItem[$camelKey] = $this->replaceKeys($value);
       }
-
       return $newItem;
     } elseif (is_object($item)) {
       $newItem = new stdClass();
       foreach ($item as $key => $value) {
         $camelKey = $this->toCamelCase($key);
+        if(in_array($camelKey, $this->privateFields)) {
+            continue;
+        }
         $newItem->{$camelKey} = $this->replaceKeys($value);
       }
-
       return $newItem;
+    } elseif (is_numeric($item)) {
+      // "cast" to number
+      return $item + 0;
     } else {
       return $item;
     }

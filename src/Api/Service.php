@@ -3,9 +3,9 @@
 namespace KKL\Ligatool\Api;
 
 class Service {
-
+  
   public static function init() {
-    add_action('rest_api_init', function () {
+    add_action('rest_api_init', function() {
       {
         $controller = new Documentation();
         $controller->register_routes();
@@ -48,5 +48,5 @@ class Service {
       }
     });
   }
-
+  
 }

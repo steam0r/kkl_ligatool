@@ -7,11 +7,11 @@ use KKL\Ligatool\Events;
 use KKL\Ligatool\Template;
 
 class EventListener {
-
+  
   public function init() {
     Events\Service::registerCallback(Events\Service::$MATCH_FIXTURE_SET, array($this, 'post_new_fixture'));
   }
-
+  
   public function post_new_fixture(Events\MatchFixtureUpdatedEvent $event) {
     $db = new DB\Wordpress();
     $match = $event->getMatch();
@@ -21,62 +21,44 @@ class EventListener {
     $time = strtotime($match->fixture);
     setlocale(LC_TIME, 'de_DE');
     $text = strftime("%d. %B %Y %H:%M:%S", $time);
-    if ($match->location) {
+    if($match->location) {
       $location = $db->getLocation($match->location);
-      if ($location) {
-        $text .= ", Spielort: ".$location->title;
+      if($location) {
+        $text .= ", Spielort: " . $location->title;
       }
     }
-
+    
     $actor = $db->getPlayerByMailAddress($event->getActorEmail());
-    if (!$actor) {
+    if(!$actor) {
       $actor = $event->getActorEmail();
     } else {
-      $actor = $actor->first_name." ".$actor->last_name;
+      $actor = $actor->first_name . " " . $actor->last_name;
     }
-
-    $data = array(
-        "mail"  => array(
-            "to"    => array(
-                "name" => "",
-            ),
-            "actor" => array(
-                "name" => $actor,
-            ),
-        ),
-        "match" => array(
-            "text"    => $league->name.': '.$home->name.' gegen '.$away->name,
-            "fixture" => $text,
-        ),
-    );
-
+    
+    $data = array("mail" => array("to" => array("name" => "",), "actor" => array("name" => $actor,),), "match" => array("text" => $league->name . ': ' . $home->name . ' gegen ' . $away->name, "fixture" => $text,),);
+    
     $data['mail']['to']['name'] = 'Ligaleitung';
     $this->sendMail('stephan-alleine@undev.de', null, $data);
     $data['mail']['to']['name'] = $home->name;
     $this->sendMail('stephan@5711.org', 'stephan@undev.de', $data);
     $data['mail']['to']['name'] = $away->name;
     $this->sendMail('stephan@undev.de', 'stephan@5711.org', $data);
-
+    
   }
-
+  
   private function sendMail($to, $cc, $data) {
-
+    
     $kkl_twig = Template\Service::getTemplateEngine();
-
-    $to = $data['mail']['to']['name']."<".$to.">";
-    $subject = '[kkl] Spieltermin '.$data['match']['text'];
-    $headers = array(
-        'From: Ligaleitung <ligaleitung@kickerligakoeln.de>',
-        'Reply-To: ligaleitung@kickerligakoeln.de',
-        'MIME-Version: 1.0',
-        'Content-type: text/html; charset=utf-8',
-    );
-    if ($cc != null) {
-      $headers[] = 'Cc: '.$cc;
+    
+    $to = $data['mail']['to']['name'] . "<" . $to . ">";
+    $subject = '[kkl] Spieltermin ' . $data['match']['text'];
+    $headers = array('From: Ligaleitung <ligaleitung@kickerligakoeln.de>', 'Reply-To: ligaleitung@kickerligakoeln.de', 'MIME-Version: 1.0', 'Content-type: text/html; charset=utf-8',);
+    if($cc != null) {
+      $headers[] = 'Cc: ' . $cc;
     }
-
+    
     $message = $kkl_twig->render('mails/new_fixture_mail.twig', $data);
     wp_mail($to, $subject, $message, $headers);
   }
-
+  
 }

@@ -12,5 +12,5 @@ namespace KKL\Ligatool\Template;
 use Twig_Environment;
 
 class Engine extends Twig_Environment {
-
+  
 }

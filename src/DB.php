@@ -42,7 +42,7 @@ abstract class DB {
 						m.fixture,
 						m.score_home,
 						m.location,
-                        m.status,
+            m.status,
 						ht.name AS homename,
 						at.name AS awayname,
 						at.id AS awayid,
@@ -222,7 +222,7 @@ abstract class DB {
     $sql = "SELECT * FROM leagues ORDER BY name ASC";
     $leagues = $this->getDb()->get_results($sql);
     foreach($leagues as $league) {
-      $league->active = ord($league->active);
+      $league->active = boolval($league->active);
     }
     
     return $leagues;
@@ -232,7 +232,7 @@ abstract class DB {
     $sql = "SELECT * FROM leagues WHERE active = 1 ORDER BY name ASC";
     $leagues = $this->getDb()->get_results($sql);
     foreach($leagues as $league) {
-      $league->active = ord($league->active);
+      $league->active = boolval($league->active);
     }
     
     return $leagues;
@@ -242,7 +242,7 @@ abstract class DB {
     $sql = "SELECT * FROM leagues WHERE active = 0 ORDER BY name ASC";
     $leagues = $this->getDb()->get_results($sql);
     foreach($leagues as $league) {
-      $league->active = ord($league->active);
+      $league->active = boolval($league->active);
     }
     
     return $leagues;
@@ -251,7 +251,7 @@ abstract class DB {
   public function getLeagueBySlug($slug) {
     $sql = "SELECT * FROM leagues WHERE code = '" . esc_sql($slug) . "'";
     $league = $this->getDb()->get_row($sql);
-    $league->active = ord($league->active);
+    $league->active = boolval($league->active);
     
     return $league;
   }
@@ -361,7 +361,7 @@ abstract class DB {
   public function getLeagueForGameday($dayId) {
     $sql = "SELECT * FROM leagues WHERE id = (SELECT league_id AS id FROM seasons WHERE id = (SELECT season_id AS id FROM game_days WHERE id = '" . esc_sql($dayId) . "'))";
     $league = $this->getDb()->get_row($sql);
-    $league->active = ord($league->active);
+    $league->active = boolval($league->active);
     
     return $league;
   }
@@ -369,7 +369,7 @@ abstract class DB {
   public function getLeagueForSeason($seasonId) {
     $sql = "SELECT * FROM leagues WHERE id = (SELECT league_id AS id FROM seasons WHERE id = '" . esc_sql($seasonId) . "')";
     $league = $this->getDb()->get_row($sql);
-    $league->active = ord($league->active);
+    $league->active = boolval($league->active);
     
     return $league;
   }
@@ -1089,7 +1089,7 @@ abstract class DB {
   public function getLeague($leagueId) {
     $sql = "SELECT * FROM leagues WHERE id = '" . esc_sql($leagueId) . "'";
     $league = $this->getDb()->get_row($sql);
-    $league->active = ord($league->active);
+    $league->active = boolval($league->active);
     
     return $league;
   }

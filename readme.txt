@@ -31,5 +31,6 @@ this is a very rough first version, needs changes.
 
 == Changelog ==
 1.0	initial version (05.12.2015)
+2.0 move to composer (21.04.2018)
 
 == Upgrade Notice ==

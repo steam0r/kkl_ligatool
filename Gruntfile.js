@@ -7,11 +7,22 @@ module.exports = function (grunt) {
                 additionalFiles: ['composer.json'],
                 npm: false
             }
+        },
+        composer : {
+          options : {
+            usePhp: false,
+            composerLocation: './composer'
+          },
+          default: {
+            options : {
+              cwd: '.'
+            }
+          }
         }
     });
 
-    grunt.registerTask("default", ["composer:install"]);
-    grunt.registerTask("build", ["composer:install"]);
+    grunt.registerTask("default", ["composer:default:install"]);
+    grunt.registerTask("build", ["composer:default:install"]);
 
     grunt.registerTask("dev", ["default"]);
 

@@ -1,32 +1,148 @@
-module.exports = function (grunt) {
+module.exports = function (grunt){
 
-    grunt.initConfig({
-        pkg: grunt.file.readJSON("package.json"),
-        release: {
-            options: {
-                additionalFiles: ['composer.json'],
-                npm: false
-            }
-        },
-        composer : {
-          options : {
-            usePhp: false,
-            composerLocation: './composer'
-          },
-          default: {
-            options : {
-              cwd: '.'
-            }
-          }
+  grunt.initConfig({
+    pkg: grunt.file.readJSON('package.json'),
+    cmp: grunt.file.readJSON('composer.json'),
+    bumpup: {
+      options: {
+        updateProps: {
+          pkg: 'package.json'
         }
-    });
+      },
+      files: ['package.json', 'composer.json', 'release-template.json']
+    },
+    composer: {
+      options: {
+        usePhp: true,
+        composerLocation: './composer'
+      },
+      default: {
+        options: {
+          cwd: '.'
+        }
+      }
+    },
+    copy: {
+      update: {
+        files: [
+          {
+            expand: true,
+            src: ['css/**', 'js/**', 'lang/**', 'pages/**', 'sql/**', 'src/**', 'templates/**', 'vendor/**', 'label-guide-wp.php', 'README.md'],
+            dest: '<%= cmp.name %>/'
+          }
+        ]
+      }
+    },
+    compress: {
+      main: {
+        options: {
+          archive: 'target/label-guide-wp.zip',
+          mode: 'zip'
+        },
+        expand: true,
+        src: ['css/**', 'js/**', 'lang/**', 'pages/**', 'sql/**', 'src/**', 'templates/**', 'vendor/**', 'label-guide-wp.php', 'README.md']
+      },
+      update: {
+        options: {
+          archive: 'target/update/label-guide-wp.zip',
+          mode: 'zip'
+        },
+        src: [
+          '<%= cmp.name %>/**'
+        ]
+      }
+    },
+    replace: {
+      versions: {
+        options: {
+          patterns: [
+            {
+              match: /Version:\s*(.*)/,
+              replacement: 'Version: <%= pkg.version %>'
+            }
+          ]
+        },
+        files: [
+          {
+            expand: true,
+            flatten: true,
+            src: ['README.md', 'label-guide-wp.php']
+          }
+        ]
+      }
+    },
+    clean: [
+      'target',
+      'vendor',
+      'target',
+      '<%= cmp.name %>',
+      'vendor',
+      'release.json'
+    ]
+  });
 
-    grunt.registerTask("default", ["composer:default:install"]);
-    grunt.registerTask("build", ["composer:default:install"]);
+  // Alias task for release
+  grunt.registerTask('release', function (type){
+    grunt.task.run('clean');        // clean previous builds
+    type = type ? type : 'patch';     // default release type
+    grunt.task.run('bumpup:' + type); // bump up the version
+    grunt.task.run('replace');        // replace version number in plugin file and readme
+    grunt.task.run('composer:default:install');         // get php dependencies
+    grunt.task.run('compress');     // build a release zip
+    grunt.task.run('compress:main');     // build a release zip
+    grunt.task.run('copy:update'); // copy files over to build an update zip
+    grunt.task.run('compress:update');     // build a release zip
+  });
 
-    grunt.registerTask("dev", ["default"]);
+  // Alias task for release with buildmeta suffix support
+  grunt.registerTask('release', function (type, build){
+    grunt.task.run('clean');        // clean previous builds
+    var bumpParts = ['bumpup'];
+    if (type){
+      bumpParts.push(type);
+    }
+    if (build){
+      bumpParts.push(build);
+    }
+    grunt.task.run(bumpParts.join(':')); // bump up the version
+    grunt.task.run('replace');        // replace version number in plugin file and readme
+    grunt.task.run('composer:default:install');         // get php dependencies
+    grunt.task.run('compress:main');     // build a release zip
+    grunt.task.run('copy:update'); // copy files over to build an update zip
+    grunt.task.run('compress:update');     // build a release zip
+  });
 
-    // needed modules
-    grunt.loadNpmTasks('grunt-composer');
-    grunt.loadNpmTasks('grunt-release');
+  grunt.registerTask('strider:releasefile', function (type){
+    var artifcatId = process.env.STRIDER_ARTIFACT_ID;
+    var branch = process.env.STRIDER_BRANCH;
+    if (!artifcatId || !branch){
+      grunt.fail.fatal("got no information in environment: STRIDER_ARTIFACT_ID or STRIDER_BRANCH missing!", 1);
+    }
+    var name = process.env.STRIDER_PROJECT_NAME;
+    var cmp = grunt.config.get("cmp");
+    var projectName = name ? name : cmp.name;
+    var releaseJson = {
+      "name": projectName,
+      "version": cmp.version,
+      "download_url": cmp.extra.release.baseurl + projectName + "/api/artifact-repository/dl/" + artifcatId + "?branch=" + branch,
+      "sections": {
+        "description": cmp.description
+      }
+    };
+    grunt.file.write('release.json', JSON.stringify(releaseJson, null, 2));
+  });
+
+  grunt.registerTask('build', ['clean', 'composer:default:install']);
+  grunt.registerTask('package', ['default', 'compress:main', 'copy:update', 'compress:update']);
+  grunt.registerTask('default', ['build']);
+
+  // needed modules
+  // needed modules
+  grunt.loadNpmTasks('grunt-composer');
+  grunt.loadNpmTasks('grunt-replace');
+  grunt.loadNpmTasks('grunt-contrib-compress');
+  grunt.loadNpmTasks('grunt-bumpup');
+  grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-copy');
+
 }

@@ -27,7 +27,7 @@ module.exports = function (grunt){
         files: [
           {
             expand: true,
-            src: ['css/**', 'js/**', 'lang/**', 'pages/**', 'sql/**', 'src/**', 'templates/**', 'vendor/**', 'label-guide-wp.php', 'README.md'],
+            src: ['css/**', 'js/**', 'lang/**', 'pages/**', 'sql/**', 'src/**', 'templates/**', 'vendor/**', 'kkl_ligatool.php', 'README.md'],
             dest: '<%= cmp.name %>/'
           }
         ]
@@ -36,15 +36,15 @@ module.exports = function (grunt){
     compress: {
       main: {
         options: {
-          archive: 'target/label-guide-wp.zip',
+          archive: 'target/kkl_ligatool.zip',
           mode: 'zip'
         },
         expand: true,
-        src: ['css/**', 'js/**', 'lang/**', 'pages/**', 'sql/**', 'src/**', 'templates/**', 'vendor/**', 'label-guide-wp.php', 'README.md']
+        src: ['css/**', 'js/**', 'lang/**', 'pages/**', 'sql/**', 'src/**', 'templates/**', 'vendor/**', 'kkl_ligatool.php', 'README.md']
       },
       update: {
         options: {
-          archive: 'target/update/label-guide-wp.zip',
+          archive: 'target/update/kkl_ligatool.zip',
           mode: 'zip'
         },
         src: [

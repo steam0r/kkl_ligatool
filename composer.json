@@ -19,6 +19,11 @@
       "name": "Benedikt Scherer"
     }
   ],
+  "extra": {
+    "release": {
+      "baseurl": "https://ci.undev.de/"
+    }
+  },
   "autoload": {
     "psr-4": {
       "KKL\\Ligatool\\": [

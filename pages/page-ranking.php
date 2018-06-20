@@ -31,7 +31,7 @@ if (isset($wp_query->query_vars['json'])) {
   $output = array();
 
   if (!$overview) {
-    $ranking = new stdClass;
+    $ranking = new \stdClass;
     $ranking->league = $context['league'];
     $ranking->ranks = $db->getRankingForLeagueAndSeasonAndGameDay($context['league']->id, $context['season']->id, $context['game_day']->number);
     foreach ($ranking->ranks as $rank) {
@@ -58,12 +58,11 @@ if (isset($wp_query->query_vars['json'])) {
     $output['schedules'] = $schedules;
 
   } else {
-    $context = KKL::getContext();
     foreach ($db->getLeagues() as $league) {
       if ($league->active != 1) continue;
       $season = $db->getSeason($league->current_season);
       $day = $db->getGameDay($season->current_game_day);
-      $ranking = new stdClass;
+      $ranking = new \stdClass;
       $ranking->league = $league;
       $ranking->ranks = $db->getRankingForLeagueAndSeasonAndGameDay($league->id, $season->id, $day->number);
       foreach ($ranking->ranks as $rank) {

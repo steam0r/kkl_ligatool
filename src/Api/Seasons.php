@@ -23,7 +23,7 @@ class Seasons extends Controller {
       return is_user_logged_in();
     }, 'callback' => array($this, 'set_schedule_for_season'), 'args' => array('context' => array('default' => 'view',),),));
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/ranking', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_ranking_for_season'), 'args' => array('context' => array('default' => 'view',),),));
-    register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/liveranking', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_ranking_for_season'), 'args' => array('context' => array('default' => 'view',),),));
+    register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/liveranking', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_liveranking_for_season'), 'args' => array('context' => array('default' => 'view',),),));
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/info', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_info_for_season'), 'args' => array('context' => array('default' => 'view',),),));
   }
   
@@ -282,6 +282,16 @@ class Seasons extends Controller {
     
     return $this->getResponse($request, $items, true);
   }
+  
+  public function get_liveranking_for_season(WP_REST_Request $request) {
+    $seasonId = $request->get_param('id');
+    $db = new DB\Api();
+    $gameDay = $db->getCurrentGameDayForSeason($seasonId);
+    $items = $db->getRankingForLeagueAndSeasonAndGameDay(null, $seasonId, $gameDay->id, true);
+    
+    return $this->getResponse($request, $items, true);
+  }
+  
   
   protected function getLinks($itemId) {
     $leagueEndpoint = new Leagues();

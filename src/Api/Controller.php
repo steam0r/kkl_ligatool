@@ -111,7 +111,7 @@ abstract class Controller extends WP_REST_Controller {
       $reducedItems = array_slice($reducedItems, $this->offset);
       $reducedItems = array_slice($reducedItems, ($this->per_page * ($this->page - 1)), $this->per_page);
       $totalPages = ceil($totalItems / $this->per_page);
-      
+  
       if(!$hideLinks && (!$fieldsParam || strpos($fieldsParam, '_links') !== false)) {
         foreach($reducedItems as $key => $reducedItem) {
           if(is_object($reducedItem)) {
@@ -131,6 +131,38 @@ abstract class Controller extends WP_REST_Controller {
             $reducedItems[$key] = $reducedItem;
           }
         }
+      }
+      if(!$hideLinks && (!$fieldsParam || strpos($fieldsParam, '_links') !== false)) {
+        $reducedItems = $this->addLinks($reducedItems);
+      }
+  
+      $response = new WP_REST_Response($reducedItems, 200);
+      $response->header('X-Total-Count', $totalItems);
+      $response->header('X-Total-Pages', $totalPages);
+      $response->header('X-WP-Total', $totalItems);
+      $response->header('X-WP-TotalPages', $totalPages);
+      // $link = '<https://api.github.com/user/repos?page=3&per_page=100>; rel="next", <https://api.github.com/user/repos?page=50&per_page=100>; rel="last"';
+      // $response->header('Link', $link);
+      return $response;
+    } elseif (is_object($reducedItems)) {
+      $reqPage = $request->get_param('page');
+      $reqPerPage = $request->get_param('per_page');
+      $reqOffset = $request->get_param('offset');
+      if(is_numeric($reqPage) && $reqPage > 0) {
+        $this->page = $reqPage;
+      }
+      if(is_numeric($reqPerPage) && $reqPage > 0) {
+        $this->per_page = $reqPerPage;
+      }
+      if(is_numeric($reqOffset) && $reqOffset > 0) {
+        $this->offset = $reqOffset;
+      }
+      $totalPages = ceil($totalItems / $this->per_page);
+
+      $reqEmbeds = $request->get_param('embed');
+      if($reqEmbeds) {
+        $embeds = explode(',', $reqEmbeds);
+        $reducedItems = $this->addEmbeddables($reducedItems, $embeds);
       }
       if(!$hideLinks && (!$fieldsParam || strpos($fieldsParam, '_links') !== false)) {
         $reducedItems = $this->addLinks($reducedItems);

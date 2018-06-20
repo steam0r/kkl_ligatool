@@ -1,6 +1,6 @@
 {
   "name": "kkl-ligatool",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "license": "MIT",
   "devDependencies": {
     "grunt": "1.0.2",

@@ -1,6 +1,6 @@
 {
   "name": "kkl/ligatool",
-  "version": "2.0.5",
+  "version": "2.1.0",
   "type": "wordpress-plugin",
   "description": "Tool to manage the Kölner Kickerliga",
   "keywords": [
@@ -43,11 +43,9 @@
           "reference": "v61"
         },
         "autoload": {
-          "psr-4": {
-            "KKL\\Ligatool\\": [
-              "."
-            ]
-          }
+          "classmap": [
+            "."
+          ]
         }
       }
     }
@@ -56,9 +54,11 @@
     "php": ">=5.6.32",
     "twig/twig": "1.13.0",
     "scribu/scb-framework": "v61",
+    "composer/installers": "v1.5.0",
     "tigokr/slack-api": "1.0",
     "zircote/swagger-php": "2.0.13",
     "symfony/finder": "2.2",
-    "doctrine/annotations": "1.4.0"
+    "doctrine/annotations": "1.4.0",
+    "yahnis-elsts/plugin-update-checker": "4.4"
   }
 }

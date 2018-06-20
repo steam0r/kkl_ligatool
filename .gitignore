@@ -2,6 +2,6 @@
 *.iml
 vendor/
 node_modules/
-kkl/
+kkl_ligatool/
 target/
 release.json

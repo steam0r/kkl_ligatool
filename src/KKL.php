@@ -60,15 +60,15 @@ class KKL {
     
     add_action('init', array($this, 'add_rewrite_rules'));
     
-    add_shortcode('league_table', array('KKL_Shortcodes', 'leagueTable'));
-    add_shortcode('table_overview', array('KKL_Shortcodes', 'tableOverview'));
-    add_shortcode('gameday_table', array('KKL_Shortcodes', 'gameDayTable'));
-    add_shortcode('gameday_overview', array('KKL_Shortcodes', 'gameDayOverview'));
-    add_shortcode('league_overview', array('KKL_Shortcodes', 'leagueOverview'));
-    add_shortcode('club_detail', array('KKL_Shortcodes', 'clubDetail'));
-    add_shortcode('gameday_pager', array('KKL_Shortcodes', 'gameDayPager'));
-    add_shortcode('season_schedule', array('KKL_Shortcodes', 'seasonSchedule'));
-    add_shortcode('contact_list', array('KKL_Shortcodes', 'contactList'));
+    add_shortcode('league_table', array(Shortcodes::class, 'leagueTable'));
+    add_shortcode('table_overview', array(Shortcodes::class, 'tableOverview'));
+    add_shortcode('gameday_table', array(Shortcodes::class, 'gameDayTable'));
+    add_shortcode('gameday_overview', array(Shortcodes::class, 'gameDayOverview'));
+    add_shortcode('league_overview', array(Shortcodes::class, 'leagueOverview'));
+    add_shortcode('club_detail', array(Shortcodes::class, 'clubDetail'));
+    add_shortcode('gameday_pager', array(Shortcodes::class, 'gameDayPager'));
+    add_shortcode('season_schedule', array(Shortcodes::class, 'seasonSchedule'));
+    add_shortcode('contact_list', array(Shortcodes::class, 'contactList'));
     
     register_sidebar(array('name' => __(__('kkl_global_sidebar', 'kkl-ligatool')), 'id' => 'kkl_global_sidebar', 'description' => __('Widgets in this area will be shown on pages using any kkl page template below the page sidebar.'), 'class' => 'kkl_global_sidebar', 'before_title' => '<h4>', 'after_title' => '</h4>',));
     

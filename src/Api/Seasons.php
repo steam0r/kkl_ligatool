@@ -23,6 +23,7 @@ class Seasons extends Controller {
       return is_user_logged_in();
     }, 'callback' => array($this, 'set_schedule_for_season'), 'args' => array('context' => array('default' => 'view',),),));
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/ranking', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_ranking_for_season'), 'args' => array('context' => array('default' => 'view',),),));
+    register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/liveranking', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_ranking_for_season'), 'args' => array('context' => array('default' => 'view',),),));
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/info', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_info_for_season'), 'args' => array('context' => array('default' => 'view',),),));
   }
   

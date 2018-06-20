@@ -13,7 +13,7 @@ class EventListener {
   
   public function init() {
     Events\Service::registerCallback(Events\Service::$MATCH_FIXTURE_SET, array($this, 'post_new_fixture'));
-    Events\Service::registerCallback(Events\Service::$NEW_GAMEDAY_UPCOMING, array($this, 'post_new_upcoming_gameday'));
+    Events\Service::registerCallback(Events\Service::$NEW_GAMEDAY_UPCOMING, array($this, 'post_new_gameday'));
     
   }
   

@@ -85,9 +85,6 @@ class KKL {
     
     $mailIntegration = new Mail\EventListener();
     $mailIntegration->init();
-
-    $icalFeed = new iCal\iCalFeed();
-    $icalFeed->init();
     
     Api\Service::init();
     Tasks\Service::init();

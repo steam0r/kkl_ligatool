@@ -46,6 +46,10 @@ class Service {
         $controller = new Admins();
         $controller->register_routes();
       }
+      {
+        $controller = new iCal();
+        $controller->register_routes();
+      }
     });
   }
   

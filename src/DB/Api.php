@@ -263,4 +263,32 @@ class Api extends DB {
     return $score;
   }
   
+  /**
+   * @deprecated
+   * @param $mail
+   * @return array|null|object|void
+   */
+  public function getInfoByEmailAddress($mail) {
+    $sql = "
+      select
+      tp.property_key as role,
+      t.name as team,
+      l.name as league,
+      s.name as season,
+      m.id as suggested_matchId,
+      slack.value as slack
+      from players as p
+      join team_properties as tp ON p.id = tp.value AND (tp.property_key = 'captain' or tp.property_key = 'vice_captain')
+      join teams AS t ON t.id = tp.objectId
+      join seasons AS s ON s.id = t.season_id AND s.active = 1
+      join leagues as l ON l.id = s.league_id
+      left join matches AS m ON m.game_day_id = s.current_game_day AND (t.id = m.home_team OR t.id = m.away_team)
+      left join season_properties AS sp ON sp.objectId = s.id AND sp.property_key = 'season_admin'
+      left join players AS adm ON adm.id = sp.value
+      left join player_properties as slack ON adm.id = slack.objectId AND slack.property_key = 'slack_alias'
+      where p.email = '$mail' order by s.id DESC limit 1;";
+    $result = $this->getDb()->get_row($sql);
+    return $result;
+  }
+  
 }

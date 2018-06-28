@@ -50,7 +50,6 @@ class EventListener {
   public function send_reminder_mail(Events\GameDayReminderEvent $event) {
     
     $to = "Kölner Kickerliga <ligaleitung@kickerligakoeln.de>";
-    $to = "Stephan Maihöfer <stephan@5711.org>";
     $subject = "Anstehende Spiele in der Kölner Kickerliga";
     $headers = array(
       'From: Ligaleitung <ligaleitung@kickerligakoeln.de>',

@@ -8,7 +8,7 @@ use WP_REST_Server;
 
 class GameDays extends Controller {
   
-  public function register_routes() {
+  public function registerRoutes() {
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName(), array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_gamedays'), 'args' => array(),));
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_gameday'), 'args' => array('context' => array('default' => 'view',),)));
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/matches', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_matches_for_gameday'), 'args' => array('context' => array('default' => 'view',),)));

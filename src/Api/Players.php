@@ -8,7 +8,7 @@ use WP_REST_Server;
 
 class Players extends Controller {
   
-  public function register_routes() {
+  public function registerRoutes() {
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName(), array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_players'), 'args' => array(),));
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_player'), 'args' => array('context' => array('default' => 'view',),)));
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/properties', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_info_for_player'), 'args' => array('context' => array('default' => 'view',),)));

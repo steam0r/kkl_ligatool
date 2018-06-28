@@ -9,7 +9,7 @@ use WP_REST_Server;
 
 class Seasons extends Controller {
   
-  public function register_routes() {
+  public function registerRoutes() {
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName(), array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_seasons'), 'args' => array(),));
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_season'), 'args' => array('context' => array('default' => 'view',),),));
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/teams', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_teams_for_season'), 'args' => array('context' => array('default' => 'view',),),));

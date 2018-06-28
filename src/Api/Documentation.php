@@ -9,7 +9,7 @@ use WP_REST_Server;
 
 class Documentation extends Controller {
   
-  public function register_routes() {
+  public function registerRoutes() {
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/swagger.json', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_swagger_json'), 'args' => array(),));
   }
   

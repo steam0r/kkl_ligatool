@@ -59,6 +59,7 @@
     "zircote/swagger-php": "2.0.13",
     "symfony/finder": "2.2",
     "doctrine/annotations": "1.4.0",
-    "yahnis-elsts/plugin-update-checker": "4.4"
+    "yahnis-elsts/plugin-update-checker": "4.4",
+    "eluceo/ical": "0.14.0"
   }
 }

@@ -10,7 +10,7 @@ use WP_REST_Server;
 
 class Matches extends Controller {
   
-  public function register_routes() {
+  public function registerRoutes() {
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName(), array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_matches'), 'args' => array(),));
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_match'), 'args' => array('context' => array('default' => 'view',),)));
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/fixture', array('methods' => 'PATCH', 'callback' => array($this, 'set_match_fixture'), 'permission_callback' => array($this, 'is_valid_email_for_match'), 'args' => array('context' => array('default' => 'view',),)));

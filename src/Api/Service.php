@@ -8,47 +8,47 @@ class Service {
     add_action('rest_api_init', function() {
       {
         $controller = new Documentation();
-        $controller->register_routes();
+        $controller->init();
       }
       {
         $controller = new Clubs();
-        $controller->register_routes();
+        $controller->init();
       }
       {
         $controller = new GameDays();
-        $controller->register_routes();
+        $controller->init();
       }
       {
         $controller = new Leagues();
-        $controller->register_routes();
+        $controller->init();
       }
       {
         $controller = new Locations();
-        $controller->register_routes();
+        $controller->init();
       }
       {
         $controller = new Matches();
-        $controller->register_routes();
+        $controller->init();
       }
       {
         $controller = new Players();
-        $controller->register_routes();
+        $controller->init();
       }
       {
         $controller = new Seasons();
-        $controller->register_routes();
+        $controller->init();
       }
       {
         $controller = new Teams();
-        $controller->register_routes();
+        $controller->init();
       }
       {
         $controller = new Admins();
-        $controller->register_routes();
+        $controller->init();
       }
       {
-        $controller = new iCal();
-        $controller->register_routes();
+        $controller = new ICal();
+        $controller->init();
       }
     });
   }

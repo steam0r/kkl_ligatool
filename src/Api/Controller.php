@@ -28,6 +28,13 @@ abstract class Controller extends WP_REST_Controller {
   private $reservedQueryParams = array('fields', 'order', 'orderby', 'page', 'per_page', 'offset', 'embed',);
   private $privateFields = array('createdAt', 'updatedAt');
   
+  
+  public function init() {
+    $this->registerRoutes();
+  }
+  
+  public abstract function registerRoutes();
+  
   /**
    * @param WP_REST_Request $request
    * @param array           $items

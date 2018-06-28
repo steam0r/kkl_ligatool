@@ -8,7 +8,7 @@ use WP_REST_Server;
 
 class Clubs extends Controller {
   
-  public function register_routes() {
+  public function registerRoutes() {
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName(), array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_clubs'), 'args' => array(),));
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d\w]+)', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_club'), 'args' => array('context' => array('default' => 'view',),)));
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d\w]+)/teams', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_teams_for_club'), 'args' => array('context' => array('default' => 'view',),)));

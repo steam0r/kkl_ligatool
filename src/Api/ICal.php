@@ -2,76 +2,72 @@
 
 namespace KKL\Ligatool\Api;
 
+use Eluceo\iCal\Property\Event\Geo;
 use KKL\Ligatool\DB;
-use WP_REST_Request;
-use WP_REST_Response;
-use WP_REST_Server;
 
-class iCal extends Controller {
-
-    public function register_routes() {
-        register_rest_route($this->getNamespace(), '/' . $this->getBaseName(), array(
-                'methods' => WP_REST_Server::READABLE,
-                'callback' => array(
-                        $this,
-                        'calendar_init'
-                ),
-                'args' => array(),
-        ));
+class ICal extends CalendarController {
+  
+  public function registerRoutes() {
+    // no normal routes here, just a calendar at /calendar
+  }
+  
+  public function getBaseName() {
+      return 'calendar';
+  }
+  
+  protected function getEvents() {
+    
+    $events = array();
+    $db = new DB\Api();
+    foreach($db->getActiveLeagues() as $league) {
+      $season = $db->getCurrentSeason($league->id);
+      foreach($db->getGameDaysForSeason($season->id) as $gameday) {
+        $event = new \Eluceo\iCal\Component\Event();
+      
+        $dtStart = new \DateTime($gameday->fixture);
+        $dtStart->setTimezone(new \DateTimeZone('Europe/Berlin'));
+      
+        $dtEnd = new \DateTime($gameday->end);
+        $dtEnd->setTimezone(new \DateTimeZone('Europe/Berlin'));
+      
+        $event->setDtStart($dtStart)
+          ->setDtEnd($dtEnd)
+          ->setSummary($league->name . ' - Spieltag ' . $gameday->number)
+          ->setUseTimezone(true)
+          ->setNoTime(true);
+        $events[] = $event;
+        
+        foreach($db->getMatchesByGameDay($gameday->id) as $match) {
+          if($match->fixture != null) {
+            $teamHome = $db->getTeam($match->home_team);
+            $teamAway = $db->getTeam($match->away_team);
+  
+            $dtStart = new \DateTime($match->fixture);
+            $dtStart->setTimezone(new \DateTimeZone('Europe/Berlin'));
+  
+            $interval = date_interval_create_from_date_string('3 hour');
+            $dtEnd = new \DateTime($match->fixture);
+            $dtEnd = $dtEnd->add($interval);
+            $dtEnd->setTimezone(new \DateTimeZone('Europe/Berlin'));
+            
+            $event = $event->setDtStart($dtStart)
+              ->setDtEnd($dtEnd)
+              ->setSummary($teamHome->name . ' vs. ' . $teamAway->name)
+              ->setUseTimezone(true)
+              ->setNoTime(false);
+            
+            if(is_numeric($match->location)) {
+              $location = $db->getLocation($match->location);
+              $geo = new Geo($location->lat, $location->lng);
+              $event->setLocation($location->title, $location->description, $geo);
+            }
+            $events[] = $event;
+          }
+        }
+        
+      }
     }
-
-    public function getBaseName() {
-        return 'calendar';
-    }
-
-
-    /**
-     * @param WP_REST_Request $request
-     * @return WP_REST_Response
-     */
-    public function calendar_init(WP_REST_Request $request) {
-        $calendar = $this->create_calendar();
-
-        $response = new WP_REST_Response($calendar, 200);
-        $response->header('Content-Type', 'text/calendar; charset=utf-8');
-
-        return $response;
-    }
-
-
-    /**
-     * @return string
-     */
-    private function create_calendar() {
-        $db = new DB\Wordpress();
-
-        // $allLeagues = $db->getLeagues();
-        $currentSeasonForLeague = $db->getCurrentSeason(2); // koeln1
-        $gamedaysForCurrentLeagueAndSeason = $db->getGameDaysForSeason($currentSeasonForLeague->id);
-
-        define('DATE_ICAL', 'Ymd\THis\Z');
-        $output =
-"BEGIN:VCALENDAR
-METHOD:PUBLISH
-VERSION:2.0
-PRODID:-//Kölner Kickerliga//Spieltermine//DE\n";
-
-        foreach($gamedaysForCurrentLeagueAndSeason as $gameday):
-            $output .=
-"BEGIN:VEVENT
-SUMMARY:" . $gameday->number . ". Spieltag
-UID:" . $gameday->id . "
-STATUS:CONFIRMED
-DTSTAMP:" . date(DATE_ICAL, strtotime($gameday->fixture)) . "
-DTSTART:" . date(DATE_ICAL, strtotime($gameday->fixture)) . "
-DTEND:" . date(DATE_ICAL, strtotime($gameday->end)) . "
-LAST-MODIFIED:" . date(DATE_ICAL, strtotime($gameday->updated_at)) . "
-END:VEVENT\n";
-        endforeach;
-
-        // close calendar
-        $output .= "END:VCALENDAR";
-
-        return $output;
-    }
+    return $events;
+  }
+  
 }

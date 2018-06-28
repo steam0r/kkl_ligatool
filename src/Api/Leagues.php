@@ -8,7 +8,7 @@ use WP_REST_Server;
 
 class Leagues extends Controller {
   
-  public function register_routes() {
+  public function registerRoutes() {
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName(), array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_leagues'), 'args' => array(),));
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d\w]+)', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_league'), 'args' => array('context' => array('default' => 'view',),),));
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d\w]+)/properties', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_properties_for_league'), 'args' => array('context' => array('default' => 'view',),),));

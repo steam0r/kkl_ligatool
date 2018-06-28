@@ -2,9 +2,6 @@
 
 namespace KKL\Ligatool\Tasks;
 
-/* cronjobs require explicit autoloading */
-require_once(__DIR__.'/../../vendor/autoload.php');
-
 use KKL\Ligatool\DB;
 use KKL\Ligatool\Events;
 
@@ -53,7 +50,7 @@ class GameDayReminder {
       $second = $ranking[1];
       $lastButOne = $ranking[count($ranking) - 2];
       $last = $ranking[count($ranking) - 1];
-      $potentialMatches[$seasons[$season]['name']] = array("top" => array($first['team_id'], $second['team_id']), "bottom" => array($lastButOne['team_id'], $last['team_id']));
+      $potentialMatches[$seasons[$season]['name']] = array("top" => array($first->team_id, $second->team_id), "bottom" => array($lastButOne->team_id, $last->team_id));
     }
     
     $topMatches = array();

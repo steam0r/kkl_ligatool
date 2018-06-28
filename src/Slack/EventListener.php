@@ -53,8 +53,7 @@ class EventListener {
     $topMatches = $event->getTopMatches();
     $attachments = array();
     $attachment['title'] = "@benedikt: Zeit die Erinnerungsmail zu verschicken!";
-    $attachment['text'] = "Mit Klick auf den Link, kommst du zu der vorformatierten Mail.";
-    $attachment['title_link'] = "https://www.kickerligakoeln.de/wp-kkl/reminder.php?offset=" . $event->getOffset() . "&echo=true";
+    $attachment['text'] = "In deinem Postfach sollte eine vorformatierte Mail liegen.";
     $attachment['color'] = "#FF0000";
     $attachments[] = $attachment;
     foreach($topMatches as $leagueName => $topMatch) {

@@ -3,7 +3,7 @@
 Plugin Name: KKL Ligatool
 Plugin URI: https://www.kickerligakoeln.de
 Description: Integration of the KKL Database into Wordpress
-Version: 2.2.5
+Version: 2.4.0
 Author: Stephan Maihoefer / Benedikt Scherer
 Author URI: http://undev.de
 License: MIT
@@ -11,7 +11,7 @@ License: MIT
 
 use KKL\Ligatool\KKL;
 
-require __DIR__.'/vendor/autoload.php';
+require_once(__DIR__.'/vendor/autoload.php');
 
 $kkl = new KKL();
 $kkl->init();

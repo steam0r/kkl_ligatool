@@ -9,6 +9,7 @@ use KKL\Ligatool\Template;
 class EventListener {
   
   public function init() {
+    Events\Service::registerCallback(Events\Service::$NEW_GAMEDAY_UPCOMING, array($this, 'send_reminder_mail'));
     Events\Service::registerCallback(Events\Service::$MATCH_FIXTURE_SET, array($this, 'post_new_fixture'));
   }
   
@@ -46,13 +47,36 @@ class EventListener {
     
   }
   
+  public function send_reminder_mail(Events\GameDayReminderEvent $event) {
+    
+    $to = "Kölner Kickerliga <ligaleitung@kickerligakoeln.de>";
+    $subject = "Anstehende Spiele in der Kölner Kickerliga";
+    $headers = array(
+      'From: Ligaleitung <ligaleitung@kickerligakoeln.de>',
+      'Reply-To: ligaleitung@kickerligakoeln.de',
+      'MIME-Version: 1.0',
+      'Content-type: text/html; charset=utf-8'
+    );
+  
+    $templateEngine = Template\Service::getTemplateEngine();
+    $template = $templateEngine->loadTemplate('mails/reminder_mail.twig');
+    $message = $template->render(array('matches' => $event->getMatches()));
+    wp_mail($to, $subject, $message, $headers);
+    
+  }
+  
   private function sendMail($to, $cc, $data) {
     
     $kkl_twig = Template\Service::getTemplateEngine();
     
     $to = $data['mail']['to']['name'] . "<" . $to . ">";
     $subject = '[kkl] Spieltermin ' . $data['match']['text'];
-    $headers = array('From: Ligaleitung <ligaleitung@kickerligakoeln.de>', 'Reply-To: ligaleitung@kickerligakoeln.de', 'MIME-Version: 1.0', 'Content-type: text/html; charset=utf-8',);
+    $headers = array(
+      'From: Ligaleitung <ligaleitung@kickerligakoeln.de>',
+      'Reply-To: ligaleitung@kickerligakoeln.de',
+      'MIME-Version: 1.0',
+      'Content-type: text/html; charset=utf-8'
+    );
     if($cc != null) {
       $headers[] = 'Cc: ' . $cc;
     }

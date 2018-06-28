@@ -9,7 +9,7 @@ class GameDayReminder {
   
   public static function execute() {
     $offset = 6;
-    $matches = static::getMatches(6);
+    $matches = static::getMatches($offset);
     if(!empty($matches)) {
       $topMatches = static::getTopMatches($matches);
       Events\Service::fireEvent(Events\Service::$NEW_GAMEDAY_UPCOMING, new Events\GameDayReminderEvent($matches, $topMatches, $offset));
@@ -35,8 +35,8 @@ class GameDayReminder {
     $seasons = array();
     $days = array();
     foreach($matches as $match) {
-      $days[$match['season_id']] = $match['day_number'];
-      $seasons[$match['season_id']] = array("name" => $match['league'], "code" => $match['leaguecode']);
+      $days[$match->season_id] = $match->day_number;
+      $seasons[$match->season_id] = array("name" => $match->league, "code" => $match->leaguecode);
     }
     
     $potentialMatches = array();
@@ -50,19 +50,19 @@ class GameDayReminder {
       $second = $ranking[1];
       $lastButOne = $ranking[count($ranking) - 2];
       $last = $ranking[count($ranking) - 1];
-      $potentialMatches[$seasons[$season]['name']] = array("top" => array($first['team_id'], $second['team_id']), "bottom" => array($lastButOne['team_id'], $last['team_id']));
+      $potentialMatches[$seasons[$season]['name']] = array("top" => array($first->team_id, $second->team_id), "bottom" => array($lastButOne->team_id, $last->team_id));
     }
     
     $topMatches = array();
     foreach($matches as $match) {
-      $league = $match['league'];
-      $home = $match['home_id'];
-      $away = $match['away_id'];
+      $league = $match->league;
+      $home = $match->home_id;
+      $away = $match->away_id;
       if(in_array($home, $potentialMatches[$league]['top']) && in_array($away, $potentialMatches[$league]['top'])) {
-        $topMatches[$league] = array("type" => "top", "home" => $match['home'], "away" => $match['away'], "leaguecode" => $match['leaguecode'], "contact" => $match['slack']);
+        $topMatches[$league] = array("type" => "top", "home" => $match->home, "away" => $match->away, "leaguecode" => $match->leaguecode, "contact" => $match->slack);
       }
       if(in_array($home, $potentialMatches[$league]['bottom']) && in_array($away, $potentialMatches[$league]['bottom'])) {
-        $topMatches[$league] = array("type" => "bottom", "home" => $match['home'], "away" => $match['away'], "leaguecode" => $match['leaguecode'], "contact" => $match['slack']);
+        $topMatches[$league] = array("type" => "bottom", "home" => $match->home, "away" => $match->away, "leaguecode" => $match->leaguecode, "contact" => $match->slack);
       }
     }
     return $topMatches;

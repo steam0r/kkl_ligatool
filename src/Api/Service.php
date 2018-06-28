@@ -50,6 +50,10 @@ class Service {
         $controller = new ICal();
         $controller->init();
       }
+      {
+        $controller = new Mailinglists();
+        $controller->register_routes();
+      }
     });
   }
   

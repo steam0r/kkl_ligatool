@@ -2,6 +2,9 @@
 
 namespace KKL\Ligatool\Tasks;
 
+/* cronjobs require explicit autoloading */
+require_once(__DIR__ . '../../vendor/autoload.php');
+
 use KKL\Ligatool\DB;
 
 class NewGameDay {

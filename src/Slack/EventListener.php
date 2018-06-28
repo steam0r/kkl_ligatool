@@ -39,7 +39,7 @@ class EventListener {
     $attachment['title_link'] = get_site_url() . '/wp-admin/admin.php?page=kkl_matches_admin_page&id=' . $match->id;
     $attachment['color'] = "#FF0000";
     
-    $slack->call('chat.postMessage', array("icon_emoji" => ":robot_face:", "username" => "Mr. Robot", "channel" => static::$TEST_CHANNEL, "text" => $event->getActorEmail() . " hat gerade einen Spieltermin eingetragen", "attachments" => json_encode(array($attachment))));
+    $slack->call('chat.postMessage', array("icon_emoji" => ":robot_face:", "username" => "Mr. Robot", "channel" => $this->getChannel(), "text" => $event->getActorEmail() . " hat gerade einen Spieltermin eingetragen", "attachments" => json_encode(array($attachment))));
   }
   
   private function getSlack() {
@@ -73,8 +73,12 @@ class EventListener {
       $attachments[] = $a;
     }
     $slack = $this->getSlack();
-    $slack->call('chat.postMessage', array("icon_emoji" => ":robot_face:", "username" => "Mr. Robot", "channel" => static::$TEST_CHANNEL, "text" => "Ein neuer Spieltag steht an:", "attachments" => json_encode($attachments)));
+    $slack->call('chat.postMessage', array("icon_emoji" => ":robot_face:", "username" => "Mr. Robot", "channel" => $this->getChannel(), "text" => "Ein neuer Spieltag steht an:", "attachments" => json_encode($attachments)));
     
+  }
+  
+  private function getChannel() {
+    return static::$LEAGUE_CHANNEL;
   }
   
 }

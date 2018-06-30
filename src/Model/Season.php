@@ -11,7 +11,7 @@ namespace KKL\Ligatool\Model;
 /**
  * @SWG\Definition(required={"name", "league", "startDate", "endDate"}, type="object")
  */
-class Season extends BaseModel {
+class Season extends SwaggerModel {
   
   /**
    * @var boolean

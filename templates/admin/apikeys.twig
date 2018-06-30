@@ -1,0 +1,35 @@
+<h2>API-Keys:</h2>
+<form method="POST" action="{{ action_url }}">
+<table class="wp-list-table widefat fixed striped" style="width: 95%">
+  <thead>
+  <tr>
+    <td style="width: 20%;">Name</td>
+    <td>Api-Key</td>
+    <td style="width: 10%;"></td>
+  </tr>
+  </thead>
+  <tbody>
+  {% for apiKey in keys %}
+    <tr>
+      <td>{{ apiKey.name }}</td>
+      <td>{{ apiKey.apiKey }}</td>
+      <td>
+        <input name="delete[{{ apiKey.apiKey }}]" type="submit" class="button-primary" value="löschen">
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+  <input type="hidden" name="action" value="kkl_create_api_key">
+
+  <table class="form-table" style="width: 50%;">
+    <tbody>
+    <tr>
+      <th style="width: 10%;" scope="row"><label for="api_key_name">Name:</label></th>
+      <td><input name="api_key_name" style="width: 100%;" id="api_key_name" type="text" /></td>
+      <td><input name="create" type="submit" class="button-primary" value="API-Key anlegen"></td>
+    </tr>
+    </tbody>
+  </table>
+</form>

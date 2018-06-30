@@ -3,7 +3,7 @@
 namespace KKL\Ligatool\Widget;
 
 use KKL\Ligatool\DB;
-use KKL\Ligatool\KKL;
+use KKL\Ligatool\Plugin;
 use KKL\Ligatool\Template;
 use WP_Widget;
 
@@ -34,7 +34,7 @@ class OtherSeasons extends WP_Widget {
     
     $league_id = $instance['league'];
     if(!$league_id) {
-      $context = KKL::getContext();
+      $context = Plugin::getContext();
       $league = $context['league'];
     } else {
       $league = $db->getLeague($league_id);
@@ -42,7 +42,7 @@ class OtherSeasons extends WP_Widget {
     
     $seasons = $db->getSeasonsByLeague($league->id);
     foreach($seasons as $season) {
-      $season->link = KKL::getLink('league', array('league' => $league->code, 'season' => date('Y', strtotime($season->start_date))));
+      $season->link = Plugin::getLink('league', array('league' => $league->code, 'season' => date('Y', strtotime($season->start_date))));
     }
     if(!empty($seasons)) {
       $title = apply_filters('widget_title', $instance['title']);

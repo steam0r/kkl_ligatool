@@ -9,6 +9,7 @@ wordpress:
   volumes:
     - ./:/var/www/html/wp-content/plugins/kkl_ligatool
     - ./scripts/docker_php_config.ini:/usr/local/etc/php/conf.d/uploads.ini
+    - ./scripts/.htaccess:/var/www/html/.htaccess
 wordpress_db:
   image: mysql:5.6
   environment:

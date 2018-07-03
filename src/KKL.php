@@ -69,6 +69,7 @@ class KKL {
     add_shortcode('gameday_pager', array(Shortcodes::class, 'gameDayPager'));
     add_shortcode('season_schedule', array(Shortcodes::class, 'seasonSchedule'));
     add_shortcode('contact_list', array(Shortcodes::class, 'contactList'));
+    add_shortcode( 'set_match_fixture', array('KKL_Shortcodes', 'setMatchFixture'));
     
     register_sidebar(array('name' => __(__('kkl_global_sidebar', 'kkl-ligatool')), 'id' => 'kkl_global_sidebar', 'description' => __('Widgets in this area will be shown on pages using any kkl page template below the page sidebar.'), 'class' => 'kkl_global_sidebar', 'before_title' => '<h4>', 'after_title' => '</h4>',));
     

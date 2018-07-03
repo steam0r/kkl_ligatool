@@ -45,11 +45,17 @@ class Shortcodes {
       }
       
       $day = $db->getGameDay($league->season->current_game_day);
-      $league->link = KKL::getLink('league', array('league' => $league->code, 'season' => date('Y', strtotime($league->season->start_date)), 'game_day' => $day->number,));
+      $league->link = KKL::getLink(
+        'league', array('league'   => $league->code, 'season' => date('Y', strtotime($league->season->start_date)),
+                        'game_day' => $day->number,)
+      );
       $leagues[] = $league;
     }
     
-    return $kkl_twig->render('shortcodes/league_overview.twig', array('context' => $context, 'leagues' => $leagues, 'all_leagues' => $all_leagues,));
+    return $kkl_twig->render(
+      'shortcodes/league_overview.twig',
+      array('context' => $context, 'leagues' => $leagues, 'all_leagues' => $all_leagues,)
+    );
   }
   
   public static function leagueTable($atts, $content, $tag) {
@@ -62,7 +68,9 @@ class Shortcodes {
     
     $ranking = new stdClass;
     $ranking->league = $context['league'];
-    $ranking->ranks = $db->getRankingForLeagueAndSeasonAndGameDay($context['league']->id, $context['season']->id, $context['game_day']->number);
+    $ranking->ranks = $db->getRankingForLeagueAndSeasonAndGameDay(
+      $context['league']->id, $context['season']->id, $context['game_day']->number
+    );
     foreach($ranking->ranks as $rank) {
       $team = $db->getTeam($rank->team_id);
       $club = $db->getClub($team->club_id);
@@ -92,7 +100,10 @@ class Shortcodes {
         $club = $db->getClub($team->club_id);
         $rank->team->link = KKL::getLink('club', array('club' => $club->short_name));
       }
-      $ranking->league->link = KKL::getLink('league', array('league' => $league->code, 'season' => date('Y', strtotime($season->start_date)), 'game_day' => $day->number));
+      $ranking->league->link = KKL::getLink(
+        'league', array('league'   => $league->code, 'season' => date('Y', strtotime($season->start_date)),
+                        'game_day' => $day->number)
+      );
       $rankings[] = $ranking;
     }
     
@@ -114,11 +125,16 @@ class Shortcodes {
       $match->home->link = KKL::getLink('club', array('club' => $home_club->short_name));
       $match->away->link = KKL::getLink('club', array('club' => $away_club->short_name));
     }
-    $schedule->link = KKL::getLink('schedule', array('league' => $context['league']->code, 'season' => date('Y', strtotime($context['season']->start_date))));
+    $schedule->link = KKL::getLink(
+      'schedule',
+      array('league' => $context['league']->code, 'season' => date('Y', strtotime($context['season']->start_date)))
+    );
     
     $schedules[] = $schedule;
     
-    return $kkl_twig->render('shortcodes/game_day.twig', array('context' => $context, 'schedules' => $schedules, 'view' => 'current'));
+    return $kkl_twig->render(
+      'shortcodes/game_day.twig', array('context' => $context, 'schedules' => $schedules, 'view' => 'current')
+    );
   }
   
   public static function gameDayOverview($atts, $content, $tag) {
@@ -135,7 +151,9 @@ class Shortcodes {
     }
     foreach(array_keys($leagues) as $league_id) {
       $league = $db->getLeague($league_id);
-      echo $kkl_twig->render('shortcodes/gameday_overview.twig', array('schedule' => $games[$league_id], 'league' => $league));
+      echo $kkl_twig->render(
+        'shortcodes/gameday_overview.twig', array('schedule' => $games[$league_id], 'league' => $league)
+      );
     }
   }
   
@@ -157,7 +175,10 @@ class Shortcodes {
       }
     }
     
-    return $kkl_twig->render('shortcodes/game_day.twig', array('context' => $context, 'schedules' => $schedules, 'view' => 'all', 'activeTeam' => $activeTeam));
+    return $kkl_twig->render(
+      'shortcodes/game_day.twig',
+      array('context' => $context, 'schedules' => $schedules, 'view' => 'all', 'activeTeam' => $activeTeam)
+    );
   }
   
   public static function clubDetail($atts, $content, $tag) {
@@ -175,7 +196,9 @@ class Shortcodes {
       $seasonTeam->season = $db->getSeason($seasonTeam->season_id);
       $seasonTeam->season->league = $db->getLeague($seasonTeam->season->league_id);
       
-      $ranking = $db->getRankingForLeagueAndSeasonAndGameDay($seasonTeam->season->league_id, $seasonTeam->season->id, $seasonTeam->season->current_game_day);
+      $ranking = $db->getRankingForLeagueAndSeasonAndGameDay(
+        $seasonTeam->season->league_id, $seasonTeam->season->id, $seasonTeam->season->current_game_day
+      );
       $position = 1;
       foreach($ranking as $rank) {
         if($rank->team_id == $seasonTeam->id) {
@@ -187,7 +210,11 @@ class Shortcodes {
       }
       
       $seasonTeam->link = KKL::getLink('club', array('club' => $contextClub->short_name));
-      $seasonTeam->schedule_link = KKL::getLink('schedule', array('league' => $seasonTeam->season->league->code, 'season' => date('Y', strtotime($seasonTeam->season->start_date)), 'team' => $seasonTeam->short_name));
+      $seasonTeam->schedule_link = KKL::getLink(
+        'schedule', array('league' => $seasonTeam->season->league->code, 'season' => date(
+                    'Y', strtotime($seasonTeam->season->start_date)
+                  ), 'team'        => $seasonTeam->short_name)
+      );
       
       
       $teams[$seasonTeam->id] = $seasonTeam;
@@ -196,7 +223,10 @@ class Shortcodes {
     $currentTeam = $db->getCurrentTeamForClub($contextClub->id);
     $currentLocation = $db->getLocation($currentTeam->properties['location']);
     
-    return $kkl_twig->render('shortcodes/club_detail.twig', array('context' => $context, 'club' => $contextClub, 'teams' => $teams, 'current_location' => $currentLocation));
+    return $kkl_twig->render(
+      'shortcodes/club_detail.twig',
+      array('context' => $context, 'club' => $contextClub, 'teams' => $teams, 'current_location' => $currentLocation)
+    );
     
   }
   
@@ -215,16 +245,24 @@ class Shortcodes {
     if(!$prev) {
       $day->isFirst = true;
     } else {
-      $prev->link = KKL::getLink('league', array('league' => $league->code, 'season' => date('Y', strtotime($season->start_date)), 'game_day' => $prev->number));
+      $prev->link = KKL::getLink(
+        'league', array('league'   => $league->code, 'season' => date('Y', strtotime($season->start_date)),
+                        'game_day' => $prev->number)
+      );
     }
     $next = $db->getNextGameDay($day);
     if(!$next) {
       $day->isLast = true;
     } else {
-      $next->link = KKL::getLink('league', array('league' => $league->code, 'season' => date('Y', strtotime($season->start_date)), 'game_day' => $next->number));
+      $next->link = KKL::getLink(
+        'league', array('league'   => $league->code, 'season' => date('Y', strtotime($season->start_date)),
+                        'game_day' => $next->number)
+      );
     }
     
-    return $kkl_twig->render('shortcodes/gameday_pager.twig', array('context' => $context, 'prev' => $prev, 'day' => $day, 'next' => $next));
+    return $kkl_twig->render(
+      'shortcodes/gameday_pager.twig', array('context' => $context, 'prev' => $prev, 'day' => $day, 'next' => $next)
+    );
     
   }
   
@@ -242,7 +280,41 @@ class Shortcodes {
     
     usort($players, array(__CLASS__, "cmp",));
     
-    return $kkl_twig->render('shortcodes/contact_list.twig', array('context' => $context, 'leagues' => $leagues, 'players' => $players,));
+    return $kkl_twig->render(
+      'shortcodes/contact_list.twig', array('context' => $context, 'leagues' => $leagues, 'players' => $players,)
+    );
+    
+  }
+  
+  public static function setMatchFixture($atts, $content, $tag) {
+    
+    $backend = new Backend();
+    $db = new DB\Wordpress();
+    $data = $db->getAllUpcomingGames();
+    $templateEngine = Template\Service::getTemplateEngine();
+    
+    $all_matches = array();
+    foreach($data as $game) {
+      $teamProperties = $db->getTeamProperties($game->homeid);
+      
+      $leagueData = $db->getLeague($game->league_id);
+      $all_matches[$game->league_id]["id"] = $game->league_id;
+      $all_matches[$game->league_id]["name"] = $leagueData->name;
+      $all_matches[$game->league_id]["code"] = $leagueData->code;
+      $all_matches[$game->league_id]["matches"][] = array("match"       => $game,
+                                                          "location_id" => $teamProperties["location"]);
+    }
+    
+    $backend->enqueue_scripts(
+      array(array('handle' => 'datepicker', 'src' => 'jquery.datetimepicker.js', 'type' => 'js'),
+            array('handle' => 'datepicker', 'src' => 'jquery.datetimepicker.css', 'type' => 'css'),
+            array('handle' => 'set_fixture', 'src' => 'frontend/set-fixture.js', 'type' => 'js'))
+    );
+    
+    return $templateEngine->render(
+      'shortcodes/set_match_fixture.tpl',
+      array('api_url' => get_site_url(), 'all_matches' => $all_matches, 'all_locations' => $all_locations)
+    );
     
   }
   

@@ -394,8 +394,10 @@ abstract class ListTable extends WP_List_Table {
     $db = new DB\Wordpress();
     $days = $db->getGameDays();
     $keyed = array();
-    foreach($days as $day) {
-      $keyed[$day->id] = $day;
+    if(is_array($days)) {
+      foreach($days as $day) {
+        $keyed[$day->id] = $day;
+      }
     }
     $this->gamedays = $keyed;
     

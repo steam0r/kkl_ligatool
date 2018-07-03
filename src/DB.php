@@ -128,19 +128,26 @@ abstract class DB {
   
   public function getClubs() {
     $sql = "SELECT * FROM clubs ORDER BY name ASC";
-    
-    return $this->getDb()->get_results($sql);
+    $results = $this->getDb()->get_results($sql);
+    if(is_array($results)) {
+      return $results;
+    }else{
+      return array();
+    }
   }
   
   public function getTeams() {
     $sql = "SELECT * FROM teams ORDER BY name ASC";
     $teams = $this->getDb()->get_results($sql);
-    foreach($teams as $team) {
-      $properties = $this->getTeamProperties($team->id);
-      $team->properties = $properties;
+    if(is_array($teams)) {
+      foreach($teams as $team) {
+        $properties = $this->getTeamProperties($team->id);
+        $team->properties = $properties;
+      }
+      return $teams;
+    }else{
+      return array();
     }
-    
-    return $teams;
   }
   
   public function getTeamProperties($teamId) {

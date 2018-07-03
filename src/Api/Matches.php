@@ -214,12 +214,11 @@ class Matches extends Controller {
   
   private function updateMatchFromRequest($request, $match) {
     $body = json_decode($request->get_body());
-    $match->location = $body->location;
     $match->goals_home = $body->goals_home;
     $match->goals_away = $body->goals_away;
     $match->score_home = $body->score_home;
     $match->score_away = $body->score_away;
-    $match->notes = $body->description;
+    $match->notes = $body->notes;
     return $match;
   }
   

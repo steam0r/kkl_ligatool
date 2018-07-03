@@ -8,7 +8,8 @@ use stdClass;
 class SeasonAdminPage extends AdminPage {
   
   function setup() {
-    $this->args = array('page_title' => __('season', 'kkl-ligatool'), 'page_slug' => 'kkl_seasons_admin_page', 'parent' => null);
+    $this->args = array('page_title' => __('season', 'kkl-ligatool'), 'page_slug' => 'kkl_seasons_admin_page',
+                        'parent'     => null);
   }
   
   function display_content() {
@@ -39,7 +40,30 @@ class SeasonAdminPage extends AdminPage {
       $active_checked = true;
     }
     
-    echo $this->form_table(array(array('type' => 'hidden', 'name' => 'id', 'value' => $season->id), array('title' => __('name', 'kkl-ligatool'), 'type' => 'text', 'name' => 'name', 'value' => ($this->errors) ? $_POST['name'] : $season->name, 'extra' => ($this->errors['name']) ? array('style' => "border-color: red;") : array()), array('title' => __('league', 'kkl-ligatool'), 'type' => 'select', 'name' => 'league', 'choices' => $league_options, 'selected' => ($this->errors) ? $_POST['league'] : $season->league_id, 'extra' => ($this->errors['league']) ? array('style' => "border-color: red;") : array()), array('title' => __('start_date', 'kkl-ligatool'), 'type' => 'text', 'name' => 'start_date', 'value' => $season->start_date, 'extra' => array('class' => 'datetimepicker')), array('title' => __('end_date', 'kkl-ligatool'), 'type' => 'text', 'name' => 'end_date', 'value' => $season->end_date, 'extra' => array('class' => 'datetimepicker')), array('title' => __('current_game_day', 'kkl-ligatool'), 'type' => 'select', 'name' => 'current_game_day', 'choices' => $day_options, 'selected' => $season->current_game_day), array('title' => __('active', 'kkl-ligatool'), 'type' => 'checkbox', 'name' => 'active', 'checked' => $active_checked), array('title' => __('season_admin', 'kkl-ligatool'), 'type' => 'select', 'name' => 'season_admin', 'choices' => $contact_options, 'selected' => ($this->errors) ? $_POST['season_admin'] : $season->properties['season_admin'], 'extra' => ($this->errors['season_admin']) ? array('style' => "border-color: red;") : array()),));
+    echo $this->form_table(
+      array(array('type' => 'hidden', 'name' => 'id', 'value' => $season->id),
+            array('title' => __('name', 'kkl-ligatool'), 'type' => 'text', 'name' => 'name',
+                  'value' => ($this->errors) ? $_POST['name'] : $season->name,
+                  'extra' => ($this->errors['name']) ? array('style' => "border-color: red;") : array()),
+            array('title'   => __('league', 'kkl-ligatool'), 'type' => 'select', 'name' => 'league',
+                  'choices' => $league_options, 'selected' => ($this->errors) ? $_POST['league'] : $season->league_id,
+                  'extra'   => ($this->errors['league']) ? array('style' => "border-color: red;") : array()),
+            array('title' => __('start_date', 'kkl-ligatool'), 'type' => 'text', 'name' => 'start_date',
+                  'value' => $season->start_date, 'extra' => array('class' => 'datetimepicker')),
+            array('title' => __('end_date', 'kkl-ligatool'), 'type' => 'text', 'name' => 'end_date',
+                  'value' => $season->end_date, 'extra' => array('class' => 'datetimepicker')),
+            array('title'   => __('current_game_day', 'kkl-ligatool'), 'type' => 'select', 'name' => 'current_game_day',
+                  'choices' => $day_options, 'selected' => $season->current_game_day),
+            array('title'   => __('active', 'kkl-ligatool'), 'type' => 'checkbox', 'name' => 'active',
+                  'checked' => $active_checked),
+            array('title'    => __('season_admin', 'kkl-ligatool'), 'type' => 'select', 'name' => 'season_admin',
+                  'choices'  => $contact_options,
+                  'selected' => ($this->errors) ? $_POST['season_admin'] : $season->properties['season_admin'],
+                  'extra'    => ($this->errors['season_admin']) ? array('style' => "border-color: red;") : array()),
+            array('title' => "Auf- und Abstiegslinien<br/>(unterhalb von)", 'type' => 'text', 'name' => 'relegation_markers',
+                  'value' => ($this->errors) ? $_POST['relegation_markers'] : $season->properties['relegation_markers'],
+                  'extra' => ($this->errors['relegation_markers']) ? array('style' => "border-color: red;") : array()))
+    );
   }
   
   function get_item() {
@@ -82,10 +106,16 @@ class SeasonAdminPage extends AdminPage {
     $season = $db->createOrUpdateSeason($season);
     
     $properties['season_admin'] = false;
-    if($_POST['season_admin'])
+    $properties['relegation_markers'] = false;
+    if($_POST['season_admin']) {
       $properties['season_admin'] = $_POST['season_admin'];
-    if(!empty($properties))
+    }
+    if($_POST['relegation_markers']) {
+      $properties['relegation_markers'] = $_POST['relegation_markers'];
+    }
+    if(!empty($properties)) {
       $db->setSeasonProperties($season, $properties);
+    }
     
     return $season;
     

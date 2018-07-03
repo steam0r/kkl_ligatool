@@ -1,3 +1,8 @@
+<style type="text/css">
+  .relegation_marker td {
+    border-bottom: 2px solid black;
+  }
+</style>
 {% for ranking in rankings %}
 {% if ranking.league.link %}
 <h2><a href="/tabelle/{{ ranking.league.link }}">{{ ranking.league.name }} <i class="fa fa-angle-double-right"></i></a></h2>
@@ -27,7 +32,7 @@
     </thead>
       <tbody>
       {% for rank in ranking.ranks %}
-      <tr>
+      <tr{% if rank.relegation_marker %} class="relegation_marker relegation_marker_{{ rank.relegation_marker }}"{% endif %}>
         <td>{% if not rank.shared_rank %}{{ rank.position }}{% endif %}</td>
         <td><a href="/team/{{ rank.team.link }}" target="_self">{{ rank.team.name }}</a>{% if rank.team.properties['current_league_winner']%} (M){% endif %}{% if rank.team.properties['current_cup_winner']%} (P){% endif %}</td>
         <td>{{ rank.games }}</td>
@@ -40,6 +45,7 @@
         <td class="hidden-xs">{{ rank.goalDiff }}</td>
         <td class="hidden-xs">{{ rank.goalsFor }}:{{ rank.goalsAgainst }}</td>
         <td><strong>{{ rank.score }}</strong></td>
+        <td><strong>{{ rank.relegation_marker }}</strong></td>
       </tr>
       {% endfor %}
     </tbody>

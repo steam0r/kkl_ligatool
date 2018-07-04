@@ -1,8 +1,3 @@
-<style type="text/css">
-  .relegation_marker td {
-    border-bottom: 2px solid black;
-  }
-</style>
 {% for ranking in rankings %}
 {% if ranking.league.link %}
 <h2><a href="/tabelle/{{ ranking.league.link }}">{{ ranking.league.name }} <i class="fa fa-angle-double-right"></i></a></h2>
@@ -10,7 +5,7 @@
 <h2>{{ ranking.league.name }}</h2>
 {% endif %}
 <a name="{{ ranking.league.code }}"></a>
-<table class="table table-striped kkl-table sortable">
+<table class="table kkl-table sortable">
     <thead>
       <tr>
         <th class="position">Platz</th>

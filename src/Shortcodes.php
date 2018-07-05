@@ -68,7 +68,10 @@ class Shortcodes {
       $club = $db->getClub($team->club_id);
       $rank->team->link = KKL::getLink('club', array('club' => $club->short_name));
     }
-    
+    $properties = $db->getSeasonProperties($context['season']->id);
+    if($properties && array_key_exists('relegation_explanation', $properties)) {
+      $ranking->relegation_explanation = $properties['relegation_explanation'];
+    }
     $rankings[] = $ranking;
     
     return $kkl_twig->render('shortcodes/table.twig', array('context' => $context, 'rankings' => $rankings));

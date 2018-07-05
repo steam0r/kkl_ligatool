@@ -62,7 +62,10 @@ class SeasonAdminPage extends AdminPage {
                   'extra'    => ($this->errors['season_admin']) ? array('style' => "border-color: red;") : array()),
             array('title' => "Auf- und Abstiegslinien<br/>(unterhalb von)", 'type' => 'text', 'name' => 'relegation_markers',
                   'value' => ($this->errors) ? $_POST['relegation_markers'] : $season->properties['relegation_markers'],
-                  'extra' => ($this->errors['relegation_markers']) ? array('style' => "border-color: red;") : array()))
+                  'extra' => ($this->errors['relegation_markers']) ? array('style' => "border-color: red;") : array()),
+            array('title' => "Auf- und Abstiegsregeln", 'type' => 'textarea', 'name' => 'relegation_explanation',
+                  'value' => ($this->errors) ? $_POST['relegation_explanation'] : $season->properties['relegation_explanation'],
+                  'extra' => ($this->errors['relegation_explanation']) ? array('rows' => 7, 'cols' => 50, 'style' => "border-color: red;") : array('rows' => 7, 'cols' => 50)))
     );
   }
   
@@ -112,6 +115,9 @@ class SeasonAdminPage extends AdminPage {
     }
     if($_POST['relegation_markers']) {
       $properties['relegation_markers'] = $_POST['relegation_markers'];
+    }
+    if($_POST['relegation_explanation']) {
+      $properties['relegation_explanation'] = $_POST['relegation_explanation'];
     }
     if(!empty($properties)) {
       $db->setSeasonProperties($season, $properties);

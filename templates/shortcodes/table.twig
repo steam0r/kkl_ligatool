@@ -5,7 +5,7 @@
 <h2>{{ ranking.league.name }}</h2>
 {% endif %}
 <a name="{{ ranking.league.code }}"></a>
-<table class="table kkl-table sortable">
+<table class="table kkl-table sortable ranking">
     <thead>
       <tr>
         <th class="position">Platz</th>
@@ -44,4 +44,9 @@
       {% endfor %}
     </tbody>
 </table>
+  {% if ranking.relegation_explanation %}
+    <p class="relegation_explanation">
+      {{ ranking.relegation_explanation }}
+    </p>
+  {% endif %}
 {% endfor %}

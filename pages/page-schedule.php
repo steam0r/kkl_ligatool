@@ -5,7 +5,7 @@ $league = get_query_var('league');
 $season = get_query_var('season');
 $game_day = get_query_var('game_day');
 
-$KKL = new KKL();
+$KKL = new Plugin();
 if ($league && $season && $game_day) {
   $context = $KKL->getContextByLeagueAndSeasonAndGameDay($league, $season, $game_day);
 } elseif ($league && $season) {

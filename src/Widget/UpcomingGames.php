@@ -3,7 +3,7 @@
 namespace KKL\Ligatool\Widget;
 
 use KKL\Ligatool\DB;
-use KKL\Ligatool\KKL;
+use KKL\Ligatool\Plugin;
 use KKL\Ligatool\Template;
 use WP_Widget;
 
@@ -38,7 +38,7 @@ class UpcomingGames extends WP_Widget {
     
     $league_id = $instance['league'];
     if(!$league_id) {
-      $context = KKL::getContext();
+      $context = Plugin::getContext();
       $league_id = $context['league']->id;
       if(!$league_id) {
         $team = $context['team'];

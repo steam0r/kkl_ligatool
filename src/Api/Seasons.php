@@ -10,21 +10,64 @@ use WP_REST_Server;
 class Seasons extends Controller {
   
   public function register_routes() {
-    register_rest_route($this->getNamespace(), '/' . $this->getBaseName(), array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_seasons'), 'args' => array(),));
-    register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_season'), 'args' => array('context' => array('default' => 'view',),),));
-    register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/teams', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_teams_for_season'), 'args' => array('context' => array('default' => 'view',),),));
-    register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/teams', array('methods' => WP_REST_Server::CREATABLE, 'permission_callback' => function() {
-      return is_user_logged_in();
-    }, 'callback' => array($this, 'add_teams_to_season'), 'args' => array('context' => array('default' => 'view',),),));
-    register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/gamedays', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_gamedays_for_season'), 'args' => array('context' => array('default' => 'view',),),));
-    register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/currentgameday', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_current_game_day_for_season'), 'args' => array('context' => array('default' => 'view',),),));
-    register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/schedule', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_schedule_for_season'), 'args' => array('context' => array('default' => 'view',),),));
-    register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/schedule', array('methods' => WP_REST_Server::CREATABLE, 'permission_callback' => function() {
-      return is_user_logged_in();
-    }, 'callback' => array($this, 'set_schedule_for_season'), 'args' => array('context' => array('default' => 'view',),),));
-    register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/ranking', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_ranking_for_season'), 'args' => array('context' => array('default' => 'view',),),));
-    register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/liveranking', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_liveranking_for_season'), 'args' => array('context' => array('default' => 'view',),),));
-    register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/info', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_info_for_season'), 'args' => array('context' => array('default' => 'view',),),));
+    register_rest_route(
+      $this->getNamespace(), '/' . $this->getBaseName(),
+      array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_seasons'), 'args' => array(),)
+    );
+    register_rest_route(
+      $this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)',
+      array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_season'),
+            'args'    => array('context' => array('default' => 'view',),),)
+    );
+    register_rest_route(
+      $this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/teams',
+      array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_teams_for_season'),
+            'args'    => array('context' => array('default' => 'view',),),)
+    );
+    register_rest_route(
+      $this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/teams',
+      array('methods' => WP_REST_Server::CREATABLE, 'permission_callback' => function() {
+        return is_user_logged_in();
+      }, 'callback'   => array($this, 'add_teams_to_season'),
+            'args'    => array('context' => array('default' => 'view',),),)
+    );
+    register_rest_route(
+      $this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/gamedays',
+      array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_gamedays_for_season'),
+            'args'    => array('context' => array('default' => 'view',),),)
+    );
+    register_rest_route(
+      $this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/currentgameday',
+      array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_current_game_day_for_season'),
+            'args'    => array('context' => array('default' => 'view',),),)
+    );
+    register_rest_route(
+      $this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/schedule',
+      array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_schedule_for_season'),
+            'args'    => array('context' => array('default' => 'view',),),)
+    );
+    register_rest_route(
+      $this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/schedule',
+      array('methods' => WP_REST_Server::CREATABLE, 'permission_callback' => function() {
+        return is_user_logged_in();
+      }, 'callback'   => array($this, 'set_schedule_for_season'),
+            'args'    => array('context' => array('default' => 'view',),),)
+    );
+    register_rest_route(
+      $this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/ranking',
+      array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_ranking_for_season'),
+            'args'    => array('context' => array('default' => 'view',),),)
+    );
+    register_rest_route(
+      $this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/liveranking',
+      array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_liveranking_for_season'),
+            'args'    => array('context' => array('default' => 'view',),),)
+    );
+    register_rest_route(
+      $this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/info',
+      array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_info_for_season'),
+            'args'    => array('context' => array('default' => 'view',),),)
+    );
   }
   
   public function getBaseName() {
@@ -296,11 +339,37 @@ class Seasons extends Controller {
   protected function getLinks($itemId) {
     $leagueEndpoint = new Leagues();
     
-    return array("gameDays" => array("href" => $this->getFullBaseUrl() . '/<id>/gamedays', "embeddable" => array("table" => "game_days", "field" => "season_id",),), "teams" => array("href" => $this->getFullBaseUrl() . '/<id>/teams', "embeddable" => array("table" => "teams", "field" => "season_id",),), "league" => array("href" => $leagueEndpoint->getFullBaseUrl() . '/<propertyid>', "embeddable" => array("table" => "leagues", "field" => "id",), "idFields" => array("leagueId"),), "currentGameDay" => array("href" => $this->getFullBaseUrl() . '/<id>/currentgameday', "embeddable" => array("callback" => function() use ($itemId) {
-      $db = new DB\Api();
+    return array("gameDays"                                                                                         => array("href"       => $this->getFullBaseUrl(
+      ) . '/<id>/gamedays',
+                                                                                                                             "embeddable" => array("table" => "game_days",
+                                                                                                                                                   "field" => "season_id",),),
+                 "teams"                                                                                            => array("href"       => $this->getFullBaseUrl(
+                   ) . '/<id>/teams',
+                                                                                                                             "embeddable" => array("table" => "teams",
+                                                                                                                                                   "field" => "season_id",),),
+                 "league"                                                                                           => array("href"       => $leagueEndpoint->getFullBaseUrl(
+                   ) . '/<propertyid>',
+                                                                                                                             "embeddable" => array("table" => "leagues",
+                                                                                                                                                   "field" => "id",),
+                                                                                                                             "idFields"   => array("leagueId"),),
+                 "currentGameDay"                                                                                   => array("href"       => $this->getFullBaseUrl(
+                   ) . '/<id>/currentgameday',
+                                                                                                                             "embeddable" => array("callback" => function() use ($itemId) {
+                                                                                                                               $db = new DB\Api(
+                                                                                                                               );
       
-      return $db->getCurrentGameDayForSeason($itemId);
-    },),), "schedule" => array("href" => $this->getFullBaseUrl() . '/<id>/schedule',), "ranking" => array("href" => $this->getFullBaseUrl() . '/<id>/ranking',), "properties" => array("href" => $this->getFullBaseUrl() . '/<id>/properties', "embeddable" => array("table" => "season_properties", "field" => "objectId",),),);
+                                                                                                                               return $db->getCurrentGameDayForSeason(
+                                                                                                                                 $itemId
+                                                                                                                               );
+                                                                                                                             },),),
+                 "schedule"                                                                                         => array("href" => $this->getFullBaseUrl(
+                   ) . '/<id>/schedule',),
+                 "ranking"                                                                                          => array("href" => $this->getFullBaseUrl(
+                   ) . '/<id>/ranking',),
+                 "properties"                                                                                       => array("href"       => $this->getFullBaseUrl(
+                   ) . '/<id>/properties',
+                                                                                                                             "embeddable" => array("table" => "season_properties",
+                                                                                                                                                   "field" => "objectId",),),);
   }
   
 }

@@ -11,7 +11,7 @@ namespace KKL\Ligatool\Model;
 /**
  * @SWG\Definition(required={"title"}, type="object")
  */
-class Location extends BaseModel {
+class Location extends SwaggerModel {
   
   /**
    * @var string

@@ -11,6 +11,6 @@ namespace KKL\Ligatool\Model;
 /**
  * @SWG\Definition(required={"firstName"}, type="object")
  */
-class Player extends BaseModel {
-  
+class Player extends SwaggerModel {
+
 }

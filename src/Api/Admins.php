@@ -9,9 +9,36 @@ use WP_REST_Server;
 class Admins extends Controller {
   
   public function register_routes() {
-    register_rest_route($this->getNamespace(), '/' . $this->getBaseName(), array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_admins'), 'args' => array(),));
-    register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_admin'), 'args' => array('context' => array('default' => 'view',),)));
-    register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/properties', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_info_for_admin'), 'args' => array('context' => array('default' => 'view',),)));
+    register_rest_route(
+      $this->getNamespace(),
+      '/' . $this->getBaseName(),
+      array(
+        'methods' => WP_REST_Server::READABLE,
+        'callback' => array($this, 'get_admins'),
+        'args' => array(),
+        'permission_callback' => array($this, 'authenticate_api_key')
+      )
+    );
+    register_rest_route(
+      $this->getNamespace(),
+      '/' . $this->getBaseName() . '/(?P<id>[\d]+)',
+      array(
+        'methods' => WP_REST_Server::READABLE,
+        'callback' => array($this, 'get_admin'),
+        'args' => array('context' => array('default' => 'view')),
+        'permission_callback' => array($this, 'authenticate_api_key')
+      )
+    );
+    register_rest_route(
+      $this->getNamespace(),
+      '/' . $this->getBaseName() . '/(?P<id>[\d]+)/properties',
+      array(
+        'methods' => WP_REST_Server::READABLE,
+        'callback' => array($this, 'get_info_for_admin'),
+        'args' => array('context' => array('default' => 'view')),
+        'permission_callback' => array($this, 'authenticate_api_key')
+      )
+    );
   }
   
   public function getBaseName() {

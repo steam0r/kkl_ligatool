@@ -2,12 +2,24 @@
 
 namespace KKL\Ligatool;
 
+use KKL\Ligatool\Model\ApiKey;
 use stdClass;
+use Symlink\ORM\Manager;
+use Symlink\ORM\Mapping;
 use wpdb;
 
 abstract class DB {
   
+  /**
+   * @deprecated move to orm
+   * @var wpdb wordpres db layer
+   */
   private $db;
+  
+  /**
+   * @var Manager simple wordpress orm layer
+   */
+  private $orm;
   
   public function __construct(wpdb $db = null) {
     if($db !== null) {
@@ -16,6 +28,7 @@ abstract class DB {
       $options = get_option('kkl_ligatool');
       $this->db = new wpdb($options['db_user'], $options['db_pass'], $options['db_name'], $options['db_host']);
     }
+    $this->orm = Manager::getManager();
   }
   
   
@@ -29,10 +42,18 @@ abstract class DB {
   }
   
   /**
+   * @deprecated user orm layer for new functions, implement databse-code in db-layer not in modules
    * @return wpdb
    */
   public function getDb() {
     return $this->db;
+  }
+  
+  /**
+   * @return Manager
+   */
+  protected function getOrm() {
+    return $this->orm;
   }
   
   public function getUpcomingGames($league_id) {
@@ -1260,6 +1281,34 @@ abstract class DB {
     $this->getDb()->insert('game_days', $values, array('%d', '%s', '%s', '%d'));
     
     return $this->getGameDay($this->getDb()->insert_id);
+  }
+  
+  /**
+   * @return ApiKey[]
+   */
+  public function getApiKeys() {
+    $orm = $this->getOrm();
+    $repo = $orm->getRepository(ApiKey::class);
+    $results = $repo->createQueryBuilder()->orderBy('ID', 'ASC')->buildQuery()->getResults(true);
+    if(!is_array($results)) {
+      $results = array();
+    }
+    return $results;
+  }
+  
+  /**
+   * @param string $key
+   * @return ApiKey|null
+   */
+  public function getApiKey($key) {
+    $orm = $this->getOrm();
+    $repo = $orm->getRepository(ApiKey::class);
+    $results = $repo->createQueryBuilder()->where('api_key', $key, '=')->buildQuery()->getResults(true);
+    if($results) {
+      return $results[0];
+    } else {
+      return null;
+    }
   }
   
 }

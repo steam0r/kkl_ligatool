@@ -9,10 +9,22 @@ use WP_REST_Server;
 class Teams extends Controller {
   
   public function register_routes() {
-    register_rest_route($this->getNamespace(), '/' . $this->getBaseName(), array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_teams'), 'args' => array(),));
-    register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_team'), 'args' => array('context' => array('default' => 'view',),)));
-    register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/matches', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_matches_for_team'), 'args' => array('context' => array('default' => 'view',),)));
-    register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/properties', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_info_for_team'), 'args' => array('context' => array('default' => 'view',),)));
+    register_rest_route($this->getNamespace(), '/' . $this->getBaseName(),
+                        array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_teams'),
+                              'args'    => array(),)
+    );
+    register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)',
+                        array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_team'),
+                              'args'    => array('context' => array('default' => 'view',),))
+    );
+    register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/matches',
+                        array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_matches_for_team'),
+                              'args'    => array('context' => array('default' => 'view',),))
+    );
+    register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/properties',
+                        array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_info_for_team'),
+                              'args'    => array('context' => array('default' => 'view',),))
+    );
   }
   
   public function getBaseName() {
@@ -116,10 +128,19 @@ class Teams extends Controller {
   protected function getLinks($itemId) {
     $clubEndpoint = new Clubs();
     $seasonEndpoint = new Seasons();
-    return array("matches" => array("href" => $this->getFullBaseUrl() . '/<id>/matches', "embeddable" => array("callback" => function() use ($itemId) {
-      $db = new DB\Api();
-      return $db->getMatchesForTeam($itemId);
-    })), "club" => array("href" => $clubEndpoint->getFullBaseUrl() . '/<propertyid>', "embeddable" => array("table" => "clubs", "field" => "id"), "idFields" => array("clubId")), "season" => array("href" => $seasonEndpoint->getFullBaseUrl() . '/<propertyid>', "embeddable" => array("table" => "seasons", "field" => "id"), "idFields" => array("seasonId")), "properties" => array("href" => $this->getFullBaseUrl() . '/<id>/properties', "embeddable" => array("table" => "team_properties", "field" => "objectId")),);
+    return array("matches" => array("href" => $this->getFullBaseUrl() . '/<id>/matches',
+                                    "embeddable" => array("callback" => function() use ($itemId) {
+                                      $db = new DB\Api();
+                                      return $db->getMatchesForTeam($itemId);
+                                    })), "club" => array("href"       => $clubEndpoint->getFullBaseUrl() .
+                                                                         '/<propertyid>',
+                                                         "embeddable" => array("table" => "clubs", "field" => "id"),
+                                                         "idFields" => array("clubId")),
+                 "season" => array("href"       => $seasonEndpoint->getFullBaseUrl() . '/<propertyid>',
+                                   "embeddable" => array("table" => "seasons", "field" => "id"),
+                                   "idFields"   => array("seasonId")),
+                 "properties" => array("href"       => $this->getFullBaseUrl() . '/<id>/properties',
+                                       "embeddable" => array("table" => "team_properties", "field" => "objectId")),);
   }
   
 }

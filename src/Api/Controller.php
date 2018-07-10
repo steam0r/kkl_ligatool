@@ -309,6 +309,22 @@ abstract class Controller extends WP_REST_Controller {
   
   protected abstract function getBaseName();
   
+  /**
+   * @param WP_REST_Request $request
+   * @return bool
+   */
+  public function authenticate_api_key($request) {
+    $key = $request->get_header('X-Api-Key');
+    if($key) {
+      $db = new DB\Wordpress();
+      $apiKey = $db->getApiKey($key);
+      if($apiKey) {
+        return true;
+      }
+    }
+    return false;
+  }
+  
   protected function getLinks($itemId) {
     return array();
   }

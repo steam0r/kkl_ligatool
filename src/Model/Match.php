@@ -11,6 +11,6 @@ namespace KKL\Ligatool\Model;
 /**
  * @SWG\Definition(required={"home", "away"}, type="object")
  */
-class Match extends BaseModel {
-  
+class Match extends SwaggerModel {
+
 }

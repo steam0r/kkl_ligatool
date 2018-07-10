@@ -1,11 +1,11 @@
 <?php
 namespace KKL\Ligatool;
 
-$kkl = new KKL();
+$kkl = new Plugin();
 
 $team = get_query_var('team');
 $context = $kkl->getContextByClubCode($team);
-KKL::setContext($context);
+Plugin::setContext($context);
 
 /*
 Template Name: Team Detail

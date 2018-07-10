@@ -26,11 +26,11 @@ if (isset($wp_query->query_vars['json'])) {
         $team->logo = "/images/team/".$team->logo;
       }
       // HACK
-      $team->link = KKL::getLink('club', array('club' => $club->short_name));
+      $team->link = Plugin::getLink('club', array('club' => $club->short_name));
     }
 
     $day = $db->getGameDay($league->season->current_game_day);
-    $league->link = KKL::getLink('league', array('league' => $league->code, 'season' => date('Y', strtotime($league->season->start_date)), 'game_day' => $day->number));
+    $league->link = Plugin::getLink('league', array('league' => $league->code, 'season' => date('Y', strtotime($league->season->start_date)), 'game_day' => $day->number));
     $leagues[] = $league;
   }
 

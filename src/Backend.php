@@ -2,6 +2,9 @@
 
 namespace KKL\Ligatool;
 
+use KKL\Ligatool\DB\Wordpress;
+use KKL\Ligatool\Model\ApiKey;
+
 class Backend {
   
   public static function add_help_options() {
@@ -226,7 +229,7 @@ class Backend {
   }
   
   public static function settings_page() {
-    
+  
     $kkl_twig = Template\Service::getTemplateEngine();
     
     self::display_tabs();
@@ -244,8 +247,15 @@ class Backend {
     ob_end_clean();
     
     $vars['save'] = esc_attr('Save Changes');
+  
+    
+    $db = new DB\Wordpress();
+    $apikeys = $db->getApiKeys();
+    $vars['keys'] = $apikeys;
+    $vars['action_url'] = esc_url(admin_url('admin-post.php'));
     
     echo $kkl_twig->render('admin/settings.twig', $vars);
+    echo $kkl_twig->render('admin/apikeys.twig', $vars);
     
   }
   
@@ -276,6 +286,7 @@ class Backend {
     add_action('admin_menu', array(__CLASS__, 'admin_menu'));
     add_action('set-screen-option', array(__CLASS__, 'set_screen_option'));
     add_action('admin_init', array(__CLASS__, 'register_settings'));
+    add_action('admin_post_kkl_create_api_key', array(__CLASS__, 'kkl_create_api_key'));
     
   }
   
@@ -377,6 +388,36 @@ class Backend {
   public function add_kkl_ligatool_page($parent_slug, $page_title, $menu_title, $capability, $menu_slug, $function) {
     $hook = add_submenu_page($parent_slug, $page_title, $page_title, $capability, $menu_slug, $function);
     add_action('manage_' . $hook . '_columns', array(__CLASS__, 'add_screen_options'));
+  }
+  
+  public function kkl_create_api_key() {
+    status_header(200);
+  
+    $db = new Wordpress();
+    $delete = $_REQUEST['delete'];
+    if(is_array($delete)) {
+      foreach($delete as $key => $value) {
+        $apiKey = $db->getApiKey($key);
+        if($apiKey) {
+          $apiKey->delete();
+        }
+      }
+    }else{
+      $name = $_REQUEST['api_key_name'];
+      $apiKey = new ApiKey();
+      $apiKey->setName($name);
+  
+      $key = uniqid('kkl_');
+      while($db->getApiKey($key) != null) {
+        $key = uniqid('kkl_');
+      }
+      $apiKey->setApiKey($key);
+      $apiKey->save();
+  
+    }
+    $admin_url = admin_url('admin.php?page=kkl_ligatool_settings');
+    wp_redirect($admin_url);
+    exit;
   }
   
   

@@ -11,7 +11,7 @@ namespace KKL\Ligatool\Model;
 /**
  * @SWG\Definition(required={"fixture", "seasonId"}, type="object")
  */
-class GameDay extends BaseModel {
+class GameDay extends SwaggerModel {
   
   /**
    * @var int
@@ -20,20 +20,20 @@ class GameDay extends BaseModel {
   private $seasonId;
   
   /**
-   * @SWG\Property(format="int64")
    * @var int
+   * @SWG\Property(format="int64")
    */
   private $number;
   
   /**
-   * @SWG\Property(example="1980-09-02 05:11:42")
    * @var string
+   * @SWG\Property(example="1980-09-02 05:11:42")
    */
   private $fixture;
   
   /**
-   * @SWG\Property(example="1980-09-02 05:11:42")
    * @var string
+   * @SWG\Property(example="1980-09-02 05:11:42")
    */
   private $endDate;
   

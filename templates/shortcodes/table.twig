@@ -5,7 +5,7 @@
 <h2>{{ ranking.league.name }}</h2>
 {% endif %}
 <a name="{{ ranking.league.code }}"></a>
-<table class="table table-striped kkl-table sortable">
+<table class="table kkl-table sortable ranking">
     <thead>
       <tr>
         <th class="position">Platz</th>
@@ -27,7 +27,7 @@
     </thead>
       <tbody>
       {% for rank in ranking.ranks %}
-      <tr>
+      <tr{% if rank.relegation_marker %} class="relegation_marker relegation_marker_{{ rank.relegation_marker }}"{% endif %}>
         <td>{% if not rank.shared_rank %}{{ rank.position }}{% endif %}</td>
         <td><a href="/team/{{ rank.team.link }}" target="_self">{{ rank.team.name }}</a>{% if rank.team.properties['current_league_winner']%} (M){% endif %}{% if rank.team.properties['current_cup_winner']%} (P){% endif %}</td>
         <td>{{ rank.games }}</td>
@@ -44,4 +44,9 @@
       {% endfor %}
     </tbody>
 </table>
+  {% if ranking.relegation_explanation %}
+    <p class="relegation_explanation">
+      {{ ranking.relegation_explanation }}
+    </p>
+  {% endif %}
 {% endfor %}

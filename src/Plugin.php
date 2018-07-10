@@ -4,13 +4,19 @@ namespace KKL\Ligatool;
 
 use scbLoad4;
 
-class KKL {
+class Plugin {
   
-  public static $context = array();
+  private static $baseUrl;
+  private static $basePath;
+  private static $context = array();
+  private static $pluginFile;
   
   private $db;
   
-  public function __construct() {
+  public function __construct($pluginFile, $baseUrl, $basePath) {
+    static::$pluginFile = $pluginFile;
+    static::$baseUrl = $baseUrl;
+    static::$basePath = $baseUrl;
     $this->db = new DB\Wordpress();
   }
   
@@ -20,6 +26,27 @@ class KKL {
   
   public static function setContext($context) {
     self::$context = $context;
+  }
+  
+  /**
+   * @return mixed
+   */
+  public static function getBaseUrl() {
+    return self::$baseUrl;
+  }
+  
+  /**
+   * @return mixed
+   */
+  public static function getBasePath() {
+    return self::$basePath;
+  }
+  
+  /**
+   * @return mixed
+   */
+  public static function getPluginFile() {
+    return self::$pluginFile;
   }
   
   public static function getLink($type, $values) {
@@ -55,6 +82,11 @@ class KKL {
   }
   
   public function init() {
+  
+    add_option(DB\Wordpress::$VERSION_KEY, DB\Wordpress::$VERSION );
+  
+    register_activation_hook( static::getPluginFile(), array($this->getDB(), 'installWordpressDatabase'));
+    register_activation_hook( static::getPluginFile(), array($this->getDB(), 'installWordpressData'));
     
     add_filter('query_vars', array($this, 'add_query_vars_filter'));
     

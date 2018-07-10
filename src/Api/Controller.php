@@ -72,7 +72,19 @@ abstract class Controller extends WP_REST_Controller {
         }
       });
     }
-    
+  
+    $reqEmbeds = $request->get_param('embed');
+    if($reqEmbeds) {
+      $embeds = explode(',', $reqEmbeds);
+      foreach($data as $key => $reducedItem) {
+        if(is_object($reducedItem)) {
+          $data[$key] = $this->addEmbeddables($reducedItem, $embeds);
+        } else {
+          $data[$key] = $reducedItem;
+        }
+      }
+    }
+
     $reducedItems = array();
     $fieldsParam = $request->get_param('fields');
     if($fieldsParam) {
@@ -83,6 +95,9 @@ abstract class Controller extends WP_REST_Controller {
           if(property_exists($item, $wantedField)) {
             $reducedItem->{$wantedField} = $item->{$wantedField};
           }
+        }
+        if($reqEmbeds) {
+          $reducedItem->_embedded = $item->_embedded;
         }
         $reducedItems[] = $reducedItem;
       }
@@ -121,17 +136,6 @@ abstract class Controller extends WP_REST_Controller {
           }
         }
       }
-      $reqEmbeds = $request->get_param('embed');
-      if($reqEmbeds) {
-        $embeds = explode(',', $reqEmbeds);
-        foreach($reducedItems as $key => $reducedItem) {
-          if(is_object($reducedItem)) {
-            $reducedItems[$key] = $this->addEmbeddables($reducedItem, $embeds);
-          } else {
-            $reducedItems[$key] = $reducedItem;
-          }
-        }
-      }
       if(!$hideLinks && (!$fieldsParam || strpos($fieldsParam, '_links') !== false)) {
         $reducedItems = $this->addLinks($reducedItems);
       }
@@ -158,12 +162,7 @@ abstract class Controller extends WP_REST_Controller {
         $this->offset = $reqOffset;
       }
       $totalPages = ceil($totalItems / $this->per_page);
-
-      $reqEmbeds = $request->get_param('embed');
-      if($reqEmbeds) {
-        $embeds = explode(',', $reqEmbeds);
-        $reducedItems = $this->addEmbeddables($reducedItems, $embeds);
-      }
+      
       if(!$hideLinks && (!$fieldsParam || strpos($fieldsParam, '_links') !== false)) {
         $reducedItems = $this->addLinks($reducedItems);
       }
@@ -308,6 +307,22 @@ abstract class Controller extends WP_REST_Controller {
   }
   
   protected abstract function getBaseName();
+  
+  /**
+   * @param WP_REST_Request $request
+   * @return bool
+   */
+  public function authenticate_api_key($request) {
+    $key = $request->get_header('X-Api-Key');
+    if($key) {
+      $db = new DB\Wordpress();
+      $apiKey = $db->getApiKey($key);
+      if($apiKey) {
+        return true;
+      }
+    }
+    return false;
+  }
   
   protected function getLinks($itemId) {
     return array();

@@ -2,12 +2,24 @@
 
 namespace KKL\Ligatool;
 
+use KKL\Ligatool\Model\ApiKey;
 use stdClass;
+use Symlink\ORM\Manager;
+use Symlink\ORM\Mapping;
 use wpdb;
 
 abstract class DB {
   
+  /**
+   * @deprecated move to orm
+   * @var wpdb wordpres db layer
+   */
   private $db;
+  
+  /**
+   * @var Manager simple wordpress orm layer
+   */
+  private $orm;
   
   public function __construct(wpdb $db = null) {
     if($db !== null) {
@@ -16,6 +28,7 @@ abstract class DB {
       $options = get_option('kkl_ligatool');
       $this->db = new wpdb($options['db_user'], $options['db_pass'], $options['db_name'], $options['db_host']);
     }
+    $this->orm = Manager::getManager();
   }
   
   
@@ -29,10 +42,18 @@ abstract class DB {
   }
   
   /**
+   * @deprecated user orm layer for new functions, implement databse-code in db-layer not in modules
    * @return wpdb
    */
   public function getDb() {
     return $this->db;
+  }
+  
+  /**
+   * @return Manager
+   */
+  protected function getOrm() {
+    return $this->orm;
   }
   
   public function getUpcomingGames($league_id) {
@@ -525,8 +546,25 @@ abstract class DB {
   }
   
   public function getRankingForLeagueAndSeasonAndGameDay($leagueId, $seasonId, $dayNumber) {
-    $sql = "SELECT " . "team_scores.team_id, " . "sum(team_scores.score) as score, " . "sum(team_scores.win) as wins, " . "sum(team_scores.loss) as losses, " . "sum(team_scores.draw) as draws, " . "sum(team_scores.goalsFor) as goalsFor, " . "sum(team_scores.goalsAgainst) as goalsAgainst, " . "sum(team_scores.goalsFor - team_scores.goalsAgainst) as goalDiff, " . "sum(team_scores.gamesFor) as gamesFor, " . "sum(team_scores.gamesAgainst) as gamesAgainst, " . "sum(team_scores.gamesFor - team_scores.gamesAgainst) as gameDiff " . "FROM game_days, " . "team_scores  " . "WHERE game_days.season_id='" . esc_sql($seasonId) . "' " . "AND game_days.number <= '" . esc_sql($dayNumber) . "' " . "AND gameDay_id=game_days.id " . "GROUP BY team_id " . //      "ORDER BY score DESC, gameDiff DESC, goalDiff DESC, team_scores.goalsFor DESC";
-      "ORDER BY score DESC, gameDiff DESC";
+    $sql = "SELECT " .
+           "team_scores.team_id, " .
+           "sum(team_scores.score) as score, " .
+           "sum(team_scores.win) as wins, " .
+           "sum(team_scores.loss) as losses, " .
+           "sum(team_scores.draw) as draws, " .
+           "sum(team_scores.goalsFor) as goalsFor, " .
+           "sum(team_scores.goalsAgainst) as goalsAgainst, " .
+           "sum(team_scores.goalsFor - team_scores.goalsAgainst) as goalDiff, " .
+           "sum(team_scores.gamesFor) as gamesFor, " .
+           "sum(team_scores.gamesAgainst) as gamesAgainst, " .
+           "sum(team_scores.gamesFor - team_scores.gamesAgainst) as gameDiff " .
+           "FROM game_days, " .
+           "team_scores  " .
+           "WHERE game_days.season_id='" . esc_sql($seasonId) . "' " .
+           "AND game_days.number <= '" . esc_sql($dayNumber) . "' " .
+           "AND gameDay_id=game_days.id " .
+           "GROUP BY team_id " . //      "ORDER BY score DESC, gameDiff DESC, goalDiff DESC, team_scores.goalsFor DESC";
+           "ORDER BY score DESC, gameDiff DESC";
     
     $ranking = $this->getDb()->get_results($sql);
     
@@ -617,13 +655,27 @@ abstract class DB {
         }
       }
     }
+  
+    $properties = $this->getSeasonProperties($seasonId);
+    $relegationMarkers = array();
+    if($properties && array_key_exists('relegation_markers', $properties)) {
+      $relegationMarkers = explode(',', $properties['relegation_markers']);
+    }
     
     $position = 0;
     $previousScore = 0;
     $previousGameDiff = 0;
+    $markerCount = 0;
     foreach($ranking as $rank) {
       
       $position++;
+      
+      if(in_array($position, $relegationMarkers)) {
+        $markerCount++;
+        $rank->relegation_marker = $markerCount;
+      }else{
+        $rank->relegation_marker = false;
+      }
       
       $rank->team = $this->getTeam($rank->team_id);
       $rank->games = $rank->wins + $rank->losses + $rank->draws;
@@ -1229,6 +1281,34 @@ abstract class DB {
     $this->getDb()->insert('game_days', $values, array('%d', '%s', '%s', '%d'));
     
     return $this->getGameDay($this->getDb()->insert_id);
+  }
+  
+  /**
+   * @return ApiKey[]
+   */
+  public function getApiKeys() {
+    $orm = $this->getOrm();
+    $repo = $orm->getRepository(ApiKey::class);
+    $results = $repo->createQueryBuilder()->orderBy('ID', 'ASC')->buildQuery()->getResults(true);
+    if(!is_array($results)) {
+      $results = array();
+    }
+    return $results;
+  }
+  
+  /**
+   * @param string $key
+   * @return ApiKey|null
+   */
+  public function getApiKey($key) {
+    $orm = $this->getOrm();
+    $repo = $orm->getRepository(ApiKey::class);
+    $results = $repo->createQueryBuilder()->where('api_key', $key, '=')->buildQuery()->getResults(true);
+    if($results) {
+      return $results[0];
+    } else {
+      return null;
+    }
   }
   
 }

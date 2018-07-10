@@ -2,7 +2,7 @@
 
 namespace KKL\Ligatool\Model;
 
-abstract class BaseModel {
+abstract class SwaggerModel {
   
   /**
    * @SWG\Property(format="int64")

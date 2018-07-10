@@ -16,6 +16,8 @@ class Matches extends Controller {
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/fixture', array('methods' => 'PATCH', 'callback' => array($this, 'set_match_fixture'), 'permission_callback' => array($this, 'is_valid_email_for_match'), 'args' => array('context' => array('default' => 'view',),)));
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/properties', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_properties_for_match'), 'args' => array('context' => array('default' => 'view',),)));
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/info', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_info_for_match'), 'args' => array('context' => array('default' => 'view',),)));
+    register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/score', array('methods' => 'PATCH', 'callback' => array($this, 'set_live_result'), 'permission_callback' => array($this, 'authenticate_api_key'), 'args' => array('context' => array('default' => 'view',),)));
+    register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/score', array('methods' => 'PUT', 'callback' => array($this, 'set_final_match_result'), 'permission_callback' => array($this, 'authenticate_api_key'), 'args' => array('context' => array('default' => 'view',),)));
   }
   
   public function getBaseName() {
@@ -151,6 +153,26 @@ class Matches extends Controller {
     return $this->getResponse($request, $items, true);
   }
   
+  public function set_live_result(WP_REST_Request $request) {
+    $db = new DB\Api();
+    $match = $db->getMatch($request->get_param('id'));
+    $match = $this->updateMatchFromRequest($request, $match);
+    $db = new DB\Wordpress();
+    $match = $db->createOrUpdateMatch($match);
+    return new \WP_REST_Response($match, 200);
+  }
+  
+  public function set_final_match_result(WP_REST_Request $request) {
+    $db = new DB\Api();
+    $match = $db->getMatch($request->get_param('id'));
+    $match = $this->updateMatchFromRequest($request, $match);
+    $match->status = 3;
+    $db = new DB\Wordpress();
+    $match = $db->createOrUpdateMatch($match);
+    return new \WP_REST_Response($match, 200);
+  
+  }
+  
   public function is_valid_email_for_match(WP_REST_Request $request) {
     $body = json_decode($request->get_body());
     if(!property_exists($body, 'email')) {
@@ -191,6 +213,16 @@ class Matches extends Controller {
     $gameDayEndpoint = new GameDays();
     $locationEndpoint = new Locations();
     return array("homeTeam" => array("href" => $teamEndpoint->getFullBaseUrl() . '/<propertyid>', "embeddable" => array("table" => "teams", "field" => "id"), "idFields" => array("homeTeam", "homeid")), "awayTeam" => array("href" => $teamEndpoint->getFullBaseUrl() . '/<propertyid>', "embeddable" => array("table" => "teams", "field" => "id"), "idFields" => array("awayTeam", "awayid")), "location" => array("href" => $locationEndpoint->getFullBaseUrl() . '/<propertyid>', "embeddable" => array("table" => "locations", "field" => "id"), "idFields" => array("location")), "gameDay" => array("href" => $gameDayEndpoint->getFullBaseUrl() . '/<propertyid>', "embeddable" => array("table" => "game_days", "field" => "id"), "idFields" => array("gameDayId")), "properties" => array("href" => $this->getFullBaseUrl() . '/<id>/properties', "embeddable" => array("table" => "match_properties", "field" => "objectId")), "info" => array("href" => $this->getFullBaseUrl() . '/<id>/info'));
+  }
+  
+  private function updateMatchFromRequest(WP_REST_Request $request, $match) {
+    $body = json_decode($request->get_body());
+    $match->goals_home = $body->goals_home;
+    $match->goals_away = $body->goals_away;
+    $match->score_home = $body->score_home;
+    $match->score_away = $body->score_away;
+    $match->notes = $body->notes;
+    return $match;
   }
   
 }

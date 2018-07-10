@@ -11,7 +11,7 @@ namespace KKL\Ligatool\Model;
 /**
  * @SWG\Definition(required={"code", "name"}, type="object")
  */
-class League extends BaseModel {
+class League extends SwaggerModel {
   
   /**
    * @var boolean

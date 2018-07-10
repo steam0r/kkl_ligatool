@@ -12,7 +12,7 @@ class Shortcodes {
     
     $db = new DB\Wordpress();
     
-    $context = KKL::getContext();
+    $context = Plugin::getContext();
     $club = $db->getClubData($atts['id']);
     
     return $kkl_twig->render('shortcodes/club.twig', array('context' => $context, 'club' => $club));
@@ -24,7 +24,7 @@ class Shortcodes {
     $kkl_twig = Template\Service::getTemplateEngine();
     $db = new DB\Wordpress();
     
-    $context = KKL::getContext();
+    $context = Plugin::getContext();
     $all_leagues = $db->getActiveLeagues();
     $leagues = array();
     foreach($all_leagues as $league) {
@@ -41,11 +41,12 @@ class Shortcodes {
           $team->logo = "/images/team/" . $team->logo;
         }
         // HACK
-        $team->link = KKL::getLink('club', array('club' => $club->short_name));
+        $team->link = Plugin::getLink('club', array('club' => $club->short_name));
       }
       
       $day = $db->getGameDay($league->season->current_game_day);
-      $league->link = KKL::getLink(
+
+      $league->link = Plugin::getLink(
         'league', array('league'   => $league->code, 'season' => date('Y', strtotime($league->season->start_date)),
                         'game_day' => $day->number,)
       );
@@ -63,7 +64,7 @@ class Shortcodes {
     $kkl_twig = Template\Service::getTemplateEngine();
     $db = new DB\Wordpress();
     
-    $context = KKL::getContext();
+    $context = Plugin::getContext();
     $rankings = array();
     
     $ranking = new stdClass;
@@ -74,9 +75,12 @@ class Shortcodes {
     foreach($ranking->ranks as $rank) {
       $team = $db->getTeam($rank->team_id);
       $club = $db->getClub($team->club_id);
-      $rank->team->link = KKL::getLink('club', array('club' => $club->short_name));
+      $rank->team->link = Plugin::getLink('club', array('club' => $club->short_name));
     }
-    
+    $properties = $db->getSeasonProperties($context['season']->id);
+    if($properties && array_key_exists('relegation_explanation', $properties)) {
+      $ranking->relegation_explanation = $properties['relegation_explanation'];
+    }
     $rankings[] = $ranking;
     
     return $kkl_twig->render('shortcodes/table.twig', array('context' => $context, 'rankings' => $rankings));
@@ -87,7 +91,7 @@ class Shortcodes {
     $kkl_twig = Template\Service::getTemplateEngine();
     $db = new DB\Wordpress();
     
-    $context = KKL::getContext();
+    $context = Plugin::getContext();
     $rankings = array();
     foreach($db->getActiveLeagues() as $league) {
       $season = $db->getSeason($league->current_season);
@@ -98,9 +102,10 @@ class Shortcodes {
       foreach($ranking->ranks as $rank) {
         $team = $db->getTeam($rank->team_id);
         $club = $db->getClub($team->club_id);
-        $rank->team->link = KKL::getLink('club', array('club' => $club->short_name));
+        $rank->team->link = Plugin::getLink('club', array('club' => $club->short_name));
       }
-      $ranking->league->link = KKL::getLink(
+
+      $ranking->league->link = Plugin::getLink(
         'league', array('league'   => $league->code, 'season' => date('Y', strtotime($season->start_date)),
                         'game_day' => $day->number)
       );
@@ -116,16 +121,16 @@ class Shortcodes {
     $kkl_twig = Template\Service::getTemplateEngine();
     $db = new DB\Wordpress();
     
-    $context = KKL::getContext();
+    $context = Plugin::getContext();
     $schedules = array();
     $schedule = $db->getScheduleForGameDay($context['game_day']);
     foreach($schedule->matches as $match) {
       $home_club = $db->getClub($match->home->club_id);
       $away_club = $db->getClub($match->away->club_id);
-      $match->home->link = KKL::getLink('club', array('club' => $home_club->short_name));
-      $match->away->link = KKL::getLink('club', array('club' => $away_club->short_name));
+      $match->home->link = Plugin::getLink('club', array('club' => $home_club->short_name));
+      $match->away->link = Plugin::getLink('club', array('club' => $away_club->short_name));
     }
-    $schedule->link = KKL::getLink(
+    $schedule->link = Plugin::getLink(
       'schedule',
       array('league' => $context['league']->code, 'season' => date('Y', strtotime($context['season']->start_date)))
     );
@@ -164,14 +169,14 @@ class Shortcodes {
     
     $activeTeam = $_GET['team'];
     
-    $context = KKL::getContext();
+    $context = Plugin::getContext();
     $schedules = $db->getScheduleForSeason($context['season']);
     foreach($schedules as $schedule) {
       foreach($schedule->matches as $match) {
         $home_club = $db->getClub($match->home->club_id);
         $away_club = $db->getClub($match->away->club_id);
-        $match->home->link = KKL::getLink('club', array('club' => $home_club->short_name));
-        $match->away->link = KKL::getLink('club', array('club' => $away_club->short_name));
+        $match->home->link = Plugin::getLink('club', array('club' => $home_club->short_name));
+        $match->away->link = Plugin::getLink('club', array('club' => $away_club->short_name));
       }
     }
     
@@ -186,7 +191,7 @@ class Shortcodes {
     $kkl_twig = Template\Service::getTemplateEngine();
     
     $db = new DB\Wordpress();
-    $context = KKL::getContext();
+    $context = Plugin::getContext();
     $contextClub = $context['club'];
     
     $seasonTeams = $db->getTeamsForClub($contextClub->id);
@@ -208,15 +213,14 @@ class Shortcodes {
         }
         $position++;
       }
-      
-      $seasonTeam->link = KKL::getLink('club', array('club' => $contextClub->short_name));
-      $seasonTeam->schedule_link = KKL::getLink(
+
+      $seasonTeam->link = Plugin::getLink('club', array('club' => $contextClub->short_name));
+      $seasonTeam->schedule_link = Plugin::getLink(
         'schedule', array('league' => $seasonTeam->season->league->code, 'season' => date(
                     'Y', strtotime($seasonTeam->season->start_date)
                   ), 'team'        => $seasonTeam->short_name)
       );
-      
-      
+
       $teams[$seasonTeam->id] = $seasonTeam;
     }
     
@@ -235,7 +239,7 @@ class Shortcodes {
     $kkl_twig = Template\Service::getTemplateEngine();
     
     $db = new DB\Wordpress();
-    $context = KKL::getContext();
+    $context = Plugin::getContext();
     
     $day = $context['game_day'];
     $league = $context['league'];
@@ -245,19 +249,21 @@ class Shortcodes {
     if(!$prev) {
       $day->isFirst = true;
     } else {
-      $prev->link = KKL::getLink(
+      $prev->link = Plugin::getLink(
         'league', array('league'   => $league->code, 'season' => date('Y', strtotime($season->start_date)),
                         'game_day' => $prev->number)
       );
+
     }
     $next = $db->getNextGameDay($day);
     if(!$next) {
       $day->isLast = true;
     } else {
-      $next->link = KKL::getLink(
+      $next->link = Plugin::getLink(
         'league', array('league'   => $league->code, 'season' => date('Y', strtotime($season->start_date)),
                         'game_day' => $next->number)
       );
+      $next->link = Plugin::getLink('league', array('league' => $league->code, 'season' => date('Y', strtotime($season->start_date)), 'game_day' => $next->number));
     }
     
     return $kkl_twig->render(
@@ -270,7 +276,7 @@ class Shortcodes {
     $kkl_twig = Template\Service::getTemplateEngine();
     
     $db = new DB\Wordpress();
-    $context = KKL::getContext();
+    $context = Plugin::getContext();
     
     $leagues = $db->getActiveLeagues();
     $leagueadmins = $db->getLeagueAdmins();

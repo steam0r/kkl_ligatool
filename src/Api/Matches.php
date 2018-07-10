@@ -158,7 +158,8 @@ class Matches extends Controller {
     $match = $db->getMatch($request->get_param('id'));
     $match = $this->updateMatchFromRequest($request, $match);
     $db = new DB\Wordpress();
-    $this->match = $db->createOrUpdateMatch($match);
+    $match = $db->createOrUpdateMatch($match);
+    return new \WP_REST_Response($match, 200);
   }
   
   public function set_final_match_result(WP_REST_Request $request) {
@@ -167,7 +168,9 @@ class Matches extends Controller {
     $match = $this->updateMatchFromRequest($request, $match);
     $match->status = 3;
     $db = new DB\Wordpress();
-    $this->match = $db->createOrUpdateMatch($match);
+    $match = $db->createOrUpdateMatch($match);
+    return new \WP_REST_Response($match, 200);
+  
   }
   
   public function is_valid_email_for_match(WP_REST_Request $request) {
@@ -212,7 +215,7 @@ class Matches extends Controller {
     return array("homeTeam" => array("href" => $teamEndpoint->getFullBaseUrl() . '/<propertyid>', "embeddable" => array("table" => "teams", "field" => "id"), "idFields" => array("homeTeam", "homeid")), "awayTeam" => array("href" => $teamEndpoint->getFullBaseUrl() . '/<propertyid>', "embeddable" => array("table" => "teams", "field" => "id"), "idFields" => array("awayTeam", "awayid")), "location" => array("href" => $locationEndpoint->getFullBaseUrl() . '/<propertyid>', "embeddable" => array("table" => "locations", "field" => "id"), "idFields" => array("location")), "gameDay" => array("href" => $gameDayEndpoint->getFullBaseUrl() . '/<propertyid>', "embeddable" => array("table" => "game_days", "field" => "id"), "idFields" => array("gameDayId")), "properties" => array("href" => $this->getFullBaseUrl() . '/<id>/properties', "embeddable" => array("table" => "match_properties", "field" => "objectId")), "info" => array("href" => $this->getFullBaseUrl() . '/<id>/info'));
   }
   
-  private function updateMatchFromRequest($request, $match) {
+  private function updateMatchFromRequest(WP_REST_Request $request, $match) {
     $body = json_decode($request->get_body());
     $match->goals_home = $body->goals_home;
     $match->goals_away = $body->goals_away;

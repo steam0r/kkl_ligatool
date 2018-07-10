@@ -11,11 +11,11 @@ class Teams extends Controller {
   public function register_routes() {
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName(),
                         array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_teams'),
-                              'args'    => array(),)
+                              'args'    => array(),'permission_callback' => array($this, 'authenticate_api_key'))
     );
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)',
                         array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_team'),
-                              'args'    => array('context' => array('default' => 'view',),))
+                              'args'    => array('context' => array('default' => 'view',),'permission_callback' => array($this, 'authenticate_api_key')))
     );
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/matches',
                         array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_matches_for_team'),
@@ -23,7 +23,7 @@ class Teams extends Controller {
     );
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/properties',
                         array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_info_for_team'),
-                              'args'    => array('context' => array('default' => 'view',),))
+                              'args'    => array('context' => array('default' => 'view',),'permission_callback' => array($this, 'authenticate_api_key')))
     );
   }
   

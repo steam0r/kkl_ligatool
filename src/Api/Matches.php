@@ -156,7 +156,7 @@ class Matches extends Controller {
   public function set_live_result(WP_REST_Request $request) {
     $db = new DB\Api();
     $match = $db->getMatch($request->get_param('id'));
-    $match = $this->updateMatchFromRequest($match, $request);
+    $match = $this->updateMatchFromRequest($request, $match);
     $db = new DB\Wordpress();
     $this->match = $db->createOrUpdateMatch($match);
   }
@@ -164,7 +164,7 @@ class Matches extends Controller {
   public function set_final_match_result(WP_REST_Request $request) {
     $db = new DB\Api();
     $match = $db->getMatch($request->get_param('id'));
-    $match = $this->updateMatchFromRequest($match, $request);
+    $match = $this->updateMatchFromRequest($request, $match);
     $match->status = 3;
     $db = new DB\Wordpress();
     $this->match = $db->createOrUpdateMatch($match);

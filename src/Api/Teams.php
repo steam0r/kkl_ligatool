@@ -15,11 +15,11 @@ class Teams extends Controller {
     );
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)',
                         array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_team'),
-                              'args'    => array('context' => array('default' => 'view',),'permission_callback' => array($this, 'authenticate_api_key')))
+                              'args'    => array('context' => array('default' => 'view', 'permission_callback' => array($this, 'authenticate_api_key'))))
     );
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/matches',
                         array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_matches_for_team'),
-                              'args'    => array('context' => array('default' => 'view',),))
+                              'args'    => array('context' => array('default' => 'view')))
     );
     register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/properties',
                         array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_info_for_team'),

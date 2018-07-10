@@ -66,7 +66,7 @@ module.exports = function (grunt){
           {
             expand: true,
             flatten: true,
-            src: ['readme.txt', 'kkl_ligatool.php']
+            src: ['README.md', 'kkl_ligatool.php']
           }
         ]
       }

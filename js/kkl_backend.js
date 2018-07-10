@@ -18,8 +18,11 @@ function kkl_backend_addFilter(url, filterParameter, newValue) {
 }
 
 jQuery(document).ready(function() {
-	jQuery('#toplevel_page_kkl_ligatool').addClass("current");
-	jQuery('#toplevel_page_kkl_ligatool a').addClass("current");
+  var href = jQuery(location).attr('href')
+	if(href.includes('page=kkl_')) {
+  	jQuery('#toplevel_page_kkl_ligatool').addClass("current");
+		jQuery('#toplevel_page_kkl_ligatool a').addClass("current");
+	}
 	jQuery('.pickfixture').datetimepicker({
  		dateFormat: "yy-mm-dd",
     timeFormat:  "HH:mm",
@@ -29,6 +32,6 @@ jQuery(document).ready(function() {
 
 
 jQuery(document).ready(function() {
- 
+
 });
 

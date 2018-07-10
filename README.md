@@ -1,6 +1,6 @@
 === Plugin Name ===
 Tags: kicker, liga, kickerliebe, ligatool, foosball
-Version: 2.4.1
+Version: 2.6.4
 Requires at least: 4.3.1
 Tested up to: 4.3.1
 Stable tag: 1.0
@@ -35,3 +35,27 @@ this is a very rough first version, needs changes.
 2.0 move to composer (21.04.2018)
 
 == Upgrade Notice ==
+
+== Docker Development Environment ==
+
+install docker on your machine
+clone the project
+run "docker-compose up -d" in the root folder of the project
+    this will take some time for the first run
+    will be faster in every subsequent run
+go to http://localhost:8080
+    do basic wordpress setup of language and user
+go to http://localhost:8181
+    login as root:db4wp
+    create a new database "kkl_ligatool"
+    import a kickerliga-sql-dump into the new database
+go to http://localhost:8080/wp-admin/
+    login with your admin user
+    activate the plugin
+    got to the plugin page, then "settings"
+    fill out the database config
+        host: mysql
+        name: kkl_ligatool
+        user: root
+        pass: db4wp
+    save and reload the page

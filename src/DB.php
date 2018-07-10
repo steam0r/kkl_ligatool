@@ -149,19 +149,26 @@ abstract class DB {
   
   public function getClubs() {
     $sql = "SELECT * FROM clubs ORDER BY name ASC";
-    
-    return $this->getDb()->get_results($sql);
+    $results = $this->getDb()->get_results($sql);
+    if(is_array($results)) {
+      return $results;
+    }else{
+      return array();
+    }
   }
   
   public function getTeams() {
     $sql = "SELECT * FROM teams ORDER BY name ASC";
     $teams = $this->getDb()->get_results($sql);
-    foreach($teams as $team) {
-      $properties = $this->getTeamProperties($team->id);
-      $team->properties = $properties;
+    if(is_array($teams)) {
+      foreach($teams as $team) {
+        $properties = $this->getTeamProperties($team->id);
+        $team->properties = $properties;
+      }
+      return $teams;
+    }else{
+      return array();
     }
-    
-    return $teams;
   }
   
   public function getTeamProperties($teamId) {
@@ -539,8 +546,25 @@ abstract class DB {
   }
   
   public function getRankingForLeagueAndSeasonAndGameDay($leagueId, $seasonId, $dayNumber) {
-    $sql = "SELECT " . "team_scores.team_id, " . "sum(team_scores.score) as score, " . "sum(team_scores.win) as wins, " . "sum(team_scores.loss) as losses, " . "sum(team_scores.draw) as draws, " . "sum(team_scores.goalsFor) as goalsFor, " . "sum(team_scores.goalsAgainst) as goalsAgainst, " . "sum(team_scores.goalsFor - team_scores.goalsAgainst) as goalDiff, " . "sum(team_scores.gamesFor) as gamesFor, " . "sum(team_scores.gamesAgainst) as gamesAgainst, " . "sum(team_scores.gamesFor - team_scores.gamesAgainst) as gameDiff " . "FROM game_days, " . "team_scores  " . "WHERE game_days.season_id='" . esc_sql($seasonId) . "' " . "AND game_days.number <= '" . esc_sql($dayNumber) . "' " . "AND gameDay_id=game_days.id " . "GROUP BY team_id " . //      "ORDER BY score DESC, gameDiff DESC, goalDiff DESC, team_scores.goalsFor DESC";
-      "ORDER BY score DESC, gameDiff DESC";
+    $sql = "SELECT " .
+           "team_scores.team_id, " .
+           "sum(team_scores.score) as score, " .
+           "sum(team_scores.win) as wins, " .
+           "sum(team_scores.loss) as losses, " .
+           "sum(team_scores.draw) as draws, " .
+           "sum(team_scores.goalsFor) as goalsFor, " .
+           "sum(team_scores.goalsAgainst) as goalsAgainst, " .
+           "sum(team_scores.goalsFor - team_scores.goalsAgainst) as goalDiff, " .
+           "sum(team_scores.gamesFor) as gamesFor, " .
+           "sum(team_scores.gamesAgainst) as gamesAgainst, " .
+           "sum(team_scores.gamesFor - team_scores.gamesAgainst) as gameDiff " .
+           "FROM game_days, " .
+           "team_scores  " .
+           "WHERE game_days.season_id='" . esc_sql($seasonId) . "' " .
+           "AND game_days.number <= '" . esc_sql($dayNumber) . "' " .
+           "AND gameDay_id=game_days.id " .
+           "GROUP BY team_id " . //      "ORDER BY score DESC, gameDiff DESC, goalDiff DESC, team_scores.goalsFor DESC";
+           "ORDER BY score DESC, gameDiff DESC";
     
     $ranking = $this->getDb()->get_results($sql);
     
@@ -631,13 +655,27 @@ abstract class DB {
         }
       }
     }
+  
+    $properties = $this->getSeasonProperties($seasonId);
+    $relegationMarkers = array();
+    if($properties && array_key_exists('relegation_markers', $properties)) {
+      $relegationMarkers = explode(',', $properties['relegation_markers']);
+    }
     
     $position = 0;
     $previousScore = 0;
     $previousGameDiff = 0;
+    $markerCount = 0;
     foreach($ranking as $rank) {
       
       $position++;
+      
+      if(in_array($position, $relegationMarkers)) {
+        $markerCount++;
+        $rank->relegation_marker = $markerCount;
+      }else{
+        $rank->relegation_marker = false;
+      }
       
       $rank->team = $this->getTeam($rank->team_id);
       $rank->games = $rank->wins + $rank->losses + $rank->draws;

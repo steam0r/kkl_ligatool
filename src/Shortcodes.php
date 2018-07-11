@@ -2,6 +2,7 @@
 
 namespace KKL\Ligatool;
 
+use Polyshapes\Plugin\Frontend;
 use stdClass;
 
 class Shortcodes {
@@ -294,10 +295,9 @@ class Shortcodes {
   
   public static function setMatchFixture($atts, $content, $tag) {
     
-    $backend = new Backend();
+    $templateEngine = Template\Service::getTemplateEngine();
     $db = new DB\Wordpress();
     $data = $db->getAllUpcomingGames();
-    $templateEngine = Template\Service::getTemplateEngine();
     
     $all_matches = array();
     foreach($data as $game) {
@@ -311,15 +311,17 @@ class Shortcodes {
                                                           "location_id" => $teamProperties["location"]);
     }
     
-    $backend->enqueue_scripts(
-      array(array('handle' => 'datepicker', 'src' => 'jquery.datetimepicker.js', 'type' => 'js'),
-            array('handle' => 'datepicker', 'src' => 'jquery.datetimepicker.css', 'type' => 'css'),
-            array('handle' => 'set_fixture', 'src' => 'frontend/set-fixture.js', 'type' => 'js'))
-    );
-    
+    $all_locations = $db->getLocations();
+    $baseUrl = Plugin::getBaseUrl();
     return $templateEngine->render(
-      'shortcodes/set_match_fixture.tpl',
-      array('api_url' => get_site_url(), 'all_matches' => $all_matches, 'all_locations' => $all_locations)
+      'shortcodes/set_match_fixture.twig',
+      array(
+        'api_url' => get_site_url(),
+        'all_matches' => $all_matches,
+        'all_locations' => $all_locations,
+        'scripts' => array($baseUrl . 'js/jquery.datetimepicker.js', $baseUrl . 'js/frontend/set-fixture.js'),
+        'styles' => array($baseUrl . 'css/jquery.datetimepicker.css')
+      )
     );
     
   }

@@ -1,3 +1,10 @@
+{% for script in scripts %}
+  <script type="text/javascript" src="{{ script }}"></script>
+{% endfor %}
+{% for style in styles %}
+    <link rel="stylesheet" type="text/css" href="{{ script }}"/>
+{% endfor %}
+
 <div class="kkl-match-fixture">
     <form action="#" method="patch" id="set_match_fixture" data-url="{{ api_url }}">
         <div class="set-fixture-match">

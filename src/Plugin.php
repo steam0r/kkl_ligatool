@@ -101,7 +101,7 @@ class Plugin {
     add_shortcode('gameday_pager', array(Shortcodes::class, 'gameDayPager'));
     add_shortcode('season_schedule', array(Shortcodes::class, 'seasonSchedule'));
     add_shortcode('contact_list', array(Shortcodes::class, 'contactList'));
-    add_shortcode( 'set_match_fixture', array('KKL_Shortcodes', 'setMatchFixture'));
+    add_shortcode('set_match_fixture', array(Shortcodes::class, 'setMatchFixture'));
     
     register_sidebar(array('name' => __(__('kkl_global_sidebar', 'kkl-ligatool')), 'id' => 'kkl_global_sidebar', 'description' => __('Widgets in this area will be shown on pages using any kkl page template below the page sidebar.'), 'class' => 'kkl_global_sidebar', 'before_title' => '<h4>', 'after_title' => '</h4>',));
     
@@ -249,6 +249,19 @@ class Plugin {
     
     return $data;
     
+  }
+  
+  public static function enqueue_scripts($arr) {
+    foreach($arr as $script) {
+      if($script['type'] === 'js') {
+        wp_register_script(
+          $script['handle'], plugins_url() . '/kkl_ligatool/js/' . $script['src'], '', '', true
+        );
+        wp_enqueue_script($script['handle']);
+      } elseif($script['type'] === 'css') {
+        wp_enqueue_style($script['handle'], plugins_url() . '/kkl_ligatool/css/' . $script['src']);
+      }
+    }
   }
   
 }

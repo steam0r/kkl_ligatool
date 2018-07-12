@@ -147,6 +147,38 @@ abstract class DB {
     
   }
   
+  public function getAllGamesForNextGameday() {
+    
+    $sql = "SELECT  m.id,
+                        m.score_away,
+                        m.fixture,
+                        m.score_home,
+                        m.location,
+                        l.id AS league_id,
+                        ht.name AS homename,
+                        at.name AS awayname,
+                        at.id AS awayid,
+                        ht.id AS homeid
+                FROM    leagues AS l,
+                        matches AS m,
+                        teams AS at,
+                        teams AS ht
+                JOIN seasons AS s
+                JOIN game_days AS cgd ON cgd.id = s.current_game_day
+                JOIN game_days AS gd ON gd.season_id = s.id AND gd.number = (cgd.number + 1)
+                WHERE   l.active = 1
+                AND     s.id = l.current_season
+                AND     m.game_day_id = gd.id
+                AND     at.id = m.away_team
+                AND     ht.id = m.home_team ORDER BY l.name ASC";
+    
+    $result = $this->getDb()->get_results($sql);
+    
+    return $result;
+    
+  }
+  
+  
   public function getClubs() {
     $sql = "SELECT * FROM clubs ORDER BY name ASC";
     $results = $this->getDb()->get_results($sql);

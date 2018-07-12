@@ -137,11 +137,35 @@ class Plugin {
       });
       add_filter('set-screen-option', array('KKLBackend', 'set_screen_options'), 10, 3);
       Backend::display();
+    }else{
+      static::enqueue_scripts(
+        array(array('handle' => 'kkl_frontend_datepicker', 'src' => 'jquery.datetimepicker.js', 'type' => 'js'),
+              array('handle' => 'kkl_frontend_datepicker', 'src' => 'jquery.datetimepicker.css', 'type' => 'css'),
+              array('handle' => 'kkl_set_fixture', 'src' => 'frontend/set_fixture.js', 'type' => 'js')
+        ));
     }
     
     add_action('plugins_loaded', function() {
       load_plugin_textdomain('kkl-ligatool', false, dirname(plugin_basename(__FILE__)) . '/../lang/');
     });
+  
+
+    
+  }
+  
+  public static function enqueue_scripts($arr) {
+    foreach($arr as $script) {
+      if($script['type'] === 'js') {
+        $src = plugins_url() . '/kkl_ligatool/js/' . $script['src'];
+        wp_register_script(
+          $script['handle'], $src, array(), false, true
+        );
+        wp_enqueue_script($script['handle']);
+      } elseif($script['type'] === 'css') {
+        $str = plugins_url() . '/kkl_ligatool/css/' . $script['src'];
+        wp_enqueue_style($script['handle'], $str);
+      }
+    }
   }
   
   public function add_query_vars_filter($vars) {
@@ -249,19 +273,6 @@ class Plugin {
     
     return $data;
     
-  }
-  
-  public static function enqueue_scripts($arr) {
-    foreach($arr as $script) {
-      if($script['type'] === 'js') {
-        wp_register_script(
-          $script['handle'], plugins_url() . '/kkl_ligatool/js/' . $script['src'], '', '', true
-        );
-        wp_enqueue_script($script['handle']);
-      } elseif($script['type'] === 'css') {
-        wp_enqueue_style($script['handle'], plugins_url() . '/kkl_ligatool/css/' . $script['src']);
-      }
-    }
   }
   
 }

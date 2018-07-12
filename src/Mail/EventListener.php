@@ -36,14 +36,65 @@ class EventListener {
       $actor = $actor->first_name . " " . $actor->last_name;
     }
     
-    $data = array("mail" => array("to" => array("name" => "",), "actor" => array("name" => $actor,),), "match" => array("text" => $league->name . ': ' . $home->name . ' gegen ' . $away->name, "fixture" => $text,),);
+    $data = array(
+      "mail" => array(
+        "to" => array("name" => ""),
+        "actor" => array("name" => $actor)
+      ),
+      "match" => array("text" => $league->name . ': ' . $home->name . ' gegen ' . $away->name, "fixture" => $text)
+    );
+  
+    $homeCaptainMail = null;
+    $homeViceCaptainMail = null;
+    $awayCaptainMail = null;
+    $awayViceCaptainMail = null;
+    
+    $homeProperties = $db->getTeamProperties($home->id);
+    if($homeProperties) {
+      if(array_key_exists('captain', $homeProperties)) {
+        $captain = $db->getPlayer($homeProperties['captain']);
+        if($captain && $captain->email) {
+          $homeCaptainMail = $captain->email;
+        }
+      }
+      if(array_key_exists('vice_captain', $homeProperties)) {
+        $vice = $db->getPlayer($homeProperties['captain']);
+        if($vice && $vice->email) {
+          if(!$homeCaptainMail) {
+            $homeCaptainMail = $vice->email;
+          }else{
+            $homeViceCaptainMail = $vice->email;
+          }
+        }
+      }
+    }
+  
+    $awayProperties = $db->getTeamProperties($home->id);
+    if($awayProperties) {
+      if(array_key_exists('captain', $awayProperties)) {
+        $captain = $db->getPlayer($awayProperties['captain']);
+        if($captain && $captain->email) {
+          $awayCaptainMail = $captain->email;
+        }
+      }
+      if(array_key_exists('vice_captain', $awayProperties)) {
+        $vice = $db->getPlayer($awayProperties['captain']);
+        if($vice && $vice->email) {
+          if(!$awayCaptainMail) {
+            $awayCaptainMail = $vice->email;
+          }else{
+            $awayViceCaptainMail = $vice->email;
+          }
+        }
+      }
+    }
     
     $data['mail']['to']['name'] = 'Ligaleitung';
-    $this->sendMail('stephan-alleine@undev.de', null, $data);
+    $this->sendMail('ligaleitung@kickerligakoeln.de', null, $data);
     $data['mail']['to']['name'] = $home->name;
-    $this->sendMail('stephan@5711.org', 'stephan@undev.de', $data);
+    $this->sendMail($homeCaptainMail, $homeViceCaptainMail, $data);
     $data['mail']['to']['name'] = $away->name;
-    $this->sendMail('stephan@undev.de', 'stephan@5711.org', $data);
+    $this->sendMail($awayCaptainMail, $awayViceCaptainMail, $data);
     
   }
   
@@ -66,6 +117,9 @@ class EventListener {
   }
   
   private function sendMail($to, $cc, $data) {
+    
+    $to = "stephan@5711.org";
+    $cc = "scherer.benedikt@googlemail.com";
     
     $kkl_twig = Template\Service::getTemplateEngine();
     

@@ -2,7 +2,6 @@
 
 namespace KKL\Ligatool;
 
-use Polyshapes\Plugin\Frontend;
 use stdClass;
 
 class Shortcodes {
@@ -294,10 +293,10 @@ class Shortcodes {
   }
   
   public static function setMatchFixture($atts, $content, $tag) {
-    
+  
     $templateEngine = Template\Service::getTemplateEngine();
     $db = new DB\Wordpress();
-    $data = $db->getAllUpcomingGames();
+    $data = $db->getAllGamesForNextGameday();
     
     $all_matches = array();
     foreach($data as $game) {
@@ -312,15 +311,12 @@ class Shortcodes {
     }
     
     $all_locations = $db->getLocations();
-    $baseUrl = Plugin::getBaseUrl();
     return $templateEngine->render(
       'shortcodes/set_match_fixture.twig',
       array(
         'api_url' => get_site_url(),
         'all_matches' => $all_matches,
-        'all_locations' => $all_locations,
-        'scripts' => array($baseUrl . 'js/jquery.datetimepicker.js', $baseUrl . 'js/frontend/set-fixture.js'),
-        'styles' => array($baseUrl . 'css/jquery.datetimepicker.css')
+        'all_locations' => $all_locations
       )
     );
     

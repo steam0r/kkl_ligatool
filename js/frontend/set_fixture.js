@@ -1,16 +1,17 @@
 var SetFixture = function () {
-  this.$setFixture = $('.kkl-match-fixture');
-  this.$locationForm = $('#location');
-  this.$datePicker = $('#fixture');
+  this.$setFixture = jQuery('.kkl-match-fixture');
+  this.$locationForm = jQuery('#location');
+  this.$datePicker = jQuery('#fixture');
 
-  this.$waitMsg = $('.kkl-match-fixture .wait');
-  this.$successMsg = $('.kkl-match-fixture .success');
+  this.$waitMsg = jQuery('.kkl-match-fixture .wait');
+  this.$successMsg = jQuery('.kkl-match-fixture .success');
 };
 
 /**
  * Init SetFixture
  */
 SetFixture.prototype.init = function () {
+  console.log("initing");
   this.eventHandler();
   this.initDatepicker();
 };
@@ -25,8 +26,8 @@ SetFixture.prototype.init = function () {
 SetFixture.prototype.eventHandler = function () {
   var _this = this;
 
-  $(document).on('change', '#match', function () {
-    var locationId = parseInt($(this + ':selected').attr('data-location'));
+  jQuery(document).on('change', '#match', function () {
+    var locationId = parseInt(jQuery(this + ':selected').attr('data-location'));
 
     if (locationId) {
       _this.$locationForm.val(locationId);
@@ -35,7 +36,7 @@ SetFixture.prototype.eventHandler = function () {
     }
   });
 
-  $(document).on('submit', '#set_match_fixture', function (event) {
+  jQuery(document).on('submit', '#set_match_fixture', function (event) {
     event.preventDefault();
 
     _this.validateForm('set_match_fixture', function (formData) {
@@ -104,7 +105,7 @@ SetFixture.prototype.initDatepicker = function () {
  * @param callback
  */
 SetFixture.prototype.validateForm = function (form_id, callback) {
-  var $form = $('#' + form_id);
+  var $form = jQuery('#' + form_id);
   var i = 0;
   data = {
     formular: form_id,
@@ -116,26 +117,26 @@ SetFixture.prototype.validateForm = function (form_id, callback) {
 
   // find & validate formfields
   $form.find('input, select').each(function (index) {
-    if ($(this).attr('type') === 'text' || $(this).attr('type') === 'number') {
-      if ($(this).val() === '') {
+    if (jQuery(this).attr('type') === 'text' || jQuery(this).attr('type') === 'number') {
+      if (jQuery(this).val() === '') {
         i++;
-        $(this).addClass('has-error');
+        jQuery(this).addClass('has-error');
       } else {
-        data[$(this).attr('name')] = $(this).val();
+        data[jQuery(this).attr('name')] = jQuery(this).val();
       }
 
-    } else if ($(this).attr('type') === 'email') {
-      var email = jQuery.trim($(this).val());
+    } else if (jQuery(this).attr('type') === 'email') {
+      var email = jQuery.trim(jQuery(this).val());
       var regex = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,12})$/;
 
       if (!regex.test(email)) {
         i++;
-        $(this).addClass('has-error');
+        jQuery(this).addClass('has-error');
       } else {
-        data[$(this).attr('name')] = $(this).val();
+        data[jQuery(this).attr('name')] = jQuery(this).val();
       }
     } else {
-      data[$(this).attr('name')] = $(this).val();
+      data[jQuery(this).attr('name')] = jQuery(this).val();
     }
   });
 
@@ -149,7 +150,8 @@ SetFixture.prototype.validateForm = function (form_id, callback) {
  *
  * @type {SetFixture}
  */
-$(document).ready(function () {
+jQuery(document).ready(function () {
+  console.log("INCLUDED");
   var setFixture = new SetFixture();
   setFixture.init();
 });

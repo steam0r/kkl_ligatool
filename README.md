@@ -1,6 +1,6 @@
 === Plugin Name ===
 Tags: kicker, liga, kickerliebe, ligatool, foosball
-Version: 2.7.3
+Version: 2.8.0
 Requires at least: 4.3.1
 Tested up to: 4.3.1
 Stable tag: 1.0
@@ -35,6 +35,23 @@ this is a very rough first version, needs changes.
 2.0 move to composer (21.04.2018)
 
 == Upgrade Notice ==
+
+== build a release ==
+
+checkout "master", merge everything you need, execute one of:
+
+"grunt release:patch" 
+    increases i.e. from 57.1.1 to 57.1.2
+
+"grunt release:minor" 
+    increases i.e. from 57.1.1 to 57.2.0
+
+"grunt release:major" 
+    increases i.e. from 57.1.1 to 58.0.0
+
+check "https://ci.undev.de/" for progress.
+
+when this finished check for updates in your wordpress installation.
 
 == Docker Development Environment ==
 

@@ -185,19 +185,31 @@ class Matches extends Controller {
     $homeInfo = $db->getTeamProperties($match->home_team);
     $awayInfo = $db->getTeamProperties($match->away_team);
     if(is_array($homeInfo)) {
-      if(isset($homeInfo['captain_email']) && strtolower(trim($homeInfo['captain_email'])) == $requestEmail) {
-        return true;
+      if(isset($homeInfo['captain'])) {
+        $homeCaptain = $db->getPlayer($homeInfo['captain']);
+        if($homeCaptain && strtolower(trim($homeCaptain->email)) == $requestEmail) {
+          return true;
+        }
       }
-      if(isset($homeInfo['vice_captain_email']) && strtolower(trim($homeInfo['vice_captain_email'])) == $requestEmail) {
-        return true;
+      if(isset($homeInfo['vice_captain'])) {
+        $homeVice = $db->getPlayer($homeInfo['vice_captain']);
+        if($homeVice && strtolower(trim($homeVice->email)) == $requestEmail) {
+          return true;
+        }
       }
     }
     if(is_array($awayInfo)) {
-      if(isset($awayInfo['captain_email']) && strtolower(trim($awayInfo['captain_email'])) == $requestEmail) {
-        return true;
+      if(isset($awayInfo['captain'])) {
+        $awayCaptain = $db->getPlayer($homeInfo['captain']);
+        if($awayCaptain && strtolower(trim($awayCaptain->email)) == $requestEmail) {
+          return true;
+        }
       }
-      if(isset($awayInfo['vice_captain_email']) && strtolower(trim($awayInfo['vice_captain_email'])) == $requestEmail) {
-        return true;
+      if(isset($awayInfo['vice_captain'])) {
+        $awayVice = $db->getPlayer($homeInfo['vice_captain']);
+        if($awayVice && strtolower(trim($awayVice->email)) == $requestEmail) {
+          return true;
+        }
       }
     }
     foreach($db->getLeagueAdmins() as $admin) {

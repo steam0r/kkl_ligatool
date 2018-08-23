@@ -14,21 +14,23 @@ abstract class DB {
    * @deprecated move to orm
    * @var wpdb wordpres db layer
    */
-  private $db;
+  protected static $db;
   
   /**
    * @var Manager simple wordpress orm layer
    */
-  private $orm;
+    protected static $orm;
   
   public function __construct(wpdb $db = null) {
     if($db !== null) {
-      $this->db = $db;
-    } else {
+      static::$db = $db;
+    } elseif(static::$db === null) {
       $options = get_option('kkl_ligatool');
-      $this->db = new wpdb($options['db_user'], $options['db_pass'], $options['db_name'], $options['db_host']);
+      static::$db = new wpdb($options['db_user'], $options['db_pass'], $options['db_name'], $options['db_host']);
     }
-    $this->orm = Manager::getManager();
+    if(static::$orm === null) {
+      $this->orm = Manager::getManager();
+    }
   }
   
   
@@ -46,14 +48,14 @@ abstract class DB {
    * @return wpdb
    */
   public function getDb() {
-    return $this->db;
+    return static::$db;
   }
   
   /**
    * @return Manager
    */
   protected function getOrm() {
-    return $this->orm;
+    return static::$orm;
   }
   
   public function getUpcomingGames($league_id) {

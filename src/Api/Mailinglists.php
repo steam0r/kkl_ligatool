@@ -25,6 +25,11 @@ class Mailinglists extends Controller {
       array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'resolve_mail_address'),
             'args'    => array(), 'permission_callback' => array($this, 'authenticate_api_key'))
     );
+    register_rest_route(
+      $this->getNamespace(), '/' . $this->getBaseName() . '/matchinfo/(?P<id>[\d]+)',
+      array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'resolve_matchinfo'),
+        'args'    => array(), 'permission_callback' => array($this, 'authenticate_api_key'))
+    );
   }
   
   public function getBaseName() {
@@ -117,6 +122,24 @@ class Mailinglists extends Controller {
       if($result) {
         $response = $result;
       }
+    }
+    return new WP_REST_Response($response, 200);
+  }
+
+  public function resolve_matchinfo(WP_REST_Request $request) {
+    $query = $request->get_param('id');
+    $response = new \stdClass();
+    if(isset($query)) {
+      $db = new DB\Api();
+      $match = $db->getMatch($query);
+      $homeTeam = $db->getTeam($match->home_team);
+      $awayTeam = $db->getTeam($match->away_team);
+      $day = $db->getGameDay($match->game_day_id);
+      $league = $db->getLeagueForGameday($day->id);
+      $response->id = $match->id;
+      $response->home_name = $homeTeam->name;
+      $response->away_name = $awayTeam->name;
+      $response->league = $league->name;
     }
     return new WP_REST_Response($response, 200);
   }

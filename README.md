@@ -1,6 +1,6 @@
 === Plugin Name ===
 Tags: kicker, liga, kickerliebe, ligatool, foosball
-Version: 2.8.3
+Version: 2.9.0
 Requires at least: 4.3.1
 Tested up to: 4.3.1
 Stable tag: 1.0

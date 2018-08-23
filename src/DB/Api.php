@@ -162,17 +162,17 @@ class Api extends DB {
         $rank->team_id = $teamId;
         $rank->running = true;
         if($prevDay) {
-          $prevScore = $this->getTeamScoreForGameDay($teamId, $prevDay);
+          $prevScore = $this->getTeamScoreForGameDay($teamId, $prevDay->id);
           $rank->score = $prevScore->score + $scorePlus;
-          $rank->wins = $prevScore->score + $score->win;
-          $rank->losses = $prevScore->score + $score->loss;
-          $rank->draws = $prevScore->score + $score->draw;
-          $rank->goalsFor = $prevScore->score + $score->goalsFor;
-          $rank->goalsAgainst = $prevScore->score + $score->goalsAgainst;
-          $rank->goalDiff = $prevScore->score + ($score->goalsFor - $score->goalsAgainst);
-          $rank->gamesFor = $prevScore->score + $score->gamesFor;
-          $rank->gamesAgainst = $prevScore->score + $score->gamesAgainst;
-          $rank->gameDiff = $prevScore->score + ($score->gamesFor - $score->gamesAgainst);
+          $rank->wins = $prevScore->wins + $score->win;
+          $rank->losses = $prevScore->loss + $score->loss;
+          $rank->draws = $prevScore->draw + $score->draw;
+          $rank->goalsFor = $prevScore->goalsFor + $score->goalsFor;
+          $rank->goalsAgainst = $prevScore->goalsAgainst + $score->goalsAgainst;
+          $rank->goalDiff = $prevScore->goalDiff + ($score->goalsFor - $score->goalsAgainst);
+          $rank->gamesFor = $prevScore->gamesFor + $score->gamesFor;
+          $rank->gamesAgainst = $prevScore->gamesAgainst + $score->gamesAgainst;
+          $rank->gameDiff = $prevScore->gameDiff + ($score->gamesFor - $score->gamesAgainst);
         } else {
           $rank->score = $scorePlus;
           $rank->wins = $score->win;
@@ -185,7 +185,12 @@ class Api extends DB {
           $rank->gamesAgainst = $score->gamesAgainst;
           $rank->gameDiff = ($score->gamesFor - $score->gamesAgainst);
         }
-        $ranking[] = $rank;
+        for ($i = 0; $i < count($ranking); $i++) {
+          $rank = $ranking[$i];
+          if($rank->team_id = $teamId) {
+            $ranking[$i] = $rank;
+          }
+        }
       }
     }
     uasort($ranking, function($first, $second) {

@@ -29,7 +29,7 @@ abstract class DB {
       static::$db = new wpdb($options['db_user'], $options['db_pass'], $options['db_name'], $options['db_host']);
     }
     if(static::$orm === null) {
-      $this->orm = Manager::getManager();
+      static::$orm = Manager::getManager();
     }
   }
   

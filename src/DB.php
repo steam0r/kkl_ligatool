@@ -232,8 +232,10 @@ abstract class DB {
     $sql = "SELECT * FROM players WHERE id = '" . esc_sql($playerId) . "'";
     $player = $this->getDb()->get_row($sql);
     $properties = $this->getPlayerProperties($player->id);
-    $player->properties = $properties;
-    
+    if($properties) {
+      $player->properties = $properties;
+    }
+
     return $player;
   }
   

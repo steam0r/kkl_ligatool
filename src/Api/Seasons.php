@@ -443,55 +443,68 @@ class Seasons extends Controller
       $seasons[$seasonId] = array();
       foreach ($matches as $match) {
 
-        $teamHome = new \stdClass();
-        $teamHome->name = $match->team_home->name;
-        $teamHome->short_name = $match->team_home->shortName;
-        $teamHome->season_id = $season->id;
+        if($match->team_home !== null) {
+          $teamHome = new \stdClass();
+          $teamHome->name = $match->team_home->name;
+          $teamHome->short_name = $match->team_home->shortName;
+          $teamHome->season_id = $season->id;
 
-        $homeClub = null;
-        if ($match->team_home->clubId) {
-          $homeClub = $db->getClub($match->team_home->clubId);
-        } elseif ($match->team_home->shortName) {
-          $homeClub = $db->getClubByCode($match->team_home->shortName);
+          $homeClub = null;
+          if ($match->team_home->clubId) {
+            $homeClub = $db->getClub($match->team_home->clubId);
+          } elseif ($match->team_home->shortName) {
+            $homeClub = $db->getClubByCode($match->team_home->shortName);
+          }
+
+          if (!$homeClub) {
+            $homeClub = new \stdClass();
+            $homeClub->name = $match->team_home->name;
+            $homeClub->short_name = $match->team_home->shortName;
+            $homeClub->description = "";
+            $homeClub = $db->createClub($homeClub);
+          }
+
+          $teamHome->club_id = $homeClub->id;
+          $teamHome = $db->createTeam($teamHome);
+
         }
 
-        if (!$homeClub) {
-          $homeClub = new \stdClass();
-          $homeClub->name = $match->team_home->name;
-          $homeClub->short_name = $match->team_home->shortName;
-          $homeClub->description = "";
-          $homeClub = $db->createClub($homeClub);
+        if($match->team_away->name !== null) {
+          $awayClub = null;
+          $teamAway = new \stdClass();
+          $teamAway->name = $match->team_away->name;
+          $teamAway->short_name = $match->team_away->shortName;
+          $teamAway->season_id = $season->id;
+
+          if ($match->team_away->clubId) {
+            $awayClub = $db->getClub($match->team_away->clubId);
+          } elseif ($match->team_away->shortName) {
+            $awayClub = $db->getClubByCode($match->team_away->shortName);
+          }
+
+          if (!$awayClub) {
+            $awayClub = new \stdClass();
+            $awayClub->name = $match->team_away->name;
+            $awayClub->short_name = $match->team_away->shortName;
+            $awayClub->description = "";
+            $awayClub = $db->createClub($awayClub);
+          }
+
+          $teamAway->club_id = $awayClub->id;
+          $teamAway = $db->createTeam($teamAway);
         }
-
-        $teamHome->club_id = $homeClub->id;
-        $teamHome = $db->createTeam($teamHome);
-
-        $awayClub = null;
-        $teamAway = new \stdClass();
-        $teamAway->name = $match->team_away->name;
-        $teamAway->short_name = $match->team_away->shortName;
-        $teamAway->season_id = $season->id;
-
-        if ($match->team_away->clubId) {
-          $awayClub = $db->getClub($match->team_away->clubId);
-        } elseif ($match->team_away->shortName) {
-          $awayClub = $db->getClubByCode($match->team_away->shortName);
-        }
-
-        if (!$awayClub) {
-          $awayClub = new \stdClass();
-          $awayClub->name = $match->team_away->name;
-          $awayClub->short_name = $match->team_away->shortName;
-          $awayClub->description = "";
-          $awayClub = $db->createClub($awayClub);
-        }
-
-        $teamAway->club_id = $awayClub->id;
-        $teamAway = $db->createTeam($teamAway);
 
         $newMatch = new \stdClass();
-        $newMatch->home = $teamHome->id;
-        $newMatch->away = $teamAway->id;
+        if($teamHome) {
+          $newMatch->home = $teamHome->id;
+        }else{
+          $newMatch->home = null;
+        }
+        if($teamAway) {
+          $newMatch->away = $teamAway->id;
+        }else{
+          $newMatch->away = null;
+        }
         $seasons[$seasonId][] = $newMatch;
       }
     }

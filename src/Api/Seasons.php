@@ -514,6 +514,8 @@ class Seasons extends Controller
         $teams = [$matches[0]->home, $matches[2]->home, $matches[2]->away, $matches[1]->away, $matches[0]->away, $matches[1]->home];
       } elseif (count($matches) == 4) {
         $teams = [$matches[0]->home, $matches[2]->home, $matches[3]->home, $matches[3]->away, $matches[2]->away, $matches[1]->away, $matches[0]->away, $matches[1]->home];
+      } else {
+        continue;
       }
 
       $anz = count($teams);      // Anzahl der Teams im Array $teams

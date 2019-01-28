@@ -12,6 +12,8 @@ wordpress:
     - ./scripts/.htaccess:/var/www/html/.htaccess
 wordpress_db:
   image: mysql:5.6
+  ports:
+    - 3306:3306
   environment:
     MYSQL_ROOT_PASSWORD: db4wp
 phpmyadmin:

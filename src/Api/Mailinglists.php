@@ -61,7 +61,6 @@ class Mailinglists extends Controller {
               join team_properties as tv on tv.objectId = t.id and tv.property_key = 'vice_captain'
               join players as vc on vc.id = tv.value 
               where s.active = 1";
-    // FIXME: this is wrong, should be only active players
     $results = $db->getDb()->get_results($query);
     
     foreach($results as $email) {

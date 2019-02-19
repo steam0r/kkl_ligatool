@@ -1,0 +1,7 @@
+{
+  "patches": {
+    "scribu/scb-framework": {
+      "SCB - Multipart-Formdata": "patches/multipartform.patch"
+    }
+  }
+}

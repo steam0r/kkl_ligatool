@@ -1,13 +1,11 @@
-diff --git a/Forms.php b/Forms.php
-index 92ad34f..e69de29 100644
----- a/Forms.php       2015-10-25 21:19:41.000000000 +0100
--+++ b/Forms.php  2019-02-19 10:17:03.052324839 +0100
--@@ -131,7 +131 ,7 @@
--         * @return string
--         */
--        public static function form_wrap( $content, $nonce = 'update_options' ) {
---               return html( "form method='post' action=''",
--+               return html( "form method='post' action='' enctype='multipart/form-data'",
--                        $content,
--                        wp_nonce_field( $nonce, '_wpnonce', $referer = true, $echo = false )
--                );
+--- a/Forms.php  2015-10-25 21:19:41.000000000 +0100
++++ b/Forms.php  2019-02-19 10:17:03.052324839 +0100
+@@ -128,7 +128,7 @@
+ 	 * @return string
+ 	 */
+ 	public static function form_wrap( $content, $nonce = 'update_options' ) {
+-		return html( "form method='post' action=''",
++		return html( "form method='post' action='' enctype='multipart/form-data'",
+ 			$content,
+ 			wp_nonce_field( $nonce, '_wpnonce', $referer = true, $echo = false )
+ 		);

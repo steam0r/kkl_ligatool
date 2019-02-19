@@ -1,6 +1,6 @@
 {
   "name": "kkl_ligatool",
-  "version": "2.11.0",
+  "version": "2.12.0",
   "type": "wordpress-plugin",
   "description": "Tool to manage the Kölner Kickerliga",
   "keywords": [
@@ -22,8 +22,7 @@
   "extra": {
     "release": {
       "baseurl": "https://ci.undev.de/"
-    },
-    "patches-file": "patches/composer.patches.json"
+    }
   },
   "autoload": {
     "psr-4": {

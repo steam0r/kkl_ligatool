@@ -55,8 +55,7 @@ class ClubAdminPage extends AdminPage
         'type' => 'textarea', 'name' => 'description',
         'value' => $club->description, 'extra' => array('rows' => 7, 'cols' => 100)
       )
-    ),
-      );
+    ));
   }
 
   function get_item()

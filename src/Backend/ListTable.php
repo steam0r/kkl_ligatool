@@ -174,8 +174,10 @@ abstract class ListTable extends WP_List_Table {
   }
   
   public function display() {
+    echo '<div class="wrap">';
     $this->display_search_field();
     parent::display();
+    echo '</div>';
   }
   
   public function display_search_field() {

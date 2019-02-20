@@ -137,12 +137,10 @@ module.exports = function (grunt){
   grunt.registerTask('default', ['build']);
 
   // needed modules
-  // needed modules
   grunt.loadNpmTasks('grunt-composer');
   grunt.loadNpmTasks('grunt-replace');
   grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-bumpup');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-copy');
-
-}
+};

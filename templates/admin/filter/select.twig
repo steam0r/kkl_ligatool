@@ -1,0 +1,12 @@
+<div class="filter_container">
+    <label for="{{ type }}">{{ label }}:</label>
+    <select name="{{ type }}" id="{{  type }}" onchange="window.location.href = kkl_backend_addFilter(window.location.href, '{{ type }}', this.value);">
+        {% if all %}
+            <option value="">{{ all }}</option>
+        {% endif %}
+
+        {% for filter in filters %}
+            <option value="{{ filter.id }}" {{ (filter.selected) ? 'selected' : '' }}>{{ filter.label }}</option>
+        {% endfor %}
+    </select>
+</div>

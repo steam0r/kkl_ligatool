@@ -3,6 +3,7 @@
 namespace KKL\Ligatool\Backend;
 
 use KKL\Ligatool\DB;
+use KKL\Ligatool\Template\Service;
 use WP_List_Table;
 
 abstract class ListTable extends WP_List_Table {
@@ -265,22 +266,35 @@ abstract class ListTable extends WP_List_Table {
     
     return $keyed;
   }
-  
+
+  /**
+   *
+   */
   function display_league_filter() {
-    
-    $filter = '<div class="filter_container"><label for="league_filter">' . __('league', 'kkl-ligatool') . ':</label><br/><select id="league_filter" name="league_filter" onchange="window.location.href = kkl_backend_addFilter(window.location.href, \'league_filter\', this.value);">';
-    $filter .= '<option value="">' . __('display_all', 'kkl-ligatool') . '</option>';
-    foreach($this->get_leagues() as $league) {
-      $cl = $this->get_current_league();
-      if($cl->id == $league->id) {
-        $filter .= '<option value="' . $league->id . '" selected="selected">' . $league->name . '</option>';
-      } else {
-        $filter .= '<option value="' . $league->id . '">' . $league->name . '</option>';
+    $filters = array();
+    $cl = $this->get_current_league();
+
+    foreach ($this->get_leagues() as $league) {
+      $filterItem = array(
+          "label" => $league->name,
+          "id" => $league->id,
+          "selected" => false
+      );
+
+      if ($cl->id == $league->id) {
+        $filterItem["selected"] = true;
       }
+
+      $filters[] = $filterItem;
     }
-    $filter .= "</select></div>";
-    
-    return $filter;
+
+    $kkl_twig = Service::getTemplateEngine();
+    echo $kkl_twig->render('admin/filter/select.twig', array(
+        "type" => "league_filter",
+        "label" => __('league', 'kkl-ligatool'),
+        "all" => __('display_all', 'kkl-ligatool'),
+        "filters" => $filters
+    ));
   }
   
   function get_leagues() {
@@ -320,24 +334,40 @@ abstract class ListTable extends WP_List_Table {
     
     return $league;
   }
-  
+
+  /**
+   * 
+   */
   function display_season_filter() {
-    $league = $this->get_current_league();
-    $filter = '<div class="filter_container"><label for="season_filter">' . __('season', 'kkl-ligatool') . ':</label><br/><select id="season_filter" name="season_filter" onchange="window.location.href = kkl_backend_addFilter(window.location.href, \'season_filter\', this.value);">';
-    $filter .= '<option value="">' . __('display_all', 'kkl-ligatool') . '</option>';
-    foreach($this->get_seasons() as $season) {
-      if($league && ($league->id != $season->league_id)) {
+    $filters = array();
+    $cs = $this->get_current_season();
+    $cl = $this->get_current_league();
+
+    foreach ($this->get_seasons() as $season) {
+      if ($cl && ($cl->id != $season->league_id)) {
         continue;
       }
-      if($this->get_current_season()->id == $season->id) {
-        $filter .= '<option value="' . $season->id . '" selected="selected">' . $season->name . '</option>';
-      } else {
-        $filter .= '<option value="' . $season->id . '">' . $season->name . '</option>';
+
+      $filterItem = array(
+          "label" => $season->name,
+          "id" => $season->id,
+          "selected" => false
+      );
+
+      if ($cs->id == $season->id) {
+        $filterItem["selected"] = true;
       }
+
+      $filters[] = $filterItem;
     }
-    $filter .= "</select></div>";
-    
-    return $filter;
+
+    $kkl_twig = Service::getTemplateEngine();
+    echo $kkl_twig->render('admin/filter/select.twig', array(
+        "type" => "season_filter",
+        "label" => __('season', 'kkl-ligatool'),
+        "all" => __('display_all', 'kkl-ligatool'),
+        "filters" => $filters
+    ));
   }
   
   function get_seasons() {
@@ -372,24 +402,40 @@ abstract class ListTable extends WP_List_Table {
     
     return $season;
   }
-  
+
+  /**
+   *
+   */
   function display_game_day_filter() {
-    $filter = '<div class="filter_container"><label for="gameday_filter">' . __('game_day', 'kkl-ligatool') . ':</label><br/><select id="gameday_filter" name="gameday_filter" onchange="window.location.href = kkl_backend_addFilter(window.location.href, \'game_day_filter\', this.value);">';
-    $filter .= '<option value="">' . __('display_all', 'kkl-ligatool') . '</option>';
-    foreach($this->get_game_days() as $day) {
-      $seasonId = $this->get_current_season()->id;
-      if($seasonId && ($seasonId != $day->season_id)) {
+    $filters = array();
+    $cs = $this->get_current_season()->id;
+    $cgd = $this->get_current_game_day();
+
+    foreach ($this->get_game_days() as $day) {
+      if ($cs && ($cs != $day->season_id)) {
         continue;
       }
-      if($this->get_current_game_day()->id == $day->id) {
-        $filter .= '<option value="' . $day->id . '" selected="selected">' . $day->number . '</option>';
-      } else {
-        $filter .= '<option value="' . $day->id . '">' . $day->number . '</option>';
+
+      $filterItem = array(
+          "label" => $day->number,
+          "id" => $day->id,
+          "selected" => false
+      );
+
+      if ($cgd->id == $day->id) {
+        $filterItem["selected"] = true;
       }
+
+      $filters[] = $filterItem;
     }
-    $filter .= "</select></div>";
-    
-    return $filter;
+
+    $kkl_twig = Service::getTemplateEngine();
+    echo $kkl_twig->render('admin/filter/select.twig', array(
+        "type" => "game_day_filter",
+        "label" => __('game_day', 'kkl-ligatool'),
+        "all" => __('display_all', 'kkl-ligatool'),
+        "filters" => $filters
+    ));
   }
   
   function get_game_days() {

@@ -34,7 +34,29 @@ class Service {
     if($debug) {
       $kkl_twig->addExtension(new Twig_Extension_Debug());
     }
+
+    $filters = self::addTemplateFilters();
+    foreach ($filters as $filter) {
+      $kkl_twig->addFilter($filter);
+    }
+
     static::$engine = $kkl_twig;
   }
-  
+
+
+  /**
+   * @return array
+   */
+  private static function addTemplateFilters() {
+    $filters = array();
+
+    // usage: {{ '/image.png'|imgSrc }}
+    $filters[] = new \Twig_SimpleFilter('imgSrc', function ($image) {
+      return plugins_url('../../images' . $image, __FILE__);
+    });
+
+
+    return $filters;
+  }
+
 }

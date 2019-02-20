@@ -136,7 +136,6 @@ class Backend {
   
   public static function leagues_page() {
     
-    
     self::display_tabs();
     
     $wp_list_table = new Backend\LeagueListTable();

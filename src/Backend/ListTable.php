@@ -7,7 +7,7 @@ use WP_List_Table;
 
 abstract class ListTable extends WP_List_Table {
   
-  public static $ITEMS_PER_PAGE = 10;
+  public static $ITEMS_PER_PAGE = 20;
   public $_args = array();
   
   /**
@@ -46,7 +46,10 @@ abstract class ListTable extends WP_List_Table {
     
     $this->_column_headers = array($columns, $hidden, $sortable);
     
-    $this->set_pagination_args(array('total_items' => $this->get_total_items(), 'per_page' => $this->get_items_per_page(null)));
+    $this->set_pagination_args(array(
+        'total_items' => $this->get_total_items(),
+        'per_page' => $this->get_items_per_page(null)
+    ));
     
     $query = $this->get_query();
     $this->items = $this->db->getDb()->get_results($query, ARRAY_A);
@@ -427,7 +430,7 @@ abstract class ListTable extends WP_List_Table {
   function display_create_link() {
     $page = $this->get_create_page();
     $link = add_query_arg(compact('page', 'id'), admin_url('admin.php'));
-    $html = '<a href="' . $link . '">' . __('create_new', 'kkl-ligatool') . '</a>';
+    $html = '<a class="button-primary" href="' . $link . '">' . __('create_new', 'kkl-ligatool') . '</a>';
     
     return $html;
   }

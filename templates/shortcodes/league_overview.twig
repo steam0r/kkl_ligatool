@@ -1,24 +1,32 @@
-<div class="kkl-teams">
-    <nav class="list-pills">
+<div class="kl-league-overview">
+    <nav>
         <ul>
             {% for league in all_leagues %}
-                <li><a rel="isotope" href="#" data-filter=".{{ league.code }}"
-                       data-id="{{ league.current_season }}">{{ league.name }}</a></li>
+                <li><a href="#{{ league.code }}" data-id="{{ league.current_season }}">{{ league.name }}</a></li>
             {% endfor %}
         </ul>
     </nav>
 
-    <div class="isotope-grid team-wrapper">
+    <div class="wrapper">
         {% for league in leagues %}
-            {% for team in league.teams %}
-                <div class="team-item isotope-item  {{ league.code }}">
-                    <a href="/team/{{ team.link }}" target="_self" title="{{ team.name }}">
-                        <img class="img-responsive" src="{% if team.logo %}{{ team.logo }}{% else %}{% endif %}"
-                             alt="KKL |{{ team.name }}"/>
-                        <span>{{ team.name }}</span>
-                    </a>
-                </div>
-            {% endfor %}
+            <div class="league" data-id="{{ league.code }}" id="{{ league.code }}"><a name="{{ league.code }}"></a>
+                <h3>{{ league.name }}</h3>
+
+                <ul>
+                    {% for team in league.teams %}
+                        <li>
+                            <a href="/team/{{ team.link }}" target="_self" title="{{ team.name }}">
+                                <span class="img">
+                                    <img src="{% if team.logo %}{{ team.logo }}{% else %}unknown{% endif %}"
+                                         alt="{{ team.name }}"/>
+                                </span>
+                                <span>{{ team.name }}</span>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+            </div>
         {% endfor %}
     </div>
 </div>

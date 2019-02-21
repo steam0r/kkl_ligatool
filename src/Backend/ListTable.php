@@ -336,7 +336,7 @@ abstract class ListTable extends WP_List_Table {
   }
 
   /**
-   * 
+   *
    */
   function display_season_filter() {
     $filters = array();

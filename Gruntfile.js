@@ -27,7 +27,7 @@ module.exports = function (grunt){
         files: [
           {
             expand: true,
-            src: ['css/**', 'js/**', 'lang/**', 'pages/**', 'sql/**', 'src/**', 'templates/**', 'vendor/**', 'kkl_ligatool.php', 'README.md'],
+            src: ['css/**', 'js/**', 'images/**', 'lang/**', 'pages/**', 'sql/**', 'src/**', 'templates/**', 'vendor/**', 'kkl_ligatool.php', 'README.md'],
             dest: '<%= cmp.name %>/'
           }
         ]
@@ -40,7 +40,7 @@ module.exports = function (grunt){
           mode: 'zip'
         },
         expand: true,
-        src: ['css/**', 'js/**', 'lang/**', 'pages/**', 'sql/**', 'src/**', 'templates/**', 'vendor/**', 'kkl_ligatool.php', 'README.md']
+        src: ['css/**', 'js/**', 'images/**', 'lang/**', 'pages/**', 'sql/**', 'src/**', 'templates/**', 'vendor/**', 'kkl_ligatool.php', 'README.md']
       },
       update: {
         options: {

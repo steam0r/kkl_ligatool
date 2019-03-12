@@ -274,7 +274,7 @@ class Backend {
       array(array('handle' => 'kkl_datepicker', 'src' => 'jquery.datetimepicker.js', 'type' => 'js'),
             array('handle' => 'kkl_datepicker', 'src' => 'jquery.datetimepicker.css', 'type' => 'css'),
             array('handle' => 'kkl_backend', 'src' => 'kkl_backend.js', 'type' => 'js'),
-            array('handle' => 'kkl_backend', 'src' => 'kkl_backend.css', 'type' => 'css'))
+            array('handle' => 'kkl_backend', 'src' => 'ligatool.css', 'type' => 'css'))
     );
     
     add_action('admin_menu', array(__CLASS__, 'admin_menu'));

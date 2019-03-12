@@ -9,12 +9,12 @@
 
     <div class="wrapper">
         {% for league in leagues %}
-            <div class="league" data-id="{{ league.code }}" id="{{ league.code }}"><a name="{{ league.code }}"></a>
+            <div class="league" id="league-{{ league.id }}"><a name="{{ league.code }}"></a>
                 <h3>{{ league.name }}</h3>
 
                 <ul>
                     {% for team in league.teams %}
-                        <li>
+                        <li id="team-{{ team.id }}" data-club="{{ team.club_id }}">
                             <a href="/team/{{ team.link }}" target="_self" title="{{ team.name }}">
                                 <span class="img">
                                     <img src="{% if team.logo %}{{ team.logo }}{% else %}unknown{% endif %}"

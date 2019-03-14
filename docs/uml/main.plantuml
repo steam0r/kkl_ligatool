@@ -1,0 +1,105 @@
+@startuml
+package "match related data" {
+    object league {
+        name
+        code
+        active
+    }
+
+    object season {
+        name
+        start_date
+        end_date
+        active
+    }
+
+    object gameday {
+        ordinal
+        start_date
+        end_date
+    }
+
+    object match {
+        fixture
+        team_home
+        team_away
+        score_home
+        score_away
+        location
+        notes
+    }
+
+    object set {
+        ordinal
+        score_home
+        score_away
+        players_home
+        players_away
+    }
+
+    object game {
+        ordinal
+        goals_home
+        goals_away
+    }
+}
+
+package "participant related data" {
+
+    object club {
+        name
+        short_name
+        description
+        picture
+        country_code
+    }
+
+    object team {
+        name
+        short_name
+        description
+        picture
+        country_code
+    }
+
+    object player {
+        first_name
+        last_name
+        nick_name
+        email
+        phone
+        picture
+        birthdate
+        description
+        country_code
+    }
+}
+
+package "location related data" {
+    object location {
+        title
+        description
+        latitude
+        longitude
+    }
+}
+
+league o-- "n" season
+season o-- "n" gameday
+gameday o-- "n" match
+match o-- "n" set
+set o-- "n" game
+
+club o-- "n" team
+team o-- "n" player
+
+season o-- "n" team
+
+match --> location
+match --> "home" team
+match --> "away" team
+
+set --> "home" player
+set --> "away" player
+
+@enduml

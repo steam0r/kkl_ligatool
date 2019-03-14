@@ -2,6 +2,9 @@
 
 namespace KKL\Ligatool;
 
+use KKL\Ligatool\Widget\OtherLeagues;
+use KKL\Ligatool\Widget\OtherSeasons;
+use KKL\Ligatool\Widget\UpcomingGames;
 use scbLoad4;
 
 class Plugin {
@@ -102,15 +105,13 @@ class Plugin {
     add_shortcode('season_schedule', array(Shortcodes::class, 'seasonSchedule'));
     add_shortcode('contact_list', array(Shortcodes::class, 'contactList'));
     add_shortcode('set_match_fixture', array(Shortcodes::class, 'setMatchFixture'));
-    
+
+    add_action('widgets_init', array($this, 'register_widgets'));
+
     register_sidebar(array('name' => __(__('kkl_global_sidebar', 'kkl-ligatool')), 'id' => 'kkl_global_sidebar', 'description' => __('Widgets in this area will be shown on pages using any kkl page template below the page sidebar.'), 'class' => 'kkl_global_sidebar', 'before_title' => '<h4>', 'after_title' => '</h4>',));
-    
     register_sidebar(array('name' => __(__('kkl_table_sidebar', 'kkl-ligatool')), 'id' => 'kkl_table_sidebar', 'description' => __('Widgets in this area will be shown on pages using the table page template.'), 'class' => 'kkl_table_sidebar', 'before_title' => '<h4>', 'after_title' => '</h4>',));
-    
     register_sidebar(array('name' => __(__('kkl_leagues_sidebar', 'kkl-ligatool')), 'id' => 'kkl_leagues_sidebar', 'description' => __('Widgets in this area will be shown on pages using the league page template.'), 'class' => 'kkl_league_sidebar', 'before_title' => '<h4>', 'after_title' => '</h4>',));
-    
     register_sidebar(array('name' => __(__('kkl_schedule_sidebar', 'kkl-ligatool')), 'id' => 'kkl_schedule_sidebar', 'description' => __('Widgets in this area will be shown on pages using the schedule page template.'), 'class' => 'kkl_schedule_sidebar', 'before_title' => '<h4>', 'after_title' => '</h4>',));
-    
     register_sidebar(array('name' => __(__('kkl_teamdetail_sidebar', 'kkl-ligatool')), 'id' => 'kkl_teamdetail_sidebar', 'description' => __('Widgets in this area will be shown on pages using the team page template.'), 'class' => 'kkl_teamdetail_sidebar', 'before_title' => '<h4>', 'after_title' => '</h4>',));
     
     $slackIntegration = new Slack\EventListener();
@@ -148,9 +149,6 @@ class Plugin {
     add_action('plugins_loaded', function() {
       load_plugin_textdomain('kkl-ligatool', false, dirname(plugin_basename(__FILE__)) . '/../lang/');
     });
-  
-
-    
   }
   
   public static function enqueue_scripts($arr) {
@@ -179,7 +177,13 @@ class Plugin {
     
     return $vars;
   }
-  
+
+  public function register_widgets() {
+    register_widget(new OtherLeagues());
+    register_widget(new OtherSeasons());
+    register_widget(new UpcomingGames());
+  }
+
   public function add_rewrite_rules() {
     
     $pages = get_pages(array('meta_key' => '_wp_page_template', 'meta_value' => 'page-ranking.php',));

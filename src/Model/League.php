@@ -9,30 +9,30 @@
 namespace KKL\Ligatool\Model;
 
 /**
- * @SWG\Definition(required={"code", "name"}, type="object")
+ * @OA\Schema()
  */
 class League extends SwaggerModel {
   
   /**
    * @var boolean
-   * @SWG\Property()
+   * @OA\Property()
    */
   private $active;
   
   /**
    * @var string
-   * @SWG\Property(example="koeln1")
+   * @OA\Property(example="koeln1")
    */
   private $code;
   
   /**
    * @var string
-   * @SWG\Property(example="1. Liga")
+   * @OA\Property(example="1. Liga")
    */
   private $name;
   
   /**
-   * @SWG\Property(format="int64")
+   * @OA\Property(format="int64")
    * @var int
    */
   private $currentSeason;

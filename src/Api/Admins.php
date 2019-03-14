@@ -46,12 +46,13 @@ class Admins extends Controller {
   }
   
   /**
-   * @SWG\Get(
+   * @OA\Get(
    *     path="/admins",
-   *     @SWG\Response(
+   *     tags={"admins"},
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(type="array", ref="#/definitions/Player")
+   *         @OA\Schema(type="array", ref="#/definitions/Player")
    *     )
    * )
    * @param WP_REST_Request $request
@@ -64,19 +65,20 @@ class Admins extends Controller {
   }
   
   /**
-   * @SWG\Get(
-   *     path="/admins/{playerId}",
-   *     @SWG\Parameter(
+   * @OA\Get(
+   *     path="/admins/:playerId",
+   *     tags={"admins"},
+   *     @OA\Parameter(
    *         in="path",
    *         name="playerId",
    *         required=true,
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(ref="#/definitions/Player")
+   *         @OA\Schema(ref="#/definitions/Player")
    *     )
    * )
    * @param WP_REST_Request $request
@@ -89,19 +91,20 @@ class Admins extends Controller {
   }
   
   /**
-   * @SWG\Get(
-   *     path="/admins/{playerId}/info",
-   *     @SWG\Parameter(
+   * @OA\Get(
+   *     path="/admins/:playerId/info",
+   *     tags={"admins"},
+   *     @OA\Parameter(
    *         in="path",
    *         name="playerId",
    *         required=true,
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(type="array", ref="#/definitions/Property")
+   *         @OA\Schema(type="array", ref="#/definitions/Property")
    *     )
    * )
    * @param WP_REST_Request $request

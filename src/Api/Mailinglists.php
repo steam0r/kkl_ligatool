@@ -37,9 +37,10 @@ class Mailinglists extends Controller {
   }
   
   /**
-   * @SWG\Get(
+   * @OA\Get(
    *     path="/mailinglists/league",
-   *     @SWG\Response(
+   *     tags={"mailinglists"},
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation"
    *     )
@@ -77,9 +78,10 @@ class Mailinglists extends Controller {
   }
   
   /**
-   * @SWG\Get(
+   * @OA\Get(
    *     path="/mailinglists/admins",
-   *     @SWG\Response(
+   *     tags={"mailinglists"},
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation"
    *     )
@@ -112,9 +114,10 @@ class Mailinglists extends Controller {
   }
   
   /**
-   * @SWG\Get(
+   * @OA\Get(
    *     path="/mailinglists/resolve",
-   *     @SWG\Response(
+   *     tags={"mailinglists"},
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation"
    *     )

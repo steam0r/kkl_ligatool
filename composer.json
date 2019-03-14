@@ -60,7 +60,7 @@
     "scribu/scb-framework": "v61",
     "composer/installers": "v1.5.0",
     "tigokr/slack-api": "1.0",
-    "zircote/swagger-php": "2.0.13",
+    "zircote/swagger-php": "^s3.0",
     "symfony/finder": "2.2",
     "doctrine/annotations": "1.4.0",
     "rjjakes/wordpress-orm": "dev-master",

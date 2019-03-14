@@ -5,19 +5,19 @@ namespace KKL\Ligatool\Model;
 abstract class SwaggerModel {
   
   /**
-   * @SWG\Property(format="int64")
+   * @OA\Property(format="int64")
    * @var int
    */
   private $id;
   
   /**
-   * @SWG\Property(example="1980-09-02 05:11:42")
+   * @OA\Property(example="1980-09-02 05:11:42")
    * @var string
    */
   private $createdAt;
   
   /**
-   * @SWG\Property(example="1980-09-02 05:11:42")
+   * @OA\Property(example="1980-09-02 05:11:42")
    * @var string
    */
   private $updatedAt;

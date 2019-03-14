@@ -9,7 +9,7 @@
 namespace KKL\Ligatool\Model;
 
 /**
- * @SWG\Definition(required={"name", "key"}, type="object")
+ * @OA\Schema()
  * @ORM_Type              Entity
  * @ORM_Table "kkl_api_keys"
  * @ORM_AllowSchemaUpdate True
@@ -18,7 +18,7 @@ class ApiKey extends KKLModel {
   
   /**
    * @var string
-   * @SWG\Property()
+   * @OA\Property()
    * @ORM_Column_Type   TEXT
    * @ORM_Column_Null   NOT NULL
    */
@@ -26,7 +26,7 @@ class ApiKey extends KKLModel {
   
   /**
    * @var string
-   * @SWG\Property()
+   * @OA\Property()
    * @ORM_Column_Type   TEXT
    * @ORM_Column_Null   NOT NULL
    */

@@ -151,12 +151,13 @@ class Seasons extends Controller
 
 
   /**
-   * @SWG\Get(
+   * @OA\Get(
    *     path="/seasons",
-   *     @SWG\Response(
+   *     tags={"seasons"},
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(type="array", ref="#/definitions/Season")
+   *         @OA\Schema(type="array", ref="#/definitions/Season")
    *     )
    * )
    * @param WP_REST_Request $request
@@ -171,19 +172,20 @@ class Seasons extends Controller
   }
 
   /**
-   * @SWG\Get(
-   *     path="/seasons/{seasonId}",
-   *     @SWG\Parameter(
+   * @OA\Get(
+   *     path="/seasons/:seasonId",
+   *     tags={"seasons"},
+   *     @OA\Parameter(
    *         in="path",
    *         name="seasonId",
    *         required=true,
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(ref="#/definitions/Season")
+   *         @OA\Schema(ref="#/definitions/Season")
    *     )
    * )
    * @param WP_REST_Request $request
@@ -198,19 +200,20 @@ class Seasons extends Controller
   }
 
   /**
-   * @SWG\Get(
-   *     path="/seasons/{seasonId}/teams",
-   *     @SWG\Parameter(
+   * @OA\Get(
+   *     path="/seasons/:seasonId/teams",
+   *     tags={"seasons"},
+   *     @OA\Parameter(
    *         in="path",
    *         name="seasonId",
    *         required=true,
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(type="array", ref="#/definitions/Team")
+   *         @OA\Schema(type="array", ref="#/definitions/Team")
    *     )
    * )
    * @param WP_REST_Request $request
@@ -284,19 +287,20 @@ class Seasons extends Controller
   }
 
   /**
-   * @SWG\Get(
-   *     path="/seasons/{seasonId}/gamedays",
-   *     @SWG\Parameter(
+   * @OA\Get(
+   *     path="/seasons/:seasonId/gamedays",
+   *     tags={"seasons"},
+   *     @OA\Parameter(
    *         in="path",
    *         name="seasonId",
    *         required=true,
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(type="array", ref="#/definitions/GameDay")
+   *         @OA\Schema(type="array", ref="#/definitions/GameDay")
    *     )
    * )
    * @param WP_REST_Request $request
@@ -312,19 +316,20 @@ class Seasons extends Controller
   }
 
   /**
-   * @SWG\Get(
-   *     path="/seasons/{seasonId}/currentgameday",
-   *     @SWG\Parameter(
+   * @OA\Get(
+   *     path="/seasons/:seasonId/currentgameday",
+   *     tags={"seasons"},
+   *     @OA\Parameter(
    *         in="path",
    *         name="seasonId",
    *         required=true,
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(type="array", ref="#/definitions/GameDay")
+   *         @OA\Schema(type="array", ref="#/definitions/GameDay")
    *     )
    * )
    * @param WP_REST_Request $request
@@ -340,19 +345,20 @@ class Seasons extends Controller
   }
 
   /**
-   * @SWG\Get(
-   *     path="/seasons/{seasonId}/info",
-   *     @SWG\Parameter(
+   * @OA\Get(
+   *     path="/seasons/:seasonId/info",
+   *     tags={"seasons"},
+   *     @OA\Parameter(
    *         in="path",
    *         name="seasonId",
    *         required=true,
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(type="array", ref="#/definitions/Property")
+   *         @OA\Schema(type="array", ref="#/definitions/Property")
    *     )
    * )
    * @param WP_REST_Request $request
@@ -367,19 +373,20 @@ class Seasons extends Controller
   }
 
   /**
-   * @SWG\Get(
-   *     path="/seasons/{seasonId}/teams",
-   *     @SWG\Parameter(
+   * @OA\Get(
+   *     path="/seasons/:seasonId/teams",
+   *     tags={"seasons"},
+   *     @OA\Parameter(
    *         in="path",
    *         name="seasonId",
    *         required=true,
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(type="array", ref="#/definitions/Schedule")
+   *         @OA\Schema(type="array", ref="#/definitions/Schedule")
    *     )
    * )
    * @param WP_REST_Request $request
@@ -394,19 +401,20 @@ class Seasons extends Controller
   }
 
   /**
-   * @SWG\Get(
-   *     path="/seasons/{seasonId}/teams",
-   *     @SWG\Parameter(
+   * @OA\Get(
+   *     path="/seasons/:seasonId/teams",
+   *     tags={"seasons"},
+   *     @OA\Parameter(
    *         in="path",
    *         name="seasonId",
    *         required=true,
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(type="array", ref="#/definitions/Ranking")
+   *         @OA\Schema(type="array", ref="#/definitions/Ranking")
    *     )
    * )
    * @param WP_REST_Request $request

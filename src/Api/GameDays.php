@@ -81,12 +81,13 @@ class GameDays extends Controller
   }
 
   /**
-   * @SWG\Get(
+   * @OA\Get(
    *     path="/gamedays",
-   *     @SWG\Response(
+   *     tags={"gamedays"},
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(type="array", ref="#/definitions/GameDay")
+   *         @OA\Schema(type="array", ref="#/definitions/GameDay")
    *     )
    * )
    * @param WP_REST_Request $request
@@ -100,19 +101,20 @@ class GameDays extends Controller
   }
 
   /**
-   * @SWG\Get(
-   *     path="/gamedays/{gamedayId}",
-   *     @SWG\Parameter(
+   * @OA\Get(
+   *     path="/gamedays/:gamedayId",
+   *     tags={"gamedays"},
+   *     @OA\Parameter(
    *         in="path",
    *         name="gamedayId",
    *         required=true,
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(ref="#/definitions/GameDay")
+   *         @OA\Schema(ref="#/definitions/GameDay")
    *     )
    * )
    * @param WP_REST_Request $request
@@ -126,19 +128,20 @@ class GameDays extends Controller
   }
 
   /**
-   * @SWG\Get(
-   *     path="/gamedays/{gamedayId}/matches",
-   *     @SWG\Parameter(
+   * @OA\Get(
+   *     path="/gamedays/:gamedayId/matches",
+   *     tags={"gamedays"},
+   *     @OA\Parameter(
    *         in="path",
    *         name="gamedayId",
    *         required=true,
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(type="array", ref="#/definitions/Matches")
+   *         @OA\Schema(type="array", ref="#/definitions/Matches")
    *     )
    * )
    * @param WP_REST_Request $request
@@ -153,19 +156,20 @@ class GameDays extends Controller
   }
 
   /**
-   * @SWG\Get(
-   *     path="/gamedays/{gamedayId}/next",
-   *     @SWG\Parameter(
+   * @OA\Get(
+   *     path="/gamedays/:gamedayId/next",
+   *     tags={"gamedays"},
+   *     @OA\Parameter(
    *         in="path",
    *         name="gamedayId",
    *         required=true,
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(ref="#/definitions/GameDay")
+   *         @OA\Schema(ref="#/definitions/GameDay")
    *     )
    * )
    * @param WP_REST_Request $request
@@ -179,19 +183,20 @@ class GameDays extends Controller
   }
 
   /**
-   * @SWG\Get(
-   *     path="/gamedays/{gamedayId}/previous",
-   *     @SWG\Parameter(
+   * @OA\Get(
+   *     path="/gamedays/:gamedayId/previous",
+   *     tags={"gamedays"},
+   *     @OA\Parameter(
    *         in="path",
    *         name="gamedayId",
    *         required=true,
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(ref="#/definitions/GameDay")
+   *         @OA\Schema(ref="#/definitions/GameDay")
    *     )
    * )
    * @param WP_REST_Request $request

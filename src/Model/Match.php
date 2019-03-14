@@ -9,7 +9,7 @@
 namespace KKL\Ligatool\Model;
 
 /**
- * @SWG\Definition(required={"home", "away"}, type="object")
+ * @OA\Schema()
  */
 class Match extends SwaggerModel {
 

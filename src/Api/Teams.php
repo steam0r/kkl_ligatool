@@ -35,12 +35,13 @@ class Teams extends Controller {
   }
   
   /**
-   * @SWG\Get(
+   * @OA\Get(
    *     path="/teams",
-   *     @SWG\Response(
+   *     tags={"teams"},
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(type="array", ref="#/definitions/Team")
+   *         @OA\Schema(type="array", ref="#/definitions/Team")
    *     )
    * )
    * @param WP_REST_Request $request
@@ -53,19 +54,20 @@ class Teams extends Controller {
   }
   
   /**
-   * @SWG\Get(
-   *     path="/teams/{seasonId}",
-   *     @SWG\Parameter(
+   * @OA\Get(
+   *     path="/teams/:seasonId",
+   *     tags={"teams"},
+   *     @OA\Parameter(
    *         in="path",
    *         name="teamId",
    *         required=true,
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(ref="#/definitions/Team")
+   *         @OA\Schema(ref="#/definitions/Team")
    *     )
    * )
    * @param WP_REST_Request $request
@@ -78,19 +80,20 @@ class Teams extends Controller {
   }
   
   /**
-   * @SWG\Get(
-   *     path="/teams/{teamId}/matches",
-   *     @SWG\Parameter(
+   * @OA\Get(
+   *     path="/teams/:teamId/matches",
+   *     tags={"teams"},
+   *     @OA\Parameter(
    *         in="path",
    *         name="teamId",
    *         required=true,
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(type="array", ref="#/definitions/Match")
+   *         @OA\Schema(type="array", ref="#/definitions/Match")
    *     )
    * )
    * @param WP_REST_Request $request
@@ -104,19 +107,20 @@ class Teams extends Controller {
   }
   
   /**
-   * @SWG\Get(
-   *     path="/teams/{teamId}/info",
-   *     @SWG\Parameter(
+   * @OA\Get(
+   *     path="/teams/:teamId/info",
+   *     tags={"teams"},
+   *     @OA\Parameter(
    *         in="path",
    *         name="teamId",
    *         required=true,
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(type="array", ref="#/definitions/Property")
+   *         @OA\Schema(type="array", ref="#/definitions/Property")
    *     )
    * )
    * @param WP_REST_Request $request

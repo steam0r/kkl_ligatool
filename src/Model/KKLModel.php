@@ -9,7 +9,7 @@ abstract class KKLModel extends BaseModel {
   
   /**
    * @var string
-   * @SWG\Property(example="1980-09-02 05:11:42")
+   * @OA\Property(example="1980-09-02 05:11:42")
    * @ORM_Column_Type   datetime
    * @ORM_Column_Null   DEFAULT NULL
    */
@@ -17,7 +17,7 @@ abstract class KKLModel extends BaseModel {
   
   /**
    * @var string
-   * @SWG\Property(example="1980-09-02 05:11:42")
+   * @OA\Property(example="1980-09-02 05:11:42")
    * @ORM_Column_Type   datetime
    * @ORM_Column_Null   DEFAULT NULL
    */

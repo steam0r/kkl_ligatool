@@ -41,12 +41,13 @@ class Clubs extends Controller {
   }
   
   /**
-   * @SWG\Get(
+   * @OA\Get(
    *     path="/clubs",
-   *     @SWG\Response(
+   *     tags={"clubs"},
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(type="array", ref="#/definitions/Club")
+   *         @OA\Schema(type="array", ref="#/definitions/Club")
    *     )
    * )
    * @param WP_REST_Request $request
@@ -59,19 +60,20 @@ class Clubs extends Controller {
   }
   
   /**
-   * @SWG\Get(
-   *     path="/club/{clubId}",
-   *     @SWG\Parameter(
+   * @OA\Get(
+   *     path="/club/:clubId",
+   *     tags={"clubs"},
+   *     @OA\Parameter(
    *         in="path",
    *         name="clubId",
    *         required=true,
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(ref="#/definitions/Club")
+   *         @OA\Schema(ref="#/definitions/Club")
    *     )
    * )
    * @param WP_REST_Request $request
@@ -93,19 +95,20 @@ class Clubs extends Controller {
   }
   
   /**
-   * @SWG\Get(
-   *     path="/club/{clubId}/teams",
-   *     @SWG\Parameter(
+   * @OA\Get(
+   *     path="/club/:clubId/teams",
+   *     tags={"clubs"},
+   *     @OA\Parameter(
    *         in="path",
    *         name="clubId",
    *         required=true,
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(type="array", ref="#/definitions/Team")
+   *         @OA\Schema(type="array", ref="#/definitions/Team")
    *     )
    * )
    * @param WP_REST_Request $request
@@ -120,19 +123,20 @@ class Clubs extends Controller {
   }
   
   /**
-   * @SWG\Get(
-   *     path="/club/{clubId}/awards",
-   *     @SWG\Parameter(
+   * @OA\Get(
+   *     path="/club/:clubId/awards",
+   *     tags={"clubs"},
+   *     @OA\Parameter(
    *         in="path",
    *         name="clubId",
    *         required=true,
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(type="array", ref="#/definitions/Award")
+   *         @OA\Schema(type="array", ref="#/definitions/Award")
    *     )
    * )
    * @param WP_REST_Request $request
@@ -146,19 +150,20 @@ class Clubs extends Controller {
   }
   
   /**
-   * @SWG\Get(
-   *     path="/club/{clubId}/currentteam",
-   *     @SWG\Parameter(
+   * @OA\Get(
+   *     path="/club/:clubId/currentteam",
+   *     tags={"clubs"},
+   *     @OA\Parameter(
    *         in="path",
    *         name="clubId",
    *         required=true,
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(ref="#/definitions/Team")
+   *         @OA\Schema(ref="#/definitions/Team")
    *     )
    * )
    * @param WP_REST_Request $request
@@ -173,19 +178,20 @@ class Clubs extends Controller {
   }
   
   /**
-   * @SWG\Get(
-   *     path="/club/{clubId}/info",
-   *     @SWG\Parameter(
+   * @OA\Get(
+   *     path="/club/:clubId/info",
+   *     tags={"clubs"},
+   *     @OA\Parameter(
    *         in="path",
    *         name="clubId",
    *         required=true,
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(type="array", ref="#/definitions/Property")
+   *         @OA\Schema(type="array", ref="#/definitions/Property")
    *     )
    * )
    * @param WP_REST_Request $request

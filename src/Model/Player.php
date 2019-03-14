@@ -9,7 +9,7 @@
 namespace KKL\Ligatool\Model;
 
 /**
- * @SWG\Definition(required={"firstName"}, type="object")
+ * @OA\Schema()
  */
 class Player extends SwaggerModel {
 

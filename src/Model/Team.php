@@ -9,7 +9,7 @@
 namespace KKL\Ligatool\Model;
 
 /**
- * @SWG\Definition(required={"name"}, type="object")
+ * @OA\Schema()
  */
 class Team extends SwaggerModel {
 

@@ -19,12 +19,13 @@ class Locations extends Controller {
   }
   
   /**
-   * @SWG\Get(
+   * @OA\Get(
    *     path="/locations",
-   *     @SWG\Response(
+   *     tags={"locations"},
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(type="array", ref="#/definitions/Location")
+   *         @OA\Schema(type="array", ref="#/definitions/Location")
    *     )
    * )
    * @param WP_REST_Request $request
@@ -37,19 +38,20 @@ class Locations extends Controller {
   }
   
   /**
-   * @SWG\Get(
-   *     path="/locations/{locationId}",
-   *     @SWG\Parameter(
+   * @OA\Get(
+   *     path="/locations/:locationId",
+   *     tags={"locations"},
+   *     @OA\Parameter(
    *         in="path",
    *         name="locationId",
    *         required=true,
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(ref="#/definitions/Location")
+   *         @OA\Schema(ref="#/definitions/Location")
    *     )
    * )
    * @param WP_REST_Request $request
@@ -62,19 +64,20 @@ class Locations extends Controller {
   }
   
   /**
-   * @SWG\Get(
-   *     path="/locations/{locationId}/teams",
-   *     @SWG\Parameter(
+   * @OA\Get(
+   *     path="/locations/:locationId/teams",
+   *     tags={"locations"},
+   *     @OA\Parameter(
    *         in="path",
    *         name="locationId",
    *         required=true,
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(type="array", ref="#/definitions/Team")
+   *         @OA\Schema(type="array", ref="#/definitions/Team")
    *     )
    * )
    * @param WP_REST_Request $request

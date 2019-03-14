@@ -9,31 +9,31 @@
 namespace KKL\Ligatool\Model;
 
 /**
- * @SWG\Definition(required={"title"}, type="object")
+ * @OA\Schema()
  */
 class Location extends SwaggerModel {
   
   /**
    * @var string
-   * @SWG\Property()
+   * @OA\Property()
    */
   private $title;
   
   /**
    * @var string
-   * @SWG\Property()
+   * @OA\Property()
    */
   private $description;
   
   /**
    * @var string
-   * @SWG\Property()
+   * @OA\Property()
    */
   private $latitude;
   
   /**
    * @var string
-   * @SWG\Property()
+   * @OA\Property()
    */
   private $longitude;
   

@@ -94,12 +94,13 @@ class Matches extends Controller
   }
 
   /**
-   * @SWG\Get(
+   * @OA\Get(
    *     path="/matches",
-   *     @SWG\Response(
+   *     tags={"matches"},
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(type="array", ref="#/definitions/Match")
+   *         @OA\Schema(type="array", ref="#/definitions/Match")
    *     )
    * )
    * @param WP_REST_Request $request
@@ -113,19 +114,20 @@ class Matches extends Controller
   }
 
   /**
-   * @SWG\Get(
-   *     path="/matches/{matchId}",
-   *     @SWG\Parameter(
+   * @OA\Get(
+   *     path="/matches/:matchId",
+   *     tags={"matches"},
+   *     @OA\Parameter(
    *         in="path",
    *         name="matchId",
    *         required=true,
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(ref="#/definitions/Match")
+   *         @OA\Schema(ref="#/definitions/Match")
    *     )
    * )
    * @param WP_REST_Request $request
@@ -140,19 +142,20 @@ class Matches extends Controller
 
 
   /**
-   * @SWG\Get(
-   *     path="/matches/{matchId}/properties",
-   *     @SWG\Parameter(
+   * @OA\Get(
+   *     path="/matches/:matchId/properties",
+   *     tags={"matches"},
+   *     @OA\Parameter(
    *         in="path",
    *         name="matchId",
    *         required=true,
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(type="array", ref="#/definitions/Property")
+   *         @OA\Schema(type="array", ref="#/definitions/Property")
    *     )
    * )
    * @param WP_REST_Request $request
@@ -166,19 +169,20 @@ class Matches extends Controller
   }
 
   /**
-   * @SWG\Get(
-   *     path="/matches/{matchId}/info",
-   *     @SWG\Parameter(
+   * @OA\Get(
+   *     path="/matches/:matchId/info",
+   *     tags={"matches"},
+   *     @OA\Parameter(
    *         in="path",
    *         name="matchId",
    *         required=true,
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(type="array", ref="#/definitions/Property")
+   *         @OA\Schema(type="array", ref="#/definitions/Property")
    *     )
    * )
    * @param WP_REST_Request $request

@@ -9,31 +9,31 @@
 namespace KKL\Ligatool\Model;
 
 /**
- * @SWG\Definition(required={"propertyKey", "objectId"}, type="object")
+ * @OA\Schema()
  */
 class Property extends SwaggerModel {
   
   /**
    * @var string
-   * @SWG\Property()
+   * @OA\Property()
    */
   private $propertyKey;
   
   /**
-   * @SWG\Property(format="int64")
+   * @OA\Property(format="int64")
    * @var int
    */
   private $objectId;
   
   /**
    * @var string
-   * @SWG\Property()
+   * @OA\Property()
    */
   private $text;
   
   /**
    * @var string
-   * @SWG\Property()
+   * @OA\Property()
    */
   private $value;
   

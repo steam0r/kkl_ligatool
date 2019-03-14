@@ -9,31 +9,31 @@
 namespace KKL\Ligatool\Model;
 
 /**
- * @SWG\Definition(required={"fixture", "seasonId"}, type="object")
+ * @OA\Schema()
  */
 class GameDay extends SwaggerModel {
   
   /**
    * @var int
-   * @SWG\Property()
+   * @OA\Property()
    */
   private $seasonId;
   
   /**
    * @var int
-   * @SWG\Property(format="int64")
+   * @OA\Property(format="int64")
    */
   private $number;
   
   /**
    * @var string
-   * @SWG\Property(example="1980-09-02 05:11:42")
+   * @OA\Property(example="1980-09-02 05:11:42")
    */
   private $fixture;
   
   /**
    * @var string
-   * @SWG\Property(example="1980-09-02 05:11:42")
+   * @OA\Property(example="1980-09-02 05:11:42")
    */
   private $endDate;
   

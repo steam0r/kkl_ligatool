@@ -36,17 +36,18 @@ class Leagues extends Controller
 
 
   /**
-   * @SWG\Get(
+   * @OA\Get(
    *     path="/leagues",
+   *     tags={"leagues"},
    *     summary="Find all Leagues",
    *     description="Returns a list of all leagues",
    *     operationId="getLeagues",
    *     tags={"league"},
    *     produces={"application/json"},
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(type="array", ref="#/definitions/League")
+   *         @OA\Schema(type="array", ref="#/definitions/League")
    *     )
    * )
    * @param WP_REST_Request $request
@@ -61,14 +62,15 @@ class Leagues extends Controller
   }
 
   /**
-   * @SWG\Get(
-   *     path="/leagues/{leagueId}",
+   * @OA\Get(
+   *     path="/leagues/:leagueId",
+   *     tags={"leagues"},
    *     summary="Find league by ID",
    *     description="Returns a single league",
    *     operationId="getLegueById",
    *     tags={"league"},
    *     produces={"application/json"},
-   *     @SWG\Parameter(
+   *     @OA\Parameter(
    *         description="ID of league to return",
    *         in="path",
    *         name="leagueId",
@@ -76,16 +78,16 @@ class Leagues extends Controller
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(ref="#/definitions/League")
+   *         @OA\Schema(ref="#/definitions/League")
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response="400",
    *         description="Invalid ID supplied"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response="404",
    *         description="League not found"
    *     )
@@ -112,14 +114,15 @@ class Leagues extends Controller
   }
 
   /**
-   * @SWG\Get(
-   *     path="/leagues/{leagueId}/properties",
+   * @OA\Get(
+   *     path="/leagues/:leagueId/properties",
+   *     tags={"leagues"},
    *     summary="Find properties by League",
    *     description="Returns properties for a single league",
    *     operationId="getLeagueProperties",
    *     tags={"league"},
    *     produces={"application/json"},
-   *     @SWG\Parameter(
+   *     @OA\Parameter(
    *         description="ID of league to return properties for",
    *         in="path",
    *         name="leagueId",
@@ -127,16 +130,16 @@ class Leagues extends Controller
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(ref="#/definitions/Properties")
+   *         @OA\Schema(ref="#/definitions/Properties")
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response="400",
    *         description="Invalid ID supplied"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response="404",
    *         description="League not found"
    *     )
@@ -154,14 +157,15 @@ class Leagues extends Controller
   }
 
   /**
-   * @SWG\Get(
-   *     path="/leagues/{leagueId}/seasons",
+   * @OA\Get(
+   *     path="/leagues/:leagueId/seasons",
+   *     tags={"leagues"},
    *     summary="Find all Seasons for a League",
    *     description="Returns Seasons for a single League",
    *     operationId="getSeasonsByLeague",
    *     tags={"league"},
    *     produces={"application/json"},
-   *     @SWG\Parameter(
+   *     @OA\Parameter(
    *         description="ID of league to return seasons for",
    *         in="path",
    *         name="leagueId",
@@ -169,16 +173,16 @@ class Leagues extends Controller
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(type="array", ref="#/definitions/Season")
+   *         @OA\Schema(type="array", ref="#/definitions/Season")
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response="400",
    *         description="Invalid ID supplied"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response="404",
    *         description="League not found"
    *     )
@@ -197,14 +201,15 @@ class Leagues extends Controller
   }
 
   /**
-   * @SWG\Get(
-   *     path="/leagues/{leagueId}/currentseason",
+   * @OA\Get(
+   *     path="/leagues/:leagueId/currentseason",
+   *     tags={"leagues"},
    *     summary="Find the currently active Seasons for a League",
    *     description="Find the currently active Seasons for a League",
    *     operationId="getCurrentSeason",
    *     tags={"league"},
    *     produces={"application/json"},
-   *     @SWG\Parameter(
+   *     @OA\Parameter(
    *         description="ID of league to return season for",
    *         in="path",
    *         name="leagueId",
@@ -212,16 +217,16 @@ class Leagues extends Controller
    *         type="integer",
    *         format="int64"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response=200,
    *         description="successful operation",
-   *         @SWG\Schema(ref="#/definitions/Season")
+   *         @OA\Schema(ref="#/definitions/Season")
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response="400",
    *         description="Invalid ID supplied"
    *     ),
-   *     @SWG\Response(
+   *     @OA\Response(
    *         response="404",
    *         description="League not found"
    *     )

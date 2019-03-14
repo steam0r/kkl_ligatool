@@ -287,7 +287,11 @@ class Shortcodes {
     usort($players, array(__CLASS__, "cmp",));
     
     return $kkl_twig->render(
-      'shortcodes/contact_list.twig', array('context' => $context, 'leagues' => $leagues, 'players' => $players,)
+      'shortcodes/contact_list.twig', array(
+        'context' => $context,
+        'leagues' => $leagues,
+        'players' => $players
+      )
     );
     
   }

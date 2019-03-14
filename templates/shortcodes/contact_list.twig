@@ -1,35 +1,36 @@
-<div class="kkl-kontaktliste">
-    <nav class="list-pills">
+<div class="kl-contact-list">
+    <nav>
         <ul>
-            <li><a rel="isotope" href="#" data-filter="*">Alle</a></li>
-            <li><a rel="isotope" href="#" data-filter=".ligaleitung">Ligaleitung</a></li>
-            <li><a rel="isotope" href="#" data-filter=".captain">Kapitän</a></li>
-            <li><a rel="isotope" href="#" data-filter=".vice_captain">Vizekapitän</a></li>
+            <li><a href="#all" data-id="all">Alle</a></li>
+            <li><a href="#ligaleitung" data-id="ligaleitung">Ligaleitung</a></li>
+            <li><a href="#captain" data-id="captain">Kapitän</a></li>
+            <li><a href="#vice_captain" data-id="vice_captain">Vize Kapitän</a></li>
             {% for league in leagues %}
-                <li><a rel="isotope" href="#" data-filter=".{{ league.code }}" data-id="{{ league.current_season }}">{{ league.name }}</a></li>
+                <li><a href="#{{ league.code }}" data-id="{{ league.current_season }}">{{ league.name }}</a></li>
             {% endfor %}
         </ul>
     </nav>
 
-    <div class="isotope-grid kontakte-wrapper">
-
+    <div class="wrapper">
         {% for player in players %}
-            <div class="kontakte-item  isotope-item  {{ player.league_short }} {{ player.role }} {{ player.team_short }}">
+            <div class="contact -in" data-league="{{ player.league_short }}" data-role="{{ player.role }}"
+                 data-team="{{ player.team_short }}">
+                <h3>{{ player.first_name }} {{ player.last_name }}</h3>
 
-                <h3>
-                    {{ player.first_name }} {{ player.last_name }}<br/>
-                    {% if player.team %}
-                        <em>"{{ player.team }}"</em>
-                    {% endif %}
-                </h3>
+                {% if player.team %}
+                    <span class="team">{{ player.team }}</span>
+                {% endif %}
+
                 <p>
                     {% if player.location %}
-                        Spielort: {{ player.location }}<br/>
+                        <span class="location">Spielort:</span> {{ player.location }}<br/>
                     {% endif %}
-                    Telefon: {{ player.phone }}<br/>
-                    E-Mail: <a href="mailto:{{ player.email }}">{{ player.email }}</a>
+                    <span class="phone">Telefon:</span> {{ player.phone }}<br/>
+                    <span class="email">E-Mail:</span> <a href="mailto:{{ player.email }}">{{ player.email }}</a>
                 </p>
             </div>
         {% endfor %}
     </div>
 </div>
+
+// TODO: set class by click on link and hide contact

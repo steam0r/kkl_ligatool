@@ -291,16 +291,17 @@ class Shortcodes {
     $vicecaptains = $db->getViceCaptainsContactData();
     $players = array_merge($leagueadmins, $captains, $vicecaptains);
 
+    $leagueMap = array();
+    foreach ( $leagues as $league ) {
+      $leagueMap[$league->code] = $league;
+    }
+
     $contactMap = array();
     foreach ( $players as $player ) {
 
       if ( $player->league_short ) {
         if ( !isset( $contactMap[ $player->league_short ] ) ) {
-          foreach ( $leagues as $league ) {
-            if ( $league->code === $player->league_short ) {
-              $contactMap[ $player->league_short ]['league'] = $league;
-            }
-          }
+          $contactMap[ $player->league_short ]['league'] = $leagueMap[$player->league_short];
         }
         $contactMap[ $player->league_short ]['players'][] = $player;
       } else if ( $player->role === 'ligaleitung' ) {

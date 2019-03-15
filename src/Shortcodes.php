@@ -284,7 +284,6 @@ class Shortcodes {
     $kkl_twig = Template\Service::getTemplateEngine();
 
     $db = new DB\Wordpress();
-    $context = Plugin::getContext();
 
     $leagues = $db->getActiveLeagues();
     $leagueadmins = $db->getLeagueAdmins();
@@ -314,8 +313,6 @@ class Shortcodes {
         }
 
         $contactMap['ligaleitung']['players'][] = $player;
-      } else {
-        // $contactMap['other']['players'][] = $player; // eg Test User
       }
     }
 
@@ -323,9 +320,8 @@ class Shortcodes {
 
     return $kkl_twig->render(
       'shortcodes/contact_list.twig', array(
-        'context' => $context,
         'leagues' => $leagues,
-        'conatctMap' => $contactMap
+        'contactMap' => $contactMap
       )
     );
 

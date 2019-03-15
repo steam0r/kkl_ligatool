@@ -271,37 +271,72 @@ class Shortcodes {
     );
     
   }
-  
+
+
+  /**
+   * @param $atts
+   * @param $content
+   * @param $tag
+   *
+   * @return mixed
+   */
   public static function contactList($atts, $content, $tag) {
     $kkl_twig = Template\Service::getTemplateEngine();
-    
+
     $db = new DB\Wordpress();
     $context = Plugin::getContext();
-    
+
     $leagues = $db->getActiveLeagues();
     $leagueadmins = $db->getLeagueAdmins();
     $captains = $db->getCaptainsContactData();
     $vicecaptains = $db->getViceCaptainsContactData();
     $players = array_merge($leagueadmins, $captains, $vicecaptains);
-    
-    usort($players, array(__CLASS__, "cmp",));
-    
+
+    $contactMap = array();
+    foreach ( $players as $player ) {
+
+      if ( $player->league_short ) {
+        if ( !isset( $contactMap[ $player->league_short ] ) ) {
+          foreach ( $leagues as $league ) {
+            if ( $league->code === $player->league_short ) {
+              $contactMap[ $player->league_short ]['league'] = $league;
+            }
+          }
+        }
+        $contactMap[ $player->league_short ]['players'][] = $player;
+      } else if ( $player->role === 'ligaleitung' ) {
+        if ( !isset( $contactMap['ligaleitung'] ) ) {
+          $contactMap['ligaleitung']['league'] = array(
+              'id' => 'ligaleitung',
+              'code' => 'ligaleitung',
+              'name' => 'Ligaleitung'
+          );
+        }
+
+        $contactMap['ligaleitung']['players'][] = $player;
+      } else {
+        // $contactMap['other']['players'][] = $player; // eg Test User
+      }
+    }
+
+    usort($contactMap, array(__CLASS__, "cmp",));
+
     return $kkl_twig->render(
       'shortcodes/contact_list.twig', array(
         'context' => $context,
         'leagues' => $leagues,
-        'players' => $players
+        'conatctMap' => $contactMap
       )
     );
-    
+
   }
-  
+
   public static function setMatchFixture($atts, $content, $tag) {
-  
+
     $templateEngine = Template\Service::getTemplateEngine();
     $db = new DB\Wordpress();
     $data = $db->getAllGamesForNextGameday();
-    
+
     $all_matches = array();
     foreach($data as $game) {
       $teamProperties = $db->getTeamProperties($game->homeid);

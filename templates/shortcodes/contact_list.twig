@@ -12,25 +12,32 @@
     </nav>
 
     <div class="wrapper">
-        {% for player in players %}
-            <div class="contact -in" data-league="{{ player.league_short }}" data-role="{{ player.role }}"
-                 data-team="{{ player.team_short }}">
-                <h3>{{ player.first_name }} {{ player.last_name }}</h3>
+        {% for leagueItem in conatctMap %}
+            <div class="league" id="league-{{ leagueItem.league.id }}"><a name="{{ leagueItem.league.code }}"></a>
+                <h3>{{ leagueItem.league.name }}</h3>
 
-                {% if player.team %}
-                    <span class="team">{{ player.team }}</span>
-                {% endif %}
+                {% for player in leagueItem.players %}
+                    <div class="contact -in" data-league="{{ player.league_short }}" data-role="{{ player.role }}"
+                         data-team="{{ player.team_short }}">
+                        <h4>{{ player.first_name }} {{ player.last_name }}</h4>
 
-                <p>
-                    {% if player.location %}
-                        <span class="location">Spielort:</span> {{ player.location }}<br/>
-                    {% endif %}
-                    <span class="phone">Telefon:</span> {{ player.phone }}<br/>
-                    <span class="email">E-Mail:</span> <a href="mailto:{{ player.email }}">{{ player.email }}</a>
-                </p>
+                        {% if player.team %}
+                            <span class="team">{{ player.team }}</span>
+                        {% endif %}
+
+                        <p class="role">{{ player.role }}</p>
+
+                        <p>
+                            {% if player.location %}
+                                <span class="location">Spielort:</span> {{ player.location }}<br/>
+                            {% endif %}
+                            <span class="phone">Telefon:</span> {{ player.phone }}<br/>
+                            <span class="email">E-Mail:</span> <a
+                                    href="mailto:{{ player.email }}">{{ player.email }}</a>
+                        </p>
+                    </div>
+                {% endfor %}
             </div>
         {% endfor %}
     </div>
 </div>
-
-// TODO: set class by click on link and hide contact

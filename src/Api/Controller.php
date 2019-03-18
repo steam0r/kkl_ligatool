@@ -255,7 +255,7 @@ abstract class Controller extends WP_REST_Controller {
     foreach($items as $key => $item) {
       $keepItem = true;
       foreach($searchParams as $searchParam => $search) {
-        if($keepItem && (property_exists($item, $searchParam) && $item->{$searchParam} != $search)) {
+        if(property_exists($item, $searchParam) && $item->{$searchParam} != $search) {
           $keepItem = false;
         }
       }

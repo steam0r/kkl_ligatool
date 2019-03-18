@@ -131,7 +131,7 @@ class Locations extends Controller {
       if (!$team->logo) {
         $club = $db->getClub($team->club_id);
         if ($club) {
-          $team->logo = $club->logo;
+          $team->logo = get_site_url(). $club->logo;
         }
       }
       $teams[] = $team;

@@ -794,14 +794,14 @@ abstract class DB {
     $sql = "SELECT * FROM locations";
     $locations = $this->getDb()->get_results($sql);
     foreach($locations as $location) {
-      $location->teams = $this->getTeamsForLocation($location->id);
+      $location->teams = $this->getTeamsForLocation($location);
     }
     
     return $locations;
   }
   
-  public function getTeamsForLocation($locationId) {
-    $sql = "SELECT objectId FROM team_properties WHERE property_key = 'location' AND value = '" . esc_sql($locationId) . "'";
+  public function getTeamsForLocation($location) {
+    $sql = "SELECT objectId FROM team_properties WHERE property_key = 'location' AND value = '" . esc_sql($location->id) . "'";
     $teamIds = $this->getDb()->get_results($sql);
     $teams = array();
     foreach($teamIds as $teamId) {

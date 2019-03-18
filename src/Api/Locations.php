@@ -7,7 +7,7 @@ use WP_REST_Request;
 use WP_REST_Server;
 
 class Locations extends Controller {
-  
+
   public function register_routes() {
     register_rest_route(
       $this->getNamespace(),
@@ -27,13 +27,32 @@ class Locations extends Controller {
         'args' => array('context' => array('default' => 'view'))
       )
     );
-    register_rest_route($this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/teams', array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_teams_for_location'), 'args' => array('context' => array('default' => 'view',),)));
+    register_rest_route(
+      $this->getNamespace(),
+      '/' . $this->getBaseName() . '/(?P<id>[\d]+)/teams',
+      array(
+        'methods' => WP_REST_Server::READABLE,
+        'callback' => array($this, 'get_teams_for_location'),
+        'args' => array('context' => array('default' => 'view')
+        )
+      )
+    );
+    register_rest_route(
+      $this->getNamespace(),
+      '/' . $this->getBaseName() . '/(?P<id>[\d]+)/clubs',
+      array(
+        'methods' => WP_REST_Server::READABLE,
+        'callback' => array($this, 'get_clubs_for_location'),
+        'args' => array('context' => array('default' => 'view')
+        )
+      )
+    );
   }
-  
+
   public function getBaseName() {
     return 'locations';
   }
-  
+
   /**
    * @SWG\Get(
    *     path="/locations",
@@ -51,7 +70,7 @@ class Locations extends Controller {
     $items = $db->getLocations();
     return $this->getResponse($request, $items);
   }
-  
+
   /**
    * @SWG\Get(
    *     path="/locations/{locationId}",
@@ -76,7 +95,7 @@ class Locations extends Controller {
     $items = array($db->getLocation($request->get_param('id')));
     return $this->getResponse($request, $items);
   }
-  
+
   /**
    * @SWG\Get(
    *     path="/locations/{locationId}/teams",
@@ -99,7 +118,23 @@ class Locations extends Controller {
   public function get_teams_for_location(WP_REST_Request $request) {
     $db = new DB\Api();
     $items = $db->getTeamsForLocation($request->get_param('id'));
+    foreach ($items as $team) {
+      if (array_key_exists('properties', $team)) {
+        if (array_key_exists('captainEmail', $team['properties'])) {
+          unset($team['properties']['captainEmail']);
+        }
+        if (array_key_exists('viceCaptainEmail', $team['properties'])) {
+          unset($team['properties']['viceCaptainEmail']);
+        }
+      }
+      if (!$team['logo']) {
+        $club = $db->getClub($team['clubId']);
+        if ($club) {
+          $team['logo'] = $club->logo;
+        }
+      }
+    }
     return $this->getResponse($request, $items);
   }
-  
+
 }

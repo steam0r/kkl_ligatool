@@ -118,23 +118,24 @@ class Locations extends Controller {
   public function get_teams_for_location(WP_REST_Request $request) {
     $db = new DB\Api();
     $items = $db->getTeamsForLocation($request->get_param('id'));
+    $teams = array();
     foreach ($items as $team) {
-      if (array_key_exists('properties', $team)) {
-        if (array_key_exists('captainEmail', $team['properties'])) {
-          unset($team['properties']['captainEmail']);
+      if (property_exists($team, 'properties')) {
+        if (array_key_exists('captain_email', $team->properties)) {
+          unset($team->properties['captain_email']);
         }
-        if (array_key_exists('viceCaptainEmail', $team['properties'])) {
-          unset($team['properties']['viceCaptainEmail']);
+        if (array_key_exists('vice_captain_email', $team->properties)) {
+          unset($team->properties['vice_captain_email']);
         }
       }
-      if (!$team['logo']) {
-        $club = $db->getClub($team['clubId']);
+      if (!$team->logo) {
+        $club = $db->getClub($team->club_id);
         if ($club) {
-          $team['logo'] = $club->logo;
+          $team->logo = $club->logo;
         }
       }
+      $teams[] = $team;
     }
-    return $this->getResponse($request, $items);
+    return $this->getResponse($request, $teams);
   }
-
 }

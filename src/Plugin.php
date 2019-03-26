@@ -17,24 +17,20 @@ class Plugin {
   
   private $db;
 
-  private $kklTemplates = array(
+  private $pageTemplates = array(
       array(
+          'name' => 'Team Details #1',
+          'filename' => 'league-overview.php',
           'page' => array(
-              'id' => 143,
-              'slug' => 'teams',
               'matches' => array('team_name')
-          ),
-          'template' => 'league-overview.php',
-          'name' => 'Team Details'
+          )
       ),
       array(
+          'filename' => 'ranking.php',
+          'name' => 'Tabelle #1',
           'page' => array(
-              'id' => 138,
-              'slug' => 'tabelle',
               'matches' => array('league_name')
-          ),
-          'template' => 'ranking.php',
-          'name' => 'Tabelle'
+          )
       )
   );
 
@@ -114,9 +110,12 @@ class Plugin {
     register_activation_hook( static::getPluginFile(), array($this->getDB(), 'installWordpressData'));
     
     add_filter('query_vars', array($this, 'add_query_vars_filter'));
-    
+
+    add_action('page_templates', array($this, 'init_page_templates'));
+    do_action('page_templates');
+
     add_action('init', array($this, 'add_rewrite_rules'));
-    add_action('plugins_loaded', array(PageTemplater::class, 'get_instance'));
+
 
     add_shortcode('league_table', array(Shortcodes::class, 'leagueTable'));
     add_shortcode('table_overview', array(Shortcodes::class, 'tableOverview'));
@@ -173,6 +172,20 @@ class Plugin {
       load_plugin_textdomain('kkl-ligatool', false, dirname(plugin_basename(__FILE__)) . '/../lang/');
     });
   }
+
+
+  /**
+   * offer "page-templates" on wp pages
+   */
+  public function init_page_templates() {
+    $output = array();
+
+    foreach($this->pageTemplates as $template) {
+      $output[$template['filename']] = $template['name'];
+    }
+
+    PageTemplater::get_instance($output);
+  }
   
   public static function enqueue_scripts($arr) {
     foreach($arr as $script) {
@@ -209,25 +222,41 @@ class Plugin {
 
   public function add_rewrite_rules() {
 
-    // TODO: get this from somewhere else ...
-    $pageTemplates = $this->kklTemplates;
+    // TODO: get pageTemplates from 'environment'?
+    $pageTemplates = $this->pageTemplates;
 
     foreach($pageTemplates as $template) {
+      // get all pages are using page-templates
+      $pages = get_pages(array(
+          'meta_key' => '_wp_page_template',
+          'meta_value' => $template['filename']
+      ));
+
+      // define url matches & regex for page-template
       $matches = '';
-      $path = '/';
+      $regex = '';
       foreach($template['page']['matches'] as $key => $match) {
         $matches = $matches . '&' . $match . '=$matches[' . ($key + 1) . ']';
-        $path = $path . '([^/]*)?/?';
+        $regex = $regex . '([^/]*)?/?';
       }
 
-      add_rewrite_rule($template['page']['slug'] . $path, 'index.php?page_id=' . $template['page']['id'] . $matches, 'top');
+      // add rewrite rule for every page
+      foreach($pages as $page) {
+        $url_endpoint = get_permalink($page->ID);
+        $url_endpoint = parse_url($url_endpoint);
+        $url_endpoint = ltrim($url_endpoint['path'], '/'); // issue ?!
 
+        add_rewrite_rule($url_endpoint . $regex, 'index.php?page_id=' . $page->ID . $matches, 'top');
+      }
+
+      // save matches in var
       foreach($template['page']['matches'] as $match) {
-        add_rewrite_tag('%' .$match. '%', '([^/]+)');
+        add_rewrite_tag('%' . $match . '%', '([^/]+)');
       }
     }
 
 
+    // TODO: kann dann gelöscht werden ?
     $pages = get_pages(array('meta_key' => '_wp_page_template', 'meta_value' => 'page-ranking.php',));
     
     foreach($pages as $page) {

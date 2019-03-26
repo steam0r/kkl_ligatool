@@ -8,8 +8,9 @@ namespace KKL\Ligatool\Backend;
  * Class PageTemplater
  * @package KKL\Ligatool\Backend
  */
-
 class PageTemplater {
+
+  const TEMPLATE_PATH = __DIR__ . '/../../pages/';
 
   /**
    * A reference to an instance of this class.
@@ -24,10 +25,10 @@ class PageTemplater {
   /**
    * Returns an instance of this class.
    */
-  public static function get_instance() {
+  public static function get_instance($args) {
 
     if(null == self::$instance) {
-      self::$instance = new PageTemplater();
+      self::$instance = new PageTemplater($args);
     }
 
     return self::$instance;
@@ -37,7 +38,7 @@ class PageTemplater {
   /**
    * Initializes the plugin by setting filters and administration functions.
    */
-  private function __construct() {
+  private function __construct($templates = array()) {
 
     $this->templates = array();
 
@@ -86,11 +87,7 @@ class PageTemplater {
     );
 
 
-    // Add your templates to this array.
-    $this->templates = array(
-        'goodtobebad-template.php' => 'It\'s Good to Be Bad',
-    );
-
+    $this->templates = $templates;
   }
 
   /**
@@ -153,7 +150,7 @@ class PageTemplater {
       return $template;
     }
 
-    $file = plugin_dir_path(__FILE__) . get_post_meta(
+    $file = self::TEMPLATE_PATH . get_post_meta(
             $post->ID, '_wp_page_template', true
         );
 

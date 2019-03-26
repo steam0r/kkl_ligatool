@@ -2,6 +2,7 @@
 
 namespace KKL\Ligatool;
 
+use KKL\Ligatool\Backend\PageTemplater;
 use KKL\Ligatool\Widget\OtherLeagues;
 use KKL\Ligatool\Widget\OtherSeasons;
 use KKL\Ligatool\Widget\UpcomingGames;
@@ -18,14 +19,22 @@ class Plugin {
 
   private $kklTemplates = array(
       array(
-          'id' => 143,
-          'slug' => 'teams',
-          'matches' => array('team_name', 'hund', 'test')
+          'page' => array(
+              'id' => 143,
+              'slug' => 'teams',
+              'matches' => array('team_name')
+          ),
+          'template' => 'league-overview.php',
+          'name' => 'Team Details'
       ),
       array(
-          'id' => 138,
-          'slug' => 'tabelle',
-          'matches' => array('league_name')
+          'page' => array(
+              'id' => 138,
+              'slug' => 'tabelle',
+              'matches' => array('league_name')
+          ),
+          'template' => 'ranking.php',
+          'name' => 'Tabelle'
       )
   );
 
@@ -98,7 +107,7 @@ class Plugin {
   }
   
   public function init() {
-  
+
     add_option(DB\Wordpress::$VERSION_KEY, DB\Wordpress::$VERSION );
   
     register_activation_hook( static::getPluginFile(), array($this->getDB(), 'installWordpressDatabase'));
@@ -107,7 +116,8 @@ class Plugin {
     add_filter('query_vars', array($this, 'add_query_vars_filter'));
     
     add_action('init', array($this, 'add_rewrite_rules'));
-    
+    add_action('plugins_loaded', array(PageTemplater::class, 'get_instance'));
+
     add_shortcode('league_table', array(Shortcodes::class, 'leagueTable'));
     add_shortcode('table_overview', array(Shortcodes::class, 'tableOverview'));
     add_shortcode('gameday_table', array(Shortcodes::class, 'gameDayTable'));
@@ -205,14 +215,14 @@ class Plugin {
     foreach($pageTemplates as $template) {
       $matches = '';
       $path = '/';
-      foreach($template['matches'] as $key => $match) {
+      foreach($template['page']['matches'] as $key => $match) {
         $matches = $matches . '&' . $match . '=$matches[' . ($key + 1) . ']';
         $path = $path . '([^/]*)?/?';
       }
 
-      add_rewrite_rule($template['slug'] . $path, 'index.php?page_id=' . $template['id'] . $matches, 'top');
+      add_rewrite_rule($template['page']['slug'] . $path, 'index.php?page_id=' . $template['page']['id'] . $matches, 'top');
 
-      foreach($template['matches'] as $match) {
+      foreach($template['page']['matches'] as $match) {
         add_rewrite_tag('%' .$match. '%', '([^/]+)');
       }
     }

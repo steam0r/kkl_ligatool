@@ -15,7 +15,20 @@ class Plugin {
   private static $pluginFile;
   
   private $db;
-  
+
+  private $kklTemplates = array(
+      array(
+          'id' => 143,
+          'slug' => 'teams',
+          'matches' => array('team_name', 'hund', 'test')
+      ),
+      array(
+          'id' => 138,
+          'slug' => 'tabelle',
+          'matches' => array('league_name')
+      )
+  );
+
   public function __construct($pluginFile, $baseUrl, $basePath) {
     static::$pluginFile = $pluginFile;
     static::$baseUrl = $baseUrl;
@@ -185,7 +198,26 @@ class Plugin {
   }
 
   public function add_rewrite_rules() {
-    
+
+    // TODO: get this from somewhere else ...
+    $pageTemplates = $this->kklTemplates;
+
+    foreach($pageTemplates as $template) {
+      $matches = '';
+      $path = '/';
+      foreach($template['matches'] as $key => $match) {
+        $matches = $matches . '&' . $match . '=$matches[' . ($key + 1) . ']';
+        $path = $path . '([^/]*)?/?';
+      }
+
+      add_rewrite_rule($template['slug'] . $path, 'index.php?page_id=' . $template['id'] . $matches, 'top');
+
+      foreach($template['matches'] as $match) {
+        add_rewrite_tag('%' .$match. '%', '([^/]+)');
+      }
+    }
+
+
     $pages = get_pages(array('meta_key' => '_wp_page_template', 'meta_value' => 'page-ranking.php',));
     
     foreach($pages as $page) {

@@ -18,9 +18,16 @@ class Shortcodes {
     return $kkl_twig->render('shortcodes/club.twig', array('context' => $context, 'club' => $club));
     
   }
-  
+
+
+  /**
+   * @param $attrs
+   * @param $content
+   * @param $tag
+   *
+   * @return mixed
+   */
   public static function leagueOverview($attrs, $content, $tag) {
-    
     $kkl_twig = Template\Service::getTemplateEngine();
     $db = new DB\Wordpress();
     
@@ -47,15 +54,22 @@ class Shortcodes {
       $day = $db->getGameDay($league->season->current_game_day);
 
       $league->link = Plugin::getLink(
-        'league', array('league'   => $league->code, 'season' => date('Y', strtotime($league->season->start_date)),
-                        'game_day' => $day->number,)
+          'league', array(
+              'league' => $league->code,
+              'season' => date('Y', strtotime($league->season->start_date)),
+              'game_day' => $day->number,
+          )
       );
       $leagues[] = $league;
     }
-    
+
     return $kkl_twig->render(
-      'shortcodes/league_overview.twig',
-      array('context' => $context, 'leagues' => $leagues, 'all_leagues' => $all_leagues,)
+        'shortcodes/league_overview.twig',
+        array(
+            'context' => $context,
+            'leagues' => $leagues,
+            'all_leagues' => $all_leagues
+        )
     );
   }
   

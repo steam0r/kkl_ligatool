@@ -1,7 +1,5 @@
 <?php get_header(); ?>
 
-<section>
-  <h1>Hello World</h1>
-</section>
+<?= \KKL\Ligatool\Pages::leagueOverview(); ?>
 
 <?php get_footer(); ?>

@@ -19,15 +19,22 @@ class Plugin {
 
   private $pageTemplates = array(
       array(
-          'name' => 'Team Details #1',
+          'name' => 'KL Kontaktliste',
+          'filename' => 'contact-list.php',
+          'page' => array(
+              'matches' => array('')
+          )
+      ),
+      array(
+          'name' => 'KL Teams',
           'filename' => 'league-overview.php',
           'page' => array(
               'matches' => array('team_name')
           )
       ),
       array(
+          'name' => 'KL Tabelle',
           'filename' => 'ranking.php',
-          'name' => 'Tabelle #1',
           'page' => array(
               'matches' => array('league_name')
           )
@@ -221,8 +228,6 @@ class Plugin {
   }
 
   public function add_rewrite_rules() {
-
-    // TODO: get pageTemplates from 'environment'?
     $pageTemplates = $this->pageTemplates;
 
     foreach($pageTemplates as $template) {

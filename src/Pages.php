@@ -95,11 +95,6 @@ class Pages {
       }
     }
 
-    usort($contactMap, array(
-        __CLASS__,
-        "cmp",
-    ));
-
     return $kkl_twig->render(
         self::PAGES_PATH . '/contact_list.twig', array(
             'leagues' => $leagues,

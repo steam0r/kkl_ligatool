@@ -166,14 +166,6 @@
 </IfModule>
 # END W3TC Skip 404 error handling by WordPress for static files
 # BEGIN WordPress
-<IfModule mod_rewrite.c>
-RewriteEngine On
-RewriteBase /
-RewriteRule ^index\.php$ - [L]
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /index.php [L]
-</IfModule>
 
 # END WordPress
 # enable the directives - assuming they're not enabled globally

@@ -1,0 +1,72 @@
+<section id="kl-ranking" class="kl-ranking">
+    <header>
+        <div class="container">
+            <h1>Tabelle</h1>
+        </div>
+    </header>
+
+    <div class="container">
+
+        {% for ranking in rankings %}
+            <div class="kl-ranking-league">
+                <a name="{{ ranking.league.code }}"></a>
+
+                {% if ranking.league.link %}
+                    <h2>
+                        <a href="{{ ranking.league.link }}">{{ ranking.league.name }}</a>
+                    </h2>
+                {% else %}
+                    <h2>{{ ranking.league.name }}</h2>
+                {% endif %}
+
+                <table class="table kl-table sortable">
+                    <thead>
+                    <tr>
+                        <th class="ranking">Platz</th>
+                        <th class="team_name">Team</th>
+                        <th class="games">Spiele</th>
+                        <th class="wdl">g/u/v</th>
+                        <th class="wins">g.</th>
+                        <th class="draws">u.</th>
+                        <th class="losses">v.</th>
+                        <th class="set_rate">Satzdiff.</th>
+                        <th class="sets">Sätze</th>
+                        <th class="goal_rate">Tordiff.</th>
+                        <th class="goals">Tore</th>
+                        <th class="score">Punkte</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for rank in ranking.ranks %}
+                        <tr class="{{ rank.relegation_marker ? 'rel_' . rank.relegation_marker }}">
+                            <td class="ranking">{{ not rank.shared_rank ? rank.position }}</td>
+                            <td class="team_name">
+                                <a href="/team/{{ rank.team.link }}" target="_self">{{ rank.team.name }}</a>
+                                {{ rank.team.properties['current_league_winner'] ? '(M)' }}
+                                {{ rank.team.properties['current_cup_winner'] ? '(P)' }}
+                            </td>
+                            <td class="games">{{ rank.games }}</td>
+                            <td class="wdl">{{ rank.wins }}/{{ rank.draws }}/{{ rank.losses }}</td>
+                            <td class="wins">{{ rank.wins }}</td>
+                            <td class="draws">{{ rank.draws }}</td>
+                            <td class="losses">{{ rank.losses }}</td>
+                            <td class="set_rate">{{ rank.gameDiff }}</td>
+                            <td class="sets">{{ rank.gamesFor }}:{{ rank.gamesAgainst }}</td>
+                            <td class="goal_rate">{{ rank.goalDiff }}</td>
+                            <td class="goals">{{ rank.goalsFor }}:{{ rank.goalsAgainst }}</td>
+                            <td class="score"><strong>{{ rank.score }}</strong></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% if ranking.relegation_explanation %}
+                    <p class="relegation_explanation">
+                        {{ ranking.relegation_explanation }}
+                    </p>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+
+    </div>
+</section>

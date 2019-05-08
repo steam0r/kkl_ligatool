@@ -1,7 +1,11 @@
 <?php
 
-namespace KKL\Ligatool;
+namespace KKL\Ligatool\Pages;
 
+
+use KKL\Ligatool\Template;
+use KKL\Ligatool\DB;
+use KKL\Ligatool\Plugin;
 
 class Pages {
 
@@ -11,7 +15,7 @@ class Pages {
    *
    * @return mixed
    */
-  public static function leagueOverview() {
+  public static function teamOverview() {
     $kkl_twig = Template\Service::getTemplateEngine();
     $db = new DB\Wordpress();
 
@@ -60,7 +64,6 @@ class Pages {
    */
   public static function contactList() {
     $kkl_twig = Template\Service::getTemplateEngine();
-
     $db = new DB\Wordpress();
 
     $leagues = $db->getActiveLeagues();
@@ -101,6 +104,49 @@ class Pages {
             'contactMap' => $contactMap
         )
     );
+  }
 
+
+  /**
+   * @return mixed
+   */
+  public static function ranking() {
+    $pageContext = new PageContext();
+    $kkl_twig = Template\Service::getTemplateEngine();
+
+    $league = get_query_var('league');
+    $season = get_query_var('season');
+    $game_day = get_query_var('game_day');
+
+    switch(true) {
+      case ($league && $season && $game_day):
+        $templateName = '/ranking-single.twig';
+        $templateContext = array(
+            'rankings' => $pageContext->getLeagueAndSeasonAndGameDay($league, $season, $game_day)
+        );
+        break;
+
+      case ($league && $season):
+        $templateName = '/ranking-single.twig';
+        $templateContext = array(
+            'rankings' => $pageContext->getLeagueAndSeason($league, $season)
+        );
+        break;
+
+      case ($league):
+        $templateName = '/ranking-single.twig';
+        $templateContext = array(
+            'rankings' => $pageContext->getLeague($league, $season)
+        );
+        break;
+
+      default:
+        $templateName = '/ranking-all.twig';
+        $templateContext = array(
+            'rankings' => $pageContext->getAllActiveLeagues()
+        );
+    }
+
+    return $kkl_twig->render(self::PAGES_PATH . $templateName, $templateContext);
   }
 }

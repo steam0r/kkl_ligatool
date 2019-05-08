@@ -19,24 +19,24 @@ class Plugin {
 
   private $pageTemplates = array(
       array(
-          'name' => 'KL Kontaktliste',
-          'filename' => 'contact-list.php',
+          'name' => 'KL Contactlist',
+          'filename' => 'kl_contact-list.php',
           'page' => array(
               'matches' => array('')
           )
       ),
       array(
-          'name' => 'KL Teams',
-          'filename' => 'league-overview.php',
+          'name' => 'KL Team Overview',
+          'filename' => 'kl_team-overview.php',
           'page' => array(
               'matches' => array('team_name')
           )
       ),
       array(
-          'name' => 'KL Tabelle',
-          'filename' => 'ranking.php',
+          'name' => 'KL Ranking',
+          'filename' => 'kl_ranking.php',
           'page' => array(
-              'matches' => array('league_name')
+              'matches' => array('league', 'season', 'game_day')
           )
       )
   );
@@ -301,7 +301,12 @@ class Plugin {
     flush_rewrite_rules(true);
     
   }
-  
+
+
+  /*
+   * TODO:
+   * try to remove!!
+   */
   public function getContextByLeagueAndSeasonAndGameDay($league, $season, $game_day) {
     
     $data = array();

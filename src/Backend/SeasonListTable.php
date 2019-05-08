@@ -2,19 +2,21 @@
 
 namespace KKL\Ligatool\Backend;
 
+use KKL\Ligatool\Model\Season;
+
 class SeasonListTable extends ListTable {
-  
-  function get_table_name() {
-    return "seasons";
+
+  public function getModel() {
+    return new Season();
   }
-  
+
   function get_search_fields() {
     return array('name');
   }
   
   function get_filter_sql() {
     if($this->get_current_league()) {
-      return " league_id = '" . $this->get_current_league()->id . "'";
+      return " league_id = '" . $this->get_current_league()->ID . "'";
     }
     return " league_id IS NOT NULL";
   }
@@ -24,7 +26,7 @@ class SeasonListTable extends ListTable {
    * @return array $columns, the array of columns to use with the table
    */
   function get_display_columns() {
-    return $columns = array('id' => __('id', 'kkl-ligatool'), 'league_id' => __('league', 'kkl-ligatool'), 'name' => __('name', 'kkl-ligatool'), 'start_date' => __('start', 'kkl-ligatool'), 'end_date' => __('end', 'kkl-ligatool'), 'active' => __('is_active', 'kkl-ligatool'));
+    return $columns = array('ID' => __('id', 'kkl-ligatool'), 'league_id' => __('league', 'kkl-ligatool'), 'name' => __('name', 'kkl-ligatool'), 'start_date' => __('start', 'kkl-ligatool'), 'end_date' => __('end', 'kkl-ligatool'), 'active' => __('is_active', 'kkl-ligatool'));
   }
   
   function column_league_id($item) {

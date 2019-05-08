@@ -3,20 +3,21 @@
 namespace KKL\Ligatool\Backend;
 
 use KKL\Ligatool\DB;
+use KKL\Ligatool\Model\Match;
 
 class MatchListTable extends ListTable {
-  
-  function get_table_name() {
-    return "matches";
+
+  public function getModel() {
+    return new Match();
   }
   
   function get_filter_sql() {
     if($this->get_current_game_day()) {
-      return "game_day_id = '" . $this->get_current_game_day()->id . "'";
+      return "game_day_id = '" . $this->get_current_game_day()->ID . "'";
     } elseif($this->get_current_season()) {
-      return "game_day_id = (SELECT current_game_day AS game_day_id FROM seasons WHERE id = '" . $this->get_current_season()->id . "')";
+      return "game_day_id = (SELECT current_game_day AS game_day_id FROM seasons WHERE id = '" . $this->get_current_season()->ID . "')";
     } elseif($this->get_current_league()) {
-      return "game_day_id = (SELECT current_game_day AS game_day_id FROM seasons WHERE id = (SELECT current_season AS season_id FROM leagues WHERE id = '" . $this->get_current_league()->id . "'))";
+      return "game_day_id = (SELECT current_game_day AS game_day_id FROM seasons WHERE id = (SELECT current_season AS season_id FROM leagues WHERE id = '" . $this->get_current_league()->ID . "'))";
     }
     return "";
   }
@@ -26,7 +27,7 @@ class MatchListTable extends ListTable {
    * @return array $columns, the array of columns to use with the table
    */
   function get_display_columns() {
-    return $columns = array('id' => __('ID', 'kkl-ligatool'), 'game_day_id' => __('game_day', 'kkl-ligatool'), 'home_team' => __('home_team', 'kkl-ligatool'), 'away_team' => __('away_team', 'kkl-ligatool'), 'fixture' => __('fixture', 'kkl-ligatool'), 'location' => __('location', 'kkl-ligatool'), 'score_home' => __('score_home', 'kkl-ligatool'), 'score_away' => __('score_away', 'kkl-ligatool'), 'goals_home' => __('goals_home', 'kkl-ligatool'), 'goals_away' => __('goals_away', 'kkl-ligatool'));
+    return $columns = array('ID' => __('id', 'kkl-ligatool'), 'game_day_id' => __('game_day', 'kkl-ligatool'), 'home_team' => __('home_team', 'kkl-ligatool'), 'away_team' => __('away_team', 'kkl-ligatool'), 'fixture' => __('fixture', 'kkl-ligatool'), 'location' => __('location', 'kkl-ligatool'), 'score_home' => __('score_home', 'kkl-ligatool'), 'score_away' => __('score_away', 'kkl-ligatool'), 'goals_home' => __('goals_home', 'kkl-ligatool'), 'goals_away' => __('goals_away', 'kkl-ligatool'));
   }
   
   function column_game_day_id($item) {
@@ -87,7 +88,7 @@ class MatchListTable extends ListTable {
     $game_day = $this->get_current_game_day();
     if($game_day) {
       $page = $this->get_create_page();
-      $link = add_query_arg(array(compact('page', 'id'), 'gameDayId' => $game_day->id), admin_url('admin.php'));
+      $link = add_query_arg(array(compact('page', 'id'), 'gameDayId' => $game_day->ID), admin_url('admin.php'));
       $html = '<a href="' . $link . '">' . __('create_new', 'kkl-ligatool') . '</a>';
       return $html;
     }

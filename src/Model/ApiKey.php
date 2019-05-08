@@ -20,7 +20,7 @@ class ApiKey extends KKLModel {
    * @var string
    * @SWG\Property()
    * @ORM_Column_Type   TEXT
-   * @ORM_Column_Null   NOT NULL
+   * @ORM_Column_Null   NULL
    */
   protected $name;
   
@@ -28,7 +28,7 @@ class ApiKey extends KKLModel {
    * @var string
    * @SWG\Property()
    * @ORM_Column_Type   TEXT
-   * @ORM_Column_Null   NOT NULL
+   * @ORM_Column_Null   NULL
    */
   protected $api_key;
   

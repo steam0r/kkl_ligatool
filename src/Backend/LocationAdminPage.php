@@ -15,7 +15,7 @@ class LocationAdminPage extends AdminPage {
     
     $location = $this->get_item();
     
-    echo $this->form_table(array(array('type' => 'hidden', 'name' => 'id', 'value' => $location->id), array('title' => __('name', 'kkl-ligatool'), 'type' => 'text', 'name' => 'title', 'value' => ($this->errors) ? $_POST['title'] : $location->title, 'extra' => ($this->errors['title']) ? array('style' => "border-color: red;") : array()), array('title' => __('address', 'kkl-ligatool'), 'type' => 'text', 'name' => 'description', 'value' => $location->description), array('title' => __('latitude', 'kkl-ligatool'), 'type' => 'text', 'name' => 'lat', 'value' => ($this->errors) ? $_POST['lat'] : $location->lat, 'extra' => ($this->errors['lat']) ? array('style' => "border-color: red;") : array()), array('title' => __('longitude', 'kkl-ligatool'), 'type' => 'text', 'name' => 'lng', 'value' => ($this->errors) ? $_POST['lng'] : $location->lng, 'extra' => ($this->errors['lng']) ? array('style' => "border-color: red;") : array())));
+    echo $this->form_table(array(array('type' => 'hidden', 'name' => 'id', 'value' => $location->ID), array('title' => __('name', 'kkl-ligatool'), 'type' => 'text', 'name' => 'title', 'value' => ($this->errors) ? $_POST['title'] : $location->title, 'extra' => ($this->errors['title']) ? array('style' => "border-color: red;") : array()), array('title' => __('address', 'kkl-ligatool'), 'type' => 'text', 'name' => 'description', 'value' => $location->description), array('title' => __('latitude', 'kkl-ligatool'), 'type' => 'text', 'name' => 'lat', 'value' => ($this->errors) ? $_POST['lat'] : $location->lat, 'extra' => ($this->errors['lat']) ? array('style' => "border-color: red;") : array()), array('title' => __('longitude', 'kkl-ligatool'), 'type' => 'text', 'name' => 'lng', 'value' => ($this->errors) ? $_POST['lng'] : $location->lng, 'extra' => ($this->errors['lng']) ? array('style' => "border-color: red;") : array())));
   }
   
   function get_item() {
@@ -44,7 +44,7 @@ class LocationAdminPage extends AdminPage {
   function save() {
     
     $location = new stdClass;
-    $location->id = $_POST['id'];
+    $location->ID = $_POST['id'];
     $location->title = $_POST['title'];
     $location->description = $_POST['description'];
     $location->lat = $_POST['lat'];

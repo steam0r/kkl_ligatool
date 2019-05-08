@@ -23,7 +23,7 @@ class MatchAdminPage extends AdminPage {
     $locations = array();
     $locations[0] = __('unknown location', 'kkl-ligatool');
     foreach($db_locations as $location) {
-      $locations[$location->id] = $location->title;
+      $locations[$location->ID] = $location->title;
     }
     if(!$match->location && !$_POST['location']) {
       $home = $db->getTeam($match->home_team);
@@ -37,23 +37,23 @@ class MatchAdminPage extends AdminPage {
     
     $game_days = array();
     foreach($db_game_days as $game_day) {
-      $game_days[$game_day->id] = $game_day->number;
+      $game_days[$game_day->ID] = $game_day->number;
     }
     
     $db_teams = $db->getTeamsForSeason($current_game_day->season_id);
     $teams = array();
     foreach($db_teams as $team) {
-      $teams[$team->id] = $team->name;
+      $teams[$team->ID] = $team->name;
     }
     
-    $db_games = $db->getMatchesByGameDay($current_game_day->id);
+    $db_games = $db->getMatchesByGameDay($current_game_day->ID);
     $games = array();
     $games[0] = __('back to overview', 'kkl-ligatool');
     $games[1] = __('create new game', 'kkl-ligatool');
     foreach($db_games as $game) {
       $home = $db->getTeam($game->home_team);
       $away = $db->getTeam($game->away_team);
-      $games[$game->id] = $home->name . " - " . $away->name;
+      $games[$game->ID] = $home->name . " - " . $away->name;
     }
     
     $final_checked = ($match->status == 3);
@@ -62,7 +62,7 @@ class MatchAdminPage extends AdminPage {
     }
     
     $fixture = $this->cleanDate($match->fixture);
-    echo $this->form_table(array(array('type' => 'hidden', 'name' => 'id', 'value' => $match->id), array('title' => __('game_day', 'kkl-ligatool'), 'type' => 'select', 'name' => 'game_day', 'value' => $game_days, 'selected' => ($this->errors) ? $_POST['game_day'] : $current_game_day->id,), array('title' => __('fixture', 'kkl-ligatool'), 'type' => 'text', 'name' => 'fixture', 'value' => $fixture, 'extra' => array('class' => "pickfixture")), array('title' => __('team_home', 'kkl-ligatool'), 'type' => 'select', 'name' => 'team_home', 'value' => $teams, 'selected' => ($this->errors) ? $_POST['team_home'] : $match->home_team,), array('title' => __('team_away', 'kkl-ligatool'), 'type' => 'select', 'name' => 'team_away', 'value' => $teams, 'selected' => ($this->errors) ? $_POST['team_away'] : $match->away_team,), array('title' => __('location', 'kkl-ligatool'), 'type' => 'select', 'name' => 'location', 'value' => $locations, 'selected' => ($this->errors) ? $_POST['location'] : $match->location,), array('title' => __('goals_home', 'kkl-ligatool'), 'type' => 'select', 'name' => 'goals_home', 'value' => $this->get_goals_array(), 'selected' => ($this->errors) ? $_POST['goals_home'] : $match->goals_home), array('title' => __('goals_away', 'kkl-ligatool'), 'type' => 'select', 'name' => 'goals_away', 'value' => $this->get_goals_array(), 'selected' => ($this->errors) ? $_POST['goals_away'] : $match->goals_away), array('title' => __('score_home', 'kkl-ligatool'), 'type' => 'select', 'name' => 'score_home', 'value' => $this->get_score_array(), 'selected' => ($this->errors) ? $_POST['score_home'] : $match->score_home), array('title' => __('score_away', 'kkl-ligatool'), 'type' => 'select', 'name' => 'score_away', 'value' => $this->get_score_array(), 'selected' => ($this->errors) ? $_POST['score_away'] : $match->score_away), array('title' => __('final_score', 'kkl-ligatool'), 'type' => 'checkbox', 'name' => 'final_score', 'checked' => $final_checked), array('title' => __('description', 'kkl-ligatool'), 'type' => 'textarea', 'name' => 'description', 'value' => ($this->errors) ? $_POST['description'] : $match->notes, 'extra' => array('rows' => 7, 'cols' => 100)), array('title' => __('next_game', 'kkl-ligatool'), 'type' => 'select', 'name' => 'next_game', 'value' => $games, 'selected' => ($this->errors) ? $_POST['next_game'] : null,),));
+    echo $this->form_table(array(array('type' => 'hidden', 'name' => 'id', 'value' => $match->ID), array('title' => __('game_day', 'kkl-ligatool'), 'type' => 'select', 'name' => 'game_day', 'value' => $game_days, 'selected' => ($this->errors) ? $_POST['game_day'] : $current_game_day->ID,), array('title' => __('fixture', 'kkl-ligatool'), 'type' => 'text', 'name' => 'fixture', 'value' => $fixture, 'extra' => array('class' => "pickfixture")), array('title' => __('team_home', 'kkl-ligatool'), 'type' => 'select', 'name' => 'team_home', 'value' => $teams, 'selected' => ($this->errors) ? $_POST['team_home'] : $match->home_team,), array('title' => __('team_away', 'kkl-ligatool'), 'type' => 'select', 'name' => 'team_away', 'value' => $teams, 'selected' => ($this->errors) ? $_POST['team_away'] : $match->away_team,), array('title' => __('location', 'kkl-ligatool'), 'type' => 'select', 'name' => 'location', 'value' => $locations, 'selected' => ($this->errors) ? $_POST['location'] : $match->location,), array('title' => __('goals_home', 'kkl-ligatool'), 'type' => 'select', 'name' => 'goals_home', 'value' => $this->get_goals_array(), 'selected' => ($this->errors) ? $_POST['goals_home'] : $match->goals_home), array('title' => __('goals_away', 'kkl-ligatool'), 'type' => 'select', 'name' => 'goals_away', 'value' => $this->get_goals_array(), 'selected' => ($this->errors) ? $_POST['goals_away'] : $match->goals_away), array('title' => __('score_home', 'kkl-ligatool'), 'type' => 'select', 'name' => 'score_home', 'value' => $this->get_score_array(), 'selected' => ($this->errors) ? $_POST['score_home'] : $match->score_home), array('title' => __('score_away', 'kkl-ligatool'), 'type' => 'select', 'name' => 'score_away', 'value' => $this->get_score_array(), 'selected' => ($this->errors) ? $_POST['score_away'] : $match->score_away), array('title' => __('final_score', 'kkl-ligatool'), 'type' => 'checkbox', 'name' => 'final_score', 'checked' => $final_checked), array('title' => __('description', 'kkl-ligatool'), 'type' => 'textarea', 'name' => 'description', 'value' => ($this->errors) ? $_POST['description'] : $match->notes, 'extra' => array('rows' => 7, 'cols' => 100)), array('title' => __('next_game', 'kkl-ligatool'), 'type' => 'select', 'name' => 'next_game', 'value' => $games, 'selected' => ($this->errors) ? $_POST['next_game'] : null,),));
   }
   
   function get_item() {
@@ -126,7 +126,7 @@ class MatchAdminPage extends AdminPage {
   function save() {
     
     $match = new stdClass;
-    $match->id = $_POST['id'];
+    $match->ID = $_POST['id'];
     $match->game_day_id = $_POST['game_day'];
     $match->fixture = $this->cleanDate($_POST['fixture']);
     $match->home_team = $_POST['team_home'];

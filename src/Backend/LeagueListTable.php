@@ -2,12 +2,14 @@
 
 namespace KKL\Ligatool\Backend;
 
+use KKL\Ligatool\Model\League;
+
 class LeagueListTable extends ListTable {
-  
-  function get_table_name() {
-    return "leagues";
+
+  public function getModel() {
+    return new League();
   }
-  
+
   function get_search_fields() {
     return array('name', 'code ');
   }
@@ -17,7 +19,7 @@ class LeagueListTable extends ListTable {
    * @return array $columns, the array of columns to use with the table
    */
   function get_display_columns() {
-    return array('id' => __('id', 'kkl-ligatool'), 'name' => __('name', 'kkl-ligatool'), 'code' => __('url_code', 'kkl-ligatool'), 'active' => __('is_active', 'kkl-ligatool'));
+    return array('ID' => __('id', 'kkl-ligatool'), 'name' => __('name', 'kkl-ligatool'), 'code' => __('url_code', 'kkl-ligatool'), 'active' => __('is_active', 'kkl-ligatool'));
   }
   
   function column_active($item) {

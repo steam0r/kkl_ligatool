@@ -69,10 +69,10 @@ class Backend {
     $leagues = $db->getLeagues();
     $html .= '<option value="0">' . __('please select', 'kkl-ligatool') . '</option>';
     foreach($leagues as $league) {
-      if($league->id == $default_league) {
-        $html .= '<option value="' . $league->id . '" selected="selected">' . $league->name . '</option>';
+      if($league->ID == $default_league) {
+        $html .= '<option value="' . $league->ID . '" selected="selected">' . $league->name . '</option>';
       } else {
-        $html .= '<option value="' . $league->id . '">' . $league->name . '</option>';
+        $html .= '<option value="' . $league->ID . '">' . $league->name . '</option>';
       }
     }
     $html .= '</select><br/><br/>';

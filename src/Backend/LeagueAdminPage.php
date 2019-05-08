@@ -20,7 +20,7 @@ class LeagueAdminPage extends AdminPage {
     $seasons = $db->getSeasons();
     $season_options = array("" => __('please_select', 'kkl-ligatool'));
     foreach($seasons as $season) {
-      $season_options[$season->id] = $season->name;
+      $season_options[$season->ID] = $season->name;
     }
     
     $active_checked = ($league->active == 1);
@@ -28,7 +28,7 @@ class LeagueAdminPage extends AdminPage {
       $active_checked = true;
     }
     
-    echo $this->form_table(array(array('type' => 'hidden', 'name' => 'id', 'value' => $league->id), array('title' => __('name', 'kkl-ligatool'), 'type' => 'text', 'name' => 'name', 'value' => ($this->errors) ? $_POST['name'] : $league->name, 'extra' => ($this->errors['name']) ? array('style' => "border-color: red;") : array()), array('title' => __('url_code', 'kkl-ligatool'), 'type' => 'text', 'name' => 'url_code', 'value' => ($this->errors) ? $_POST['url_code'] : $league->code, 'extra' => ($this->errors['url_code']) ? array('style' => "border-color: red;") : array()), array('title' => __('active', 'kkl-ligatool'), 'type' => 'checkbox', 'name' => 'active', 'checked' => $active_checked), array('title' => __('current_season', 'kkl-ligatool'), 'type' => 'select', 'name' => 'season', 'choices' => $season_options, 'selected' => ($this->errors) ? $_POST['season'] : $league->current_season, 'extra' => ($this->errors['season']) ? array('style' => "border-color: red;") : array())));
+    echo $this->form_table(array(array('type' => 'hidden', 'name' => 'id', 'value' => $league->ID), array('title' => __('name', 'kkl-ligatool'), 'type' => 'text', 'name' => 'name', 'value' => ($this->errors) ? $_POST['name'] : $league->name, 'extra' => ($this->errors['name']) ? array('style' => "border-color: red;") : array()), array('title' => __('url_code', 'kkl-ligatool'), 'type' => 'text', 'name' => 'url_code', 'value' => ($this->errors) ? $_POST['url_code'] : $league->code, 'extra' => ($this->errors['url_code']) ? array('style' => "border-color: red;") : array()), array('title' => __('active', 'kkl-ligatool'), 'type' => 'checkbox', 'name' => 'active', 'checked' => $active_checked), array('title' => __('current_season', 'kkl-ligatool'), 'type' => 'select', 'name' => 'season', 'choices' => $season_options, 'selected' => ($this->errors) ? $_POST['season'] : $league->current_season, 'extra' => ($this->errors['season']) ? array('style' => "border-color: red;") : array())));
     
   }
   
@@ -57,7 +57,7 @@ class LeagueAdminPage extends AdminPage {
   function save() {
     
     $league = new stdClass;
-    $league->id = $_POST['id'];
+    $league->ID = $_POST['id'];
     $league->name = $_POST['name'];
     $league->code = $_POST['url_code'];
     $league->active = ($_POST['active']) ? 1 : 0;

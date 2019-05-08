@@ -114,7 +114,7 @@ class Clubs extends Controller {
   public function get_teams_for_club(WP_REST_Request $request) {
     $db = new DB\Api();
     $club = $this->getClubFromRequest($request);
-    $items = $db->getTeamsForClub($club->id);
+    $items = $db->getTeamsForClub($club->ID);
     $teamsEndpoint = new Teams();
     return $teamsEndpoint->getResponse($request, $items);
   }
@@ -141,7 +141,7 @@ class Clubs extends Controller {
   public function get_awards_for_club(WP_REST_Request $request) {
     $db = new DB\Api();
     $club = $this->getClubFromRequest($request);
-    $items = $db->getAwardsForClub($club->id);
+    $items = $db->getAwardsForClub($club->ID);
     return $this->getResponse($request, $items);
   }
   
@@ -167,7 +167,7 @@ class Clubs extends Controller {
   public function get_current_team_for_club(WP_REST_Request $request) {
     $db = new DB\Api();
     $club = $this->getClubFromRequest($request);
-    $items = array($db->getCurrentTeamForClub($club->id));
+    $items = array($db->getCurrentTeamForClub($club->ID));
     $teamsEndpoint = new Teams();
     return $teamsEndpoint->getResponse($request, $items);
   }
@@ -194,7 +194,7 @@ class Clubs extends Controller {
   public function get_info_for_club(WP_REST_Request $request) {
     $db = new DB\Api();
     $club = $this->getClubFromRequest($request);
-    $items = array($db->getClubProperties($club->id));
+    $items = array($db->getClubProperties($club->ID));
     return $this->getResponse($request, $items);
   }
   

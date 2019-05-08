@@ -26,7 +26,7 @@ class ClubAdminPage extends AdminPage {
     }
     echo html('img', $logo);
     
-    echo $this->form_table(array(array('type' => 'hidden', 'name' => 'id', 'value' => $club->id), array('title' => __('name', 'kkl-ligatool'), 'type' => 'text', 'name' => 'name', 'value' => ($this->errors) ? $_POST['name'] : $club->name, 'extra' => ($this->errors['name']) ? array('style' => "border-color: red;") : array()), array('title' => __('url_code', 'kkl-ligatool'), 'type' => 'text', 'name' => 'short_name', 'value' => ($this->errors) ? $_POST['short_name'] : $club->short_name, 'extra' => ($this->errors['short_name']) ? array('style' => "border-color: red;") : array()), array('title' => __('club_logo', 'kkl-ligatool'), 'type' => 'file', 'name' => 'logo', 'value' => ($this->errors) ? $_POST['logo'] : $club->logo, 'extra' => ($this->errors['logo']) ? array('style' => "border-color: red;") : array()), array('title' => __('description', 'kkl-ligatool'), 'type' => 'textarea', 'name' => 'description', 'value' => $club->description, 'extra' => array('rows' => 7, 'cols' => 100))));
+    echo $this->form_table(array(array('type' => 'hidden', 'name' => 'id', 'value' => $club->ID), array('title' => __('name', 'kkl-ligatool'), 'type' => 'text', 'name' => 'name', 'value' => ($this->errors) ? $_POST['name'] : $club->name, 'extra' => ($this->errors['name']) ? array('style' => "border-color: red;") : array()), array('title' => __('url_code', 'kkl-ligatool'), 'type' => 'text', 'name' => 'short_name', 'value' => ($this->errors) ? $_POST['short_name'] : $club->short_name, 'extra' => ($this->errors['short_name']) ? array('style' => "border-color: red;") : array()), array('title' => __('club_logo', 'kkl-ligatool'), 'type' => 'file', 'name' => 'logo', 'value' => ($this->errors) ? $_POST['logo'] : $club->logo, 'extra' => ($this->errors['logo']) ? array('style' => "border-color: red;") : array()), array('title' => __('description', 'kkl-ligatool'), 'type' => 'textarea', 'name' => 'description', 'value' => $club->description, 'extra' => array('rows' => 7, 'cols' => 100))));
   }
   
   function get_item() {
@@ -54,7 +54,7 @@ class ClubAdminPage extends AdminPage {
   function save() {
     
     $club = new stdClass;
-    $club->id = $_POST['id'];
+    $club->ID = $_POST['id'];
     $club->name = $_POST['name'];
     $club->short_name = $_POST['short_name'];
     $club->description = $_POST['description'];

@@ -148,7 +148,7 @@ class Leagues extends Controller
   {
     $db = new DB\Api();
     $league = $this->getLeagueFromRequest($request);
-    $items = $db->getLeagueProperties($league->id);
+    $items = $db->getLeagueProperties($league->ID);
 
     return $this->getResponse($request, $items);
   }
@@ -190,7 +190,7 @@ class Leagues extends Controller
   {
     $db = new DB\Api();
     $league = $this->getLeagueFromRequest($request);
-    $items = $db->getSeasonsByLeague($league->id);
+    $items = $db->getSeasonsByLeague($league->ID);
     $seasonsEndpoint = new Seasons();
 
     return $seasonsEndpoint->getResponse($request, $items);
@@ -233,7 +233,7 @@ class Leagues extends Controller
   {
     $db = new DB\Api();
     $league = $this->getLeagueFromRequest($request);
-    $items = array($db->getCurrentSeason($league->id));
+    $items = array($db->getCurrentSeason($league->ID));
     $seasonsEndpoint = new Seasons();
 
     return $seasonsEndpoint->getResponse($request, $items);
@@ -259,7 +259,7 @@ class Leagues extends Controller
       $season->start_date = $start_date;
       $season->end_date = $end_date;
       $season->active = true;
-      $season->league_id = $league->id;
+      $season->league_id = $league->ID;
       $season = $db->createSeason($season);
       $i = 1;
       foreach ($days as $day) {
@@ -267,16 +267,16 @@ class Leagues extends Controller
         $d->number = $i;
         $d->start_date = $day->start;
         $d->end_date = $day->end;
-        $d->season_id = $season->id;
+        $d->season_id = $season->ID;
         $d = $db->createGameDay($d);
         if ($i == 1) {
-          $season->current_game_day = $d->id;
+          $season->current_game_day = $d->ID;
           $season = $db->updateSeason($season);
         }
         $i++;
       }
     }
-    return $db->getSeason($season->id);
+    return $db->getSeason($season->ID);
 
   }
 

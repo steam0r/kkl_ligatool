@@ -45,7 +45,7 @@ class PlayerAdminPage extends AdminPage {
       $ligaleitung_address = $_POST['ligaleitung_address'];
     }
     
-    echo $this->form_table(array(array('type' => 'hidden', 'name' => 'id', 'value' => $player->id), array('title' => __('firstname', 'kkl-ligatool'), 'type' => 'text', 'name' => 'first_name', 'value' => ($this->errors) ? $_POST['first_name'] : $player->first_name, 'extra' => ($this->errors['first_name']) ? array('style' => "border-color: red;") : array()), array('title' => __('lastname', 'kkl-ligatool'), 'type' => 'text', 'name' => 'last_name', 'value' => ($this->errors) ? $_POST['last_name'] : $player->last_name, 'extra' => ($this->errors['last_name']) ? array('style' => "border-color: red;") : array()), array('title' => __('email', 'kkl-ligatool'), 'type' => 'text', 'name' => 'email', 'value' => ($this->errors) ? $_POST['email'] : $player->email, 'extra' => ($this->errors['email']) ? array('style' => "border-color: red;") : array()), array('title' => __('phone', 'kkl-ligatool'), 'type' => 'text', 'name' => 'phone', 'value' => ($this->errors) ? $_POST['phone'] : $player->phone, 'extra' => ($this->errors['phone']) ? array('style' => "border-color: red;") : array()), array('title' => __('member_ligaleitung', 'kkl-ligatool'), 'type' => 'checkbox', 'name' => 'member_ligaleitung', 'checked' => $ligaleitung_checked), array('title' => __('slack_alias', 'kkl-ligatool'), 'type' => 'text', 'name' => 'slack_alias', 'value' => ($this->errors) ? $_POST['slack_alias'] : $slack_alias, 'extra' => ($this->errors['slack_alias']) ? array('style' => "border-color: red;") : array()), array('title' => __('ligaleitung_address', 'kkl-ligatool'), 'type' => 'text', 'name' => 'ligaleitung_address', 'value' => ($this->errors) ? $_POST['ligaleitung_address'] : $ligaleitung_address, 'extra' => ($this->errors['ligaleitung_address']) ? array('style' => "border-color: red;") : array()), array('title' => __('next_page', 'kkl-ligatool'), 'type' => 'select', 'name' => 'next_page', 'value' => $next, 'selected' => ($this->errors) ? $_POST['next_page'] : null,),));
+    echo $this->form_table(array(array('type' => 'hidden', 'name' => 'id', 'value' => $player->ID), array('title' => __('firstname', 'kkl-ligatool'), 'type' => 'text', 'name' => 'first_name', 'value' => ($this->errors) ? $_POST['first_name'] : $player->first_name, 'extra' => ($this->errors['first_name']) ? array('style' => "border-color: red;") : array()), array('title' => __('lastname', 'kkl-ligatool'), 'type' => 'text', 'name' => 'last_name', 'value' => ($this->errors) ? $_POST['last_name'] : $player->last_name, 'extra' => ($this->errors['last_name']) ? array('style' => "border-color: red;") : array()), array('title' => __('email', 'kkl-ligatool'), 'type' => 'text', 'name' => 'email', 'value' => ($this->errors) ? $_POST['email'] : $player->email, 'extra' => ($this->errors['email']) ? array('style' => "border-color: red;") : array()), array('title' => __('phone', 'kkl-ligatool'), 'type' => 'text', 'name' => 'phone', 'value' => ($this->errors) ? $_POST['phone'] : $player->phone, 'extra' => ($this->errors['phone']) ? array('style' => "border-color: red;") : array()), array('title' => __('member_ligaleitung', 'kkl-ligatool'), 'type' => 'checkbox', 'name' => 'member_ligaleitung', 'checked' => $ligaleitung_checked), array('title' => __('slack_alias', 'kkl-ligatool'), 'type' => 'text', 'name' => 'slack_alias', 'value' => ($this->errors) ? $_POST['slack_alias'] : $slack_alias, 'extra' => ($this->errors['slack_alias']) ? array('style' => "border-color: red;") : array()), array('title' => __('ligaleitung_address', 'kkl-ligatool'), 'type' => 'text', 'name' => 'ligaleitung_address', 'value' => ($this->errors) ? $_POST['ligaleitung_address'] : $ligaleitung_address, 'extra' => ($this->errors['ligaleitung_address']) ? array('style' => "border-color: red;") : array()), array('title' => __('next_page', 'kkl-ligatool'), 'type' => 'select', 'name' => 'next_page', 'value' => $next, 'selected' => ($this->errors) ? $_POST['next_page'] : null,),));
   }
   
   function get_item() {
@@ -73,7 +73,7 @@ class PlayerAdminPage extends AdminPage {
   function save() {
     
     $player = new stdClass;
-    $player->id = $_POST['id'];
+    $player->ID = $_POST['id'];
     $player->first_name = $_POST['first_name'];
     $player->last_name = $_POST['last_name'];
     $player->email = $_POST['email'];
@@ -96,7 +96,7 @@ class PlayerAdminPage extends AdminPage {
     if(!empty($properties))
       $db->setPlayerProperties($player, $properties);
     
-    return $db->getPlayer($player->id);
+    return $db->getPlayer($player->ID);
     
   }
   

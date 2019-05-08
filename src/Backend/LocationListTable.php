@@ -2,10 +2,12 @@
 
 namespace KKL\Ligatool\Backend;
 
+use KKL\Ligatool\Model\Location;
+
 class LocationListTable extends ListTable {
-  
-  function get_table_name() {
-    return "locations";
+
+  public function getModel() {
+    return new Location();
   }
   
   function get_search_fields() {
@@ -17,7 +19,7 @@ class LocationListTable extends ListTable {
    * @return array $columns, the array of columns to use with the table
    */
   function get_display_columns() {
-    return $columns = array('id' => __('id', 'kkl-ligatool'), 'title' => __('title', 'kkl-ligatool'), 'description' => __('address', 'kkl-ligatool'), 'lat' => __('latitude', 'kkl-ligatool'), 'lng' => __('longitude', 'kkl-ligatool'),);
+    return $columns = array('ID' => __('id', 'kkl-ligatool'), 'title' => __('title', 'kkl-ligatool'), 'description' => __('address', 'kkl-ligatool'), 'lat' => __('latitude', 'kkl-ligatool'), 'lng' => __('longitude', 'kkl-ligatool'),);
   }
   
   function display() {

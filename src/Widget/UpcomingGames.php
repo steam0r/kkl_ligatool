@@ -39,12 +39,12 @@ class UpcomingGames extends WP_Widget {
     $league_id = $instance['league'];
     if(!$league_id) {
       $context = Plugin::getContext();
-      $league_id = $context['league']->id;
+      $league_id = $context['league']->ID;
       if(!$league_id) {
         $team = $context['team'];
         if($team) {
           $current_team = $db->getCurrentTeamForClub($team->club_id);
-          $data = $db->getGamesForTeam($current_team->id);
+          $data = $db->getGamesForTeam($current_team->ID);
           echo $this->tpl->render('widgets/upcoming_games.twig', array('schedule' => $data, 'display_result' => true));
         } else {
           $data = $db->getAllUpcomingGames();
@@ -101,9 +101,9 @@ class UpcomingGames extends WP_Widget {
         <?php
         foreach($leagues as $l) {
           $selected = false;
-          if($l->id == $league)
+          if($l->ID == $league)
             $selected = true;
-          echo "<option value=\"$l->id\"";
+          echo "<option value=\"$l->ID\"";
           if($selected)
             echo ' selected="selected"';
           echo ">";

@@ -252,7 +252,7 @@ class Seasons extends Controller
         $club = $db->createClub($club);
       }
 
-      $team->club_id = $club->id;
+      $team->club_id = $club->ID;
       $db->createTeam($team);
     }
     $items = $db->getTeamsForSeason($request->get_param('id'));
@@ -271,10 +271,10 @@ class Seasons extends Controller
         $awayTeam = $db->getTeamByCodeAndSeason($matchData->home->short_name, $seasonId);
         $homeTeam = $db->getTeamByCodeAndSeason($matchData->away->short_name, $seasonId);
         $match = new stdClass();
-        $match->game_day_id = $gameday->id;
+        $match->game_day_id = $gameday->ID;
         $match->status = -1;
-        $match->away_team = $awayTeam->id;
-        $match->home_team = $homeTeam->id;
+        $match->away_team = $awayTeam->ID;
+        $match->home_team = $homeTeam->ID;
         $db->createMatch($match);
       }
     }
@@ -417,7 +417,7 @@ class Seasons extends Controller
     $seasonId = $request->get_param('id');
     $db = new DB\Api();
     $gameDay = $db->getCurrentGameDayForSeason($seasonId);
-    $items = $db->getRankingForLeagueAndSeasonAndGameDay(null, $seasonId, $gameDay->id);
+    $items = $db->getRankingForLeagueAndSeasonAndGameDay(null, $seasonId, $gameDay->ID);
 
     return $this->getResponse($request, $items, true);
   }
@@ -427,7 +427,7 @@ class Seasons extends Controller
     $seasonId = $request->get_param('id');
     $db = new DB\Api();
     $gameDay = $db->getCurrentGameDayForSeason($seasonId);
-    $items = $db->getRankingForLeagueAndSeasonAndGameDay(null, $seasonId, $gameDay->id, true);
+    $items = $db->getRankingForLeagueAndSeasonAndGameDay(null, $seasonId, $gameDay->ID, true);
 
     return $this->getResponse($request, $items, true);
   }
@@ -447,7 +447,7 @@ class Seasons extends Controller
           $teamHome = new \stdClass();
           $teamHome->name = $match->team_home->name;
           $teamHome->short_name = $match->team_home->shortName;
-          $teamHome->season_id = $season->id;
+          $teamHome->season_id = $season->ID;
 
           $homeClub = null;
           if ($match->team_home->clubId) {
@@ -464,7 +464,7 @@ class Seasons extends Controller
             $homeClub = $db->createClub($homeClub);
           }
 
-          $teamHome->club_id = $homeClub->id;
+          $teamHome->club_id = $homeClub->ID;
           $teamHome = $db->createTeam($teamHome);
 
         }
@@ -474,7 +474,7 @@ class Seasons extends Controller
           $teamAway = new \stdClass();
           $teamAway->name = $match->team_away->name;
           $teamAway->short_name = $match->team_away->shortName;
-          $teamAway->season_id = $season->id;
+          $teamAway->season_id = $season->ID;
 
           if ($match->team_away->clubId) {
             $awayClub = $db->getClub($match->team_away->clubId);
@@ -490,18 +490,18 @@ class Seasons extends Controller
             $awayClub = $db->createClub($awayClub);
           }
 
-          $teamAway->club_id = $awayClub->id;
+          $teamAway->club_id = $awayClub->ID;
           $teamAway = $db->createTeam($teamAway);
         }
 
         $newMatch = new \stdClass();
         if($teamHome) {
-          $newMatch->home = $teamHome->id;
+          $newMatch->home = $teamHome->ID;
         }else{
           $newMatch->home = null;
         }
         if($teamAway) {
-          $newMatch->away = $teamAway->id;
+          $newMatch->away = $teamAway->ID;
         }else{
           $newMatch->away = null;
         }
@@ -564,7 +564,7 @@ class Seasons extends Controller
 
         foreach ($dayData['matches'] as $match) {
           $newMatch = new \stdClass();
-          $newMatch->game_day_id = $gameDay->id;
+          $newMatch->game_day_id = $gameDay->ID;
           $newMatch->score_away = null;
           $newMatch->score_home = null;
           $newMatch->fixture = null;

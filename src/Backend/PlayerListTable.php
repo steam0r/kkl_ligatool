@@ -2,12 +2,14 @@
 
 namespace KKL\Ligatool\Backend;
 
+use KKL\Ligatool\Model\Player;
+
 class PlayerListTable extends ListTable {
-  
-  function get_table_name() {
-    return "players";
+
+  public function getModel() {
+    return new Player();
   }
-  
+
   function get_search_fields() {
     return array('first_name', 'last_name', 'email');
   }
@@ -17,7 +19,7 @@ class PlayerListTable extends ListTable {
    * @return array $columns, the array of columns to use with the table
    */
   function get_display_columns() {
-    return $columns = array('id' => __('id', 'kkl-ligatool'), 'first_name' => __('firstname', 'kkl-ligatool'), 'last_name' => __('lastname', 'kkl-ligatool'), 'email' => __('email', 'kkl-ligatool'),);
+    return $columns = array('ID' => __('id', 'kkl-ligatool'), 'first_name' => __('firstname', 'kkl-ligatool'), 'last_name' => __('lastname', 'kkl-ligatool'), 'email' => __('email', 'kkl-ligatool'),);
   }
   
   function display() {

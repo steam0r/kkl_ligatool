@@ -8,7 +8,7 @@ abstract class SwaggerModel {
    * @SWG\Property(format="int64")
    * @var int
    */
-  private $id;
+  private $ID;
   
   /**
    * @SWG\Property(example="1980-09-02 05:11:42")
@@ -26,14 +26,14 @@ abstract class SwaggerModel {
    * @return mixed
    */
   public function getId() {
-    return $this->id;
+    return $this->ID;
   }
   
   /**
    * @param mixed $id
    */
   public function setId($id) {
-    $this->id = $id;
+    $this->ID = $id;
   }
   
   /**

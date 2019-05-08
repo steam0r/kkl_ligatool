@@ -40,7 +40,7 @@ class OtherSeasons extends WP_Widget {
       $league = $db->getLeague($league_id);
     }
     
-    $seasons = $db->getSeasonsByLeague($league->id);
+    $seasons = $db->getSeasonsByLeague($league->ID);
     foreach($seasons as $season) {
       $season->link = Plugin::getLink('league', array('league' => $league->code, 'season' => date('Y', strtotime($season->start_date))));
     }
@@ -88,9 +88,9 @@ class OtherSeasons extends WP_Widget {
         <?php
         foreach($leagues as $l) {
           $selected = false;
-          if($l->id == $league)
+          if($l->ID == $league)
             $selected = true;
-          echo "<option value=\"$l->id\"";
+          echo "<option value=\"$l->ID\"";
           if($selected)
             echo ' selected="selected"';
           echo ">";

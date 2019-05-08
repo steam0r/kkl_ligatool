@@ -10,87 +10,42 @@ namespace KKL\Ligatool\Model;
 
 /**
  * @SWG\Definition(required={"title"}, type="object")
+ * @ORM_Type              Entity
+ * @ORM_Table "kkl_locations"
+ * @ORM_AllowSchemaUpdate True
  */
-class Location extends SwaggerModel {
+class Location extends KKLModel {
   
   /**
    * @var string
    * @SWG\Property()
+   * @ORM_Column_Type   TEXT
+   * @ORM_Column_Null   NULL
    */
   private $title;
   
   /**
    * @var string
    * @SWG\Property()
+   * @ORM_Column_Type   TEXT
+   * @ORM_Column_Null   NULL
    */
   private $description;
   
   /**
    * @var string
    * @SWG\Property()
+   * @ORM_Column_Type   TEXT
+   * @ORM_Column_Null   NULL
    */
-  private $latitude;
+  private $lat;
   
   /**
    * @var string
    * @SWG\Property()
+   * @ORM_Column_Type   TEXT
+   * @ORM_Column_Null   NULL
    */
-  private $longitude;
-  
-  /**
-   * @return string
-   */
-  public function getTitle() {
-    return $this->title;
-  }
-  
-  /**
-   * @param string $title
-   */
-  public function setTitle($title) {
-    $this->title = $title;
-  }
-  
-  /**
-   * @return string
-   */
-  public function getDescription() {
-    return $this->description;
-  }
-  
-  /**
-   * @param string $description
-   */
-  public function setDescription($description) {
-    $this->description = $description;
-  }
-  
-  /**
-   * @return string
-   */
-  public function getLatitude() {
-    return $this->latitude;
-  }
-  
-  /**
-   * @param string $latitude
-   */
-  public function setLatitude($latitude) {
-    $this->latitude = $latitude;
-  }
-  
-  /**
-   * @return string
-   */
-  public function getLongitude() {
-    return $this->longitude;
-  }
-  
-  /**
-   * @param string $longitude
-   */
-  public function setLongitude($longitude) {
-    $this->longitude = $longitude;
-  }
-  
+  private $lng;
+
 }

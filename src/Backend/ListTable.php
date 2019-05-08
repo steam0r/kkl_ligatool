@@ -45,8 +45,8 @@ abstract class ListTable extends WP_List_Table {
     $sortable = $this->get_sortable_columns();
     
     $this->_column_headers = array($columns, $hidden, $sortable);
-    
-    $this->set_pagination_args(array('total_items' => $this->get_total_items(), 'per_page' => $this->get_items_per_page(null)));
+
+    $this->set_pagination_args(array('total_items' => $this->get_total_items(), 'per_page' => $this->get_items_per_page($this->get_items_per_page(null), self::$ITEMS_PER_PAGE)));
     
     $query = $this->get_query();
     $this->items = $this->db->getDb()->get_results($query, ARRAY_A);
@@ -66,7 +66,7 @@ abstract class ListTable extends WP_List_Table {
   public function get_sortable_columns() {
     $sortables = array();
     foreach($this->get_columns() as $key => $value) {
-      if($key == 'id') {
+      if($key == 'ID') {
         $sortables[$key] = array($key, true);
       } else {
         $sortables[$key] = array($key, false);
@@ -84,7 +84,6 @@ abstract class ListTable extends WP_List_Table {
     if($results) {
       $this->total_items = $results[0]['count'];
     }
-    
     return $this->total_items;
   }
   
@@ -116,8 +115,12 @@ abstract class ListTable extends WP_List_Table {
     
     return $query;
   }
-  
-  abstract public function get_table_name();
+
+  abstract public function getModel();
+
+  public function get_table_name() {
+    return $this->getModel()->getFullTableName();
+  }
   
   public function get_filter_sql() {
     return "";
@@ -190,14 +193,13 @@ abstract class ListTable extends WP_List_Table {
   
   public function column_actions($item) {
     $page = $this->get_edit_page();
-    $id = $item['id'];
+    $id = $item['ID'];
     
     return '<a href="' . add_query_arg(compact('page', 'id'), admin_url('admin.php')) . '">' . __('edit', 'kkl-ligatool') . '</a>';
   }
   
   public function get_edit_page() {
-    $edit_page = "kkl_" . $this->get_table_name() . "_admin_page";
-    
+    $edit_page = $this->getModel()->getTableName() . "_admin_page";
     return $edit_page;
   }
   
@@ -239,7 +241,7 @@ abstract class ListTable extends WP_List_Table {
     $clubs = $db->getClubs();
     $keyed = array();
     foreach($clubs as $club) {
-      $keyed[$club->id] = $club;
+      $keyed[$club->ID] = $club;
     }
     $this->clubs = $keyed;
     
@@ -254,7 +256,7 @@ abstract class ListTable extends WP_List_Table {
     $teams = $db->getTeams();
     $keyed = array();
     foreach($teams as $team) {
-      $keyed[$team->id] = $team;
+      $keyed[$team->ID] = $team;
     }
     $this->teams = $keyed;
     
@@ -267,10 +269,10 @@ abstract class ListTable extends WP_List_Table {
     $filter .= '<option value="">' . __('display_all', 'kkl-ligatool') . '</option>';
     foreach($this->get_leagues() as $league) {
       $cl = $this->get_current_league();
-      if($cl->id == $league->id) {
-        $filter .= '<option value="' . $league->id . '" selected="selected">' . $league->name . '</option>';
+      if($cl->ID == $league->ID) {
+        $filter .= '<option value="' . $league->ID . '" selected="selected">' . $league->name . '</option>';
       } else {
-        $filter .= '<option value="' . $league->id . '">' . $league->name . '</option>';
+        $filter .= '<option value="' . $league->ID . '">' . $league->name . '</option>';
       }
     }
     $filter .= "</select></div>";
@@ -286,7 +288,7 @@ abstract class ListTable extends WP_List_Table {
     $leagues = $db->getLeagues();
     $keyed = array();
     foreach($leagues as $league) {
-      $keyed[$league->id] = $league;
+      $keyed[$league->ID] = $league;
     }
     $this->leagues = $keyed;
     
@@ -321,13 +323,13 @@ abstract class ListTable extends WP_List_Table {
     $filter = '<div class="filter_container"><label for="season_filter">' . __('season', 'kkl-ligatool') . ':</label><br/><select id="season_filter" name="season_filter" onchange="window.location.href = kkl_backend_addFilter(window.location.href, \'season_filter\', this.value);">';
     $filter .= '<option value="">' . __('display_all', 'kkl-ligatool') . '</option>';
     foreach($this->get_seasons() as $season) {
-      if($league && ($league->id != $season->league_id)) {
+      if($league && ($league->ID != $season->league_id)) {
         continue;
       }
-      if($this->get_current_season()->id == $season->id) {
-        $filter .= '<option value="' . $season->id . '" selected="selected">' . $season->name . '</option>';
+      if($this->get_current_season()->ID == $season->ID) {
+        $filter .= '<option value="' . $season->ID . '" selected="selected">' . $season->name . '</option>';
       } else {
-        $filter .= '<option value="' . $season->id . '">' . $season->name . '</option>';
+        $filter .= '<option value="' . $season->ID . '">' . $season->name . '</option>';
       }
     }
     $filter .= "</select></div>";
@@ -343,7 +345,7 @@ abstract class ListTable extends WP_List_Table {
     $seasons = $db->getSeasons();
     $keyed = array();
     foreach($seasons as $season) {
-      $keyed[$season->id] = $season;
+      $keyed[$season->ID] = $season;
     }
     $this->seasons = $keyed;
     
@@ -361,7 +363,7 @@ abstract class ListTable extends WP_List_Table {
     } elseif($_GET['season_filter']) {
       $season = $db->getSeason($_GET['season_filter']);
     } elseif($this->get_current_league()) {
-      $season = $db->getCurrentSeason($this->get_current_league()->id);
+      $season = $db->getCurrentSeason($this->get_current_league()->ID);
     }
     $this->currentSeason = $season;
     
@@ -372,14 +374,14 @@ abstract class ListTable extends WP_List_Table {
     $filter = '<div class="filter_container"><label for="gameday_filter">' . __('game_day', 'kkl-ligatool') . ':</label><br/><select id="gameday_filter" name="gameday_filter" onchange="window.location.href = kkl_backend_addFilter(window.location.href, \'game_day_filter\', this.value);">';
     $filter .= '<option value="">' . __('display_all', 'kkl-ligatool') . '</option>';
     foreach($this->get_game_days() as $day) {
-      $seasonId = $this->get_current_season()->id;
+      $seasonId = $this->get_current_season()->ID;
       if($seasonId && ($seasonId != $day->season_id)) {
         continue;
       }
-      if($this->get_current_game_day()->id == $day->id) {
-        $filter .= '<option value="' . $day->id . '" selected="selected">' . $day->number . '</option>';
+      if($this->get_current_game_day()->ID == $day->ID) {
+        $filter .= '<option value="' . $day->ID . '" selected="selected">' . $day->number . '</option>';
       } else {
-        $filter .= '<option value="' . $day->id . '">' . $day->number . '</option>';
+        $filter .= '<option value="' . $day->ID . '">' . $day->number . '</option>';
       }
     }
     $filter .= "</select></div>";
@@ -396,7 +398,7 @@ abstract class ListTable extends WP_List_Table {
     $keyed = array();
     if(is_array($days)) {
       foreach($days as $day) {
-        $keyed[$day->id] = $day;
+        $keyed[$day->ID] = $day;
       }
     }
     $this->gamedays = $keyed;
@@ -413,9 +415,9 @@ abstract class ListTable extends WP_List_Table {
     if($_GET['game_day_filter']) {
       $day = $db->getGameday($_GET['game_day_filter']);
     } elseif($this->get_current_season()) {
-      $day = $db->getCurrentGameDayForSeason($this->get_current_season()->id);
+      $day = $db->getCurrentGameDayForSeason($this->get_current_season()->ID);
     } elseif($this->get_current_league()) {
-      $day = $db->getCurrentGameDayForLeague($this->get_current_league()->id);
+      $day = $db->getCurrentGameDayForLeague($this->get_current_league()->ID);
     }
     $this->currentGameDay = $day;
     
@@ -431,8 +433,7 @@ abstract class ListTable extends WP_List_Table {
   }
   
   public function get_create_page() {
-    $edit_page = "kkl_" . $this->get_table_name() . "_admin_page";
-    
+    $edit_page = $this->getModel()->getTableName() . "_admin_page";
     return $edit_page;
   }
   

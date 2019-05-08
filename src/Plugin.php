@@ -84,7 +84,9 @@ class Plugin {
   public function init() {
   
     add_option(DB\Wordpress::$VERSION_KEY, DB\Wordpress::$VERSION );
-  
+
+    $this->getDB()->installWordpressDatabase();
+    add_action('upgrader_process_complete', array($this->getDB(), 'installWordpressDatabase'));
     register_activation_hook( static::getPluginFile(), array($this->getDB(), 'installWordpressDatabase'));
     register_activation_hook( static::getPluginFile(), array($this->getDB(), 'installWordpressData'));
     
@@ -227,8 +229,8 @@ class Plugin {
     $data = array();
     
     $league = $this->db->getLeagueBySlug($league);
-    $season = $this->db->getSeasonByLeagueAndYear($league->id, $season);
-    $game_day = $this->db->getGameDayBySeasonAndPosition($season->id, $game_day);
+    $season = $this->db->getSeasonByLeagueAndYear($league->ID, $season);
+    $game_day = $this->db->getGameDayBySeasonAndPosition($season->ID, $game_day);
     
     $data['league'] = $league;
     $data['season'] = $season;
@@ -241,7 +243,7 @@ class Plugin {
     $data = array();
     
     $league = $this->db->getLeagueBySlug($league);
-    $season = $this->db->getSeasonByLeagueAndYear($league->id, $season);
+    $season = $this->db->getSeasonByLeagueAndYear($league->ID, $season);
     $game_day = $this->db->getGameDay($season->current_game_day);
     
     $data['league'] = $league;

@@ -10,88 +10,42 @@ namespace KKL\Ligatool\Model;
 
 /**
  * @SWG\Definition(required={"code", "name"}, type="object")
+ * @ORM_Type              Entity
+ * @ORM_Table "kkl_leagues"
+ * @ORM_AllowSchemaUpdate True
  */
-class League extends SwaggerModel {
+class League extends KKLModel {
   
   /**
    * @var boolean
    * @SWG\Property()
+   * @ORM_Column_Type   TINYINT
+   * @ORM_Column_Null   NULL
    */
   private $active;
   
   /**
    * @var string
    * @SWG\Property(example="koeln1")
+   * @ORM_Column_Type   TEXT
+   * @ORM_Column_Null   NULL
    */
   private $code;
-  
+
   /**
    * @var string
    * @SWG\Property(example="1. Liga")
+   * @ORM_Column_Type   TEXT
+   * @ORM_Column_Null   NULL
    */
   private $name;
-  
+
   /**
-   * @SWG\Property(format="int64")
    * @var int
+   * @SWG\Property(format="int64")
+   * @ORM_Column_Type   int
+   * @ORM_Column_Null   NULL
    */
-  private $currentSeason;
-  
-  /**
-   * @return mixed
-   */
-  public function getActive() {
-    return $this->active;
-  }
-  
-  /**
-   * @param mixed $active
-   */
-  public function setActive($active) {
-    $this->active = $active;
-  }
-  
-  /**
-   * @return mixed
-   */
-  public function getCode() {
-    return $this->code;
-  }
-  
-  /**
-   * @param mixed $code
-   */
-  public function setCode($code) {
-    $this->code = $code;
-  }
-  
-  /**
-   * @return mixed
-   */
-  public function getName() {
-    return $this->name;
-  }
-  
-  /**
-   * @param mixed $name
-   */
-  public function setName($name) {
-    $this->name = $name;
-  }
-  
-  /**
-   * @return mixed
-   */
-  public function getCurrentSeason() {
-    return $this->currentSeason;
-  }
-  
-  /**
-   * @param mixed $currentSeason
-   */
-  public function setCurrentSeason($currentSeason) {
-    $this->currentSeason = $currentSeason;
-  }
-  
-  
+  private $current_season;
+
 }

@@ -271,9 +271,9 @@ abstract class Controller extends WP_REST_Controller {
     if(!is_object($item)) {
       return $item;
     }
-    $links = array('self' => array('href' => $this->getFullBaseUrl() . '/' . $item->id,), 'collection' => array('href' => $this->getFullBaseUrl(),),);
-    foreach($this->getLinks($item->id) as $key => $value) {
-      $href = str_replace('<id>', $item->id, $value['href']);
+    $links = array('self' => array('href' => $this->getFullBaseUrl() . '/' . $item->ID,), 'collection' => array('href' => $this->getFullBaseUrl(),),);
+    foreach($this->getLinks($item->ID) as $key => $value) {
+      $href = str_replace('<id>', $item->ID, $value['href']);
       $idFields = $value['idFields'];
       if(isset($idFields) && is_array($idFields)) {
         foreach($idFields as $idField) {
@@ -329,7 +329,7 @@ abstract class Controller extends WP_REST_Controller {
   }
   
   private function addEmbeddables($item, $wantedEmbeds) {
-    $links = $this->getLinks($item->id);
+    $links = $this->getLinks($item->ID);
     if(empty($links)) {
       return $item;
     }
@@ -341,7 +341,7 @@ abstract class Controller extends WP_REST_Controller {
         if($config['callback'] && is_callable($config['callback'])) {
           $thisEmbed = $config['callback']();
         } else {
-          $id = $item->id;
+          $id = $item->ID;
           if($links[$wantedEmbed]['idFields'] && is_array($links[$wantedEmbed]['idFields'])) {
             foreach($links[$wantedEmbed]['idFields'] as $idField) {
               if(property_exists($item, $idField)) {

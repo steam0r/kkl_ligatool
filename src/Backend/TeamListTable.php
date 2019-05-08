@@ -2,10 +2,12 @@
 
 namespace KKL\Ligatool\Backend;
 
+use KKL\Ligatool\Model\Team;
+
 class TeamListTable extends ListTable {
-  
-  function get_table_name() {
-    return "teams";
+
+  public function getModel() {
+    return new Team();
   }
   
   function get_search_fields() {
@@ -17,12 +19,12 @@ class TeamListTable extends ListTable {
    * @return array $columns, the array of columns to use with the table
    */
   function get_display_columns() {
-    return $columns = array('id' => __('id', 'kkl-ligatool'), 'name' => __('name', 'kkl-ligatool'), 'club_id' => __('club', 'kkl-ligatool'), 'season_id' => __('season', 'kkl-ligatool'), 'short_name' => __('url_code', 'kkl-ligatool'),);
+    return $columns = array('ID' => __('id', 'kkl-ligatool'), 'name' => __('name', 'kkl-ligatool'), 'club_id' => __('club', 'kkl-ligatool'), 'season_id' => __('season', 'kkl-ligatool'), 'short_name' => __('url_code', 'kkl-ligatool'),);
   }
   
   function get_filter_sql() {
     if($this->get_current_season()) {
-      return "season_id = '" . $this->get_current_season()->id . "'";
+      return "season_id = '" . $this->get_current_season()->ID . "'";
     }
     return " season_id IS NOT NULL";
   }

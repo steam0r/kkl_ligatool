@@ -20,25 +20,25 @@ class TeamAdminPage extends AdminPage {
     $seasons = $db->getSeasons();
     $season_options = array("" => __('please_select', 'kkl-ligatool'));
     foreach($seasons as $season) {
-      $season_options[$season->id] = $season->name;
+      $season_options[$season->ID] = $season->name;
     }
     
     $clubs = $db->getClubs();
     $club_options = array("" => __('please_select', 'kkl-ligatool'));
     foreach($clubs as $club) {
-      $club_options[$club->id] = $club->name;
+      $club_options[$club->ID] = $club->name;
     }
     
     $players = $db->getPlayers();
     $captain_options = array("" => __('please_select', 'kkl-ligatool'));
     foreach($players as $player) {
-      $captain_options[$player->id] = $player->first_name . " " . $player->last_name . " (" . $player->email . ")";
+      $captain_options[$player->ID] = $player->first_name . " " . $player->last_name . " (" . $player->email . ")";
     }
     
     $locations = $db->getLocations();
     $location_options = array("" => __('please_select', 'kkl-ligatool'));
     foreach($locations as $location) {
-      $location_options[$location->id] = $location->title;
+      $location_options[$location->ID] = $location->title;
     }
     
     $leaguewinner_checked = ($team->properties && array_key_exists('current_league_winner', $team->properties));
@@ -51,7 +51,7 @@ class TeamAdminPage extends AdminPage {
       $cupwinner_checked = true;
     }
     
-    echo $this->form_table(array(array('type' => 'hidden', 'name' => 'id', 'value' => $team->id), array('title' => __('name', 'kkl-ligatool'), 'type' => 'text', 'name' => 'name', 'value' => ($this->errors) ? $_POST['name'] : $team->name, 'extra' => ($this->errors['name']) ? array('style' => "border-color: red;") : array()), array('title' => __('url_code', 'kkl-ligatool'), 'type' => 'text', 'name' => 'short_name', 'value' => ($this->errors) ? $_POST['short_name'] : $team->short_name, 'extra' => ($this->errors['short_name']) ? array('style' => "border-color: red;") : array()), array('title' => __('season', 'kkl-ligatool'), 'type' => 'select', 'name' => 'season', 'choices' => $season_options, 'selected' => ($this->errors) ? $_POST['season'] : $team->season_id, 'extra' => ($this->errors['season']) ? array('style' => "border-color: red;") : array()), array('title' => __('club', 'kkl-ligatool'), 'type' => 'select', 'name' => 'club', 'choices' => $club_options, 'selected' => ($this->errors) ? $_POST['club'] : $team->club_id, 'extra' => ($this->errors['club']) ? array('style' => "border-color: red;") : array()), array('title' => __('location', 'kkl-ligatool'), 'type' => 'select', 'name' => 'location', 'choices' => $location_options, 'selected' => ($this->errors) ? $_POST['location'] : $team->properties['location']), array('title' => __('captain', 'kkl-ligatool'), 'type' => 'select', 'name' => 'captain', 'choices' => $captain_options, 'selected' => ($this->errors) ? $_POST['captain'] : $team->properties['captain'], 'extra' => ($this->errors['captain']) ? array('style' => "border-color: red;") : array()), array('title' => __('vice-captain', 'kkl-ligatool'), 'type' => 'select', 'name' => 'vice_captain', 'choices' => $captain_options, 'selected' => ($this->errors) ? $_POST['vice_captain'] : $team->properties['vice_captain'], 'extra' => ($this->errors['vice_captain']) ? array('style' => "border-color: red;") : array()), array('title' => __('current_league_winner', 'kkl-ligatool'), 'type' => 'checkbox', 'name' => 'current_league_winner', 'checked' => $leaguewinner_checked), array('title' => __('current_cup_winner', 'kkl-ligatool'), 'type' => 'checkbox', 'name' => 'current_cup_winner', 'checked' => $cupwinner_checked)));
+    echo $this->form_table(array(array('type' => 'hidden', 'name' => 'id', 'value' => $team->ID), array('title' => __('name', 'kkl-ligatool'), 'type' => 'text', 'name' => 'name', 'value' => ($this->errors) ? $_POST['name'] : $team->name, 'extra' => ($this->errors['name']) ? array('style' => "border-color: red;") : array()), array('title' => __('url_code', 'kkl-ligatool'), 'type' => 'text', 'name' => 'short_name', 'value' => ($this->errors) ? $_POST['short_name'] : $team->short_name, 'extra' => ($this->errors['short_name']) ? array('style' => "border-color: red;") : array()), array('title' => __('season', 'kkl-ligatool'), 'type' => 'select', 'name' => 'season', 'choices' => $season_options, 'selected' => ($this->errors) ? $_POST['season'] : $team->season_id, 'extra' => ($this->errors['season']) ? array('style' => "border-color: red;") : array()), array('title' => __('club', 'kkl-ligatool'), 'type' => 'select', 'name' => 'club', 'choices' => $club_options, 'selected' => ($this->errors) ? $_POST['club'] : $team->club_id, 'extra' => ($this->errors['club']) ? array('style' => "border-color: red;") : array()), array('title' => __('location', 'kkl-ligatool'), 'type' => 'select', 'name' => 'location', 'choices' => $location_options, 'selected' => ($this->errors) ? $_POST['location'] : $team->properties['location']), array('title' => __('captain', 'kkl-ligatool'), 'type' => 'select', 'name' => 'captain', 'choices' => $captain_options, 'selected' => ($this->errors) ? $_POST['captain'] : $team->properties['captain'], 'extra' => ($this->errors['captain']) ? array('style' => "border-color: red;") : array()), array('title' => __('vice-captain', 'kkl-ligatool'), 'type' => 'select', 'name' => 'vice_captain', 'choices' => $captain_options, 'selected' => ($this->errors) ? $_POST['vice_captain'] : $team->properties['vice_captain'], 'extra' => ($this->errors['vice_captain']) ? array('style' => "border-color: red;") : array()), array('title' => __('current_league_winner', 'kkl-ligatool'), 'type' => 'checkbox', 'name' => 'current_league_winner', 'checked' => $leaguewinner_checked), array('title' => __('current_cup_winner', 'kkl-ligatool'), 'type' => 'checkbox', 'name' => 'current_cup_winner', 'checked' => $cupwinner_checked)));
   }
   
   function get_item() {
@@ -83,7 +83,7 @@ class TeamAdminPage extends AdminPage {
   function save() {
     
     $team = new stdClass;
-    $team->id = $_POST['id'];
+    $team->ID = $_POST['id'];
     $team->name = $_POST['name'];
     $team->short_name = $_POST['short_name'];
     $team->season_id = $_POST['season'];
@@ -112,7 +112,7 @@ class TeamAdminPage extends AdminPage {
     if(!empty($properties))
       $db->setTeamProperties($team, $properties);
     
-    return $db->getTeam($team->id);
+    return $db->getTeam($team->ID);
     
   }
   

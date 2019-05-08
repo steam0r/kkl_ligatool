@@ -135,8 +135,8 @@ class Mailinglists extends Controller {
       $homeTeam = $db->getTeam($match->home_team);
       $awayTeam = $db->getTeam($match->away_team);
       $day = $db->getGameDay($match->game_day_id);
-      $league = $db->getLeagueForGameday($day->id);
-      $response->id = $match->id;
+      $league = $db->getLeagueForGameday($day->ID);
+      $response->id = $match->ID;
       $response->home_name = $homeTeam->name;
       $response->away_name = $awayTeam->name;
       $response->league = $league->name;

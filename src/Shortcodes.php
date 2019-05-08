@@ -29,7 +29,7 @@ class Shortcodes {
     $leagues = array();
     foreach($all_leagues as $league) {
       $league->season = $db->getSeason($league->current_season);
-      $league->teams = $db->getTeamsForSeason($league->season->id);
+      $league->teams = $db->getTeamsForSeason($league->season->ID);
       foreach($league->teams as $team) {
         $club = $db->getClub($team->club_id);
         if(!$team->logo) {
@@ -70,14 +70,14 @@ class Shortcodes {
     $ranking = new stdClass;
     $ranking->league = $context['league'];
     $ranking->ranks = $db->getRankingForLeagueAndSeasonAndGameDay(
-      $context['league']->id, $context['season']->id, $context['game_day']->number
+      $context['league']->ID, $context['season']->ID, $context['game_day']->number
     );
     foreach($ranking->ranks as $rank) {
       $team = $db->getTeam($rank->team_id);
       $club = $db->getClub($team->club_id);
       $rank->team->link = Plugin::getLink('club', array('club' => $club->short_name));
     }
-    $properties = $db->getSeasonProperties($context['season']->id);
+    $properties = $db->getSeasonProperties($context['season']->ID);
     if($properties && array_key_exists('relegation_explanation', $properties)) {
       $ranking->relegation_explanation = $properties['relegation_explanation'];
     }
@@ -98,7 +98,7 @@ class Shortcodes {
       $day = $db->getGameDay($season->current_game_day);
       $ranking = new stdClass;
       $ranking->league = $league;
-      $ranking->ranks = $db->getRankingForLeagueAndSeasonAndGameDay($league->id, $season->id, $day->number);
+      $ranking->ranks = $db->getRankingForLeagueAndSeasonAndGameDay($league->ID, $season->ID, $day->number);
       foreach($ranking->ranks as $rank) {
         $team = $db->getTeam($rank->team_id);
         $club = $db->getClub($team->club_id);
@@ -194,7 +194,7 @@ class Shortcodes {
     $context = Plugin::getContext();
     $contextClub = $context['club'];
     
-    $seasonTeams = $db->getTeamsForClub($contextClub->id);
+    $seasonTeams = $db->getTeamsForClub($contextClub->ID);
     $teams = array();
     foreach($seasonTeams as $seasonTeam) {
       
@@ -202,11 +202,11 @@ class Shortcodes {
       $seasonTeam->season->league = $db->getLeague($seasonTeam->season->league_id);
       
       $ranking = $db->getRankingForLeagueAndSeasonAndGameDay(
-        $seasonTeam->season->league_id, $seasonTeam->season->id, $seasonTeam->season->current_game_day
+        $seasonTeam->season->league_id, $seasonTeam->season->ID, $seasonTeam->season->current_game_day
       );
       $position = 1;
       foreach($ranking as $rank) {
-        if($rank->team_id == $seasonTeam->id) {
+        if($rank->team_id == $seasonTeam->ID) {
           $seasonTeam->scores = $rank;
           $seasonTeam->scores->position = $position;
           break;
@@ -221,10 +221,10 @@ class Shortcodes {
                   ), 'team'        => $seasonTeam->short_name)
       );
 
-      $teams[$seasonTeam->id] = $seasonTeam;
+      $teams[$seasonTeam->ID] = $seasonTeam;
     }
     
-    $currentTeam = $db->getCurrentTeamForClub($contextClub->id);
+    $currentTeam = $db->getCurrentTeamForClub($contextClub->ID);
     $currentLocation = $db->getLocation($currentTeam->properties['location']);
     
     return $kkl_twig->render(

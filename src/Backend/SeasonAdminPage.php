@@ -20,19 +20,19 @@ class SeasonAdminPage extends AdminPage {
     $leagues = $db->getLeagues();
     $league_options = array();
     foreach($leagues as $league) {
-      $league_options[$league->id] = $league->name;
+      $league_options[$league->ID] = $league->name;
     }
     
-    $days = $db->getGameDaysForSeason($season->id);
+    $days = $db->getGameDaysForSeason($season->ID);
     $day_options = array("" => __('please_select', 'kkl-ligatool'));
     foreach($days as $day) {
-      $day_options[$day->id] = 'Spieltag ' . $day->number;
+      $day_options[$day->ID] = 'Spieltag ' . $day->number;
     }
     
     $admins = $db->getLeagueAdmins();
     $contact_options = array("" => __('please_select', 'kkl-ligatool'));
     foreach($admins as $admin) {
-      $contact_options[$admin->id] = $admin->first_name . " " . $admin->last_name;
+      $contact_options[$admin->ID] = $admin->first_name . " " . $admin->last_name;
     }
     
     $active_checked = ($season->active == 1);
@@ -41,7 +41,7 @@ class SeasonAdminPage extends AdminPage {
     }
     
     echo $this->form_table(
-      array(array('type' => 'hidden', 'name' => 'id', 'value' => $season->id),
+      array(array('type' => 'hidden', 'name' => 'id', 'value' => $season->ID),
             array('title' => __('name', 'kkl-ligatool'), 'type' => 'text', 'name' => 'name',
                   'value' => ($this->errors) ? $_POST['name'] : $season->name,
                   'extra' => ($this->errors['name']) ? array('style' => "border-color: red;") : array()),
@@ -97,7 +97,7 @@ class SeasonAdminPage extends AdminPage {
     $end_date = date('Y-m-d H:i:s', strtotime(str_replace('-', '/', $_POST['end_date'])));
     
     $season = new stdClass;
-    $season->id = $_POST['id'];
+    $season->ID = $_POST['id'];
     $season->name = $_POST['name'];
     $season->start_date = $start_date;
     $season->end_date = $end_date;

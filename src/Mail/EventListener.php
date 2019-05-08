@@ -49,7 +49,7 @@ class EventListener {
     $awayCaptainMail = null;
     $awayViceCaptainMail = null;
     
-    $homeProperties = $db->getTeamProperties($home->id);
+    $homeProperties = $db->getTeamProperties($home->ID);
     if($homeProperties) {
       if(array_key_exists('captain', $homeProperties)) {
         $captain = $db->getPlayer($homeProperties['captain']);
@@ -69,7 +69,7 @@ class EventListener {
       }
     }
   
-    $awayProperties = $db->getTeamProperties($home->id);
+    $awayProperties = $db->getTeamProperties($home->ID);
     if($awayProperties) {
       if(array_key_exists('captain', $awayProperties)) {
         $captain = $db->getPlayer($awayProperties['captain']);

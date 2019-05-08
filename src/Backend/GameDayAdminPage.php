@@ -24,10 +24,10 @@ class GameDayAdminPage extends AdminPage {
     $seasons = $db->getSeasons();
     $season_options = array("" => __('please_select', 'kkl-ligatool'));
     foreach($seasons as $season) {
-      $season_options[$season->id] = $season->name;
+      $season_options[$season->ID] = $season->name;
     }
     
-    echo $this->form_table(array(array('type' => 'hidden', 'name' => 'id', 'value' => $day->id), array('title' => __('number', 'kkl-ligatool'), 'type' => 'select', 'name' => 'number', 'choices' => $number_options, 'selected' => ($this->errors) ? $_POST['season'] : $day->number, 'extra' => ($this->errors['number']) ? array('style' => "border-color: red;") : array()), array('title' => __('season', 'kkl-ligatool'), 'type' => 'select', 'name' => 'season', 'choices' => $season_options, 'selected' => ($this->errors) ? $_POST['season'] : $day->season_id, 'extra' => ($this->errors['season']) ? array('style' => "border-color: red;") : array()), array('title' => __('start_date', 'kkl-ligatool'), 'type' => 'text', 'name' => 'start_date', 'extra' => array('class' => 'datetimepicker'), 'value' => $this->cleanDate($day->fixture)), array('title' => __('end_date', 'kkl-ligatool'), 'type' => 'text', 'name' => 'end_date', 'extra' => array('class' => 'datetimepicker'), 'value' => $day->end)));
+    echo $this->form_table(array(array('type' => 'hidden', 'name' => 'id', 'value' => $day->ID), array('title' => __('number', 'kkl-ligatool'), 'type' => 'select', 'name' => 'number', 'choices' => $number_options, 'selected' => ($this->errors) ? $_POST['season'] : $day->number, 'extra' => ($this->errors['number']) ? array('style' => "border-color: red;") : array()), array('title' => __('season', 'kkl-ligatool'), 'type' => 'select', 'name' => 'season', 'choices' => $season_options, 'selected' => ($this->errors) ? $_POST['season'] : $day->season_id, 'extra' => ($this->errors['season']) ? array('style' => "border-color: red;") : array()), array('title' => __('start_date', 'kkl-ligatool'), 'type' => 'text', 'name' => 'start_date', 'extra' => array('class' => 'datetimepicker'), 'value' => $this->cleanDate($day->fixture)), array('title' => __('end_date', 'kkl-ligatool'), 'type' => 'text', 'name' => 'end_date', 'extra' => array('class' => 'datetimepicker'), 'value' => $day->end)));
   }
   
   function get_item() {
@@ -58,7 +58,7 @@ class GameDayAdminPage extends AdminPage {
     $end_date = date('Y-m-d H:i:s', strtotime(str_replace('-', '/', $_POST['end_date'])));
     
     $day = new stdClass;
-    $day->id = $_POST['id'];
+    $day->ID = $_POST['id'];
     $day->number = $_POST['number'];
     $day->start_date = $start_date;
     $day->end_date = $end_date;

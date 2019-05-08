@@ -43,12 +43,12 @@ class Api extends DB {
             foreach($teams as $team) {
               $has_score = false;
               foreach($ranking as $iscore) {
-                if($team->id == $iscore->team_id)
+                if($team->ID == $iscore->team_id)
                   $has_score = true;
               }
               if(!$has_score) {
                 $new_score = new \stdClass;
-                $new_score->team_id = $team->id;
+                $new_score->team_id = $team->ID;
                 $new_score->wins = 0;
                 $new_score->draws = 0;
                 $new_score->losses = 0;
@@ -67,12 +67,12 @@ class Api extends DB {
             foreach($teams as $team) {
               $has_score = false;
               foreach($ranking as $iscore) {
-                if($team->id == $iscore->team_id)
+                if($team->ID == $iscore->team_id)
                   $has_score = true;
               }
               if(!$has_score) {
                 $new_score = new \stdClass;
-                $new_score->team_id = $team->id;
+                $new_score->team_id = $team->ID;
                 $new_score->wins = 0;
                 $new_score->draws = 0;
                 $new_score->losses = 0;
@@ -93,12 +93,12 @@ class Api extends DB {
         foreach($teams as $team) {
           $has_score = false;
           foreach($ranking as $iscore) {
-            if($team->id == $iscore->team_id)
+            if($team->ID == $iscore->team_id)
               $has_score = true;
           }
           if(!$has_score) {
             $new_score = new \stdClass;
-            $new_score->team_id = $team->id;
+            $new_score->team_id = $team->ID;
             $new_score->wins = 0;
             $new_score->draws = 0;
             $new_score->losses = 0;
@@ -142,7 +142,7 @@ class Api extends DB {
   private function addLiveScores($ranking, $dayNumber) {
     $day = $this->getGameDay($dayNumber);
     $prevDay = $this->getPreviousGameDay($day);
-    $matches = $this->getMatchesByGameDay($day->id);
+    $matches = $this->getMatchesByGameDay($day->ID);
     $scores = array();
     foreach($matches as $match) {
       $home = $this->getTeam($match->home_team);
@@ -205,13 +205,13 @@ class Api extends DB {
     
     $day = $this->getGameDay($match->game_day_id);
     
-    $sql = "SELECT " . "* " . "FROM " . "team_scores  " . "WHERE gameDay_id ='" . esc_sql($day->id) . "' " . "AND team_id = '" . esc_sql($team->id) . "';";
+    $sql = "SELECT " . "* " . "FROM " . "team_scores  " . "WHERE gameDay_id ='" . esc_sql($day->ID) . "' " . "AND team_id = '" . esc_sql($team->ID) . "';";
     
     $score = $this->getDb()->get_row($sql);
     if($score == null) {
       $score = new \stdClass;
-      $score->team_id = $team->id;
-      $score->gameDay_id = $day->id;
+      $score->team_id = $team->ID;
+      $score->gameDay_id = $day->ID;
       $score->final = false;
     } else {
       $score->final = true;
@@ -226,7 +226,7 @@ class Api extends DB {
     $score->goalsFor = 0;
     $score->score = 0;
     
-    if($match->home_team == $team->id) {
+    if($match->home_team == $team->ID) {
       $score->goalsFor = $this->getGoalsForTeam($match, $match->home_team);
       $score->goalsAgainst = $this->getGoalsForTeam($match, $match->away_team);
       $score->gamesFor = $match->score_home;
@@ -243,7 +243,7 @@ class Api extends DB {
       }
     }
     
-    if($match->away_team == $team->id) {
+    if($match->away_team == $team->ID) {
       $score->goalsFor = $this->getGoalsForTeam($match, $match->away_team);
       $score->goalsAgainst = $this->getGoalsForTeam($match, $match->home_team);
       $score->gamesFor = $match->score_away;

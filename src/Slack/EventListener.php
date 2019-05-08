@@ -36,7 +36,7 @@ class EventListener {
       }
     }
     $attachment['text'] = $text;
-    $attachment['title_link'] = get_site_url() . '/wp-admin/admin.php?page=kkl_matches_admin_page&id=' . $match->id;
+    $attachment['title_link'] = get_site_url() . '/wp-admin/admin.php?page=kkl_matches_admin_page&id=' . $match->ID;
     $attachment['color'] = "#FF0000";
     
     $slack->call('chat.postMessage', array("icon_emoji" => ":robot_face:", "username" => "Mr. Robot", "channel" => $this->getChannel(), "text" => $event->getActorEmail() . " hat gerade einen Spieltermin eingetragen", "attachments" => json_encode(array($attachment))));

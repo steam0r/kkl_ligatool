@@ -6,7 +6,7 @@ use Symlink\ORM\Manager;
 use Symlink\ORM\Models\BaseModel;
 
 abstract class KKLModel extends BaseModel {
-  
+
   /**
    * @var string
    * @SWG\Property(example="1980-09-02 05:11:42")
@@ -22,13 +22,6 @@ abstract class KKLModel extends BaseModel {
    * @ORM_Column_Null   DEFAULT NULL
    */
   protected $updated_at;
-  
-  /**
-   * @return mixed
-   */
-  public function getId() {
-    return $this->get('ID');
-  }
   
   /**
    * @return mixed
@@ -69,5 +62,10 @@ abstract class KKLModel extends BaseModel {
     $orm->remove($this);
     $orm->flush();
   }
-  
+
+  public function getFullTableName() {
+    global $wpdb;
+    return $wpdb->prefix . $this->getTableName();
+  }
+
 }

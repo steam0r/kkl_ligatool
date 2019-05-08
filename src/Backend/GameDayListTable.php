@@ -2,19 +2,21 @@
 
 namespace KKL\Ligatool\Backend;
 
+use KKL\Ligatool\Model\GameDay;
+
 class GameDayListTable extends ListTable {
-  
-  function get_table_name() {
-    return "game_days";
+
+  public function getModel() {
+    return new GameDay();
   }
-  
+
   function get_search_fields() {
     return array('number');
   }
   
   function get_filter_sql() {
     if($this->get_current_season()) {
-      return "season_id = '" . $this->get_current_season()->id . "'";
+      return "season_id = '" . $this->get_current_season()->ID . "'";
     }
     return " season_id IS NOT NULL";
   }
@@ -24,7 +26,7 @@ class GameDayListTable extends ListTable {
    * @return array $columns, the array of columns to use with the table
    */
   function get_display_columns() {
-    return $columns = array('id' => __('id', 'kkl-ligatool'), 'season_id' => __('season', 'kkl-ligatool'), 'number' => __('number', 'kkl-ligatool'), 'fixture' => __('start', 'kkl-ligatool'), 'end' => __('end', 'kkl-ligatool'));
+    return $columns = array('ID' => __('id', 'kkl-ligatool'), 'season_id' => __('season', 'kkl-ligatool'), 'number' => __('number', 'kkl-ligatool'), 'fixture' => __('start', 'kkl-ligatool'), 'end' => __('end', 'kkl-ligatool'));
   }
   
   function column_season_id($item) {

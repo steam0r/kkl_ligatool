@@ -349,7 +349,7 @@ abstract class Controller extends WP_REST_Controller {
               }
             }
           }
-          $dbEmbeddable = $db->getEmbeddable($config['table'], $config['field'], $id);
+          $dbEmbeddable = $db->getEmbeddable(static::$prefix . $config['table'], $config['field'], $id);
           if(is_array($dbEmbeddable) && count($dbEmbeddable) == 1) {
             $thisEmbed = $dbEmbeddable[0];
           }else{

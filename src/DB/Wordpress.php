@@ -35,7 +35,7 @@ class Wordpress extends DB {
   public static $VERSION = "4";
 
   public function getLeagueAdmins() {
-    $sql = "SELECT p.* FROM players AS p " . "JOIN player_properties AS pp ON pp.objectId = p.id " . "AND pp.property_key = 'member_ligaleitung' " . "AND pp.value = 'true' " . "ORDER BY p.first_name, p.last_name ASC";
+    $sql = "SELECT p.* FROM " . static::$prefix . "players AS p " . "JOIN " . static::$prefix . "player_properties AS pp ON pp.objectId = p.id " . "AND pp.property_key = 'member_ligaleitung' " . "AND pp.value = 'true' " . "ORDER BY p.first_name, p.last_name ASC";
     $players = $this->getDb()->get_results($sql);
     foreach ($players as $player) {
       $properties = $this->getPlayerProperties($player->ID);

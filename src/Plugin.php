@@ -26,7 +26,7 @@ class Plugin {
           )
       ),
       'clubs' => array(
-          'name' => 'KL Team Overview',
+          'name' => 'KL Teams',
           'filename' => 'kl_teams.php',
           'page' => array(
               'matches' => array('team_name')
@@ -40,6 +40,16 @@ class Plugin {
                   'league',
                   'season',
                   'game_day'
+              )
+          )
+      ),
+      'fixtures' => array(
+          'name' => 'KL Fixtures',
+          'filename' => 'kl_fixtures.php',
+          'page' => array(
+              'matches' => array(
+                  'league',
+                  'season'
               )
           )
       )

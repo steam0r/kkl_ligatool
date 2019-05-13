@@ -140,4 +140,18 @@ class Pages {
 
     return $kkl_twig->render(self::PAGES_PATH . $templateName, $templateContext);
   }
+
+
+  /**
+   * @return mixed
+   */
+  public static function fixtures() {
+    $kkl_twig = Template\Service::getTemplateEngine();
+    $schedule = new Schedule();
+
+    $league = get_query_var('league');
+    $season = get_query_var('season');
+
+    return $kkl_twig->render(self::PAGES_PATH . '/fixtures.twig', array());
+  }
 }

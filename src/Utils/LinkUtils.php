@@ -24,6 +24,7 @@ class LinkUtils {
       case 'club':
         $clubsContext = $plugin->getPageTemplateContext('clubs');
         $customPrefix = $clubsContext->post_name . '/';
+
         $pathName = $pathValue['pathname'];
         break;
 
@@ -39,7 +40,9 @@ class LinkUtils {
         break;
 
       case 'schedule':
-        $customPrefix = 'spielplan/';
+        $clubsContext = $plugin->getPageTemplateContext('fixtures');
+        $customPrefix = $clubsContext->post_name . '/';
+
         $pathName = $pathValue['league'] . '/' . $pathValue['season'];
         break;
 

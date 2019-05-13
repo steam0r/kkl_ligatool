@@ -4,6 +4,7 @@ namespace KKL\Ligatool\Pages;
 
 use KKL\Ligatool\Plugin;
 use KKL\Ligatool\DB;
+use KKL\Ligatool\Utils\LinkUtils;
 use stdClass;
 
 class Ranking {
@@ -33,7 +34,7 @@ class Ranking {
     foreach($ranking->ranks as $rank) {
       $team = $this->db->getTeam($rank->team_id);
       $club = $this->db->getClub($team->club_id);
-      $rank->team->link = Plugin::getLink('club', array('club' => $club->short_name));
+      $rank->team->link = LinkUtils::getLink('club', array('pathname' => $club->short_name));
     }
 
     $properties = $this->db->getSeasonProperties($pageContext['season']->id);
@@ -65,10 +66,10 @@ class Ranking {
       foreach($ranking->ranks as $rank) {
         $team = $this->db->getTeam($rank->team_id);
         $club = $this->db->getClub($team->club_id);
-        $rank->team->link = Plugin::getLink('club', array('club' => $club->short_name));
+        $rank->team->link = LinkUtils::getLink('club', array('pathname' => $club->short_name));
       }
 
-      $ranking->league->link = Plugin::getLink(
+      $ranking->league->link = LinkUtils::getLink(
           'league', array(
               'league' => $league->code,
               'season' => date('Y', strtotime($season->start_date)),

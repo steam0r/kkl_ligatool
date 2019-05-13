@@ -41,7 +41,7 @@
                         <tr class="{{ rank.relegation_marker ? 'rel_' . rank.relegation_marker }}">
                             <td class="ranking">{{ not rank.shared_rank ? rank.position }}</td>
                             <td class="team_name">
-                                <a href="/team/{{ rank.team.link }}" target="_self">{{ rank.team.name }}</a>
+                                <a href="{{ rank.team.link }}" target="_self">{{ rank.team.name }}</a>
                                 {{ rank.team.properties['current_league_winner'] ? '(M)' }}
                                 {{ rank.team.properties['current_cup_winner'] ? '(P)' }}
                             </td>
@@ -120,12 +120,11 @@
                         <tfoot>
                         <tr>
                             <td colspan="5">
-                                {% if view == 'current' %}
-                                    <a class="showSchedule" href="{{ schedule.link }}">
-                                        <i class="fa fa-calendar"></i>
+
+                                    <a class="total-schedule" href="{{ schedule.link }}">
                                         Spielplan anzeigen
                                     </a>
-                                {% endif %}
+
                             </td>
                         </tr>
                         </tfoot>

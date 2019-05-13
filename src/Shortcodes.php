@@ -190,7 +190,11 @@ class Shortcodes {
     
     return $kkl_twig->render(
       'shortcodes/club_detail.twig',
-      array('context' => $context, 'club' => $contextClub, 'teams' => $teams, 'current_location' => $currentLocation)
+      array(
+          'context' => $context,
+          'club' => $contextClub,
+          'teams' => $teams,
+          'current_location' => $currentLocation)
     );
     
   }

@@ -5,8 +5,6 @@ namespace KKL\Ligatool\Pages;
 
 use KKL\Ligatool\Template;
 use KKL\Ligatool\DB;
-use KKL\Ligatool\Plugin;
-use KKL\Ligatool\Utils\LinkUtils;
 
 class Pages {
 
@@ -96,44 +94,17 @@ class Pages {
    */
   public static function teamOverview() {
     $kkl_twig = Template\Service::getTemplateEngine();
-    $db = new DB\Wordpress();
+    $teams = new Teams();
 
     $team_name = get_query_var('team_name');
 
     if($team_name) {
       $templateName = '/team-single.twig';
-      $templatContext = array(
-          'club' => $db->getClubByCode('kurz')
-      );
-
-      var_dump($templatContext);
-
+      $templatContext = $teams->getSingleClub($team_name);
     } else {
-      $leagues = array();
-
-      foreach($db->getActiveLeagues() as $league) {
-        $league->season = $db->getSeason($league->current_season);
-        $league->teams = $db->getTeamsForSeason($league->season->id);
-
-        foreach($league->teams as $team) {
-          $club = $db->getClub($team->club_id);
-          if(!$team->logo) {
-            $team->logo = $club->logo;
-            if(!$club->logo) {
-              $team->logo = "";
-            }
-          } else {
-            $team->logo = "/images/team/" . $team->logo;
-          }
-
-          $team->link = LinkUtils::getLink('club', array('pathname' => $club->short_name));
-        }
-        $leagues[] = $league;
-      }
-
       $templateName = '/team-all.twig';
       $templatContext = array(
-          'leagues' => $leagues
+          'leagues' => $teams->getAllActiveTeams()
       );
     }
 

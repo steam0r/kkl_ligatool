@@ -92,7 +92,7 @@ class Pages {
    *
    * @return mixed
    */
-  public static function teamOverview() {
+  public static function teams() {
     $kkl_twig = Template\Service::getTemplateEngine();
     $teams = new Teams();
 

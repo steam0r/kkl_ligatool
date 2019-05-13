@@ -27,7 +27,7 @@ class Plugin {
       ),
       'clubs' => array(
           'name' => 'KL Team Overview',
-          'filename' => 'kl_team-overview.php',
+          'filename' => 'kl_teams.php',
           'page' => array(
               'matches' => array('team_name')
           )

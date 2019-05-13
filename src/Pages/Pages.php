@@ -11,6 +11,35 @@ class Pages {
 
   const PAGES_PATH = 'pages';
 
+
+  /**
+   * @param $league
+   * @param null $season
+   * @param null $game_day
+   * @return array
+   */
+  public static function leagueContext($league, $season = null, $game_day = null) {
+    $db = new DB\Wordpress();
+    $output = array(
+        'league' => $db->getLeagueBySlug($league)
+    );
+
+    if($season) {
+      $output['season'] = $db->getSeasonByLeagueAndYear($output['league']->id, $season);
+    } else {
+      $output['season'] = $db->getSeason($output['league']->current_season);
+    }
+
+    if($game_day) {
+      $output['game_day'] = $db->getGameDayBySeasonAndPosition($output['season']->id, $game_day);
+    } else {
+      $output['game_day'] = $db->getGameDay($output['season']->current_game_day);
+    }
+
+    return $output;
+  }
+
+
   /**
    *
    * @return mixed
@@ -21,9 +50,11 @@ class Pages {
 
     $all_leagues = $db->getActiveLeagues();
     $leagues = array();
+
     foreach($all_leagues as $league) {
       $league->season = $db->getSeason($league->current_season);
       $league->teams = $db->getTeamsForSeason($league->season->id);
+
       foreach($league->teams as $team) {
         $club = $db->getClub($team->club_id);
         if(!$team->logo) {
@@ -111,40 +142,26 @@ class Pages {
    * @return mixed
    */
   public static function ranking() {
-    $pageContext = new PageContext();
     $kkl_twig = Template\Service::getTemplateEngine();
+    $ranking = new Ranking();
+    $schedule = new Schedule();
 
     $league = get_query_var('league');
     $season = get_query_var('season');
     $game_day = get_query_var('game_day');
 
-    switch(true) {
-      case ($league && $season && $game_day):
-        $templateName = '/ranking-single.twig';
-        $templateContext = array(
-            'rankings' => $pageContext->getLeagueAndSeasonAndGameDay($league, $season, $game_day)
-        );
-        break;
-
-      case ($league && $season):
-        $templateName = '/ranking-single.twig';
-        $templateContext = array(
-            'rankings' => $pageContext->getLeagueAndSeason($league, $season)
-        );
-        break;
-
-      case ($league):
-        $templateName = '/ranking-single.twig';
-        $templateContext = array(
-            'rankings' => $pageContext->getLeague($league, $season)
-        );
-        break;
-
-      default:
-        $templateName = '/ranking-all.twig';
-        $templateContext = array(
-            'rankings' => $pageContext->getAllActiveLeagues()
-        );
+    if($league) {
+      $templateName = '/ranking-single.twig';
+      $pageContext = Pages::leagueContext($league, $season, $game_day);
+      $templateContext = array(
+          'rankings' => $ranking->getSingleLeague($pageContext),
+          'schedules' => $schedule->getSingleLeague($pageContext)
+      );
+    } else {
+      $templateName = '/ranking-all.twig';
+      $templateContext = array(
+          'rankings' => $ranking->getAllActiveLeagues()
+      );
     }
 
     return $kkl_twig->render(self::PAGES_PATH . $templateName, $templateContext);

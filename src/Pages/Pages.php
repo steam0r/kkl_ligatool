@@ -6,6 +6,7 @@ namespace KKL\Ligatool\Pages;
 use KKL\Ligatool\Template;
 use KKL\Ligatool\DB;
 use KKL\Ligatool\Plugin;
+use KKL\Ligatool\Utils\LinkUtils;
 
 class Pages {
 
@@ -37,55 +38,6 @@ class Pages {
     }
 
     return $output;
-  }
-
-
-  /**
-   *
-   * @return mixed
-   */
-  public static function teamOverview() {
-    $kkl_twig = Template\Service::getTemplateEngine();
-    $db = new DB\Wordpress();
-
-    $all_leagues = $db->getActiveLeagues();
-    $leagues = array();
-
-    foreach($all_leagues as $league) {
-      $league->season = $db->getSeason($league->current_season);
-      $league->teams = $db->getTeamsForSeason($league->season->id);
-
-      foreach($league->teams as $team) {
-        $club = $db->getClub($team->club_id);
-        if(!$team->logo) {
-          $team->logo = $club->logo;
-          if(!$club->logo) {
-            $team->logo = "";
-          }
-        } else {
-          $team->logo = "/images/team/" . $team->logo;
-        }
-        // HACK
-        $team->link = Plugin::getLink('club', array('club' => $club->short_name));
-      }
-
-      $day = $db->getGameDay($league->season->current_game_day);
-
-      $league->link = Plugin::getLink('league', array(
-          'league' => $league->code,
-          'season' => date('Y', strtotime($league->season->start_date)),
-          'game_day' => $day->number,
-      ));
-      $leagues[] = $league;
-    }
-
-    return $kkl_twig->render(
-        self::PAGES_PATH . '/league_overview.twig',
-        array(
-            'leagues' => $leagues,
-            'all_leagues' => $all_leagues
-        )
-    );
   }
 
 
@@ -135,6 +87,57 @@ class Pages {
             'contactMap' => $contactMap
         )
     );
+  }
+
+
+  /**
+   *
+   * @return mixed
+   */
+  public static function teamOverview() {
+    $kkl_twig = Template\Service::getTemplateEngine();
+    $db = new DB\Wordpress();
+
+    $team_name = get_query_var('team_name');
+
+    if($team_name) {
+      $templateName = '/team-single.twig';
+      $templatContext = array(
+          'club' => $db->getClubByCode('kurz')
+      );
+
+      var_dump($templatContext);
+
+    } else {
+      $leagues = array();
+
+      foreach($db->getActiveLeagues() as $league) {
+        $league->season = $db->getSeason($league->current_season);
+        $league->teams = $db->getTeamsForSeason($league->season->id);
+
+        foreach($league->teams as $team) {
+          $club = $db->getClub($team->club_id);
+          if(!$team->logo) {
+            $team->logo = $club->logo;
+            if(!$club->logo) {
+              $team->logo = "";
+            }
+          } else {
+            $team->logo = "/images/team/" . $team->logo;
+          }
+
+          $team->link = LinkUtils::getLink('club', array('pathname' => $club->short_name));
+        }
+        $leagues[] = $league;
+      }
+
+      $templateName = '/team-all.twig';
+      $templatContext = array(
+          'leagues' => $leagues
+      );
+    }
+
+    return $kkl_twig->render(self::PAGES_PATH . $templateName, $templatContext);
   }
 
 

@@ -2,7 +2,6 @@
 
 namespace KKL\Ligatool\Pages;
 
-use KKL\Ligatool\Plugin;
 use KKL\Ligatool\DB;
 use KKL\Ligatool\Utils\LinkUtils;
 use stdClass;

@@ -152,6 +152,23 @@ class Pages {
     $league = get_query_var('league');
     $season = get_query_var('season');
 
-    return $kkl_twig->render(self::PAGES_PATH . '/fixtures.twig', array());
+    if($league) {
+      $templateName = '/fixtures.twig';
+      $pageContext = Pages::leagueContext($league, $season);
+      $templateContext = array(
+          'schedules' => $schedule->getSeason($pageContext)
+      );
+
+      if(isset($_GET['team'])) {
+        $templateContext['activeTeam'] = $_GET['team'];
+      }
+    } else {
+      $templateName = '/fixtures-all.twig';
+      $templateContext = array(
+          'leagues' => $schedule->getCurrentGameday()
+      );
+    }
+
+    return $kkl_twig->render(self::PAGES_PATH . $templateName, $templateContext);
   }
 }

@@ -22,7 +22,7 @@ class ClubAward extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $club_id;
+  protected $club_id;
 
   /**
    * @var int
@@ -30,7 +30,35 @@ class ClubAward extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $award_id;
-  
-  
+  protected $award_id;
+
+  /**
+   * @return int
+   */
+  public function getClubId() {
+    return $this->club_id;
+  }
+
+  /**
+   * @param int $club_id
+   */
+  public function setClubId($club_id) {
+    $this->club_id = $club_id;
+  }
+
+  /**
+   * @return int
+   */
+  public function getAwardId() {
+    return $this->award_id;
+  }
+
+  /**
+   * @param int $award_id
+   */
+  public function setAwardId($award_id) {
+    $this->award_id = $award_id;
+  }
+
+
 }

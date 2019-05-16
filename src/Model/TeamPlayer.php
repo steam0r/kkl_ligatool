@@ -8,13 +8,15 @@
 
 namespace KKL\Ligatool\Model;
 
+use KKL\Ligatool\ServiceBroker;
+
 /**
  * @SWG\Definition(required={"code", "name"}, type="object")
  * @ORM_Type              Entity
  * @ORM_Table "kkl_team_players"
  * @ORM_AllowSchemaUpdate True
  */
-class TeamPlayer extends KKLModel {
+class TeamPlayer extends KKLPropertyModel {
 
   /**
    * @var int
@@ -22,7 +24,7 @@ class TeamPlayer extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $player_id;
+  protected $player_id;
 
   /**
    * @var int
@@ -30,7 +32,7 @@ class TeamPlayer extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $season_id;
+  protected $season_id;
 
   /**
    * @var int
@@ -38,6 +40,12 @@ class TeamPlayer extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $team_id;
-  
+  protected $team_id;
+
+  /**
+   * @return KKLModelService
+   */
+  protected function getPropertyService() {
+    return ServiceBroker::getTeamPlayerPropertyService();
+  }
 }

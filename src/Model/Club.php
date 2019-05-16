@@ -8,13 +8,15 @@
 
 namespace KKL\Ligatool\Model;
 
+use KKL\Ligatool\ServiceBroker;
+
 /**
  * @SWG\Definition(required={"code", "name"}, type="object")
  * @ORM_Type              Entity
  * @ORM_Table "kkl_clubs"
  * @ORM_AllowSchemaUpdate True
  */
-class Club extends KKLModel {
+class Club extends KKLPropertyModel {
 
   /**
    * @var string
@@ -22,7 +24,7 @@ class Club extends KKLModel {
    * @ORM_Column_Type   TEXT
    * @ORM_Column_Null   NULL
    */
-  private $name;
+  protected $name;
 
   /**
    * @var string
@@ -30,7 +32,7 @@ class Club extends KKLModel {
    * @ORM_Column_Type   TEXT
    * @ORM_Column_Null   NULL
    */
-  private $description;
+  protected $description;
 
   /**
    * @var string
@@ -38,7 +40,7 @@ class Club extends KKLModel {
    * @ORM_Column_Type   TEXT
    * @ORM_Column_Null   NULL
    */
-  private $logo;
+  protected $logo;
 
   /**
    * @var string
@@ -46,7 +48,7 @@ class Club extends KKLModel {
    * @ORM_Column_Type   TEXT
    * @ORM_Column_Null   NULL
    */
-  private $country_code;
+  protected $country_code;
 
   /**
    * @var string
@@ -54,7 +56,83 @@ class Club extends KKLModel {
    * @ORM_Column_Type   TEXT
    * @ORM_Column_Null   NULL
    */
-  private $short_name;
-  
-  
+  protected $short_name;
+
+  /**
+   * @return string
+   */
+  public function getName() {
+    return $this->name;
+  }
+
+  /**
+   * @param string $name
+   */
+  public function setName($name) {
+    $this->name = $name;
+  }
+
+  /**
+   * @return string
+   */
+  public function getDescription() {
+    return $this->description;
+  }
+
+  /**
+   * @param string $description
+   */
+  public function setDescription($description) {
+    $this->description = $description;
+  }
+
+  /**
+   * @return string
+   */
+  public function getLogo() {
+    return $this->logo;
+  }
+
+  /**
+   * @param string $logo
+   */
+  public function setLogo($logo) {
+    $this->logo = $logo;
+  }
+
+  /**
+   * @return string
+   */
+  public function getCountryCode() {
+    return $this->country_code;
+  }
+
+  /**
+   * @param string $country_code
+   */
+  public function setCountryCode($country_code) {
+    $this->country_code = $country_code;
+  }
+
+  /**
+   * @return string
+   */
+  public function getShortName() {
+    return $this->short_name;
+  }
+
+  /**
+   * @param string $short_name
+   */
+  public function setShortName($short_name) {
+    $this->short_name = $short_name;
+  }
+
+
+  /**
+   * @return KKLModelService
+   */
+  protected function getPropertyService() {
+    return ServiceBroker::getClubPropertyService();
+  }
 }

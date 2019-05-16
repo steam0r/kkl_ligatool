@@ -15,7 +15,7 @@ namespace KKL\Ligatool\Model;
  * @ORM_AllowSchemaUpdate True
  */
 class ApiKey extends KKLModel {
-  
+
   /**
    * @var string
    * @SWG\Property()
@@ -23,7 +23,7 @@ class ApiKey extends KKLModel {
    * @ORM_Column_Null   NULL
    */
   protected $name;
-  
+
   /**
    * @var string
    * @SWG\Property()
@@ -31,34 +31,34 @@ class ApiKey extends KKLModel {
    * @ORM_Column_Null   NULL
    */
   protected $api_key;
-  
+
   /**
    * @return string
    */
   public function getName() {
-    return $this->get('name');
+    return $this->name;
   }
-  
+
   /**
    * @param string $name
    */
   public function setName($name) {
-    $this->set('name', $name);
+    $this->name = $name;
   }
-  
+
   /**
    * @return string
    */
   public function getApiKey() {
-    return $this->get('api_key');
+    return $this->api_key;
   }
-  
+
   /**
-   * @param string $key
+   * @param string $api_key
    */
-  public function setApiKey($key) {
-    $this->set('api_key', $key);
+  public function setApiKey($api_key) {
+    $this->api_key = $api_key;
   }
-  
-  
+
+
 }

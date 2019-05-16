@@ -3,82 +3,126 @@
 namespace KKL\Ligatool\Backend;
 
 use KKL\Ligatool\DB;
+use KKL\Ligatool\Model\Club;
 use stdClass;
 
 class ClubAdminPage extends AdminPage {
-  
+
   function setup() {
-    $this->args = array('page_title' => __('club', 'kkl-ligatool'), 'page_slug' => 'kkl_clubs_admin_page', 'parent' => null);
+    $this->args = array(
+      'page_title' => __('club', 'kkl-ligatool'),
+      'page_slug' => 'kkl_clubs_admin_page',
+      'parent' => null
+    );
   }
-  
+
   function display_content() {
-    
+
     $club = $this->get_item();
     $logo = array();
     $logo['width'] = "172";
     $logo['height'] = "172";
     $logo['style'] = "right: 0; position: absolute; margin-right:35px";
-    if($club->logo) {
-      $logo['src'] = $club->logo;
+    if ($club->getLogo()) {
+      $logo['src'] = $club->getLogo();
     } else {
       $logo['src'] = "/wp-content/themes/kkl_2/img/kkl-logo_172x172.png";
-      
+
     }
     echo html('img', $logo);
-    
-    echo $this->form_table(array(array('type' => 'hidden', 'name' => 'id', 'value' => $club->ID), array('title' => __('name', 'kkl-ligatool'), 'type' => 'text', 'name' => 'name', 'value' => ($this->errors) ? $_POST['name'] : $club->name, 'extra' => ($this->errors['name']) ? array('style' => "border-color: red;") : array()), array('title' => __('url_code', 'kkl-ligatool'), 'type' => 'text', 'name' => 'short_name', 'value' => ($this->errors) ? $_POST['short_name'] : $club->short_name, 'extra' => ($this->errors['short_name']) ? array('style' => "border-color: red;") : array()), array('title' => __('club_logo', 'kkl-ligatool'), 'type' => 'file', 'name' => 'logo', 'value' => ($this->errors) ? $_POST['logo'] : $club->logo, 'extra' => ($this->errors['logo']) ? array('style' => "border-color: red;") : array()), array('title' => __('description', 'kkl-ligatool'), 'type' => 'textarea', 'name' => 'description', 'value' => $club->description, 'extra' => array('rows' => 7, 'cols' => 100))));
+
+    echo $this->form_table(
+      array(
+        array(
+          'type' => 'hidden',
+          'name' => 'id',
+          'value' => $club->getId()
+        ),
+        array(
+          'title' => __('name', 'kkl-ligatool'),
+          'type' => 'text',
+          'name' => 'name',
+          'value' => ($this->errors) ? $_POST['name'] : $club->getName(),
+          'extra' => ($this->errors['name']) ? array('style' => "border-color: red;") : array()
+        ),
+        array(
+          'title' => __('url_code', 'kkl-ligatool'),
+          'type' => 'text',
+          'name' => 'short_name',
+          'value' => ($this->errors) ? $_POST['short_name'] : $club->getShortName(),
+          'extra' => ($this->errors['short_name']) ? array('style' => "border-color: red;") : array()
+        ),
+        array(
+          'title' => __('club_logo', 'kkl-ligatool'),
+          'type' => 'file',
+          'name' => 'logo',
+          'value' => ($this->errors) ? $_POST['logo'] : $club->getLogo(),
+          'extra' => ($this->errors['logo']) ? array('style' => "border-color: red;") : array()
+        ),
+        array(
+          'title' => __('description', 'kkl-ligatool'),
+          'type' => 'textarea',
+          'name' => 'description',
+          'value' => $club->getDescription(),
+          'extra' => array('rows' => 7, 'cols' => 100)
+        )
+      )
+    );
   }
-  
+
+  /**
+   * @return Club|false
+   */
   function get_item() {
-    if($this->item)
+    if ($this->item)
       return $this->item;
-    if($_GET['id']) {
+    if ($_GET['id']) {
       $db = new DB\Wordpress();
       $this->setItem($db->getClub($_GET['id']));
     }
     return $this->item;
-    
+
   }
-  
+
   function validate($new_data, $old_data) {
     $errors = array();
-    
-    if(!$new_data['name'])
+
+    if (!$new_data['name'])
       $errors['name'] = true;
-    if(!$new_data['short_name'])
+    if (!$new_data['short_name'])
       $errors['short_name'] = true;
-    
+
     return $errors;
   }
-  
+
   function save() {
-    
+
     $club = new stdClass;
     $club->ID = $_POST['id'];
     $club->name = $_POST['name'];
     $club->short_name = $_POST['short_name'];
     $club->description = $_POST['description'];
-    
-    if($_FILES['logo']['name']) {
+
+    if ($_FILES['logo']['name']) {
       $club->logo = $this->handleLogoChange();
     }
-    
+
     $db = new DB\Wordpress();
     $club = $db->createOrUpdateClub($club);
-    
+
     return $club;
-    
+
   }
-  
+
   function handleLogoChange() {
-    
+
     $uploadedfile = $_FILES['logo'];
-    
+
     $upload_overrides = array('test_form' => false, 'action' => 'logo_upload');
-    
+
     $movefile = wp_handle_upload($uploadedfile, $upload_overrides);
-    
-    if($movefile && !isset($movefile['error'])) {
+
+    if ($movefile && !isset($movefile['error'])) {
       return wp_make_link_relative($movefile['url']);
     } else {
       /**
@@ -89,5 +133,5 @@ class ClubAdminPage extends AdminPage {
       die();
     }
   }
-  
+
 }

@@ -22,7 +22,7 @@ class Game extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null    NULL
    */
-  private $goals_away;
+  protected $goals_away;
 
   /**
    * @var int
@@ -30,7 +30,7 @@ class Game extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $goals_home;
+  protected $goals_home;
 
   /**
    * @var int
@@ -38,7 +38,7 @@ class Game extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $number;
+  protected $number;
 
   /**
    * @var int
@@ -46,7 +46,63 @@ class Game extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $set_id;
-  
-  
+  protected $set_id;
+
+  /**
+   * @return int
+   */
+  public function getGoalsAway() {
+    return $this->goals_away;
+  }
+
+  /**
+   * @param int $goals_away
+   */
+  public function setGoalsAway($goals_away) {
+    $this->goals_away = $goals_away;
+  }
+
+  /**
+   * @return int
+   */
+  public function getGoalsHome() {
+    return $this->goals_home;
+  }
+
+  /**
+   * @param int $goals_home
+   */
+  public function setGoalsHome($goals_home) {
+    $this->goals_home = $goals_home;
+  }
+
+  /**
+   * @return int
+   */
+  public function getNumber() {
+    return $this->number;
+  }
+
+  /**
+   * @param int $number
+   */
+  public function setNumber($number) {
+    $this->number = $number;
+  }
+
+  /**
+   * @return int
+   */
+  public function getSetId() {
+    return $this->set_id;
+  }
+
+  /**
+   * @param int $set_id
+   */
+  public function setSetId($set_id) {
+    $this->set_id = $set_id;
+  }
+
+
 }

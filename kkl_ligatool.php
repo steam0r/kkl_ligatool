@@ -11,7 +11,7 @@ License: MIT
 
 use KKL\Ligatool\Plugin;
 
-require_once(__DIR__.'/vendor/autoload.php');
+require_once(__DIR__ . '/vendor/autoload.php');
 
 $pluginFile = __FILE__;
 $baseUrl = plugin_dir_url(__FILE__);

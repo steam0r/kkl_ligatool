@@ -8,13 +8,15 @@
 
 namespace KKL\Ligatool\Model;
 
+use KKL\Ligatool\ServiceBroker;
+
 /**
  * @SWG\Definition(required={"name", "league", "startDate", "endDate"}, type="object")
  * @ORM_Type              Entity
  * @ORM_Table "kkl_seasons"
  * @ORM_AllowSchemaUpdate True
  */
-class Season extends KKLModel {
+class Season extends KKLPropertyModel {
 
   /**
    * @var boolean
@@ -22,7 +24,7 @@ class Season extends KKLModel {
    * @ORM_Column_Type   TINYINT
    * @ORM_Column_Null   NULL
    */
-  private $active;
+  protected $active;
 
   /**
    * @SWG\Property(example="1980-09-02 05:11:42")
@@ -30,7 +32,7 @@ class Season extends KKLModel {
    * @ORM_Column_Type   DATETIME
    * @ORM_Column_Null   NULL
    */
-  private $end_date;
+  protected $end_date;
 
   /**
    * @var string
@@ -38,7 +40,7 @@ class Season extends KKLModel {
    * @ORM_Column_Type   TEXT
    * @ORM_Column_Null   NULL
    */
-  private $name;
+  protected $name;
 
   /**
    * @SWG\Property(example="1980-09-02 05:11:42")
@@ -46,7 +48,7 @@ class Season extends KKLModel {
    * @ORM_Column_Type   DATETIME
    * @ORM_Column_Null   NULL
    */
-  private $start_date;
+  protected $start_date;
 
   /**
    * @SWG\Property(format="int64")
@@ -54,7 +56,7 @@ class Season extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $league_id;
+  protected $league_id;
 
   /**
    * @SWG\Property(format="int64")
@@ -62,6 +64,113 @@ class Season extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $current_game_day;
+  protected $current_game_day;
+
+  /**
+   * @return bool
+   */
+  public function isActive() {
+    return boolval($this->active);
+  }
+
+  /**
+   * @param bool $active
+   */
+  public function setActive($active) {
+    $this->active = $active;
+  }
+
+  /**
+   * @return string
+   */
+  public function getEndDate() {
+    return $this->end_date;
+  }
+
+  /**
+   * @param string $end_date
+   */
+  public function setEndDate($end_date) {
+    $this->end_date = $end_date;
+  }
+
+  /**
+   * @return string
+   */
+  public function getName() {
+    return $this->name;
+  }
+
+  /**
+   * @param string $name
+   */
+  public function setName($name) {
+    $this->name = $name;
+  }
+
+  /**
+   * @return string
+   */
+  public function getStartDate() {
+    return $this->start_date;
+  }
+
+  /**
+   * @param string $start_date
+   */
+  public function setStartDate($start_date) {
+    $this->start_date = $start_date;
+  }
+
+  /**
+   * @return int
+   */
+  public function getLeagueId() {
+    return $this->league_id;
+  }
+
+  /**
+   * @param int $league_id
+   */
+  public function setLeagueId($league_id) {
+    $this->league_id = $league_id;
+  }
+
+  /**
+   * @return int
+   */
+  public function getCurrentGameDay() {
+    return $this->current_game_day;
+  }
+
+  /**
+   * @param int $current_game_day
+   */
+  public function setCurrentGameDay($current_game_day) {
+    $this->current_game_day = $current_game_day;
+  }
+
+  /**
+   * @return KKLModelService
+   */
+  protected function getPropertyService() {
+    return ServiceBroker::getSeasonPropertyService();
+  }
+
+  /**
+   * @param string $key
+   * @return SeasonProperty
+   */
+  public function getProperty($key) {
+    return parent::getProperty($key);
+  }
+
+
+  /**
+   * @return SeasonProperty[]
+   */
+  public function getProperties() {
+    return parent::getProperties();
+  }
 
 }

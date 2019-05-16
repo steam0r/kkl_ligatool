@@ -15,37 +15,93 @@ namespace KKL\Ligatool\Model;
  * @ORM_AllowSchemaUpdate True
  */
 class GameDay extends KKLModel {
-  
+
   /**
    * @var int
    * @SWG\Property()
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $season_id;
-  
+  protected $season_id;
+
   /**
    * @var int
    * @SWG\Property(format="int64")
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $number;
-  
+  protected $number;
+
   /**
    * @var string
    * @SWG\Property(example="1980-09-02 05:11:42")
    * @ORM_Column_Type   DATETIME
    * @ORM_Column_Null   NULL
    */
-  private $fixture;
-  
+  protected $fixture;
+
   /**
    * @var string
    * @SWG\Property(example="1980-09-02 05:11:42")
    * @ORM_Column_Type   DATETIME
    * @ORM_Column_Null   NULL
    */
-  private $end;
-  
+  protected $end;
+
+  /**
+   * @return int
+   */
+  public function getSeasonId() {
+    return $this->season_id;
+  }
+
+  /**
+   * @param int $season_id
+   */
+  public function setSeasonId($season_id) {
+    $this->season_id = $season_id;
+  }
+
+  /**
+   * @return int
+   */
+  public function getNumber() {
+    return $this->number;
+  }
+
+  /**
+   * @param int $number
+   */
+  public function setNumber($number) {
+    $this->number = $number;
+  }
+
+  /**
+   * @return string
+   */
+  public function getEnd() {
+    return $this->end;
+  }
+
+  /**
+   * @param string $end
+   */
+  public function setEnd($end) {
+    $this->end = $end;
+  }
+
+  /**
+   * @return string
+   */
+  public function getFixture() {
+    return $this->fixture;
+  }
+
+  /**
+   * @param string $fixture
+   */
+  public function setFixture($fixture) {
+    $this->fixture = $fixture;
+  }
+
 }

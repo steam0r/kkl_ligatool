@@ -22,7 +22,7 @@ class SetHomePlayer extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $set_id;
+  protected $set_id;
 
   /**
    * @var int
@@ -30,7 +30,7 @@ class SetHomePlayer extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $team_player_id;
-  
-  
+  protected $team_player_id;
+
+
 }

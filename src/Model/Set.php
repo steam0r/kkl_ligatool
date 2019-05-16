@@ -22,7 +22,7 @@ class Set extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $score_away;
+  protected $score_away;
 
   /**
    * @var int
@@ -30,7 +30,7 @@ class Set extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $score_home;
+  protected $score_home;
 
   /**
    * @var int
@@ -38,7 +38,7 @@ class Set extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $number;
+  protected $number;
 
   /**
    * @var int
@@ -46,6 +46,6 @@ class Set extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $match_id;
+  protected $match_id;
 
 }

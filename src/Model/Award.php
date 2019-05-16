@@ -22,7 +22,7 @@ class Award extends KKLModel {
    * @ORM_Column_Type   TEXT
    * @ORM_Column_Null   NULL
    */
-  private $name;
+  protected $name;
 
   /**
    * @var string
@@ -30,7 +30,7 @@ class Award extends KKLModel {
    * @ORM_Column_Type   TEXT
    * @ORM_Column_Null   NULL
    */
-  private $description;
+  protected $description;
 
   /**
    * @var string
@@ -38,7 +38,49 @@ class Award extends KKLModel {
    * @ORM_Column_Type   TEXT
    * @ORM_Column_Null   NULL
    */
-  private $logo;
-  
-  
+  protected $logo;
+
+  /**
+   * @return string
+   */
+  public function getName() {
+    return $this->name;
+  }
+
+  /**
+   * @param string $name
+   */
+  public function setName($name) {
+    $this->name = $name;
+  }
+
+  /**
+   * @return string
+   */
+  public function getDescription() {
+    return $this->description;
+  }
+
+  /**
+   * @param string $description
+   */
+  public function setDescription($description) {
+    $this->description = $description;
+  }
+
+  /**
+   * @return string
+   */
+  public function getLogo() {
+    return $this->logo;
+  }
+
+  /**
+   * @param string $logo
+   */
+  public function setLogo($logo) {
+    $this->logo = $logo;
+  }
+
+
 }

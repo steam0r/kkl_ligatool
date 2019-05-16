@@ -2,59 +2,77 @@
 
 namespace KKL\Ligatool\Backend;
 
+use KKL\Ligatool\DB\Where;
 use KKL\Ligatool\Model\Team;
+use KKL\Ligatool\ServiceBroker;
 
 class TeamListTable extends ListTable {
 
-  public function getModel() {
-    return new Team();
+  public function getModelService() {
+    return ServiceBroker::getTeamService();
   }
-  
+
   function get_search_fields() {
     return array('name', 'short_name');
   }
-  
+
   /**
    * Define the columns that are going to be used in the table
    * @return array $columns, the array of columns to use with the table
    */
   function get_display_columns() {
-    return $columns = array('ID' => __('id', 'kkl-ligatool'), 'name' => __('name', 'kkl-ligatool'), 'club_id' => __('club', 'kkl-ligatool'), 'season_id' => __('season', 'kkl-ligatool'), 'short_name' => __('url_code', 'kkl-ligatool'),);
+    return $columns = array(
+      'ID' => __('id', 'kkl-ligatool'),
+      'name' => __('name', 'kkl-ligatool'),
+      'club_id' => __('club', 'kkl-ligatool'),
+      'season_id' => __('season', 'kkl-ligatool'),
+      'short_name' => __('url_code', 'kkl-ligatool')
+    );
   }
-  
+
   function get_filter_sql() {
-    if($this->get_current_season()) {
-      return "season_id = '" . $this->get_current_season()->ID . "'";
+    if ($this->get_current_season()) {
+      return new Where('season_id', $this->get_current_season()->getId(), '=');
     }
-    return " season_id IS NOT NULL";
+    return null;
   }
-  
-  function column_club_id($item) {
-    $clubs = $this->get_clubs();
-    $id = $item['club_id'];
-    $club = $clubs[$id];
-    return $club->name;
+
+  /**
+   * @param Team $team
+   * @return mixed
+   */
+  function column_club_id($team) {
+    $service = ServiceBroker::getClubService();
+    $club = $service->byId($team->getClubId());
+    return $club->getName();
   }
-  
+
+
+  /**
+   * @param Team $item
+   * @return mixed
+   */
   function column_name($item) {
-    $teams = $this->get_teams();
-    $id = $item['id'];
-    $team = $teams[$id];
-    return $team->name;
+    $service = ServiceBroker::getTeamService();
+    $team = $service->byId($item->getId());
+    return $team->getName();
   }
-  
+
+  /**
+   * @param Team $item
+   * @return mixed
+   */
   function column_season_id($item) {
-    $seasons = $this->get_seasons();
-    $id = $item['season_id'];
-    $season = $seasons[$id];
-    return $season->name;
+    $service = ServiceBroker::getSeasonService();
+    $season = $service->byId($item->getSeasonId());
+    return $season->getName();
   }
-  
+
   function display() {
     print $this->display_league_filter();
     print $this->display_season_filter();
     parent::display();
     print $this->display_create_link();
   }
-  
+
 }

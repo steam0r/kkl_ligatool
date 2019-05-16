@@ -22,7 +22,7 @@ class TeamScore extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $draw;
+  protected $draw;
 
   /**
    * @var int
@@ -30,7 +30,7 @@ class TeamScore extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $gamesAgainst;
+  protected $gamesAgainst;
 
   /**
    * @var int
@@ -38,7 +38,7 @@ class TeamScore extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $gamesFor;
+  protected $gamesFor;
 
   /**
    * @var int
@@ -46,7 +46,7 @@ class TeamScore extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $goalsAgainst;
+  protected $goalsAgainst;
 
   /**
    * @var int
@@ -54,7 +54,7 @@ class TeamScore extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $goalsFor;
+  protected $goalsFor;
 
   /**
    * @var int
@@ -62,7 +62,7 @@ class TeamScore extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $loss;
+  protected $loss;
 
   /**
    * @var int
@@ -70,7 +70,7 @@ class TeamScore extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $position;
+  protected $position;
 
   /**
    * @var int
@@ -78,7 +78,7 @@ class TeamScore extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $score;
+  protected $score;
 
   /**
    * @var int
@@ -86,7 +86,7 @@ class TeamScore extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $win;
+  protected $win;
 
   /**
    * @var int
@@ -94,7 +94,7 @@ class TeamScore extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $gameDay_id;
+  protected $gameDay_id;
 
   /**
    * @var int
@@ -102,6 +102,6 @@ class TeamScore extends KKLModel {
    * @ORM_Column_Type   int
    * @ORM_Column_Null   NULL
    */
-  private $team_id;
-  
+  protected $team_id;
+
 }

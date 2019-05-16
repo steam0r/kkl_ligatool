@@ -3,79 +3,122 @@
 namespace KKL\Ligatool\Backend;
 
 use KKL\Ligatool\DB;
+use KKL\Ligatool\DB\Where;
 use KKL\Ligatool\Model\Match;
+use KKL\Ligatool\ServiceBroker;
 
 class MatchListTable extends ListTable {
 
-  public function getModel() {
-    return new Match();
+  public function getModelService() {
+    return ServiceBroker::getMatchService();
   }
-  
+
   function get_filter_sql() {
-    if($this->get_current_game_day()) {
-      return "game_day_id = '" . $this->get_current_game_day()->ID . "'";
-    } elseif($this->get_current_season()) {
-      return "game_day_id = (SELECT current_game_day AS game_day_id FROM seasons WHERE id = '" . $this->get_current_season()->ID . "')";
-    } elseif($this->get_current_league()) {
-      return "game_day_id = (SELECT current_game_day AS game_day_id FROM seasons WHERE id = (SELECT current_season AS season_id FROM leagues WHERE id = '" . $this->get_current_league()->ID . "'))";
+    if ($this->get_current_game_day()) {
+      return new Where("game_day_id", $this->get_current_game_day()->getId(), '=');
+    } elseif ($this->get_current_season()) {
+      return "game_day_id = (SELECT current_game_day AS game_day_id FROM seasons WHERE id = '" . $this->get_current_season()->getId() . "')";
+    } elseif ($this->get_current_league()) {
+      return "game_day_id = (SELECT current_game_day AS game_day_id FROM seasons WHERE id = (SELECT current_season AS season_id FROM leagues WHERE id = '" . $this->get_current_league()->getId() . "'))";
     }
-    return "";
+    return null;
   }
-  
+
   /**
    * Define the columns that are going to be used in the table
    * @return array $columns, the array of columns to use with the table
    */
   function get_display_columns() {
-    return $columns = array('ID' => __('id', 'kkl-ligatool'), 'game_day_id' => __('game_day', 'kkl-ligatool'), 'home_team' => __('home_team', 'kkl-ligatool'), 'away_team' => __('away_team', 'kkl-ligatool'), 'fixture' => __('fixture', 'kkl-ligatool'), 'location' => __('location', 'kkl-ligatool'), 'score_home' => __('score_home', 'kkl-ligatool'), 'score_away' => __('score_away', 'kkl-ligatool'), 'goals_home' => __('goals_home', 'kkl-ligatool'), 'goals_away' => __('goals_away', 'kkl-ligatool'));
+    return $columns = array(
+      'ID' => __('id', 'kkl-ligatool'),
+      'game_day_id' => __('game_day', 'kkl-ligatool'),
+      'home_team' => __('home_team', 'kkl-ligatool'),
+      'away_team' => __('away_team', 'kkl-ligatool'),
+      'fixture' => __('fixture', 'kkl-ligatool'),
+      'location' => __('location', 'kkl-ligatool'),
+      'score_home' => __('score_home', 'kkl-ligatool'),
+      'score_away' => __('score_away', 'kkl-ligatool'),
+      'goals_home' => __('goals_home', 'kkl-ligatool'),
+      'goals_away' => __('goals_away', 'kkl-ligatool')
+    );
   }
-  
+
+  /**
+   * @param Match $item
+   * @return mixed
+   */
   function column_game_day_id($item) {
-    $days = $this->get_game_days();
-    $day = $days[$item['game_day_id']];
-    return $day->number;
+    $service = ServiceBroker::getGameDayService();
+    $day = $service->byId($item->getGameDayId());
+    return $day->getNumber();
   }
-  
+
+  /**
+   * @param Match $item
+   * @return mixed
+   */
   function column_fixture($item) {
-    $fixture = $item['fixture'];
-    if($fixture == '0000-00-00 00:00:00') {
+    $fixture = $item->getFixture();
+    if ($fixture == '0000-00-00 00:00:00') {
       $fixture = null;
     }
     return $this->column_date($fixture);
   }
-  
+
+  /**
+   * @param Match $item
+   * @return mixed
+   */
   function column_home_team($item) {
     $teams = $this->get_teams();
-    $id = $item['home_team'];
+    $id = $item->getHomeTeam();
     $team = $teams[$id];
-    return $team->name;
+    return $team->getName();
   }
-  
+
+
+  /**
+   * @param Match $item
+   * @return mixed
+   */
   function column_away_team($item) {
     $teams = $this->get_teams();
-    $id = $item['away_team'];
+    $id = $item->getAwayTeam();
     $team = $teams[$id];
-    return $team->name;
+    return $team->getName();
   }
-  
+
+
+  /**
+   * @param Match $item
+   * @return mixed
+   */
   function column_location($item) {
     $db = new DB\Wordpress();
-    $location = $db->getLocation($item['location']);
-    return $location->title;
+    $location = $db->getLocation($item->getLocation());
+    return $location ? $location->getTitle() : "";
   }
-  
+
+  /**
+   * @param Match $item
+   * @return mixed
+   */
   function column_goals_home($item) {
     $db = new DB\Wordpress();
-    $match = $db->getMatch($item['id']);
+    $match = $db->getMatch($item->getId());
     return $match->goals_home;
   }
-  
+
+  /**
+   * @param Match $item
+   * @return mixed
+   */
   function column_goals_away($item) {
     $db = new DB\Wordpress();
-    $match = $db->getMatch($item['id']);
+    $match = $db->getMatch($item->getId());
     return $match->goals_away;
   }
-  
+
   function display() {
     print $this->display_league_filter();
     print $this->display_season_filter();
@@ -83,16 +126,16 @@ class MatchListTable extends ListTable {
     parent::display();
     print $this->display_create_link();
   }
-  
+
   function display_create_link() {
     $game_day = $this->get_current_game_day();
-    if($game_day) {
+    if ($game_day) {
       $page = $this->get_create_page();
-      $link = add_query_arg(array(compact('page', 'id'), 'gameDayId' => $game_day->ID), admin_url('admin.php'));
+      $link = add_query_arg(array(compact('page', 'id'), 'gameDayId' => $game_day->getId()), admin_url('admin.php'));
       $html = '<a href="' . $link . '">' . __('create_new', 'kkl-ligatool') . '</a>';
       return $html;
     }
     return "";
   }
-  
+
 }

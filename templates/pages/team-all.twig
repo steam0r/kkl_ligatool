@@ -28,10 +28,11 @@
                                 <li id="team-{{ team.id }}" data-club="{{ team.club_id }}">
                                     <a href="{{ team.link }}" target="_self" title="{{ team.name }}"
                                        data-url="{{ base_url }}">
-                                <span class="img">
-                                    <img src="{% if team.logo %}{{ team.logo }}{% else %}unknown{% endif %}"
-                                         alt="{{ team.name }}"/>
-                                </span>
+                                        <span class="brand">
+                                            <img src="{% if team.logo %}{{ team.logo }}{% else %}unknown{% endif %}"
+                                                 alt="{{ team.name }}"
+                                            />
+                                        </span>
                                         <span>{{ team.name }}</span>
                                     </a>
                                 </li>

@@ -6,7 +6,6 @@
     </header>
 
     <div class="container">
-
         {% for ranking in rankings %}
             <div class="kl-ranking-league">
                 <a name="{{ ranking.league.code }}"></a>
@@ -19,57 +18,13 @@
                     <h2>{{ ranking.league.name }}</h2>
                 {% endif %}
 
-                <table class="table kl-table sortable">
-                    <thead>
-                    <tr>
-                        <th class="ranking">Platz</th>
-                        <th class="team_name">Team</th>
-                        <th class="games">Spiele</th>
-                        <th class="wdl">g/u/v</th>
-                        <th class="wins">g.</th>
-                        <th class="draws">u.</th>
-                        <th class="losses">v.</th>
-                        <th class="set_rate">Satzdiff.</th>
-                        <th class="sets">Sätze</th>
-                        <th class="goal_rate">Tordiff.</th>
-                        <th class="goals">Tore</th>
-                        <th class="score">Punkte</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for rank in ranking.ranks %}
-                        <tr class="{{ rank.relegation_marker ? 'rel_' . rank.relegation_marker }}">
-                            <td class="ranking">{{ not rank.shared_rank ? rank.position }}</td>
-                            <td class="team_name">
-                                <a href="{{ rank.team.link }}" target="_self">{{ rank.team.name }}</a>
-                                {{ rank.team.properties['current_league_winner'] ? '(M)' }}
-                                {{ rank.team.properties['current_cup_winner'] ? '(P)' }}
-                            </td>
-                            <td class="games">{{ rank.games }}</td>
-                            <td class="wdl">{{ rank.wins }}/{{ rank.draws }}/{{ rank.losses }}</td>
-                            <td class="wins">{{ rank.wins }}</td>
-                            <td class="draws">{{ rank.draws }}</td>
-                            <td class="losses">{{ rank.losses }}</td>
-                            <td class="set_rate">{{ rank.gameDiff }}</td>
-                            <td class="sets">{{ rank.gamesFor }}:{{ rank.gamesAgainst }}</td>
-                            <td class="goal_rate">{{ rank.goalDiff }}</td>
-                            <td class="goals">{{ rank.goalsFor }}:{{ rank.goalsAgainst }}</td>
-                            <td class="score"><strong>{{ rank.score }}</strong></td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-                {% if ranking.relegation_explanation %}
-                    <p class="relegation_explanation">
-                        {{ ranking.relegation_explanation }}
-                    </p>
-                {% endif %}
+                {% include '_partials/table_ranking.twig' %}
             </div>
         {% endfor %}
 
         {% if schedules %}
             {% for schedule in schedules %}
-                <div class="kl-schedules-league">
+                <div class="kl-fixtures-league">
                     {% if view == 'current' %}
                         <h3>
                             Aktueller Spieltag
@@ -82,56 +37,9 @@
 
                     <p class="interval">{{ schedule.day.fixture|date('d.m.Y') }} bis {{ schedule.day.end|date('d.m.Y') }}</p>
 
-                    <table class="table kl-table">
-                        <thead>
-                        <tr>
-                            <th class="date">Datum</th>
-                            <th class="home">Heim</th>
-                            <th class="divider"></th>
-                            <th class="guest">Gast</th>
-                            <th class="score">Ergebnis</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for match in schedule.matches %}
-                            <tr {% if (activeTeam and ((activeTeam == match.home.short_name) or (activeTeam == match.away.short_name))) %}class="active"{% endif %}>
-                                <td class="date">
-                                    {% if match.fixture %}
-                                        {% if match.fixture != '0000-00-00 00:00:00' %}
-                                            {{ match.fixture|date('d.m.Y') }}
-                                        {% else %}
-                                            tba
-                                        {% endif %}
-                                    {% endif %}
-                                </td>
-                                <td class="home"><a href="{{ match.home.link }}">{{ match.home.name }}</a></td>
-                                <td class="divider">vs</td>
-                                <td class="guest"><a href="{{ match.away.link }}">{{ match.away.name }}</a></td>
-                                <td class="score">
-                                    {% if match.status != 3 and (match.score_home == false and match.score_away == false) %}
-                                        --:--
-                                    {% else %}
-                                        {{ match.score_home }}:{{ match.score_away }}
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                        <tfoot>
-                        <tr>
-                            <td colspan="5">
-
-                                    <a class="total-schedule" href="{{ schedule.link }}">
-                                        Spielplan anzeigen
-                                    </a>
-
-                            </td>
-                        </tr>
-                        </tfoot>
-                    </table>
+                    {% include '_partials/table_fixtures.twig' %}
                 </div>
             {% endfor %}
         {% endif %}
-
     </div>
 </section>

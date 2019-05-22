@@ -2,6 +2,9 @@
 
 namespace KKL\Ligatool;
 
+use KKL\Ligatool\Pages\Pages;
+use KKL\Ligatool\Pages\Ranking;
+
 class Shortcodes {
 
   const TEMPLATE_PATH = 'shortcodes';
@@ -41,6 +44,31 @@ class Shortcodes {
             'all_matches' => $all_matches,
             'all_locations' => $all_locations
         )
+    );
+  }
+
+
+  /**
+   *
+   */
+  public static function ranking($atts) {
+    $templateEngine = Template\Service::getTemplateEngine();
+    $ranking = new Ranking();
+    $templateContext = array();
+
+    $league = isset($atts['league']) ? $atts['league'] : null;
+    $season = isset($atts['season']) ? $atts['season'] : null;
+
+    if(isset($league)) {
+      $pageContext = Pages::leagueContext($league, $season);
+      $templateContext = array(
+          'rankings' => $ranking->getSingleLeague($pageContext)
+      );
+    }
+
+    return $templateEngine->render(
+        self::TEMPLATE_PATH . '/ranking.twig',
+        $templateContext
     );
   }
 

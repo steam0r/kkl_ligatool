@@ -164,10 +164,8 @@ class Plugin {
         'add_rewrite_rules'
     ));
 
-    add_shortcode('set_match_fixture', array(
-        Shortcodes::class,
-        'setMatchFixture'
-    ));
+    // Add Shortcodes
+    $this->init_shortcodes();
 
     add_action('widgets_init', array(
         $this,
@@ -315,6 +313,22 @@ class Plugin {
     }
 
     PageTemplater::get_instance($output);
+  }
+
+
+  /**
+   *
+   */
+  public function init_shortcodes() {
+    add_shortcode('kl-set-fixture', array(
+        Shortcodes::class,
+        'setMatchFixture'
+    ));
+
+    add_shortcode('kl-ranking', array(
+        Shortcodes::class,
+        'ranking'
+    ));
   }
 
 

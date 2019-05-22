@@ -292,6 +292,11 @@ class Plugin {
                   'handle' => 'kkl_set_fixture',
                   'src' => 'frontend/set_fixture.js',
                   'type' => 'js'
+              ),
+              array(
+                  'handle' => 'kkl_frontend',
+                  'src' => 'ligatool_frontend.css',
+                  'type' => 'css'
               )
           ));
     }
@@ -299,6 +304,30 @@ class Plugin {
     add_action('plugins_loaded', function() {
       load_plugin_textdomain('kkl-ligatool', false, dirname(plugin_basename(__FILE__)) . '/../lang/');
     });
+  }
+
+
+  /**
+   * register scripts (css, js)
+   *
+   * @param $arr
+   */
+  public static function enqueue_scripts($arr) {
+    foreach($arr as $script) {
+      if($script['type'] === 'js') {
+        $src = plugins_url() . '/kkl_ligatool/js/' . $script['src'];
+        wp_register_script(
+            $script['handle'], $src, array(), false, true
+        );
+
+        wp_enqueue_script($script['handle']);
+
+      } elseif($script['type'] === 'css') {
+        $str = plugins_url() . '/kkl_ligatool/css/' . $script['src'];
+
+        wp_enqueue_style($script['handle'], $str);
+      }
+    }
   }
 
 
@@ -315,20 +344,6 @@ class Plugin {
     PageTemplater::get_instance($output);
   }
 
-  public static function enqueue_scripts($arr) {
-    foreach($arr as $script) {
-      if($script['type'] === 'js') {
-        $src = plugins_url() . '/kkl_ligatool/js/' . $script['src'];
-        wp_register_script(
-            $script['handle'], $src, array(), false, true
-        );
-        wp_enqueue_script($script['handle']);
-      } elseif($script['type'] === 'css') {
-        $str = plugins_url() . '/kkl_ligatool/css/' . $script['src'];
-        wp_enqueue_style($script['handle'], $str);
-      }
-    }
-  }
 
   public function add_query_vars_filter($vars) {
     $vars[] = "league";

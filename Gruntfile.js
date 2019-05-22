@@ -25,7 +25,7 @@ module.exports = function (grunt){
         files: [{
           expand: true,
           cwd: conf.cssCwd + '/',
-          src: ['ligatool.scss'],
+          src: ['*.scss'],
           dest: conf.cssDest + '/',
           ext: '.css'
         }]

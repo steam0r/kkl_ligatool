@@ -1,4 +1,4 @@
-<section id="kl-ranking" class="kl-ranking">
+<section id="kl-fixtures" class="kl-fixtures">
     <header>
         <div class="container">
             <h1>Spielplan</h1>
@@ -7,18 +7,18 @@
 
     <div class="container">
             {% for schedule in schedules %}
-                <div class="kl-schedules-league">
+                <div class="kl-fixtures-league">
                     {% if view == 'current' %}
                         <h3>
                             Aktueller Spieltag
-                            <span>{{ schedule.day.fixture|date('d.m.Y') }} bis {{ schedule.day.end|date('d.m.Y') }}</span>
                         </h3>
                     {% else %}
                         <h3>
                             Spieltag {{ schedule.number }}
-                            <span>{{ schedule.day.fixture|date('d.m.Y') }} bis {{ schedule.day.end|date('d.m.Y') }}</span>
                         </h3>
                     {% endif %}
+
+                    <p class="interval">{{ schedule.day.fixture|date('d.m.Y') }} bis {{ schedule.day.end|date('d.m.Y') }}</p>
 
                     <table class="table kl-table">
                         <thead>

@@ -29,18 +29,19 @@
                         <h3>{{ leagueItem.league.name }}</h3>
 
                         {% for player in leagueItem.players %}
-                            <div class="contact -in" data-league="{{ player.league_short }}"
-                                 data-role="{{ player.role }}"
-                                 data-team="{{ player.team_short }}">
-                                <h4>{{ player.first_name }} {{ player.last_name }}</h4>
-
-                                {% if player.team %}
-                                    <span class="team">{{ player.team }}</span>
-                                {% endif %}
+                            <article class="contact" data-league="{{ player.league_short }}"
+                                     data-role="{{ player.role }}"
+                                     data-team="{{ player.team_short }}">
+                                <header>
+                                    <h4>{{ player.first_name }} {{ player.last_name }}</h4>
+                                </header>
 
                                 <p class="role">{{ player.role }}</p>
 
                                 <p>
+                                    {% if player.team %}
+                                        <span class="team">Team:</span> {{ player.team }}<br />
+                                    {% endif %}
                                     {% if player.location %}
                                         <span class="location">Spielort:</span> {{ player.location }}<br/>
                                     {% endif %}
@@ -48,7 +49,7 @@
                                     <span class="email">E-Mail:</span> <a
                                             href="mailto:{{ player.email }}">{{ player.email }}</a>
                                 </p>
-                            </div>
+                            </article>
                         {% endfor %}
                     </div>
                 {% endfor %}

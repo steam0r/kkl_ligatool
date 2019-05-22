@@ -1,0 +1,25 @@
+/* ================================ *\
+   Transition
+\* ================================ */
+
+/// Transition Animation
+/// @access public
+/// @param {string} $object - animtated object
+/// @param {string} $duration [.1s] - duration of animation
+/// @param {string} $transition [linear] - animation type
+/// @param {string} $delay [0s] - animation delay
+@mixin _transition($object, $duration: .1s, $transition: linear, $delay: 0s) {
+    transition: $object $duration $transition $delay;
+}
+
+/// Transition Animation **Delay** for a list siblings
+/// @access public
+/// @param {number} $amount [10] - amount of items
+/// @param {string} $duration [0.05s] - time of delay
+@mixin _transition-delay($amount: 10, $duration: 0.05s) {
+    @for $i from 1 through $amount {
+        &:nth-child(#{$i}) {
+            transition-delay: ($duration * $i);
+        }
+    }
+}

@@ -1,52 +1,46 @@
-<div class="kkl-match-fixture">
+<div class="kl-match-fixture">
     <form action="#" method="patch" id="set_match_fixture" data-url="{{ api_url }}">
-        <div class="set-fixture-match">
+
+        <div class="form_matches">
             <label for="match">Begegnung*</label>
             <select name="match" id="match" class="required">
                 {% for league in all_matches %}
-                <optgroup label="{{ league.name }}">
-                    {% for match in league.matches %}
-                    <option value="{{ match["match"].id }}"
-                            data-location="{{ match.location_id }}">{{ match["match"].homename }}
-                        vs {{ match["match"].awayname }}</option>
-                    {% endfor %}
-                </optgroup>
+                    <optgroup label="{{ league.name }}">
+                        {% for match in league.matches %}
+                            <option value="{{ match["match"].id }}"
+                                    data-location="{{ match.location_id }}">{{ match["match"].homename }}
+                                vs {{ match["match"].awayname }}</option>
+                        {% endfor %}
+                    </optgroup>
                 {% endfor %}
             </select>
         </div>
 
-        <div class="set-fixture-location">
+        <div class="form_locations">
             <label for="location">Spielort</label>
             <select name="location" id="location">
                 <option value="unknown">Wähle einen Spielort</option>
                 {% for location in all_locations %}
-                <option value="{{ location.id }}">{{ location.title }}</option>
+                    <option value="{{ location.id }}">{{ location.title }}</option>
                 {% endfor %}
             </select>
         </div>
 
-        <div class="set-fixture-datepicker">
+        <div class="form_fixture">
             <label for="fixture">Spieltermin*</label>
-            <input type="text" id="fixture" name="fixture" class="required"/>
+            <input type="text" id="fixture" name="fixture" class="required" placeholder="2019-05-22 20:05"/>
         </div>
 
-        <div class="set-fixture-email">
+        <div class="form_validation">
             <label for="email_validation">E-Mail validieren*</label>
             <input type="email" id="email_validation" name="email" placeholder="E-Mail" class="required"/>
         </div>
 
-        <input type="submit" class="btn-primary" value="Spieltermin speichern"/>
+        <div class="form_button">
+            <input type="submit" value="Spieltermin speichern"/>
+        </div>
+
+        <div class="form_notification" data-notification></div>
     </form>
 
-    <div class="wait">
-        <div class="inner">
-            <p>Speichere Daten.</p>
-        </div>
-    </div>
-
-    <div class="success">
-        <div class="inner">
-            <p>Spieltermin erfolgreich gespeichert.</p>
-        </div>
-    </div>
 </div>

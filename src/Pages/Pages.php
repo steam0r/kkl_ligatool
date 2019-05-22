@@ -8,7 +8,7 @@ use KKL\Ligatool\DB;
 
 class Pages {
 
-  const PAGES_PATH = 'pages';
+  const TEMPLATE_PATH = 'pages';
 
 
   /**
@@ -80,7 +80,7 @@ class Pages {
     }
 
     return $kkl_twig->render(
-        self::PAGES_PATH . '/contact_list.twig', array(
+        self::TEMPLATE_PATH . '/contact_list.twig', array(
             'leagues' => $leagues,
             'contactMap' => $contactMap
         )
@@ -108,7 +108,7 @@ class Pages {
       );
     }
 
-    return $kkl_twig->render(self::PAGES_PATH . $templateName, $templatContext);
+    return $kkl_twig->render(self::TEMPLATE_PATH . $templateName, $templatContext);
   }
 
 
@@ -138,7 +138,7 @@ class Pages {
       );
     }
 
-    return $kkl_twig->render(self::PAGES_PATH . $templateName, $templateContext);
+    return $kkl_twig->render(self::TEMPLATE_PATH . $templateName, $templateContext);
   }
 
 
@@ -169,6 +169,6 @@ class Pages {
       );
     }
 
-    return $kkl_twig->render(self::PAGES_PATH . $templateName, $templateContext);
+    return $kkl_twig->render(self::TEMPLATE_PATH . $templateName, $templateContext);
   }
 }

@@ -164,43 +164,6 @@ class Plugin {
         'add_rewrite_rules'
     ));
 
-
-    add_shortcode('league_table', array(
-        Shortcodes::class,
-        'leagueTable'
-    ));
-    add_shortcode('table_overview', array(
-        Shortcodes::class,
-        'tableOverview'
-    ));
-    add_shortcode('gameday_table', array(
-        Shortcodes::class,
-        'gameDayTable'
-    ));
-    add_shortcode('gameday_overview', array(
-        Shortcodes::class,
-        'gameDayOverview'
-    ));
-    add_shortcode('league_overview', array(
-        Shortcodes::class,
-        'leagueOverview'
-    ));
-    add_shortcode('club_detail', array(
-        Shortcodes::class,
-        'clubDetail'
-    ));
-    add_shortcode('gameday_pager', array(
-        Shortcodes::class,
-        'gameDayPager'
-    ));
-    add_shortcode('season_schedule', array(
-        Shortcodes::class,
-        'seasonSchedule'
-    ));
-    add_shortcode('contact_list', array(
-        Shortcodes::class,
-        'contactList'
-    ));
     add_shortcode('set_match_fixture', array(
         Shortcodes::class,
         'setMatchFixture'
@@ -284,12 +247,32 @@ class Plugin {
           array(
               array(
                   'handle' => 'kkl_frontend',
-                  'src' => 'frontend/sortTable.js',
+                  'src' => '/frontend/sortTable.js',
+                  'type' => 'js'
+              ),
+              array(
+                  'handle' => 'kkl_frontend_jquery',
+                  'src' => '/frontend/jquery-1.7.2.js',
+                  'type' => 'js'
+              ),
+              array(
+                  'handle' => 'kkl_frontend_datetimepicker',
+                  'src' => '/jquery.datetimepicker.js',
+                  'type' => 'js'
+              ),
+              array(
+                  'handle' => 'kkl_frontend_datepicker',
+                  'src' => '/datepicker.min.js',
+                  'type' => 'js'
+              ),
+              array(
+                  'handle' => 'kkl_frontend_fixture',
+                  'src' => '/frontend/set_fixture.js',
                   'type' => 'js'
               ),
               array(
                   'handle' => 'kkl_frontend',
-                  'src' => 'ligatool_frontend.css',
+                  'src' => '/ligatool_frontend.css',
                   'type' => 'css'
               )
           ));
@@ -309,11 +292,11 @@ class Plugin {
   public static function enqueue_scripts($arr) {
     foreach($arr as $script) {
       if($script['type'] === 'js') {
-        $path = static::$pluginPath . '/js/' . $script['src'];
+        $path = static::$pluginPath . '/js' . $script['src'];
 
         wp_enqueue_script($script['handle'], $path);
       } elseif($script['type'] === 'css') {
-        $path = static::$pluginPath . '/css/' . $script['src'];
+        $path = static::$pluginPath . '/css' . $script['src'];
 
         wp_enqueue_style($script['handle'], $path);
       }

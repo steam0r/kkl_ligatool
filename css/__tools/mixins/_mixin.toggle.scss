@@ -1,0 +1,21 @@
+/* ================================ *\
+   Toggle Visibility
+\* ================================ */
+
+/// toggle items by `$class`
+/// @access public
+/// @param {string} $class ['-in'] - togglable css-class
+@mixin _toggleVisibility($class: '-in') {
+  display: none;
+  opacity: 0;
+  visibility: hidden;
+  @include _transition(all);
+
+  &.#{$class} {
+    display: inherit;
+    opacity: 1;
+    visibility: visible;
+
+    @content;
+  }
+}

@@ -1,0 +1,16 @@
+.kl-match-fixture {
+    form {
+
+        label {
+            display: block;
+        }
+    }
+
+    [class*="form_"] {
+        margin-bottom: $grid-gap;
+    }
+
+    [data-notification] {
+        @include _toggleVisibility();
+    }
+}

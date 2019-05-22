@@ -15,6 +15,8 @@ class Plugin {
   private static $context = array();
   private static $pluginFile;
 
+  private static $pluginPath;
+
   private $db;
 
   private $pageTemplates = array(
@@ -59,6 +61,8 @@ class Plugin {
     static::$pluginFile = $pluginFile;
     static::$baseUrl = $baseUrl;
     static::$basePath = $baseUrl;
+    static::$pluginPath = plugins_url('/kkl_ligatool');
+
     $this->db = new DB\Wordpress();
   }
 
@@ -279,18 +283,8 @@ class Plugin {
       static::enqueue_scripts(
           array(
               array(
-                  'handle' => 'kkl_frontend_datepicker',
-                  'src' => 'jquery.datetimepicker.js',
-                  'type' => 'js'
-              ),
-              array(
-                  'handle' => 'kkl_frontend_datepicker',
-                  'src' => 'jquery.datetimepicker.css',
-                  'type' => 'css'
-              ),
-              array(
-                  'handle' => 'kkl_set_fixture',
-                  'src' => 'frontend/set_fixture.js',
+                  'handle' => 'kkl_frontend',
+                  'src' => 'frontend/sortTable.js',
                   'type' => 'js'
               ),
               array(
@@ -315,17 +309,13 @@ class Plugin {
   public static function enqueue_scripts($arr) {
     foreach($arr as $script) {
       if($script['type'] === 'js') {
-        $src = plugins_url() . '/kkl_ligatool/js/' . $script['src'];
-        wp_register_script(
-            $script['handle'], $src, array(), false, true
-        );
+        $path = static::$pluginPath . '/js/' . $script['src'];
 
-        wp_enqueue_script($script['handle']);
-
+        wp_enqueue_script($script['handle'], $path);
       } elseif($script['type'] === 'css') {
-        $str = plugins_url() . '/kkl_ligatool/css/' . $script['src'];
+        $path = static::$pluginPath . '/css/' . $script['src'];
 
-        wp_enqueue_style($script['handle'], $str);
+        wp_enqueue_style($script['handle'], $path);
       }
     }
   }

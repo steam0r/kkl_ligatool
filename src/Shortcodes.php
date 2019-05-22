@@ -58,9 +58,10 @@ class Shortcodes {
 
     $league = isset($atts['league']) ? $atts['league'] : null;
     $season = isset($atts['season']) ? $atts['season'] : null;
+    $gameday = isset($atts['gameday']) ? $atts['gameday'] : null;
 
     if(isset($league)) {
-      $pageContext = Pages::leagueContext($league, $season);
+      $pageContext = Pages::leagueContext($league, $season, $gameday);
       $templateContext = array(
           'rankings' => $ranking->getSingleLeague($pageContext)
       );

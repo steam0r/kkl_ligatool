@@ -49,7 +49,8 @@ class Shortcodes {
 
 
   /**
-   *
+   * @param $atts
+   * @return mixed
    */
   public static function ranking($atts) {
     $templateEngine = Template\Service::getTemplateEngine();

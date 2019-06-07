@@ -8,11 +8,14 @@
     <div class="container">
         {% for league in leagues %}
             <div class="kl-fixtures-league">
-                <h3>
-                    {{ league.league.name }}
-                </h3>
-                <p>Spieltag {{ league.game_day.number }}</p>
-                <p class="interval">{{ league.game_day.fixture|date('d.m.Y') }} bis {{ league.game_day.end|date('d.m.Y') }}</p>
+                <header>
+                    <h3>
+                        {{ league.league.name }}
+                    </h3>
+                    <p class="gameday">Spieltag {{ league.game_day.number }}</p>
+                    <p class="interval">{{ league.game_day.fixture|date('d.m.Y') }}
+                        bis {{ league.game_day.end|date('d.m.Y') }}</p>
+                </header>
 
                 {% set schedule = league.schedules %}
                 {% include '_partials/table_fixtures.twig' %}

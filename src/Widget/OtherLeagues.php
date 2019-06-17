@@ -7,7 +7,8 @@ use KKL\Ligatool\Plugin;
 use KKL\Ligatool\Template;
 use WP_Widget;
 
-add_action('widgets_init', create_function('', 'register_widget( "KKL_Widget_OtherLeagues" );'));
+class OtherLeagues extends WP_Widget
+{
 
 class OtherLeagues extends WP_Widget {
 

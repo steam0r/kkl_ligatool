@@ -4,6 +4,7 @@ namespace KKL\Ligatool\Backend;
 
 use KKL\Ligatool\DB;
 use KKL\Ligatool\Model\Team;
+use KKL\Ligatool\Template\Service;
 use stdClass;
 
 class TeamAdminPage extends AdminPage {
@@ -16,8 +17,34 @@ class TeamAdminPage extends AdminPage {
     );
   }
 
-  function display_content() {
+  public static function display_tabs() {
+    $tabs = array(
+        'kkl_ligatool_leagues' => __('leagues', 'kkl-ligatool'),
+        'kkl_ligatool_seasons' => __('seasons', 'kkl-ligatool'),
+        'kkl_ligatool_gamedays' => __('game_days', 'kkl-ligatool'),
+        'kkl_ligatool_matches' => __('matches', 'kkl-ligatool'),
+        'kkl_ligatool_clubs' => __('clubs', 'kkl-ligatool'),
+        'kkl_ligatool_teams' => __('teams', 'kkl-ligatool'),
+        'kkl_ligatool_players' => __('players', 'kkl-ligatool'),
+        'kkl_ligatool_locations' => __('locations', 'kkl-ligatool'),
+        'kkl_ligatool_stats' => __('stats', 'kkl-ligatool'),
+        'kkl_ligatool_settings' => __('settings', 'kkl-ligatool'),
+    );
 
+    $current = null;
+    if (isset($_GET['page'])) {
+      $current = $_GET['page'];
+    }
+
+    $kkl_twig = Service::getTemplateEngine();
+    echo $kkl_twig->render('admin/navbar.twig', array(
+        "navitems" => $tabs,
+        "active" => $current
+    ));
+  }
+
+  function display_content() {
+    
     $team = $this->get_item();
 
     $db = new DB\Wordpress();

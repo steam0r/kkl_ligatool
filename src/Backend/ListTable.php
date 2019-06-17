@@ -9,11 +9,12 @@ use KKL\Ligatool\Model\KKLModelService;
 use KKL\Ligatool\Model\League;
 use KKL\Ligatool\Model\Season;
 use KKL\Ligatool\Model\Team;
+use KKL\Ligatool\Template\Service;
 use WP_List_Table;
 
 abstract class ListTable extends WP_List_Table {
 
-  public static $ITEMS_PER_PAGE = 10;
+  public static $ITEMS_PER_PAGE = 20;
   public $_args = array();
 
   /**
@@ -140,8 +141,10 @@ abstract class ListTable extends WP_List_Table {
   }
 
   public function display() {
+    echo '<div class="wrap">';
     $this->display_search_field();
     parent::display();
+    echo '</div>';
   }
 
   public function display_search_field() {
@@ -213,20 +216,30 @@ abstract class ListTable extends WP_List_Table {
   }
 
   function display_league_filter() {
+    $filters = array();
+    $cl = $this->get_current_league();
 
-    $filter = '<div class="filter_container"><label for="league_filter">' . __('league', 'kkl-ligatool') . ':</label><br/><select id="league_filter" name="league_filter" onchange="window.location.href = kkl_backend_addFilter(window.location.href, \'league_filter\', this.value);">';
-    $filter .= '<option value="">' . __('display_all', 'kkl-ligatool') . '</option>';
     foreach ($this->get_leagues() as $league) {
-      $cl = $this->get_current_league();
-      if ($cl && ($cl->getId() == $league->getId())) {
-        $filter .= '<option value="' . $league->getId() . '" selected="selected">' . $league->getName() . '</option>';
-      } else {
-        $filter .= '<option value="' . $league->getId() . '">' . $league->getName() . '</option>';
-      }
-    }
-    $filter .= "</select></div>";
+      $filterItem = array(
+          "label" => $league->getName(),
+          "id" => $league->getId(),
+          "selected" => false
+      );
 
-    return $filter;
+      if ($cl->getId() == $league->getId()) {
+        $filterItem["selected"] = true;
+      }
+
+      $filters[] = $filterItem;
+    }
+
+    $kkl_twig = Service::getTemplateEngine();
+    echo $kkl_twig->render('admin/filter/select.twig', array(
+        "type" => "league_filter",
+        "label" => __('league', 'kkl-ligatool'),
+        "all" => __('display_all', 'kkl-ligatool'),
+        "filters" => $filters
+    ));
   }
 
   function get_leagues() {
@@ -265,23 +278,35 @@ abstract class ListTable extends WP_List_Table {
   }
 
   function display_season_filter() {
-    $league = $this->get_current_league();
-    $filter = '<div class="filter_container"><label for="season_filter">' . __('season', 'kkl-ligatool') . ':</label><br/><select id="season_filter" name="season_filter" onchange="window.location.href = kkl_backend_addFilter(window.location.href, \'season_filter\', this.value);">';
-    $filter .= '<option value="">' . __('display_all', 'kkl-ligatool') . '</option>';
+    $filters = array();
+    $cs = $this->get_current_season();
+    $cl = $this->get_current_league();
+
     foreach ($this->get_seasons() as $season) {
-      if ($league && ($league->getId() != $season->getLeagueId())) {
+      if ($cl && ($cl->getId() != $season->getLeagueId())) {
         continue;
       }
-      $cs = $this->get_current_season();
-      if ($cs && ($cs->getId() == $season->getId())) {
-        $filter .= '<option value="' . $season->getId() . '" selected="selected">' . $season->getName() . '</option>';
-      } else {
-        $filter .= '<option value="' . $season->getId() . '">' . $season->getName() . '</option>';
-      }
-    }
-    $filter .= "</select></div>";
 
-    return $filter;
+      $filterItem = array(
+          "label" => $season->getName(),
+          "id" => $season->getId(),
+          "selected" => false
+      );
+
+      if ($cs->getId() == $season->getId()) {
+        $filterItem["selected"] = true;
+      }
+
+      $filters[] = $filterItem;
+    }
+
+    $kkl_twig = Service::getTemplateEngine();
+    echo $kkl_twig->render('admin/filter/select.twig', array(
+        "type" => "season_filter",
+        "label" => __('season', 'kkl-ligatool'),
+        "all" => __('display_all', 'kkl-ligatool'),
+        "filters" => $filters
+    ));
   }
 
   /**
@@ -318,23 +343,35 @@ abstract class ListTable extends WP_List_Table {
   }
 
   function display_game_day_filter() {
-    $filter = '<div class="filter_container"><label for="gameday_filter">' . __('game_day', 'kkl-ligatool') . ':</label><br/><select id="gameday_filter" name="gameday_filter" onchange="window.location.href = kkl_backend_addFilter(window.location.href, \'game_day_filter\', this.value);">';
-    $filter .= '<option value="">' . __('display_all', 'kkl-ligatool') . '</option>';
+    $filters = array();
+    $cs = $this->get_current_season()->getId();
+    $cgd = $this->get_current_game_day();
+
     foreach ($this->get_game_days() as $day) {
-      $cs = $this->get_current_season();;
-      if ($cs && ($cs->getId() != $day->getSeasonId())) {
+      if ($cs && ($cs != $day->getSeasonId())) {
         continue;
       }
-      $cd = $this->get_current_game_day();
-      if ($cd && ($cd->getId() == $day->getId())) {
-        $filter .= '<option value="' . $day->getId() . '" selected="selected">' . $day->getNumber() . '</option>';
-      } else {
-        $filter .= '<option value="' . $day->getId() . '">' . $day->getNumber() . '</option>';
-      }
-    }
-    $filter .= "</select></div>";
 
-    return $filter;
+      $filterItem = array(
+          "label" => $day->getNumber(),
+          "id" => $day->getId(),
+          "selected" => false
+      );
+
+      if ($cgd->getId() == $day->getId()) {
+        $filterItem["selected"] = true;
+      }
+
+      $filters[] = $filterItem;
+    }
+
+    $kkl_twig = Service::getTemplateEngine();
+    echo $kkl_twig->render('admin/filter/select.twig', array(
+        "type" => "game_day_filter",
+        "label" => __('game_day', 'kkl-ligatool'),
+        "all" => __('display_all', 'kkl-ligatool'),
+        "filters" => $filters
+    ));
   }
 
   /**
@@ -373,8 +410,8 @@ abstract class ListTable extends WP_List_Table {
   function display_create_link() {
     $page = $this->get_create_page();
     $link = add_query_arg(compact('page', 'id'), admin_url('admin.php'));
-    $html = '<a href="' . $link . '">' . __('create_new', 'kkl-ligatool') . '</a>';
-
+    $html = '<a class="button-primary" href="' . $link . '">' . __('create_new', 'kkl-ligatool') . '</a>';
+    
     return $html;
   }
 

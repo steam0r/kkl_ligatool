@@ -1,0 +1,7 @@
+<div class="wrap">
+    <div class="nav-tab-wrapper">
+        {% for location, tabname in navitems %}
+        <a class="nav-tab {{ (location == active) ? 'nav-tab-active' : '' }}" href="?page={{ location }}">{{ tabname }}</a>
+        {% endfor %}
+    </div>
+</div>

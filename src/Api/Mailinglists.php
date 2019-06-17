@@ -49,9 +49,18 @@ class Mailinglists extends Controller {
    */
   public function get_league_list(WP_REST_Request $request) {
     $db = new DB\Api();
-    
-    // FIXME: this is wrong, should be only active players
-    $query = "SELECT DISTINCT(email) FROM players";
+
+    $query = "select distinct c.email from seasons as s
+              join teams as t on t.season_id = s.id
+              join team_properties as tc on tc.objectId = t.id and tc.property_key = 'captain'
+              join players as c on c.id = tc.value
+              where s.active = 1
+              UNION
+              select distinct vc.email from seasons as s
+              join teams as t on t.season_id = s.id
+              join team_properties as tv on tv.objectId = t.id and tv.property_key = 'vice_captain'
+              join players as vc on vc.id = tv.value 
+              where s.active = 1";
     $results = $db->getDb()->get_results($query);
     
     foreach($results as $email) {

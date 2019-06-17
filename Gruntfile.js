@@ -1,8 +1,59 @@
 module.exports = function (grunt){
 
+  let conf = {
+      cssCwd: 'css',
+      cssDest: 'css',
+
+      jsCwd: 'js',
+      jsDest: 'js'
+    };
+
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     cmp: grunt.file.readJSON('composer.json'),
+
+    // compile sass > css > css.min
+    // ==================================
+    sass: {
+      dist: {
+        options: {
+          sourceMap: false,
+          outputStyle: 'compressed', // expanded, compressed, compact, nested
+          includePaths: [conf.cssCwd]
+        },
+
+        files: [{
+          expand: true,
+          cwd: conf.cssCwd + '/',
+          src: ['ligatool.scss'],
+          dest: conf.cssDest + '/',
+          ext: '.css'
+        }]
+      }
+    },
+
+    postcss: {
+      options: {
+        processors: [
+          require('autoprefixer')({browsers: 'last 2 versions, safari 8'}) // add vendor prefixes
+        ]
+      },
+      dist: { // = distPortal
+        src: conf.cssDest + '/*.css'
+      }
+    },
+
+    // ===================================
+    watch: {
+      css: {
+        files: [conf.cssCwd + '/**/*.scss'],
+        tasks: ['sass', 'postcss'],
+        options: {
+          spawn: false
+        }
+      }
+    },
+
     bumpup: {
       options: {
         updateProps: {
@@ -27,7 +78,7 @@ module.exports = function (grunt){
         files: [
           {
             expand: true,
-            src: ['css/**', 'js/**', 'lang/**', 'pages/**', 'sql/**', 'src/**', 'templates/**', 'vendor/**', 'kkl_ligatool.php', 'README.md'],
+            src: ['css/**', 'js/**', 'images/**', 'lang/**', 'pages/**', 'sql/**', 'src/**', 'templates/**', 'vendor/**', 'kkl_ligatool.php', 'README.md'],
             dest: '<%= cmp.name %>/'
           }
         ]
@@ -40,7 +91,7 @@ module.exports = function (grunt){
           mode: 'zip'
         },
         expand: true,
-        src: ['css/**', 'js/**', 'lang/**', 'pages/**', 'sql/**', 'src/**', 'templates/**', 'vendor/**', 'kkl_ligatool.php', 'README.md']
+        src: ['css/**', 'js/**', 'images/**', 'lang/**', 'pages/**', 'sql/**', 'src/**', 'templates/**', 'vendor/**', 'kkl_ligatool.php', 'README.md']
       },
       update: {
         options: {
@@ -136,7 +187,8 @@ module.exports = function (grunt){
   grunt.registerTask('package', ['default', 'compress:main', 'copy:update', 'compress:update']);
   grunt.registerTask('default', ['build']);
 
-  // needed modules
+  grunt.registerTask('dev', ['sass', 'postcss', 'watch']);
+
   // needed modules
   grunt.loadNpmTasks('grunt-composer');
   grunt.loadNpmTasks('grunt-replace');
@@ -144,5 +196,7 @@ module.exports = function (grunt){
   grunt.loadNpmTasks('grunt-bumpup');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-copy');
-
-}
+  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-postcss');
+  grunt.loadNpmTasks('grunt-sass');
+};

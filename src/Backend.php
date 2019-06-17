@@ -119,38 +119,32 @@ class Backend {
   }
 
   public static function display_tabs() {
-    $tabs = array('kkl_ligatool_leagues' => __('leagues', 'kkl-ligatool'),
-      'kkl_ligatool_seasons' => __('seasons', 'kkl-ligatool'),
-      'kkl_ligatool_gamedays' => __('game_days', 'kkl-ligatool'),
-      'kkl_ligatool_matches' => __('matches', 'kkl-ligatool'),
-      'kkl_ligatool_clubs' => __('clubs', 'kkl-ligatool'),
-      'kkl_ligatool_teams' => __('teams', 'kkl-ligatool'),
-      'kkl_ligatool_players' => __('players', 'kkl-ligatool'),
-      'kkl_ligatool_locations' => __('locations', 'kkl-ligatool'),
-      'kkl_ligatool_stats' => __('stats', 'kkl-ligatool'),
-      'kkl_ligatool_settings' => __('settings', 'kkl-ligatool'),);
+    $tabs = array(
+        'kkl_ligatool_leagues' => __('leagues', 'kkl-ligatool'),
+        'kkl_ligatool_seasons' => __('seasons', 'kkl-ligatool'),
+        'kkl_ligatool_gamedays' => __('game_days', 'kkl-ligatool'),
+        'kkl_ligatool_matches' => __('matches', 'kkl-ligatool'),
+        'kkl_ligatool_clubs' => __('clubs', 'kkl-ligatool'),
+        'kkl_ligatool_teams' => __('teams', 'kkl-ligatool'),
+        'kkl_ligatool_players' => __('players', 'kkl-ligatool'),
+        'kkl_ligatool_locations' => __('locations', 'kkl-ligatool'),
+        'kkl_ligatool_stats' => __('stats', 'kkl-ligatool'),
+        'kkl_ligatool_settings' => __('settings', 'kkl-ligatool')
+    );
 
     $current = null;
     if (isset($_GET['page'])) {
       $current = $_GET['page'];
     }
 
-    $content = '';
-    $content .= '<h2 class="nav-tab-wrapper">';
-    foreach ($tabs as $location => $tabname) {
-      if ($current == $location) {
-        $class = ' nav-tab-active';
-      } else {
-        $class = '';
-      }
-      $content .= '<a class="nav-tab' . $class . '" href="?page=' . $location . '">' . $tabname . '</a>';
-    }
-    $content .= '</h2>';
-    echo $content;
+    $kkl_twig = Template\Service::getTemplateEngine();
+    echo $kkl_twig->render('admin/navbar.twig', array(
+        "navitems" => $tabs,
+        "active" => $current
+    ));
   }
 
   public static function leagues_page() {
-
 
     self::display_tabs();
 
@@ -283,9 +277,9 @@ class Backend {
 
     static::enqueue_scripts(
       array(array('handle' => 'kkl_datepicker', 'src' => 'jquery.datetimepicker.js', 'type' => 'js'),
-        array('handle' => 'kkl_datepicker', 'src' => 'jquery.datetimepicker.css', 'type' => 'css'),
-        array('handle' => 'kkl_backend', 'src' => 'kkl_backend.js', 'type' => 'js'),
-        array('handle' => 'kkl_backend', 'src' => 'kkl_backend.css', 'type' => 'css'))
+            array('handle' => 'kkl_datepicker', 'src' => 'jquery.datetimepicker.css', 'type' => 'css'),
+            array('handle' => 'kkl_backend', 'src' => 'kkl_backend.js', 'type' => 'js'),
+            array('handle' => 'kkl_backend', 'src' => 'ligatool.css', 'type' => 'css'))
     );
 
     add_action('admin_menu', array(__CLASS__, 'admin_menu'));

@@ -2,6 +2,9 @@
 
 namespace KKL\Ligatool;
 
+use KKL\Ligatool\Widget\OtherLeagues;
+use KKL\Ligatool\Widget\OtherSeasons;
+use KKL\Ligatool\Widget\UpcomingGames;
 use scbLoad4;
 
 class Plugin {
@@ -107,6 +110,8 @@ class Plugin {
     add_shortcode('contact_list', array(Shortcodes::class, 'contactList'));
     add_shortcode('set_match_fixture', array(Shortcodes::class, 'setMatchFixture'));
 
+    add_action('widgets_init', array($this, 'register_widgets'));
+
     register_sidebar(array(
       'name' => __(__('kkl_global_sidebar', 'kkl-ligatool')),
       'id' => 'kkl_global_sidebar',
@@ -187,8 +192,6 @@ class Plugin {
     add_action('plugins_loaded', function () {
       load_plugin_textdomain('kkl-ligatool', false, dirname(plugin_basename(__FILE__)) . '/../lang/');
     });
-
-
   }
 
   public static function enqueue_scripts($arr) {
@@ -216,6 +219,12 @@ class Plugin {
     $vars[] = "json";
 
     return $vars;
+  }
+
+  public function register_widgets() {
+    register_widget(new OtherLeagues());
+    register_widget(new OtherSeasons());
+    register_widget(new UpcomingGames());
   }
 
   public function add_rewrite_rules() {

@@ -1,0 +1,45 @@
+<section id="kl-ranking" class="kl-ranking">
+    <header>
+        <div class="container">
+            <h1>Tabelle</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        {% for ranking in rankings %}
+            <div class="kl-ranking-league">
+                <a name="{{ ranking.league.code }}"></a>
+
+                {% if ranking.league.link %}
+                    <h2>
+                        <a href="{{ ranking.league.link }}">{{ ranking.league.name }}</a>
+                    </h2>
+                {% else %}
+                    <h2>{{ ranking.league.name }}</h2>
+                {% endif %}
+
+                {% include '_partials/table_ranking.twig' %}
+            </div>
+        {% endfor %}
+
+        {% if schedules %}
+            {% for schedule in schedules %}
+                <div class="kl-fixtures-league">
+                    {% if view == 'current' %}
+                        <h3>
+                            Aktueller Spieltag
+                        </h3>
+                    {% else %}
+                        <h3>
+                            Spieltag {{ schedule.number }}
+                        </h3>
+                    {% endif %}
+
+                    <p class="interval">{{ schedule.day.fixture|date('d.m.Y') }} bis {{ schedule.day.end|date('d.m.Y') }}</p>
+
+                    {% include '_partials/table_fixtures.twig' %}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</section>

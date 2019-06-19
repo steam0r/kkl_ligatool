@@ -1,0 +1,29 @@
+@mixin _brandHelper() {
+    .brand {
+        width: 200px;
+        height: 150px;
+
+        img {
+            position: relative;
+            display: block;
+            width: 100%;
+            height: 100%;
+
+            &:before {
+                content: '';
+                display: block;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+
+                background-color: #efefef;
+                background-image: url('#{$path-images}/kkl_icon.svg');
+                background-position: center center;
+                background-size: 50%;
+                background-repeat: no-repeat;
+            }
+        }
+    }
+}

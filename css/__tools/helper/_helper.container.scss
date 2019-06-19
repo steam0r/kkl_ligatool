@@ -1,0 +1,44 @@
+// define container width of component
+@mixin _containerHelper($width: null) {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: $grid-gap;
+    padding-right: $grid-gap;
+
+    @if ($width == null) {
+        @include _respond-to(desktops) {
+            width: $breakpoint-desktop-min;
+        }
+
+        @include _respond-to(large) {
+            width: $breakpoint-large-min;
+        }
+    }
+
+    @if ($width == "full") {
+        @include _respond-to(desktops) {
+            width: initial;
+        }
+
+        @include _respond-to(large) {
+            width: initial;
+        }
+    }
+
+    @if ($width == "small") {
+        max-width: $breakpoint-desktop-min - 560px;
+    }
+
+    @if ($width == "medium") {
+        max-width: $breakpoint-desktop-min - 400px;
+    }
+
+    @if ($width == "large") {
+        max-width: $breakpoint-desktop-min - 200px;
+    }
+
+    @if ($width == "stage") {
+        max-width: $breakpoint-desktop-max - 50px;
+    }
+}

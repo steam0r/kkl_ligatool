@@ -1,0 +1,36 @@
+.kl-team-overview {
+    position: relative;
+    width: 100%;
+
+    .container {
+        @include _containerHelper();
+    }
+
+    ul {
+        @include _reset-lists();
+    }
+
+    .league {
+
+        li {
+            margin: 0 0 5px 0;
+
+            span {
+                display: block;
+            }
+
+            @include _brandHelper();
+        }
+    }
+}
+
+.kl-team-details {
+    position: relative;
+    width: 100%;
+
+    .container {
+        @include _containerHelper();
+    }
+
+    @include _brandHelper();
+}

@@ -1,0 +1,42 @@
+/* ================================ *\
+   Reset
+\* ================================ */
+
+/// reset glow effect while focus element
+/// @access public
+@mixin _reset-glow() {
+  &:focus {
+    box-shadow: none;
+    outline: 0 none;
+  }
+}
+
+/// reset list styles
+/// @access public
+@mixin _reset-lists($type: none) {
+  margin: 0;
+  padding: 0;
+  list-style-type: $type;
+
+  li {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/// reset button (bootstrap) styles
+/// @access public
+@mixin _reset-button() {
+  background: none;
+  border: none;
+
+  outline: none;
+  box-shadow: none;
+}
+
+/// reset aligments
+/// @access public
+@mixin _reset-alignment() {
+  margin: 0;
+  padding: 0;
+}

@@ -68,10 +68,10 @@ class Backend {
     $column_id = 'screen_options_hack'; // this id will be used to identify and hide checkbox which will be automatically created by WP
 
     $html = '</label><script type="text/javascript">jQuery("label[for=\'' . $column_id .
-      '-hide\']").hide()</script>'; // using jQuery to hide unnecessary checkbox
+            '-hide\']").hide()</script>'; // using jQuery to hide unnecessary checkbox
 
     $html .= '<div class="screen-options"><label for="kkl_ligatool_default_league">' .
-      __('default league', 'kkl-ligatool') . ':</label>';
+             __('default league', 'kkl-ligatool') . ':</label>';
 
     $html .= '<select id="kkl_ligatool_default_league" name="wp_screen_options[value][kkl_ligatool_default_league]" value="' .
       $default_league . '">';
@@ -104,8 +104,8 @@ class Backend {
   }
 
   public static function add_help_screen($help_content) {
-    $help_content['toplevel_page_kkl_ligatool'] = array('title' => 'test',
-      "content" => 'Help for plugin settings page'); // using self::$plugin_page_id as array key adds your text only to plugin settings page.
+    $help_content['toplevel_page_kkl_ligatool'] = array('title'   => 'test',
+                                                        "content" => 'Help for plugin settings page'); // using self::$plugin_page_id as array key adds your text only to plugin settings page.
 
     return $help_content;
   }
@@ -272,14 +272,29 @@ class Backend {
   }
 
   public static function display() {
-
-    // add_action( 'wp_enqueue_scripts', 'enqueue_kkl_backend_scripts');
-
     static::enqueue_scripts(
-      array(array('handle' => 'kkl_datepicker', 'src' => 'jquery.datetimepicker.js', 'type' => 'js'),
-            array('handle' => 'kkl_datepicker', 'src' => 'jquery.datetimepicker.css', 'type' => 'css'),
-            array('handle' => 'kkl_backend', 'src' => 'kkl_backend.js', 'type' => 'js'),
-            array('handle' => 'kkl_backend', 'src' => 'ligatool.css', 'type' => 'css'))
+        array(
+            array(
+                'handle' => 'kkl_datepicker',
+                'src' => 'jquery.datetimepicker.js',
+                'type' => 'js'
+            ),
+            array(
+                'handle' => 'kkl_datepicker',
+                'src' => 'jquery.datetimepicker.css',
+                'type' => 'css'
+            ),
+            array(
+                'handle' => 'kkl_backend',
+                'src' => 'kkl_backend.js',
+                'type' => 'js'
+            ),
+            array(
+                'handle' => 'kkl_backend',
+                'src' => 'ligatool_admin.css',
+                'type' => 'css'
+            )
+        )
     );
 
     add_action('admin_menu', array(__CLASS__, 'admin_menu'));

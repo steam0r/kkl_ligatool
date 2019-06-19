@@ -1,0 +1,17 @@
+.kl-contact-list {
+    position: relative;
+    width: 100%;
+
+    .container {
+        @include _containerHelper();
+    }
+
+    nav ul {
+        @include _reset-lists();
+    }
+
+    .contact {
+        border-bottom: 1px solid black;
+        margin-bottom: $grid-gap;
+    }
+}

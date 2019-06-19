@@ -1,0 +1,51 @@
+.kl-table {
+    position: relative;
+    width: 100%;
+
+    border: 0;
+    text-align: center;
+
+    thead {}
+    tbody {}
+    tfoot {
+        tr { border: 0; }
+    }
+
+    tr {
+        background: $table-tr-background-even;
+        border-bottom: 1px solid $table-tr-border-color;
+
+        &:nth-child(odd) {
+            background: $table-tr-background-odd;
+        }
+    }
+
+    th {
+        border: 0;
+        padding: 3px;
+        background: $table-head-background;
+    }
+
+    td {
+        border: 0;
+        padding: 5px 3px;
+    }
+
+
+    &.sortable {
+        th {
+            padding: 3px 15px;
+            cursor: pointer;
+
+            span {
+                display: inline-block;
+                width: 15px;
+            }
+
+            &.sorttable_sorted,
+            &.sorttable_sorted_reverse {
+                padding-right: 0;
+            }
+        }
+    }
+}

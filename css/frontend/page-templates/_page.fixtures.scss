@@ -1,0 +1,8 @@
+.kl-fixtures {
+    position: relative;
+    width: 100%;
+
+    .container {
+        @include _containerHelper();
+    }
+}

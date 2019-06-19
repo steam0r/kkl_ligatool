@@ -1,0 +1,27 @@
+<section id="kl-fixtures" class="kl-fixtures">
+    <header>
+        <div class="container">
+            <h1>Spielplan</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        {% for schedule in schedules %}
+            <div class="kl-fixtures-league">
+                {% if view == 'current' %}
+                    <h3>
+                        Aktueller Spieltag
+                    </h3>
+                {% else %}
+                    <h3>
+                        Spieltag {{ schedule.number }}
+                    </h3>
+                {% endif %}
+
+                <p class="interval">{{ schedule.day.fixture|date('d.m.Y') }} bis {{ schedule.day.end|date('d.m.Y') }}</p>
+
+                {% include '_partials/table_fixtures.twig' %}
+            </div>
+        {% endfor %}
+    </div>
+</section>

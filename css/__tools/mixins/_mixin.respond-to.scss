@@ -1,0 +1,50 @@
+/*
+ * Media query wrapper.
+ *
+ * @param $media - device class the rule should respond to
+ */
+@mixin _respond-to($media...) {
+
+  @if index($media, phones) and index($media, tablets) and index($media, desktops) {
+    @content;
+  } @else if index($media, phones) and index($media, tablets) and index($media, desktops) {
+    @media (max-width: $breakpoint-desktop-max) {
+      @content;
+    }
+  } @else if index($media, phones) and index($media, tablets) {
+    @media (max-width: $breakpoint-tablet-max) {
+      @content;
+    }
+  } @else if index($media, tablets) and index($media, desktops) {
+    @media (min-width: $breakpoint-tablet-min) {
+      @content;
+    }
+  } @else if index($media, phones) {
+    @media (max-width: $breakpoint-mobile-max) {
+      @content;
+    }
+  } @else if index($media, tablets) {
+    @media (min-width: $breakpoint-tablet-min) {
+      @content;
+    }
+  } @else if index($media, desktops) {
+    @media (min-width: $breakpoint-desktop-min) {
+      @content;
+    }
+  } @else if index($media, large) {
+    @media (min-width: $breakpoint-desktop-max) {
+      @content;
+    }
+  }
+
+    // Browser hack
+  @else if index($media, ie) {
+    @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+      @content;
+    }
+  } @else if index($media, ff) {
+    @-moz-document url-prefix() {
+      @content;
+    }
+  }
+}

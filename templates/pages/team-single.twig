@@ -1,0 +1,62 @@
+<section id="kl-team-details" class="kl-team-details">
+    <header>
+        <div class="container">
+            <h1>Team Details</h1>
+        </div>
+    </header>
+
+
+    <div class="container">
+        <div class="module">
+
+            <div class="team-data">
+                <div class="brand">
+                    <img src="{{ club.logo }}" class="img-responsive"/>
+                </div>
+                <div class="content">
+                    <h3>{{ club.name }}</h3>
+                    <p>{{ club.description }}</p>
+                    {% if current_location %}
+                        <p>
+                            <strong>Spielort:</strong> {{ current_location.title }}, {{ current_location.description }}
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="history">
+                <h3>Saison Daten</h3>
+                <table class="table kl-table">
+                    <thead>
+                    <tr>
+                        <th class="name">Mannschaft</th>
+                        <th class="season">Saison</th>
+                        <th class="score">Punkte</th>
+                        <th class="goals">Tore</th>
+                        <th class="position">Position</th>
+                        <th class="link"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for team in teams %}
+                        <tr>
+                            <td class="name">{{ team.name }}</td>
+                            <td class="season">{{ team.season.name }}</td>
+                            <td class="score">{{ team.scores.score }}</td>
+                            <td class="goals">{{ team.scores.goalsFor }}:{{ team.scores.goalsAgainst }}</td>
+                            <td class="position"><strong>{{ team.scores.position }}</strong></td>
+                            <td class="link">
+                                <a href="{{ team.schedule_link }}">
+                                    <small>Spielplan</small>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+</section>

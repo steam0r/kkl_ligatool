@@ -2,6 +2,7 @@
 
 namespace KKL\Ligatool;
 
+use KKL\Ligatool\Backend\PageTemplater;
 use KKL\Ligatool\Widget\OtherLeagues;
 use KKL\Ligatool\Widget\OtherSeasons;
 use KKL\Ligatool\Widget\UpcomingGames;
@@ -14,12 +15,54 @@ class Plugin {
   private static $context = array();
   private static $pluginFile;
 
+  private static $pluginPath;
+
   private $db;
+
+  private $pageTemplates = array(
+      'contacts' => array(
+          'name' => 'KL Contactlist',
+          'filename' => 'kl_contact-list.php',
+          'page' => array(
+              'matches' => array('')
+          )
+      ),
+      'clubs' => array(
+          'name' => 'KL Teams',
+          'filename' => 'kl_teams.php',
+          'page' => array(
+              'matches' => array('team_name')
+          )
+      ),
+      'ranking' => array(
+          'name' => 'KL Ranking',
+          'filename' => 'kl_ranking.php',
+          'page' => array(
+              'matches' => array(
+                  'league',
+                  'season',
+                  'game_day'
+              )
+          )
+      ),
+      'fixtures' => array(
+          'name' => 'KL Fixtures',
+          'filename' => 'kl_fixtures.php',
+          'page' => array(
+              'matches' => array(
+                  'league',
+                  'season'
+              )
+          )
+      )
+  );
 
   public function __construct($pluginFile, $baseUrl, $basePath) {
     static::$pluginFile = $pluginFile;
     static::$baseUrl = $baseUrl;
     static::$basePath = $baseUrl;
+    static::$pluginPath = plugins_url('/kkl_ligatool');
+
     $this->db = new DB\Wordpress();
   }
 
@@ -52,16 +95,23 @@ class Plugin {
     return self::$pluginFile;
   }
 
-  public static function getLink($type, $values) {
 
+  /**
+   * TODO: refactor!!
+   *
+   * @param $type
+   * @param $values
+   * @return mixed|string
+   */
+  public static function getLink($type, $values) {
     $link = "";
 
-    if ($type == "club") {
+    if($type == "club") {
       $link = $values['club'];
       $link .= "/";
     }
 
-    if ($type == "league") {
+    if($type == "league") {
       $link = $values['league'];
       if ($values['season'])
         $link .= "/" . $values['season'];
@@ -70,7 +120,7 @@ class Plugin {
       $link .= "/";
     }
 
-    if ($type == "schedule") {
+    if($type == "schedule") {
       $link = $values['league'] . "/" . $values['season'] . "/";
       if ($values['team'])
         $link .= "?team=" . $values['team'];
@@ -80,9 +130,11 @@ class Plugin {
 
   }
 
+
   public function getDB() {
     return $this->db;
   }
+
 
   public function init() {
 
@@ -90,71 +142,78 @@ class Plugin {
 
     add_option(DB\Wordpress::$VERSION_KEY, DB\Wordpress::$VERSION);
 
-    $this->getDB()->installWordpressDatabase();
-    add_action('upgrader_process_complete', array($this->getDB(), 'installWordpressDatabase'));
-    register_activation_hook(static::getPluginFile(), array($this->getDB(), 'installWordpressDatabase'));
-    register_activation_hook(static::getPluginFile(), array($this->getDB(), 'installWordpressData'));
+    register_activation_hook(static::getPluginFile(), array(
+        $this->getDB(),
+        'installWordpressDatabase'
+    ));
+    register_activation_hook(static::getPluginFile(), array(
+        $this->getDB(),
+        'installWordpressData'
+    ));
 
-    add_filter('query_vars', array($this, 'add_query_vars_filter'));
+    add_filter('query_vars', array(
+        $this,
+        'add_query_vars_filter'
+    ));
 
-    add_action('init', array($this, 'add_rewrite_rules'));
+    add_action('page_templates', array(
+        $this,
+        'init_page_templates'
+    ));
+    do_action('page_templates');
 
-    add_shortcode('league_table', array(Shortcodes::class, 'leagueTable'));
-    add_shortcode('table_overview', array(Shortcodes::class, 'tableOverview'));
-    add_shortcode('gameday_table', array(Shortcodes::class, 'gameDayTable'));
-    add_shortcode('gameday_overview', array(Shortcodes::class, 'gameDayOverview'));
-    add_shortcode('league_overview', array(Shortcodes::class, 'leagueOverview'));
-    add_shortcode('club_detail', array(Shortcodes::class, 'clubDetail'));
-    add_shortcode('gameday_pager', array(Shortcodes::class, 'gameDayPager'));
-    add_shortcode('season_schedule', array(Shortcodes::class, 'seasonSchedule'));
-    add_shortcode('contact_list', array(Shortcodes::class, 'contactList'));
-    add_shortcode('set_match_fixture', array(Shortcodes::class, 'setMatchFixture'));
+    add_action('init', array(
+        $this,
+        'add_rewrite_rules'
+    ));
 
-    add_action('widgets_init', array($this, 'register_widgets'));
+    // Add Shortcodes
+    $this->init_shortcodes();
 
-    register_sidebar(array(
-      'name' => __(__('kkl_global_sidebar', 'kkl-ligatool')),
-      'id' => 'kkl_global_sidebar',
-      'description' => __('Widgets in this area will be shown on pages using any kkl page template below the page sidebar.'),
-      'class' => 'kkl_global_sidebar',
-      'before_title' => '<h4>',
-      'after_title' => '</h4>'
+    add_action('widgets_init', array(
+        $this,
+        'register_widgets'
     ));
 
     register_sidebar(array(
-      'name' => __(__('kkl_table_sidebar', 'kkl-ligatool')),
-      'id' => 'kkl_table_sidebar',
-      'description' => __('Widgets in this area will be shown on pages using the table page template.'),
-      'class' => 'kkl_table_sidebar',
-      'before_title' => '<h4>',
-      'after_title' => '</h4>'
+        'name' => __(__('kkl_global_sidebar', 'kkl-ligatool')),
+        'id' => 'kkl_global_sidebar',
+        'description' => __('Widgets in this area will be shown on pages using any kkl page template below the page sidebar.'),
+        'class' => 'kkl_global_sidebar',
+        'before_title' => '<h4>',
+        'after_title' => '</h4>',
     ));
-
     register_sidebar(array(
-      'name' => __(__('kkl_leagues_sidebar', 'kkl-ligatool')),
-      'id' => 'kkl_leagues_sidebar',
-      'description' => __('Widgets in this area will be shown on pages using the league page template.'),
-      'class' => 'kkl_league_sidebar',
-      'before_title' => '<h4>',
-      'after_title' => '</h4>'
+        'name' => __(__('kkl_table_sidebar', 'kkl-ligatool')),
+        'id' => 'kkl_table_sidebar',
+        'description' => __('Widgets in this area will be shown on pages using the table page template.'),
+        'class' => 'kkl_table_sidebar',
+        'before_title' => '<h4>',
+        'after_title' => '</h4>',
     ));
-
     register_sidebar(array(
-      'name' => __(__('kkl_schedule_sidebar', 'kkl-ligatool')),
-      'id' => 'kkl_schedule_sidebar',
-      'description' => __('Widgets in this area will be shown on pages using the schedule page template.'),
-      'class' => 'kkl_schedule_sidebar',
-      'before_title' => '<h4>',
-      'after_title' => '</h4>'
+        'name' => __(__('kkl_leagues_sidebar', 'kkl-ligatool')),
+        'id' => 'kkl_leagues_sidebar',
+        'description' => __('Widgets in this area will be shown on pages using the league page template.'),
+        'class' => 'kkl_league_sidebar',
+        'before_title' => '<h4>',
+        'after_title' => '</h4>',
     ));
-
     register_sidebar(array(
-      'name' => __(__('kkl_teamdetail_sidebar', 'kkl-ligatool')),
-      'id' => 'kkl_teamdetail_sidebar',
-      'description' => __('Widgets in this area will be shown on pages using the team page template.'),
-      'class' => 'kkl_teamdetail_sidebar',
-      'before_title' => '<h4>',
-      'after_title' => '</h4>'
+        'name' => __(__('kkl_schedule_sidebar', 'kkl-ligatool')),
+        'id' => 'kkl_schedule_sidebar',
+        'description' => __('Widgets in this area will be shown on pages using the schedule page template.'),
+        'class' => 'kkl_schedule_sidebar',
+        'before_title' => '<h4>',
+        'after_title' => '</h4>',
+    ));
+    register_sidebar(array(
+        'name' => __(__('kkl_teamdetail_sidebar', 'kkl-ligatool')),
+        'id' => 'kkl_teamdetail_sidebar',
+        'description' => __('Widgets in this area will be shown on pages using the team page template.'),
+        'class' => 'kkl_teamdetail_sidebar',
+        'before_title' => '<h4>',
+        'after_title' => '</h4>',
     ));
 
     $slackIntegration = new Slack\EventListener();
@@ -166,7 +225,7 @@ class Plugin {
     Api\Service::init();
     Tasks\Service::init();
 
-    if (is_admin()) {
+    if(is_admin()) {
       new Updater(__FILE__, 'steam0r', 'kkl_ligatool');
       scbLoad4::init(function () {
         $options = array();
@@ -179,35 +238,102 @@ class Plugin {
         new Backend\LocationAdminPage(__FILE__, $options);
         new Backend\PlayerAdminPage(__FILE__, $options);
       });
-      add_filter('set-screen-option', array('KKLBackend', 'set_screen_options'), 10, 3);
+      add_filter('set-screen-option', array(
+          'KKLBackend',
+          'set_screen_options'
+      ), 10, 3);
       Backend::display();
     } else {
       static::enqueue_scripts(
-        array(array('handle' => 'kkl_frontend_datepicker', 'src' => 'jquery.datetimepicker.js', 'type' => 'js'),
-          array('handle' => 'kkl_frontend_datepicker', 'src' => 'jquery.datetimepicker.css', 'type' => 'css'),
-          array('handle' => 'kkl_set_fixture', 'src' => 'frontend/set_fixture.js', 'type' => 'js')
-        ));
+          array(
+              array(
+                  'handle' => 'kkl_frontend',
+                  'src' => '/frontend/sortTable.js',
+                  'type' => 'js'
+              ),
+              array(
+                  'handle' => 'kkl_frontend_jquery',
+                  'src' => '/frontend/jquery-1.7.2.js',
+                  'type' => 'js'
+              ),
+              array(
+                  'handle' => 'kkl_frontend_datetimepicker',
+                  'src' => '/jquery.datetimepicker.js',
+                  'type' => 'js'
+              ),
+              array(
+                  'handle' => 'kkl_frontend_datepicker',
+                  'src' => '/datepicker.min.js',
+                  'type' => 'js'
+              ),
+              array(
+                  'handle' => 'kkl_frontend_fixture',
+                  'src' => '/frontend/set_fixture.js',
+                  'type' => 'js'
+              ),
+              array(
+                  'handle' => 'kkl_frontend',
+                  'src' => '/ligatool_frontend.css',
+                  'type' => 'css'
+              )
+          ));
     }
 
-    add_action('plugins_loaded', function () {
+    add_action('plugins_loaded', function() {
       load_plugin_textdomain('kkl-ligatool', false, dirname(plugin_basename(__FILE__)) . '/../lang/');
     });
   }
 
+
+  /**
+   * register scripts (css, js)
+   *
+   * @param $arr
+   */
   public static function enqueue_scripts($arr) {
-    foreach ($arr as $script) {
-      if ($script['type'] === 'js') {
-        $src = plugins_url() . '/kkl_ligatool/js/' . $script['src'];
-        wp_register_script(
-          $script['handle'], $src, array(), false, true
-        );
-        wp_enqueue_script($script['handle']);
-      } elseif ($script['type'] === 'css') {
-        $str = plugins_url() . '/kkl_ligatool/css/' . $script['src'];
-        wp_enqueue_style($script['handle'], $str);
+    foreach($arr as $script) {
+      if($script['type'] === 'js') {
+        $path = static::$pluginPath . '/js' . $script['src'];
+
+        wp_enqueue_script($script['handle'], $path);
+      } elseif($script['type'] === 'css') {
+        $path = static::$pluginPath . '/css' . $script['src'];
+
+        wp_enqueue_style($script['handle'], $path);
       }
     }
   }
+
+
+  /**
+   * offer "page-templates" on wp pages
+   */
+  public function init_page_templates() {
+    $output = array();
+
+    foreach($this->pageTemplates as $template) {
+      $output[$template['filename']] = $template['name'];
+    }
+
+    PageTemplater::get_instance($output);
+  }
+
+
+  /**
+   *
+   */
+  public function init_shortcodes() {
+    add_shortcode('kl-set-fixture', array(
+        Shortcodes::class,
+        'setMatchFixture'
+    ));
+
+    add_shortcode('kl-ranking', array(
+        Shortcodes::class,
+        'ranking'
+    ));
+  }
+
 
   public function add_query_vars_filter($vars) {
     $vars[] = "league";
@@ -227,11 +353,65 @@ class Plugin {
     register_widget(new UpcomingGames());
   }
 
+
+  /**
+   * @param $templateName
+   * @return mixed
+   */
+  public function getPageTemplateContext($templateName) {
+    $templateData = $this->pageTemplates[$templateName];
+
+    return get_pages(array(
+        'meta_key' => '_wp_page_template',
+        'meta_value' => $templateData['filename']
+    ))[0];
+  }
+
+
+  /**
+   *
+   */
   public function add_rewrite_rules() {
+    $pageTemplates = $this->pageTemplates;
 
-    $pages = get_pages(array('meta_key' => '_wp_page_template', 'meta_value' => 'page-ranking.php',));
+    foreach($pageTemplates as $template) {
+      // get all pages are using page-templates
+      $pages = get_pages(array(
+          'meta_key' => '_wp_page_template',
+          'meta_value' => $template['filename']
+      ));
 
-    foreach ($pages as $page) {
+      // define url matches & regex for page-template
+      $matches = '';
+      $regex = '';
+      foreach($template['page']['matches'] as $key => $match) {
+        $matches = $matches . '&' . $match . '=$matches[' . ($key + 1) . ']';
+        $regex = $regex . '([^/]*)?/?';
+      }
+
+      // add rewrite rule for every page
+      foreach($pages as $page) {
+        $url_endpoint = get_permalink($page->ID);
+        $url_endpoint = parse_url($url_endpoint);
+        $url_endpoint = ltrim($url_endpoint['path'], '/'); // issue ?!
+
+        add_rewrite_rule($url_endpoint . $regex, 'index.php?page_id=' . $page->ID . $matches, 'top');
+      }
+
+      // save matches in var
+      foreach($template['page']['matches'] as $match) {
+        add_rewrite_tag('%' . $match . '%', '([^/]+)');
+      }
+    }
+
+
+    // TODO: kann dann gelöscht werden ?
+    $pages = get_pages(array(
+        'meta_key' => '_wp_page_template',
+        'meta_value' => 'page-ranking.php',
+    ));
+
+    foreach($pages as $page) {
       $url_endpoint = get_permalink($page->ID);
       $url_endpoint = parse_url($url_endpoint);
       $url_endpoint = ltrim($url_endpoint['path'], '/');
@@ -241,9 +421,12 @@ class Plugin {
       add_rewrite_rule($rule, $page, 'top');
     }
 
-    $pages = get_pages(array('meta_key' => '_wp_page_template', 'meta_value' => 'page-club.php',));
+    $pages = get_pages(array(
+        'meta_key' => '_wp_page_template',
+        'meta_value' => 'page-club.php',
+    ));
 
-    foreach ($pages as $page) {
+    foreach($pages as $page) {
       $url_endpoint = get_permalink($page->ID);
       $url_endpoint = parse_url($url_endpoint);
       $url_endpoint = ltrim($url_endpoint['path'], '/');
@@ -253,9 +436,12 @@ class Plugin {
       add_rewrite_rule($rule, $page, 'top');
     }
 
-    $pages = get_pages(array('meta_key' => '_wp_page_template', 'meta_value' => 'page-schedule.php',));
+    $pages = get_pages(array(
+        'meta_key' => '_wp_page_template',
+        'meta_value' => 'page-schedule.php',
+    ));
 
-    foreach ($pages as $page) {
+    foreach($pages as $page) {
       $url_endpoint = get_permalink($page->ID);
       $url_endpoint = parse_url($url_endpoint);
       $url_endpoint = ltrim($url_endpoint['path'], '/');
@@ -269,6 +455,11 @@ class Plugin {
 
   }
 
+
+  /*
+   * TODO:
+   * try to remove!!
+   */
   public function getContextByLeagueAndSeasonAndGameDay($league, $season, $game_day) {
 
     $data = array();

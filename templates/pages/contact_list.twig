@@ -1,0 +1,60 @@
+<section class="kl-contact-list">
+    <header>
+        <div class="container">
+            <h1>Kontaktliste</h1>
+        </div>
+    </header>
+
+
+    <div class="container">
+
+        <div class="module">
+            <nav>
+                <ul>
+                    <li><a href="#all" data-id="all">Alle</a></li>
+                    <li><a href="#ligaleitung" data-id="ligaleitung">Ligaleitung</a></li>
+                    <li><a href="#captain" data-id="captain">Kapitän</a></li>
+                    <li><a href="#vice_captain" data-id="vice_captain">Vize Kapitän</a></li>
+                    {% for league in leagues %}
+                        <li><a href="#{{ league.code }}" data-id="{{ league.current_season }}">{{ league.name }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </nav>
+
+            <div class="wrapper">
+                {% for leagueItem in contactMap %}
+                    <div class="league" id="league-{{ leagueItem.league.id }}"><a
+                                name="{{ leagueItem.league.code }}"></a>
+                        <h3>{{ leagueItem.league.name }}</h3>
+
+                        {% for player in leagueItem.players %}
+                            <article class="contact" data-league="{{ player.league_short }}"
+                                     data-role="{{ player.role }}"
+                                     data-team="{{ player.team_short }}">
+                                <header>
+                                    <h4>{{ player.first_name }} {{ player.last_name }}</h4>
+                                </header>
+
+                                <p class="role">{{ player.role }}</p>
+
+                                <p>
+                                    {% if player.team %}
+                                        <span class="team">Team:</span> {{ player.team }}<br />
+                                    {% endif %}
+                                    {% if player.location %}
+                                        <span class="location">Spielort:</span> {{ player.location }}<br/>
+                                    {% endif %}
+                                    <span class="phone">Telefon:</span> {{ player.phone }}<br/>
+                                    <span class="email">E-Mail:</span> <a
+                                            href="mailto:{{ player.email }}">{{ player.email }}</a>
+                                </p>
+                            </article>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</section>

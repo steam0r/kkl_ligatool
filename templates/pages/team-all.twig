@@ -1,0 +1,48 @@
+<section id="kl-team-overview" class="kl-team-overview">
+    <header>
+        <div class="container">
+            <h1>Liga Übersicht</h1>
+        </div>
+    </header>
+
+
+    <div class="container">
+
+        <div class="module">
+            <nav>
+                <ul>
+                    {% for league in leagues %}
+                        <li><a href="#{{ league.code }}" data-id="{{ league.current_season }}">{{ league.name }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </nav>
+
+            <div class="content">
+                {% for league in leagues %}
+                    <div class="league" id="league-{{ league.id }}"><a name="{{ league.code }}"></a>
+                        <h3>{{ league.name }}</h3>
+
+                        <ul>
+                            {% for team in league.teams %}
+                                <li id="team-{{ team.id }}" data-club="{{ team.club_id }}">
+                                    <a href="{{ team.link }}" target="_self" title="{{ team.name }}"
+                                       data-url="{{ base_url }}">
+                                        <span class="brand">
+                                            <img src="{% if team.logo %}{{ team.logo }}{% else %}unknown{% endif %}"
+                                                 alt="{{ team.name }}"
+                                            />
+                                        </span>
+                                        <span>{{ team.name }}</span>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</section>

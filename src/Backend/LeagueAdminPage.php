@@ -3,6 +3,7 @@
 namespace KKL\Ligatool\Backend;
 
 use KKL\Ligatool\DB;
+use KKL\Ligatool\Model\Club;
 use KKL\Ligatool\Model\League;
 use stdClass;
 
@@ -81,6 +82,8 @@ class LeagueAdminPage extends AdminPage {
     if ($_GET['id']) {
       $db = new DB\Wordpress();
       $this->setItem($db->getLeague($_GET['id']));
+    } else{
+      $this->setItem(new League());
     }
     return $this->item;
 

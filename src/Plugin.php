@@ -88,6 +88,12 @@ class Plugin {
     return self::$basePath;
   }
 
+  public static function hasNoLeague() {
+    $service = ServiceBroker::getLeagueService();
+    $leagues = $service->getAll();
+    return empty($leagues);
+  }
+
   /**
    * @return mixed
    */

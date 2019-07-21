@@ -111,10 +111,19 @@ class Backend {
   }
 
   public static function plugin_page() {
-
     $kkl_twig = Template\Service::getTemplateEngine();
     self::display_tabs();
-    echo $kkl_twig->render('admin/home.twig');
+    $cards = array();
+    if(Plugin::hasNoLeague()) {
+      $cards[] = array(
+        'headline' => __('cards_noleague_headline', 'kkl-ligatool'),
+        'content' => __('cards_noleague_content', 'kkl-ligatool'),
+        'action_url' => esc_url(admin_url('admin-post.php')),
+        'action' => 'dashboard_card_create_league_template',
+        'button_text' => __('cards_noleague_action', 'kkl-ligatool')
+      );
+    }
+    echo $kkl_twig->render('admin/home.twig', array('cards' => $cards));
 
   }
 
@@ -302,6 +311,8 @@ class Backend {
     add_action('admin_init', array(__CLASS__, 'register_settings'));
     add_action('admin_post_kkl_create_api_key', array(__CLASS__, 'kkl_create_api_key'));
 
+    add_action('admin_post_dashboard_card_create_league_template', array(__CLASS__, 'dashboard_card_create_league_template'));
+
   }
 
   public static function enqueue_scripts($arr) {
@@ -430,6 +441,81 @@ class Backend {
 
     }
     $admin_url = admin_url('admin.php?page=kkl_ligatool_settings');
+    wp_redirect($admin_url);
+    exit;
+  }
+
+  public function dashboard_card_create_league_template() {
+    status_header(200);
+    $leagueService = ServiceBroker::getLeagueService();
+    $seasonService = ServiceBroker::getSeasonService();
+    $gameDayService = ServiceBroker::getGameDayService();
+    $clubService = ServiceBroker::getClubService();
+    $teamService = ServiceBroker::getTeamService();
+    $matchService = ServiceBroker::getMatchService();
+
+    $league = $leagueService->getModel();
+    $league->setName(__('league_template_name', 'kkl_ligatool'));
+    $league->setActive(true);
+    $league->setCode(__('league_template_code', 'kkl_ligatool'));
+
+    // TODO: handle save/update/remove via service, return new object, needs new inserted id...ffs
+    $league->save();
+
+    // FIXME: setters for dates should take date objects
+    $season = $seasonService->getModel();
+    $season->setName(__('season_template_name', 'kkl_ligatool'));
+    $season->setActive(true);
+    $season->setStartDate("1980-09-02 05:11:42");
+    $season->setEndDate("1980-10-02 05:11:42");
+    $season->setLeagueId($league->getId());
+    $season->save();
+
+    $gameDay = $gameDayService->getModel();
+    $gameDay->setSeasonId($season->getId());
+    $gameDay->setNumber(1);
+    $gameDay->setFixture("1980-09-02 05:11:42");
+    $gameDay->setEnd("1980-09-09 05:11:42");
+    $gameDay->save();
+
+    $season->setCurrentGameDay($gameDay->getId());
+    $season->save();
+    $league->setCurrentSeason($season->getId());
+    $league->save();
+
+
+
+    $teams = array();
+    for($i = 0; $i < 4; $i++) {
+      $club = $clubService->getModel();
+      $club->setName($i . ". FC Köln");
+      $club->setShortName($i . "fck");
+      $club->save();
+
+      $team = $teamService->getModel();
+      $team->setName($i  . ". FC Köln");
+      $team->setShortName($i . "fck");
+      $team->setSeasonId($season->getId());
+      $team->setClubId($club->getId());
+      $team->save();
+
+      $teams[] = $team;
+
+    }
+
+    $match = $matchService->getModel();
+    $match->setGameDayId($gameDay->getId());
+    $match->setHomeTeam($teams[0]->getId());
+    $match->setAwayTeam($teams[1]->getId());
+    $match->save();
+
+    $match = $matchService->getModel();
+    $match->setGameDayId($gameDay->getId());
+    $match->setHomeTeam($teams[2]->getId());
+    $match->setAwayTeam($teams[3]->getId());
+    $match->save();
+
+    $admin_url = admin_url('admin.php?page=kkl_ligatool_matches');
     wp_redirect($admin_url);
     exit;
   }

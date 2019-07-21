@@ -9,6 +9,7 @@
 namespace KKL\Ligatool\Model;
 
 
+use KKL\Ligatool\DB\Where;
 use KKL\Ligatool\ServiceBroker;
 
 class GameDayService extends KKLModelService {
@@ -82,5 +83,9 @@ class GameDayService extends KKLModelService {
       $result = $this->byId($season->getCurrentGameDay());
     }
     return $result;
+  }
+
+  public function allForSeason($seasonId) {
+    return $this->find(new Where('season_id', $seasonId, '='));
   }
 }

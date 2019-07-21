@@ -129,13 +129,12 @@ class MatchListTable extends ListTable {
 
   function display_create_link() {
     $game_day = $this->get_current_game_day();
+    $page = $this->get_create_page();
     if ($game_day) {
-      $page = $this->get_create_page();
       $link = add_query_arg(array(compact('page', 'id'), 'gameDayId' => $game_day->getId()), admin_url('admin.php'));
-      $html = '<a href="' . $link . '">' . __('create_new', 'kkl-ligatool') . '</a>';
-      return $html;
     }
-    return "";
+    $html = '<a href="' . $link . '">' . __('create_new', 'kkl-ligatool') . '</a>';
+    return $html;
   }
 
 }

@@ -226,7 +226,7 @@ abstract class ListTable extends WP_List_Table {
           "selected" => false
       );
 
-      if ($cl->getId() == $league->getId()) {
+      if ($cl && $cl->getId() == $league->getId()) {
         $filterItem["selected"] = true;
       }
 
@@ -293,7 +293,7 @@ abstract class ListTable extends WP_List_Table {
           "selected" => false
       );
 
-      if ($cs->getId() == $season->getId()) {
+      if ($cs && $cs->getId() == $season->getId()) {
         $filterItem["selected"] = true;
       }
 
@@ -344,11 +344,11 @@ abstract class ListTable extends WP_List_Table {
 
   function display_game_day_filter() {
     $filters = array();
-    $cs = $this->get_current_season()->getId();
+    $cs = $this->get_current_season();
     $cgd = $this->get_current_game_day();
 
     foreach ($this->get_game_days() as $day) {
-      if ($cs && ($cs != $day->getSeasonId())) {
+      if ($cs && ($cs->getId() != $day->getSeasonId())) {
         continue;
       }
 
@@ -358,7 +358,7 @@ abstract class ListTable extends WP_List_Table {
           "selected" => false
       );
 
-      if ($cgd->getId() == $day->getId()) {
+      if ($cgd && $cgd->getId() == $day->getId()) {
         $filterItem["selected"] = true;
       }
 

@@ -3,6 +3,8 @@
 namespace KKL\Ligatool\Backend;
 
 use KKL\Ligatool\DB;
+use KKL\Ligatool\Model\Club;
+use KKL\Ligatool\Model\Match;
 use stdClass;
 
 class MatchAdminPage extends AdminPage {
@@ -23,12 +25,12 @@ class MatchAdminPage extends AdminPage {
     $locations = array();
     $locations[0] = __('unknown location', 'kkl-ligatool');
     foreach ($db_locations as $location) {
-      $locations[$location->ID] = $location->title;
+      $locations[$location->getId()] = $location->getTitle();
     }
-    if (!$match->location && !$_POST['location']) {
-      $home = $db->getTeam($match->home_team);
+    if (!$match->getLocation() && !$_POST['location']) {
+      $home = $db->getTeam($match->getHomeTeam());
       if ($home) {
-        $match->location = $home->getProperty('location');
+        $match->setLocation($home->getProperty('location'));
       }
     }
 
@@ -37,13 +39,13 @@ class MatchAdminPage extends AdminPage {
 
     $game_days = array();
     foreach ($db_game_days as $game_day) {
-      $game_days[$game_day->ID] = $game_day->number;
+      $game_days[$game_day->getId()] = $game_day->getNumber();
     }
 
     $db_teams = $db->getTeamsForSeason($current_game_day->getSeasonId());
     $teams = array();
     foreach ($db_teams as $team) {
-      $teams[$team->ID] = $team->name;
+      $teams[$team->getId()] = $team->getName();
     }
 
     $db_games = $db->getMatchesByGameDay($current_game_day->getId());
@@ -51,23 +53,23 @@ class MatchAdminPage extends AdminPage {
     $games[0] = __('back to overview', 'kkl-ligatool');
     $games[1] = __('create new game', 'kkl-ligatool');
     foreach ($db_games as $game) {
-      $home = $db->getTeam($game->home_team);
-      $away = $db->getTeam($game->away_team);
-      $games[$game->ID] = $home->getName() . " - " . $away->getName();
+      $home = $db->getTeam($game->getHomeTeam());
+      $away = $db->getTeam($game->getAwayTeam());
+      $games[$game->getId()] = $home->getName() . " - " . $away->getName();
     }
 
-    $final_checked = ($match->status == 3);
+    $final_checked = ($match->getStatus() == 3);
     if ($this->errors && $_POST['final_score']) {
       $final_checked = true;
     }
 
-    $fixture = $this->cleanDate($match->fixture);
+    $fixture = $this->cleanDate($match->getFixture());
     echo $this->form_table(
       array(
         array(
           'type' => 'hidden',
           'name' => 'id',
-          'value' => $match->ID
+          'value' => $match->getId()
         ),
         array(
           'title' => __('game_day', 'kkl-ligatool'),
@@ -88,20 +90,20 @@ class MatchAdminPage extends AdminPage {
           'type' => 'select',
           'name' => 'team_home',
           'value' => $teams,
-          'selected' => ($this->errors) ? $_POST['team_home'] : $match->home_team
+          'selected' => ($this->errors) ? $_POST['team_home'] : $match->getHomeTeam()
         ),
         array(
           'title' => __('team_away', 'kkl-ligatool'),
           'type' => 'select',
           'name' => 'team_away',
-          'value' => $teams, 'selected' => ($this->errors) ? $_POST['team_away'] : $match->away_team
+          'value' => $teams, 'selected' => ($this->errors) ? $_POST['team_away'] : $match->getAwayTeam()
         ),
         array(
           'title' => __('location', 'kkl-ligatool'),
           'type' => 'select',
           'name' => 'location',
           'value' => $locations,
-          'selected' => ($this->errors) ? $_POST['location'] : $match->location
+          'selected' => ($this->errors) ? $_POST['location'] : $match->getLocation()
         ),
         array(
           'title' => __('goals_home', 'kkl-ligatool'),
@@ -121,14 +123,14 @@ class MatchAdminPage extends AdminPage {
           'type' => 'select',
           'name' => 'score_home',
           'value' => $this->get_score_array(),
-          'selected' => ($this->errors) ? $_POST['score_home'] : $match->score_home
+          'selected' => ($this->errors) ? $_POST['score_home'] : $match->getScoreHome()
         ),
         array(
           'title' => __('score_away', 'kkl-ligatool'),
           'type' => 'select',
           'name' => 'score_away',
           'value' => $this->get_score_array(),
-          'selected' => ($this->errors) ? $_POST['score_away'] : $match->score_away
+          'selected' => ($this->errors) ? $_POST['score_away'] : $match->getScoreAway()
         ),
         array(
           'title' => __('final_score', 'kkl-ligatool'),
@@ -140,7 +142,7 @@ class MatchAdminPage extends AdminPage {
           'title' => __('description', 'kkl-ligatool'),
           'type' => 'textarea',
           'name' => 'description',
-          'value' => ($this->errors) ? $_POST['description'] : $match->notes,
+          'value' => ($this->errors) ? $_POST['description'] : $match->getNotes(),
           'extra' => array('rows' => 7, 'cols' => 100)
         ),
         array(
@@ -159,6 +161,8 @@ class MatchAdminPage extends AdminPage {
     if ($_GET['id']) {
       $db = new DB\Wordpress();
       $this->match = $db->getMatch($_GET['id']);
+    }else{
+      $this->setItem(new Match());
     }
     return $this->match;
   }
@@ -169,7 +173,7 @@ class MatchAdminPage extends AdminPage {
     $item = $this->get_item();
     if ($item) {
       $db = new DB\Wordpress();
-      $this->game_day = $db->getGameDay($item->game_day_id);
+      $this->game_day = $db->getGameDay($item->getGameDayId());
     } elseif ($_GET['gameDayId']) {
       $db = new DB\Wordpress();
       $this->game_day = $db->getGameDay($_GET['gameDayId']);

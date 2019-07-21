@@ -10,9 +10,9 @@ namespace KKL\Ligatool\Model;
 
 
 use KKL\Ligatool\DB\Limit;
+use KKL\Ligatool\DB\Manager;
 use KKL\Ligatool\DB\OrderBy;
 use KKL\Ligatool\DB\Where;
-use Symlink\ORM\Manager;
 use Symlink\ORM\Repositories\BaseRepository;
 
 abstract class KKLModelService {
@@ -35,6 +35,20 @@ abstract class KKLModelService {
     $orm = Manager::getManager();
     $this->repository = $orm->getRepository(get_class($this->getModel()));
     return $this->repository;
+  }
+
+  /**
+   * @param KKLModel $model
+   */
+  public function save($model) {
+    $model->save();
+  }
+
+  /**
+   * @param KKLModel $model
+   */
+  public function delete($model) {
+    $model->delete();
   }
 
   /**

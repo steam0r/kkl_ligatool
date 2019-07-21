@@ -126,7 +126,10 @@ class PlayerAdminPage extends AdminPage {
       return $this->item;
     if ($_GET['id']) {
       $db = new DB\Wordpress();
-      $this->setItem($db->getPlayer($_GET['id']));
+      $player = $db->getPlayer($_GET['id']);
+      $this->setItem($player);
+    }else{
+      $this->setItem(new Player());
     }
     return $this->item;
 

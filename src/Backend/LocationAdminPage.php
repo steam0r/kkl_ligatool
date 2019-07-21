@@ -3,6 +3,7 @@
 namespace KKL\Ligatool\Backend;
 
 use KKL\Ligatool\DB;
+use KKL\Ligatool\Model\Club;
 use KKL\Ligatool\Model\Location;
 use stdClass;
 
@@ -67,6 +68,8 @@ class LocationAdminPage extends AdminPage {
     if ($_GET['id']) {
       $db = new DB\Wordpress();
       $this->setItem($db->getLocation($_GET['id']));
+    }else{
+      $this->setItem(new Location());
     }
     return $this->item;
   }

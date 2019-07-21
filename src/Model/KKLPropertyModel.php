@@ -26,7 +26,7 @@ abstract class KKLPropertyModel extends KKLModel {
 
   /**
    * @param string $key
-   * @return Property|false
+   * @return Property|null
    */
   public function getProperty($key) {
     foreach ($this->getProperties() as $property) {
@@ -34,7 +34,7 @@ abstract class KKLPropertyModel extends KKLModel {
         return $property;
       }
     }
-    return false;
+    return null;
   }
 
   /**

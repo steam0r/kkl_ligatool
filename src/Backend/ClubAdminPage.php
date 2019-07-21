@@ -79,6 +79,8 @@ class ClubAdminPage extends AdminPage {
     if ($_GET['id']) {
       $db = new DB\Wordpress();
       $this->setItem($db->getClub($_GET['id']));
+    }else{
+      $this->setItem(new Club());
     }
     return $this->item;
 

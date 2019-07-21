@@ -184,6 +184,23 @@ class Wordpress extends DB {
   }
 
   /**
+   * @param int $matchId
+   * @return false|Match
+   */
+  public function getMatch($matchId) {
+    $matchService = ServiceBroker::getMatchService();
+    return $matchService->byId($matchId);
+  }
+
+  /**
+   * @return Location[]
+   */
+  public function getLocations() {
+    $locationService = ServiceBroker::getLocationService();
+    return $locationService->getAll();
+  }
+
+  /**
    * @param int $leagueId
    * @return false|GameDay
    */
@@ -199,6 +216,11 @@ class Wordpress extends DB {
   public function getCurrentGameDayForSeason($seasonId) {
     $gameDayService = ServiceBroker::getGameDayService();
     return $gameDayService->currentForSeason($seasonId);
+  }
+
+  public function getGameDaysForSeason($seasonId) {
+    $gameDayService = ServiceBroker::getGameDayService();
+    return $gameDayService->allForSeason($seasonId);
   }
 
   /**
@@ -305,6 +327,15 @@ class Wordpress extends DB {
     return $service->getAll(new OrderBy('name', 'ASC'));
   }
 
+
+  /**
+   * @return Player[]
+   */
+  public function getPlayers() {
+    $service = ServiceBroker::getPlayerService();
+    return $service->getAll(new OrderBy('first_name', 'ASC'));
+  }
+
   /**
    * @return Player[]
    */
@@ -347,5 +378,10 @@ class Wordpress extends DB {
 
   public function installWordpressData() {
     // TODO: fill database with initial data, this needs every table under orm control
+  }
+
+  public function getMatchesByGameDay($gameDayId) {
+    $matchService = ServiceBroker::getMatchService();
+    return $matchService->byGameDay($gameDayId);
   }
 }

@@ -2,7 +2,7 @@
 
 namespace KKL\Ligatool;
 
-use Symlink\ORM\Manager;
+use KKL\Ligatool\DB\Manager;
 use wpdb;
 
 abstract class DB {

@@ -9,6 +9,8 @@
 namespace KKL\Ligatool\Model;
 
 
+use KKL\Ligatool\DB\Where;
+
 class MatchService extends KKLModelService {
 
   /**
@@ -52,5 +54,9 @@ class MatchService extends KKLModelService {
    */
   public function findOne($where = null, $orderBy = null, $limit = null) {
     return parent::findOne($where, $orderBy, $limit);
+  }
+
+  public function byGameDay($gameDayId) {
+    return $this->find(new Where("game_day_id", $gameDayId, '='));
   }
 }

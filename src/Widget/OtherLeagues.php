@@ -7,9 +7,6 @@ use KKL\Ligatool\Plugin;
 use KKL\Ligatool\Template;
 use WP_Widget;
 
-class OtherLeagues extends WP_Widget
-{
-
 class OtherLeagues extends WP_Widget {
 
   private $tpl;
@@ -29,7 +26,6 @@ class OtherLeagues extends WP_Widget {
   public function widget($args, $instance) {
 
     extract($args);
-
 
     $db = new DB\Wordpress();
 

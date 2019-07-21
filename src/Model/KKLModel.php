@@ -2,7 +2,7 @@
 
 namespace KKL\Ligatool\Model;
 
-use Symlink\ORM\Manager;
+use KKL\Ligatool\DB\Manager;
 use Symlink\ORM\Models\BaseModel;
 
 /**
@@ -28,10 +28,16 @@ abstract class KKLModel extends BaseModel {
    */
   protected $updated_at;
 
+  public function setId($id) {
+    $this->ID = $id;
+  }
+
 
   public function save() {
     $orm = Manager::getManager();
-    $orm->persist($this);
+    if (!$this->getId()) {
+      $orm->persist($this);
+    }
     $orm->flush();
   }
 

@@ -3,6 +3,7 @@
 namespace KKL\Ligatool\Backend;
 
 use KKL\Ligatool\DB;
+use KKL\Ligatool\Model\Club;
 use KKL\Ligatool\Model\Team;
 use KKL\Ligatool\Template\Service;
 use stdClass;
@@ -63,13 +64,13 @@ class TeamAdminPage extends AdminPage {
     $players = $db->getPlayers();
     $captain_options = array("" => __('please_select', 'kkl-ligatool'));
     foreach ($players as $player) {
-      $captain_options[$player->ID] = $player->first_name . " " . $player->last_name . " (" . $player->email . ")";
+      $captain_options[$player->getId()] = $player->getFirstName() . " " . $player->getLastName() . " (" . $player->getEmail() . ")";
     }
 
     $locations = $db->getLocations();
     $location_options = array("" => __('please_select', 'kkl-ligatool'));
     foreach ($locations as $location) {
-      $location_options[$location->ID] = $location->title;
+      $location_options[$location->getId()] = $location->getTitle();
     }
 
     $leaguewinner_checked = false;
@@ -193,6 +194,8 @@ class TeamAdminPage extends AdminPage {
     if ($_GET['id']) {
       $db = new DB\Wordpress();
       $this->setItem($db->getTeam($_GET['id']));
+    }else{
+      $this->setItem(new Team());
     }
     return $this->item;
 

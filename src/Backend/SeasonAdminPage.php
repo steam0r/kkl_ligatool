@@ -3,6 +3,7 @@
 namespace KKL\Ligatool\Backend;
 
 use KKL\Ligatool\DB;
+use KKL\Ligatool\Model\Club;
 use KKL\Ligatool\Model\Season;
 use stdClass;
 
@@ -30,7 +31,7 @@ class SeasonAdminPage extends AdminPage {
     $days = $db->getGameDaysForSeason($season->getId());
     $day_options = array("" => __('please_select', 'kkl-ligatool'));
     foreach ($days as $day) {
-      $day_options[$day->ID] = 'Spieltag ' . $day->number;
+      $day_options[$day->getId()] = 'Spieltag ' . $day->getNumber();
     }
 
     $admins = $db->getLeagueAdmins();
@@ -43,6 +44,19 @@ class SeasonAdminPage extends AdminPage {
     if ($this->errors && $_POST['active']) {
       $active_checked = true;
     }
+
+    $seasonAdmin = null;
+    $relegationMarkers = null;
+    $relegationExplanation = null;
+
+    $adminProperty = $season->getProperty('season_admin');
+    if($adminProperty) $seasonAdmin = $adminProperty->getValue();
+
+    $relegationProperty = $season->getProperty('relegation_markers');
+    if($relegationProperty) $relegationMarkers = $relegationProperty->getValue();
+
+    $explanationProperty = $season->getProperty('relegation_explanation');
+    if($explanationProperty) $relegationExplanation = $explanationProperty->getValue();
 
     echo $this->form_table(
       array(
@@ -98,21 +112,21 @@ class SeasonAdminPage extends AdminPage {
           'type' => 'select',
           'name' => 'season_admin',
           'choices' => $contact_options,
-          'selected' => ($this->errors) ? $_POST['season_admin'] : $season->getProperty('season_admin')->getValue(),
+          'selected' => ($this->errors) ? $_POST['season_admin'] : $seasonAdmin,
           'extra' => ($this->errors['season_admin']) ? array('style' => "border-color: red;") : array()
         ),
         array(
           'title' => "Auf- und Abstiegslinien<br/>(unterhalb von)",
           'type' => 'text',
           'name' => 'relegation_markers',
-          'value' => ($this->errors) ? $_POST['relegation_markers'] : $season->getProperty('relegation_markers')->getValue(),
+          'value' => ($this->errors) ? $_POST['relegation_markers'] : $relegationMarkers,
           'extra' => ($this->errors['relegation_markers']) ? array('style' => "border-color: red;") : array()
         ),
         array(
           'title' => "Auf- und Abstiegsregeln",
           'type' => 'textarea',
           'name' => 'relegation_explanation',
-          'value' => ($this->errors) ? $_POST['relegation_explanation'] : $season->getProperty('relegation_explanation')->getValue(),
+          'value' => ($this->errors) ? $_POST['relegation_explanation'] : $relegationExplanation,
           'extra' => ($this->errors['relegation_explanation']) ? array('rows' => 7, 'cols' => 50, 'style' => "border-color: red;") : array('rows' => 7, 'cols' => 50)
         )
       )
@@ -128,6 +142,8 @@ class SeasonAdminPage extends AdminPage {
     if ($_GET['id']) {
       $db = new DB\Wordpress();
       $this->setItem($db->getSeason($_GET['id']));
+    }else{
+      $this->setItem(new Season());
     }
     return $this->item;
 

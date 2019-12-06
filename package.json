@@ -1,6 +1,6 @@
 {
   "name": "kkl-ligatool",
-  "version": "2.15.7",
+  "version": "2.15.8",
   "license": "MIT",
   "devDependencies": {
     "autoprefixer": "9.7.3",

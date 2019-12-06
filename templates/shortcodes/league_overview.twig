@@ -15,7 +15,7 @@
                 <ul>
                     {% for team in league.teams %}
                         <li id="team-{{ team.id }}" data-club="{{ team.club_id }}">
-                            <a href="{{ team.link|baseUrl('/teams/') }}" target="_self" title="{{ team.name }}" data-url="{{ base_url }}">
+                            <a href="{{ team.link|baseUrl('/team/') }}" target="_self" title="{{ team.name }}" data-url="{{ base_url }}">
                                 <span class="img">
                                     <img src="{% if team.logo %}{{ team.logo }}{% else %}unknown{% endif %}"
                                          alt="{{ team.name }}"/>

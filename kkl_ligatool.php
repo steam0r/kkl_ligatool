@@ -25,6 +25,5 @@ $myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
   __FILE__, //Full path to the main plugin file or functions.php.
   'kkl_ligatool'
 );
-$myUpdateChecker->setAuthentication('41b8f6711e2b4b094239be5c93ebc2198137afa7');
 $myUpdateChecker->getVcsApi()->enableReleaseAssets();
 

@@ -470,7 +470,7 @@ class Seasons extends Controller
                 if ($a->id == $b->id) {
                   return 0;
                 }
-                return ($a->id < $b->id) ? -1;
+                return ($a->id > $b->id) ? -1 : 1;
               });
               if($teams[0]) {
                 $prevHomeTeam = $teams[0];
@@ -522,7 +522,7 @@ class Seasons extends Controller
                 if ($a->id == $b->id) {
                   return 0;
                 }
-                return ($a->id < $b->id) ? -1;
+                return ($a->id > $b->id) ? -1 : 1;
               });
               if($teams[0]) {
                 $prevAwayTeam = $teams[0];

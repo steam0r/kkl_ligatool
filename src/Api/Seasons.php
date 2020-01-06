@@ -456,16 +456,42 @@ class Seasons extends Controller
             $homeClub = $db->getClubByCode($match->team_home->shortName);
           }
 
+          $homeTeamProperties = [];
           if (!$homeClub) {
             $homeClub = new \stdClass();
             $homeClub->name = $match->team_home->name;
             $homeClub->short_name = $match->team_home->shortName;
             $homeClub->description = "";
             $homeClub = $db->createClub($homeClub);
+          }else{
+            $teams = $db->getTeamsForClub($homeClub->id);
+            if($teams && is_array($teams)) {
+              uasort($teams, function ($a, $b) {
+                if ($a->id == $b->id) {
+                  return 0;
+                }
+                return ($a->id < $b->id) ? -1;
+              });
+              if($teams[0]) {
+                $prevHomeTeam = $teams[0];
+                if(array_key_exists('captain', $prevHomeTeam) && $prevHomeTeam->properties['captain']) {
+                  $homeTeamProperties['captain'] = $prevHomeTeam->properties['captain'];
+                }
+                if(array_key_exists('vice_captain', $prevHomeTeam) && $prevHomeTeam->properties['vice_captain']) {
+                  $homeTeamProperties['vice_captain'] = $prevHomeTeam->properties['vice_captain'];
+                }
+                if(array_key_exists('location', $prevHomeTeam) && $prevHomeTeam->properties['location']) {
+                  $homeTeamProperties['location'] = $prevHomeTeam->properties['location'];
+                }
+              }
+            }
           }
 
           $teamHome->club_id = $homeClub->id;
           $teamHome = $db->createTeam($teamHome);
+          if(!empty($homeTeamProperties)) {
+            $db->setTeamProperties($teamHome, $homeTeamProperties);
+          }
 
         }
 
@@ -476,6 +502,7 @@ class Seasons extends Controller
           $teamAway->short_name = $match->team_away->shortName;
           $teamAway->season_id = $season->id;
 
+          $awayTeamProperties = [];
           if ($match->team_away->clubId) {
             $awayClub = $db->getClub($match->team_away->clubId);
           } elseif ($match->team_away->shortName) {
@@ -488,10 +515,35 @@ class Seasons extends Controller
             $awayClub->short_name = $match->team_away->shortName;
             $awayClub->description = "";
             $awayClub = $db->createClub($awayClub);
+          }else{
+            $teams = $db->getTeamsForClub($homeClub->id);
+            if($teams && is_array($teams)) {
+              uasort($teams, function ($a, $b) {
+                if ($a->id == $b->id) {
+                  return 0;
+                }
+                return ($a->id < $b->id) ? -1;
+              });
+              if($teams[0]) {
+                $prevAwayTeam = $teams[0];
+                if(array_key_exists('captain', $prevAwayTeam) && $prevHomeTeam->properties['captain']) {
+                  $awayTeamProperties['captain'] = $prevAwayTeam->properties['captain'];
+                }
+                if(array_key_exists('vice_captain', $prevAwayTeam) && $prevAwayTeam->properties['vice_captain']) {
+                  $awayTeamProperties['vice_captain'] = $prevAwayTeam->properties['vice_captain'];
+                }
+                if(array_key_exists('location', $prevAwayTeam) && $prevAwayTeam->properties['location']) {
+                  $awayTeamProperties['location'] = $prevAwayTeam->properties['location'];
+                }
+              }
+            }
           }
 
           $teamAway->club_id = $awayClub->id;
           $teamAway = $db->createTeam($teamAway);
+          if(!empty($awayTeamProperties)) {
+            $db->setTeamProperties($teamAway, $awayTeamProperties);
+          }
         }
 
         $newMatch = new \stdClass();

@@ -20,47 +20,47 @@ class Plugin {
   private $db;
 
   private $pageTemplates = array(
-      'contacts' => array(
-          'name' => 'KL Contactlist',
-          'filename' => 'kl_contact-list.php',
-          'page' => array(
-              'matches' => array('')
-          )
-      ),
-      'clubs' => array(
-          'name' => 'KL Teams',
-          'filename' => 'kl_teams.php',
-          'page' => array(
-              'matches' => array('team_name')
-          )
-      ),
-      'ranking' => array(
-          'name' => 'KL Ranking',
-          'filename' => 'kl_ranking.php',
-          'page' => array(
-              'matches' => array(
-                  'league',
-                  'season',
-                  'game_day'
-              )
-          )
-      ),
-      'fixtures' => array(
-          'name' => 'KL Fixtures',
-          'filename' => 'kl_fixtures.php',
-          'page' => array(
-              'matches' => array(
-                  'league',
-                  'season'
-              )
-          )
+    'contacts' => array(
+      'name' => 'KL Contactlist',
+      'filename' => 'kl_contact-list.php',
+      'page' => array(
+        'matches' => array('')
       )
+    ),
+    'clubs' => array(
+      'name' => 'KL Teams',
+      'filename' => 'kl_teams.php',
+      'page' => array(
+        'matches' => array('team_name')
+      )
+    ),
+    'ranking' => array(
+      'name' => 'KL Ranking',
+      'filename' => 'kl_ranking.php',
+      'page' => array(
+        'matches' => array(
+          'league',
+          'season',
+          'game_day'
+        )
+      )
+    ),
+    'fixtures' => array(
+      'name' => 'KL Fixtures',
+      'filename' => 'kl_fixtures.php',
+      'page' => array(
+        'matches' => array(
+          'league',
+          'season'
+        )
+      )
+    )
   );
 
   public function __construct($pluginFile, $baseUrl, $basePath) {
     static::$pluginFile = $pluginFile;
     static::$baseUrl = $baseUrl;
-    static::$basePath = $baseUrl;
+    static::$basePath = $basePath;
     static::$pluginPath = plugins_url('/kkl_ligatool');
 
     $this->db = new DB\Wordpress();
@@ -112,12 +112,12 @@ class Plugin {
   public static function getLink($type, $values) {
     $link = "";
 
-    if($type == "club") {
+    if ($type == "club") {
       $link = $values['club'];
       $link .= "/";
     }
 
-    if($type == "league") {
+    if ($type == "league") {
       $link = $values['league'];
       if ($values['season'])
         $link .= "/" . $values['season'];
@@ -126,7 +126,7 @@ class Plugin {
       $link .= "/";
     }
 
-    if($type == "schedule") {
+    if ($type == "schedule") {
       $link = $values['league'] . "/" . $values['season'] . "/";
       if ($values['team'])
         $link .= "?team=" . $values['team'];
@@ -149,77 +149,77 @@ class Plugin {
     add_option(DB\Wordpress::$VERSION_KEY, DB\Wordpress::$VERSION);
 
     register_activation_hook(static::getPluginFile(), array(
-        $this->getDB(),
-        'installWordpressDatabase'
+      $this->getDB(),
+      'installWordpressDatabase'
     ));
     register_activation_hook(static::getPluginFile(), array(
-        $this->getDB(),
-        'installWordpressData'
+      $this->getDB(),
+      'installWordpressData'
     ));
 
     add_filter('query_vars', array(
-        $this,
-        'add_query_vars_filter'
+      $this,
+      'add_query_vars_filter'
     ));
 
     add_action('page_templates', array(
-        $this,
-        'init_page_templates'
+      $this,
+      'init_page_templates'
     ));
     do_action('page_templates');
 
     add_action('init', array(
-        $this,
-        'add_rewrite_rules'
+      $this,
+      'add_rewrite_rules'
     ));
 
     // Add Shortcodes
     $this->init_shortcodes();
 
     add_action('widgets_init', array(
-        $this,
-        'register_widgets'
+      $this,
+      'register_widgets'
     ));
 
     register_sidebar(array(
-        'name' => __(__('kkl_global_sidebar', 'kkl-ligatool')),
-        'id' => 'kkl_global_sidebar',
-        'description' => __('Widgets in this area will be shown on pages using any kkl page template below the page sidebar.'),
-        'class' => 'kkl_global_sidebar',
-        'before_title' => '<h4>',
-        'after_title' => '</h4>',
+      'name' => __(__('kkl_global_sidebar', 'kkl-ligatool')),
+      'id' => 'kkl_global_sidebar',
+      'description' => __('Widgets in this area will be shown on pages using any kkl page template below the page sidebar.'),
+      'class' => 'kkl_global_sidebar',
+      'before_title' => '<h4>',
+      'after_title' => '</h4>',
     ));
     register_sidebar(array(
-        'name' => __(__('kkl_table_sidebar', 'kkl-ligatool')),
-        'id' => 'kkl_table_sidebar',
-        'description' => __('Widgets in this area will be shown on pages using the table page template.'),
-        'class' => 'kkl_table_sidebar',
-        'before_title' => '<h4>',
-        'after_title' => '</h4>',
+      'name' => __(__('kkl_table_sidebar', 'kkl-ligatool')),
+      'id' => 'kkl_table_sidebar',
+      'description' => __('Widgets in this area will be shown on pages using the table page template.'),
+      'class' => 'kkl_table_sidebar',
+      'before_title' => '<h4>',
+      'after_title' => '</h4>',
     ));
     register_sidebar(array(
-        'name' => __(__('kkl_leagues_sidebar', 'kkl-ligatool')),
-        'id' => 'kkl_leagues_sidebar',
-        'description' => __('Widgets in this area will be shown on pages using the league page template.'),
-        'class' => 'kkl_league_sidebar',
-        'before_title' => '<h4>',
-        'after_title' => '</h4>',
+      'name' => __(__('kkl_leagues_sidebar', 'kkl-ligatool')),
+      'id' => 'kkl_leagues_sidebar',
+      'description' => __('Widgets in this area will be shown on pages using the league page template.'),
+      'class' => 'kkl_league_sidebar',
+      'before_title' => '<h4>',
+      'after_title' => '</h4>',
     ));
     register_sidebar(array(
-        'name' => __(__('kkl_schedule_sidebar', 'kkl-ligatool')),
-        'id' => 'kkl_schedule_sidebar',
-        'description' => __('Widgets in this area will be shown on pages using the schedule page template.'),
-        'class' => 'kkl_schedule_sidebar',
-        'before_title' => '<h4>',
-        'after_title' => '</h4>',
+      'name' => __(__('kkl_schedule_sidebar', 'kkl-ligatool')),
+      'id' => 'kkl_schedule_sidebar',
+      'description' => __('Widgets in this area will be shown on pages using the schedule page template.'),
+      'class' => 'kkl_schedule_sidebar',
+      'before_title' => '<h4>',
+      'after_title' => '</h4>',
     ));
     register_sidebar(array(
-        'name' => __(__('kkl_teamdetail_sidebar', 'kkl-ligatool')),
-        'id' => 'kkl_teamdetail_sidebar',
-        'description' => __('Widgets in this area will be shown on pages using the team page template.'),
-        'class' => 'kkl_teamdetail_sidebar',
-        'before_title' => '<h4>',
-        'after_title' => '</h4>',
+      'name' => __(__('kkl_teamdetail_sidebar', 'kkl-ligatool')),
+      'id' => 'kkl_teamdetail_sidebar',
+      'description' => __('Widgets in this area will be shown on pages using the team page template.'),
+      'class' => 'kkl_teamdetail_sidebar',
+      'before_title' => '<h4>',
+      'after_title' => '</h4>',
     ));
 
     $slackIntegration = new Slack\EventListener();
@@ -231,7 +231,7 @@ class Plugin {
     Api\Service::init();
     Tasks\Service::init();
 
-    if(is_admin()) {
+    if (is_admin()) {
       new Updater(__FILE__, 'steam0r', 'kkl_ligatool');
       scbLoad4::init(function () {
         $options = array();
@@ -245,47 +245,47 @@ class Plugin {
         new Backend\PlayerAdminPage(__FILE__, $options);
       });
       add_filter('set-screen-option', array(
-          'KKLBackend',
-          'set_screen_options'
+        'KKLBackend',
+        'set_screen_options'
       ), 10, 3);
       Backend::display();
     } else {
       static::enqueue_scripts(
+        array(
           array(
-              array(
-                  'handle' => 'kkl_frontend',
-                  'src' => '/frontend/sortTable.js',
-                  'type' => 'js'
-              ),
-              array(
-                  'handle' => 'kkl_frontend_jquery',
-                  'src' => '/frontend/jquery-1.7.2.js',
-                  'type' => 'js'
-              ),
-              array(
-                  'handle' => 'kkl_frontend_datetimepicker',
-                  'src' => '/jquery.datetimepicker.js',
-                  'type' => 'js'
-              ),
-              array(
-                  'handle' => 'kkl_frontend_datepicker',
-                  'src' => '/datepicker.min.js',
-                  'type' => 'js'
-              ),
-              array(
-                  'handle' => 'kkl_frontend_fixture',
-                  'src' => '/frontend/set_fixture.js',
-                  'type' => 'js'
-              ),
-              array(
-                  'handle' => 'kkl_frontend',
-                  'src' => '/ligatool_frontend.css',
-                  'type' => 'css'
-              )
-          ));
+            'handle' => 'kkl_frontend',
+            'src' => '/frontend/sortTable.js',
+            'type' => 'js'
+          ),
+          array(
+            'handle' => 'kkl_frontend_jquery',
+            'src' => '/frontend/jquery-1.7.2.js',
+            'type' => 'js'
+          ),
+          array(
+            'handle' => 'kkl_frontend_datetimepicker',
+            'src' => '/jquery.datetimepicker.js',
+            'type' => 'js'
+          ),
+          array(
+            'handle' => 'kkl_frontend_datepicker',
+            'src' => '/datepicker.min.js',
+            'type' => 'js'
+          ),
+          array(
+            'handle' => 'kkl_frontend_fixture',
+            'src' => '/frontend/set_fixture.js',
+            'type' => 'js'
+          ),
+          array(
+            'handle' => 'kkl_frontend',
+            'src' => '/ligatool_frontend.css',
+            'type' => 'css'
+          )
+        ));
     }
 
-    add_action('plugins_loaded', function() {
+    add_action('plugins_loaded', function () {
       load_plugin_textdomain('kkl-ligatool', false, dirname(plugin_basename(__FILE__)) . '/../lang/');
     });
   }
@@ -297,12 +297,12 @@ class Plugin {
    * @param $arr
    */
   public static function enqueue_scripts($arr) {
-    foreach($arr as $script) {
-      if($script['type'] === 'js') {
+    foreach ($arr as $script) {
+      if ($script['type'] === 'js') {
         $path = static::$pluginPath . '/js' . $script['src'];
 
         wp_enqueue_script($script['handle'], $path);
-      } elseif($script['type'] === 'css') {
+      } elseif ($script['type'] === 'css') {
         $path = static::$pluginPath . '/css' . $script['src'];
 
         wp_enqueue_style($script['handle'], $path);
@@ -317,7 +317,7 @@ class Plugin {
   public function init_page_templates() {
     $output = array();
 
-    foreach($this->pageTemplates as $template) {
+    foreach ($this->pageTemplates as $template) {
       $output[$template['filename']] = $template['name'];
     }
 
@@ -330,13 +330,13 @@ class Plugin {
    */
   public function init_shortcodes() {
     add_shortcode('kl-set-fixture', array(
-        Shortcodes::class,
-        'setMatchFixture'
+      Shortcodes::class,
+      'setMatchFixture'
     ));
 
     add_shortcode('kl-ranking', array(
-        Shortcodes::class,
-        'ranking'
+      Shortcodes::class,
+      'ranking'
     ));
   }
 
@@ -368,8 +368,8 @@ class Plugin {
     $templateData = $this->pageTemplates[$templateName];
 
     return get_pages(array(
-        'meta_key' => '_wp_page_template',
-        'meta_value' => $templateData['filename']
+      'meta_key' => '_wp_page_template',
+      'meta_value' => $templateData['filename']
     ))[0];
   }
 
@@ -380,23 +380,23 @@ class Plugin {
   public function add_rewrite_rules() {
     $pageTemplates = $this->pageTemplates;
 
-    foreach($pageTemplates as $template) {
+    foreach ($pageTemplates as $template) {
       // get all pages are using page-templates
       $pages = get_pages(array(
-          'meta_key' => '_wp_page_template',
-          'meta_value' => $template['filename']
+        'meta_key' => '_wp_page_template',
+        'meta_value' => $template['filename']
       ));
 
       // define url matches & regex for page-template
       $matches = '';
       $regex = '';
-      foreach($template['page']['matches'] as $key => $match) {
+      foreach ($template['page']['matches'] as $key => $match) {
         $matches = $matches . '&' . $match . '=$matches[' . ($key + 1) . ']';
         $regex = $regex . '([^/]*)?/?';
       }
 
       // add rewrite rule for every page
-      foreach($pages as $page) {
+      foreach ($pages as $page) {
         $url_endpoint = get_permalink($page->ID);
         $url_endpoint = parse_url($url_endpoint);
         $url_endpoint = ltrim($url_endpoint['path'], '/'); // issue ?!
@@ -405,7 +405,7 @@ class Plugin {
       }
 
       // save matches in var
-      foreach($template['page']['matches'] as $match) {
+      foreach ($template['page']['matches'] as $match) {
         add_rewrite_tag('%' . $match . '%', '([^/]+)');
       }
     }
@@ -413,11 +413,11 @@ class Plugin {
 
     // TODO: kann dann gelöscht werden ?
     $pages = get_pages(array(
-        'meta_key' => '_wp_page_template',
-        'meta_value' => 'page-ranking.php',
+      'meta_key' => '_wp_page_template',
+      'meta_value' => 'page-ranking.php',
     ));
 
-    foreach($pages as $page) {
+    foreach ($pages as $page) {
       $url_endpoint = get_permalink($page->ID);
       $url_endpoint = parse_url($url_endpoint);
       $url_endpoint = ltrim($url_endpoint['path'], '/');
@@ -428,11 +428,11 @@ class Plugin {
     }
 
     $pages = get_pages(array(
-        'meta_key' => '_wp_page_template',
-        'meta_value' => 'page-club.php',
+      'meta_key' => '_wp_page_template',
+      'meta_value' => 'page-club.php',
     ));
 
-    foreach($pages as $page) {
+    foreach ($pages as $page) {
       $url_endpoint = get_permalink($page->ID);
       $url_endpoint = parse_url($url_endpoint);
       $url_endpoint = ltrim($url_endpoint['path'], '/');
@@ -443,11 +443,11 @@ class Plugin {
     }
 
     $pages = get_pages(array(
-        'meta_key' => '_wp_page_template',
-        'meta_value' => 'page-schedule.php',
+      'meta_key' => '_wp_page_template',
+      'meta_value' => 'page-schedule.php',
     ));
 
-    foreach($pages as $page) {
+    foreach ($pages as $page) {
       $url_endpoint = get_permalink($page->ID);
       $url_endpoint = parse_url($url_endpoint);
       $url_endpoint = ltrim($url_endpoint['path'], '/');
@@ -470,8 +470,10 @@ class Plugin {
 
     $data = array();
 
-    $league = $this->db->getLeagueBySlug($league);
-    $season = $this->db->getSeasonByLeagueAndYear($league->ID, $season);
+    $leagueService = ServiceBroker::getLeagueService();
+
+    $league = $leagueService->bySlug($league);
+    $season = $this->db->getSeasonByLeagueAndYear($league->getId(), $season);
     $game_day = $this->db->getGameDayBySeasonAndPosition($season->ID, $game_day);
 
     $data['league'] = $league;
@@ -484,9 +486,12 @@ class Plugin {
   public function getContextByLeagueAndSeason($league, $season) {
     $data = array();
 
-    $league = $this->db->getLeagueBySlug($league);
-    $season = $this->db->getSeasonByLeagueAndYear($league->ID, $season);
-    $game_day = $this->db->getGameDay($season->current_game_day);
+    $leagueService = ServiceBroker::getLeagueService();
+    $gameDayService = ServiceBroker::getGameDayService();
+
+    $league = $leagueService->bySlug($league);
+    $season = $this->db->getSeasonByLeagueAndYear($league->getId(), $season);
+    $game_day = $gameDayService->byId($season->current_game_day);
 
     $data['league'] = $league;
     $data['season'] = $season;
@@ -499,9 +504,13 @@ class Plugin {
 
     $data = array();
 
-    $league = $this->db->getLeagueBySlug($league);
-    $season = $this->db->getSeason($league->current_season);
-    $game_day = $this->db->getGameDay($season->getCurrentGameDay());
+    $gameDayService = ServiceBroker::getGameDayService();
+    $leagueService = ServiceBroker::getLeagueService();
+    $seasonService = ServiceBroker::getSeasonService();
+
+    $league = $leagueService->bySlug($league);
+    $season = $seasonService->byId($league->getCurrentSeason());
+    $game_day = $gameDayService->byId($season->getCurrentGameDay());
 
     $data['league'] = $league;
     $data['season'] = $season;
@@ -513,7 +522,8 @@ class Plugin {
   public function getContextByClubCode($clubCode) {
 
     $data = array();
-    $data['club'] = $this->db->getClubByCode($clubCode);
+    $clubService = ServiceBroker::getClubService();
+    $data['club'] = $clubService->byCode($clubCode);
 
     return $data;
 

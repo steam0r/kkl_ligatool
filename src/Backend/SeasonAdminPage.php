@@ -3,9 +3,8 @@
 namespace KKL\Ligatool\Backend;
 
 use KKL\Ligatool\DB;
-use KKL\Ligatool\Model\Club;
 use KKL\Ligatool\Model\Season;
-use stdClass;
+use KKL\Ligatool\ServiceBroker;
 
 class SeasonAdminPage extends AdminPage {
 
@@ -21,20 +20,22 @@ class SeasonAdminPage extends AdminPage {
 
     $season = $this->get_item();
 
-    $db = new DB\Wordpress();
-    $leagues = $db->getLeagues();
+    $leagueService = ServiceBroker::getLeagueService();
+    $leagues = $leagueService->getAll();
     $league_options = array();
     foreach ($leagues as $league) {
       $league_options[$league->getId()] = $league->getName();
     }
 
-    $days = $db->getGameDaysForSeason($season->getId());
+    $gameDayService = ServiceBroker::getGameDayService();
+    $days = $gameDayService->allForSeason($season->getId());
     $day_options = array("" => __('please_select', 'kkl-ligatool'));
     foreach ($days as $day) {
       $day_options[$day->getId()] = 'Spieltag ' . $day->getNumber();
     }
 
-    $admins = $db->getLeagueAdmins();
+    $playerService = ServiceBroker::getPlayerService();
+    $admins = $playerService->getLeagueAdmins();
     $contact_options = array("" => __('please_select', 'kkl-ligatool'));
     foreach ($admins as $admin) {
       $contact_options[$admin->getId()] = $admin->getFirstName() . " " . $admin->getLastName();
@@ -50,13 +51,13 @@ class SeasonAdminPage extends AdminPage {
     $relegationExplanation = null;
 
     $adminProperty = $season->getProperty('season_admin');
-    if($adminProperty) $seasonAdmin = $adminProperty->getValue();
+    if ($adminProperty) $seasonAdmin = $adminProperty->getValue();
 
     $relegationProperty = $season->getProperty('relegation_markers');
-    if($relegationProperty) $relegationMarkers = $relegationProperty->getValue();
+    if ($relegationProperty) $relegationMarkers = $relegationProperty->getValue();
 
     $explanationProperty = $season->getProperty('relegation_explanation');
-    if($explanationProperty) $relegationExplanation = $explanationProperty->getValue();
+    if ($explanationProperty) $relegationExplanation = $explanationProperty->getValue();
 
     echo $this->form_table(
       array(
@@ -140,9 +141,9 @@ class SeasonAdminPage extends AdminPage {
     if ($this->item)
       return $this->item;
     if ($_GET['id']) {
-      $db = new DB\Wordpress();
-      $this->setItem($db->getSeason($_GET['id']));
-    }else{
+      $seasonService = ServiceBroker::getSeasonService();
+      $this->setItem($seasonService->byId($_GET['id']));
+    } else {
       $this->setItem(new Season());
     }
     return $this->item;
@@ -165,17 +166,17 @@ class SeasonAdminPage extends AdminPage {
     $start_date = date('Y-m-d H:i:s', strtotime(str_replace('-', '/', $_POST['start_date'])));
     $end_date = date('Y-m-d H:i:s', strtotime(str_replace('-', '/', $_POST['end_date'])));
 
-    $season = new stdClass;
-    $season->ID = $_POST['id'];
-    $season->name = $_POST['name'];
-    $season->start_date = $start_date;
-    $season->end_date = $end_date;
-    $season->active = ($_POST['active']) ? 1 : 0;
-    $season->current_game_day = $_POST['current_game_day'];
-    $season->league_id = $_POST['league'];
+    $season = new Season();
+    $season->setId($_POST['id']);
+    $season->setName($_POST['name']);
+    $season->setStartDate($start_date);
+    $season->setEndDate($end_date);
+    $season->setActive(($_POST['active']) ? 1 : 0);
+    $season->setCurrentGameDay($_POST['current_game_day']);
+    $season->setLeagueId($_POST['league']);
 
-    $db = new DB\Wordpress();
-    $season = $db->createOrUpdateSeason($season);
+    $service = ServiceBroker::getPlayerService();
+    $season = $service->createOrUpdate($season);
 
     $properties['season_admin'] = false;
     $properties['relegation_markers'] = false;
@@ -189,6 +190,7 @@ class SeasonAdminPage extends AdminPage {
       $properties['relegation_explanation'] = $_POST['relegation_explanation'];
     }
     if (!empty($properties)) {
+      $db = new DB\Wordpress();
       $db->setSeasonProperties($season, $properties);
     }
 

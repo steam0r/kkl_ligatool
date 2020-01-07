@@ -9,6 +9,8 @@
 namespace KKL\Ligatool\Model;
 
 
+use KKL\Ligatool\DB\OrderBy;
+use KKL\Ligatool\DB\Where;
 use KKL\Ligatool\ServiceBroker;
 
 class LeagueService extends KKLModelService {
@@ -83,5 +85,35 @@ class LeagueService extends KKLModelService {
     }
     return $result;
 
+  }
+
+  /**
+   * @return League[]
+   */
+  public function getInactive() {
+    $leagueService = ServiceBroker::getLeagueService();
+    return $leagueService->find(
+      new Where('active', 0, '='),
+      new OrderBy('name', 'ASC')
+    );
+  }
+
+  /**
+   * @return League[]
+   */
+  public function getActive() {
+    $leagueService = ServiceBroker::getLeagueService();
+    return $leagueService->find(
+      new Where('active', 1, '='),
+      new OrderBy('name', 'ASC')
+    );
+  }
+
+  /*
+   * @param null $slug
+   * @return League|null
+   */
+  public function bySlug($slug) {
+    return $this->findOne(new Where('code', $slug, '='));
   }
 }

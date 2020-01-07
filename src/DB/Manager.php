@@ -5,6 +5,7 @@ namespace KKL\Ligatool\DB;
 
 
 use Symlink\ORM\Collections\TrackedCollection;
+use Symlink\ORM\Exceptions\FailedToInsertException;
 use Symlink\ORM\Models\BaseModel;
 
 class Manager extends \Symlink\ORM\Manager {
@@ -55,7 +56,7 @@ class Manager extends \Symlink\ORM\Manager {
    * This will perform one query per table no matter how many records need to
    * be added.
    *
-   * @throws \Symlink\ORM\Exceptions\FailedToInsertException
+   * @throws FailedToInsertException
    */
   private function _flush_insert() {
     global $wpdb;
@@ -101,7 +102,7 @@ class Manager extends \Symlink\ORM\Manager {
         }
         // Something went wrong.
         else {
-          throw new \Symlink\ORM\Exceptions\FailedToInsertException(__('Failed to insert one or more records into the database.'));
+          throw new FailedToInsertException(__('Failed to insert one or more records into the database.'));
         }
       }
     }
@@ -167,7 +168,7 @@ class Manager extends \Symlink\ORM\Manager {
         }
         // Something went wrong.
         else {
-          throw new \Symlink\ORM\Exceptions\FailedToInsertException(__('Failed to update one or more records in the database.'));
+          throw new FailedToInsertException(__('Failed to update one or more records in the database.'));
         }
 
       }
@@ -210,7 +211,7 @@ class Manager extends \Symlink\ORM\Manager {
   /**
    * Start tracking a model known to exist in the database.
    *
-   * @param \Symlink\ORM\Models\BaseModel $object
+   * @param BaseModel $object
    */
   public function track(BaseModel $object) {
     // Save it against the key.
@@ -221,7 +222,7 @@ class Manager extends \Symlink\ORM\Manager {
    * Apply changes to all models queued up with persist().
    * Attempts to combine queries to reduce MySQL load.
    *
-   * @throws \Symlink\ORM\Exceptions\FailedToInsertException
+   * @throws FailedToInsertException
    */
   public function flush() {
     $this->_flush_update();

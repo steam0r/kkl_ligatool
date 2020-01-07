@@ -24,6 +24,8 @@ class PageTemplater {
 
   /**
    * Returns an instance of this class.
+   * @param $args
+   * @return PageTemplater
    */
   public static function get_instance($args) {
 
@@ -37,6 +39,7 @@ class PageTemplater {
 
   /**
    * Initializes the plugin by setting filters and administration functions.
+   * @param array $templates
    */
   private function __construct($templates = array()) {
 
@@ -92,7 +95,8 @@ class PageTemplater {
 
   /**
    * Adds our template to the page dropdown for v4.7+
-   *
+   * @param $posts_templates
+   * @return array
    */
   public function add_new_template($posts_templates) {
     $posts_templates = array_merge($posts_templates, $this->templates);
@@ -102,6 +106,8 @@ class PageTemplater {
   /**
    * Adds our template to the pages cache in order to trick WordPress
    * into thinking the template file exists where it doens't really exist.
+   * @param $atts
+   * @return mixed
    */
   public function register_project_templates($atts) {
 
@@ -132,6 +138,8 @@ class PageTemplater {
 
   /**
    * Checks if the template is assigned to the page
+   * @param $template
+   * @return string
    */
   public function view_project_template($template) {
 

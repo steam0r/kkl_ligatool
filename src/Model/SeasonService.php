@@ -9,6 +9,7 @@
 namespace KKL\Ligatool\Model;
 
 
+use KKL\Ligatool\DB\Where;
 use KKL\Ligatool\ServiceBroker;
 
 class SeasonService extends KKLModelService {
@@ -79,4 +80,14 @@ class SeasonService extends KKLModelService {
     }
     return $result;
   }
+
+  /**
+   * @param $leagueId
+   * @return Season[]
+   */
+  public function byLeague($leagueId) {
+    $seasonService = ServiceBroker::getSeasonService();
+    return $seasonService->find(new Where('league_id', $leagueId, '='));
+  }
+
 }

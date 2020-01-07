@@ -137,7 +137,7 @@ class Match extends KKLPropertyModel {
   }
 
   /**
-   * @return string
+   * @return string|int
    */
   public function getLocation() {
     return $this->location;

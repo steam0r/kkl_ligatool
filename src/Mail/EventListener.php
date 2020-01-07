@@ -2,8 +2,8 @@
 
 namespace KKL\Ligatool\Mail;
 
-use KKL\Ligatool\DB;
 use KKL\Ligatool\Events;
+use KKL\Ligatool\ServiceBroker;
 use KKL\Ligatool\Template;
 
 class EventListener {
@@ -14,22 +14,27 @@ class EventListener {
   }
 
   public function post_new_fixture(Events\MatchFixtureUpdatedEvent $event) {
-    $db = new DB\Wordpress();
     $match = $event->getMatch();
-    $home = $db->getTeam($match->home_team);
-    $away = $db->getTeam($match->away_team);
-    $league = $db->getLeagueForGameday($match->game_day_id);
+    $teamService = ServiceBroker::getTeamService();
+    $leagueService = ServiceBroker::getLeagueService();
+
+    $home = $teamService->byId($match->home_team);
+    $away = $teamService->byId($match->away_team);
+    $league = $leagueService->byGameDay($match->game_day_id);
+
     $time = strtotime($match->fixture);
     setlocale(LC_TIME, 'de_DE');
     $text = strftime("%d. %B %Y %H:%M:%S", $time);
     if ($match->location) {
-      $location = $db->getLocation($match->location);
+      $locationService = ServiceBroker::getLocationService();
+      $location = $locationService->byId($match->getLocation());
       if ($location) {
         $text .= ", Spielort: " . $location->getTitle();
       }
     }
 
-    $actor = $db->getPlayerByMailAddress($event->getActorEmail());
+    $playerService = ServiceBroker::getPlayerService();
+    $actor = $playerService->byMailAddress($event->getActorEmail());
     if (!$actor) {
       $actor = $event->getActorEmail();
     } else {
@@ -49,42 +54,34 @@ class EventListener {
     $awayCaptainMail = null;
     $awayViceCaptainMail = null;
 
-    $homeProperties = $db->getTeamProperties($home->getId());
-    if ($homeProperties) {
-      if (array_key_exists('captain', $homeProperties)) {
-        $captain = $db->getPlayer($homeProperties['captain']);
-        if ($captain && $captain->getEmail()) {
-          $homeCaptainMail = $captain->getEmail();
-        }
+    $playerService = ServiceBroker::getPlayerService();
+
+    if ($home->getProperty('captain')) {
+      $captain = $playerService->byId($home->getProperty('captain')->getValue());
+      if ($captain && $captain->getEmail()) {
+        $homeCaptainMail = $captain->getEmail();
       }
-      if (array_key_exists('vice_captain', $homeProperties)) {
-        $vice = $db->getPlayer($homeProperties['captain']);
-        if ($vice && $vice->getEmail()) {
-          if (!$homeCaptainMail) {
-            $homeCaptainMail = $vice->getEmail();
-          } else {
-            $homeViceCaptainMail = $vice->getEmail();
-          }
-        }
+    }
+    $vice = $playerService->byId($home->getProperty('vice_captain')->getValue());
+    if ($vice && $vice->getEmail()) {
+      if (!$homeCaptainMail) {
+        $homeCaptainMail = $vice->getEmail();
+      } else {
+        $homeViceCaptainMail = $vice->getEmail();
       }
     }
 
-    $awayProperties = $db->getTeamProperties($home->getId());
-    if ($awayProperties) {
-      if (array_key_exists('captain', $awayProperties)) {
-        $captain = $db->getPlayer($awayProperties['captain']);
-        if ($captain && $captain->getEmail()) {
-          $awayCaptainMail = $captain->getEmail();
-        }
+    if ($away->getProperty('captain')) {
+      $captain = $playerService->byId($away->getProperty('captain')->getValue());
+      if ($captain && $captain->getEmail()) {
+        $awayCaptainMail = $captain->getEmail();
       }
-      if (array_key_exists('vice_captain', $awayProperties)) {
-        $vice = $db->getPlayer($awayProperties['captain']);
-        if ($vice && $vice->getEmail()) {
-          if (!$awayCaptainMail) {
-            $awayCaptainMail = $vice->getEmail();
-          } else {
-            $awayViceCaptainMail = $vice->getEmail();
-          }
+      $vice = $playerService->byId($away->getProperty('vice_captain')->getValue());
+      if ($vice && $vice->getEmail()) {
+        if (!$awayCaptainMail) {
+          $awayCaptainMail = $vice->getEmail();
+        } else {
+          $awayViceCaptainMail = $vice->getEmail();
         }
       }
     }
@@ -98,7 +95,8 @@ class EventListener {
 
   }
 
-  public function send_reminder_mail(Events\GameDayReminderEvent $event) {
+  public
+  function send_reminder_mail(Events\GameDayReminderEvent $event) {
 
     $to = "Kölner Kickerliga <ligaleitung@kickerligakoeln.de>";
     $subject = "Anstehende Spiele in der Kölner Kickerliga";
@@ -116,7 +114,8 @@ class EventListener {
 
   }
 
-  private function sendMail($to, $cc, $data) {
+  private
+  function sendMail($to, $cc, $data) {
 
     $to = "stephan@5711.org";
     $cc = "scherer.benedikt@googlemail.com";

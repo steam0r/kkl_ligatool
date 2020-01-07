@@ -9,6 +9,9 @@
 namespace KKL\Ligatool\Model;
 
 
+use KKL\Ligatool\DB\Where;
+use KKL\Ligatool\ServiceBroker;
+
 class TeamService extends KKLModelService {
 
   /**
@@ -52,6 +55,23 @@ class TeamService extends KKLModelService {
    */
   public function findOne($where = null, $orderBy = null, $limit = null) {
     return parent::findOne($where, $orderBy, $limit);
+  }
+
+  /**
+   * @param $seasonId
+   * @return Team[]
+   */
+  public function forSeason($seasonId) {
+    $teamService = ServiceBroker::getTeamService();
+    return $teamService->find(new Where('season_id', $seasonId, '='));
+  }
+
+  /**
+   * @param $code
+   * @return Team[]
+   */
+  public function byClub($code) {
+    return $this->find(new Where('club_id', $code, '='));
   }
 
 }

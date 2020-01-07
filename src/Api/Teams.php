@@ -3,7 +3,9 @@
 namespace KKL\Ligatool\Api;
 
 use KKL\Ligatool\DB;
+use WP_Error;
 use WP_REST_Request;
+use WP_REST_Response;
 use WP_REST_Server;
 
 class Teams extends Controller {
@@ -44,7 +46,7 @@ class Teams extends Controller {
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_teams(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -69,7 +71,7 @@ class Teams extends Controller {
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_team(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -94,7 +96,7 @@ class Teams extends Controller {
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_matches_for_team(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -120,7 +122,7 @@ class Teams extends Controller {
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_info_for_team(WP_REST_Request $request) {
     $db = new DB\Api();

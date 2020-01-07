@@ -3,10 +3,10 @@
 namespace KKL\Ligatool\Backend;
 
 use KKL\Ligatool\DB;
-use KKL\Ligatool\Model\Club;
+use KKL\Ligatool\DB\OrderBy;
 use KKL\Ligatool\Model\Team;
+use KKL\Ligatool\ServiceBroker;
 use KKL\Ligatool\Template\Service;
-use stdClass;
 
 class TeamAdminPage extends AdminPage {
 
@@ -20,16 +20,16 @@ class TeamAdminPage extends AdminPage {
 
   public static function display_tabs() {
     $tabs = array(
-        'kkl_ligatool_leagues' => __('leagues', 'kkl-ligatool'),
-        'kkl_ligatool_seasons' => __('seasons', 'kkl-ligatool'),
-        'kkl_ligatool_gamedays' => __('game_days', 'kkl-ligatool'),
-        'kkl_ligatool_matches' => __('matches', 'kkl-ligatool'),
-        'kkl_ligatool_clubs' => __('clubs', 'kkl-ligatool'),
-        'kkl_ligatool_teams' => __('teams', 'kkl-ligatool'),
-        'kkl_ligatool_players' => __('players', 'kkl-ligatool'),
-        'kkl_ligatool_locations' => __('locations', 'kkl-ligatool'),
-        'kkl_ligatool_stats' => __('stats', 'kkl-ligatool'),
-        'kkl_ligatool_settings' => __('settings', 'kkl-ligatool'),
+      'kkl_ligatool_leagues' => __('leagues', 'kkl-ligatool'),
+      'kkl_ligatool_seasons' => __('seasons', 'kkl-ligatool'),
+      'kkl_ligatool_gamedays' => __('game_days', 'kkl-ligatool'),
+      'kkl_ligatool_matches' => __('matches', 'kkl-ligatool'),
+      'kkl_ligatool_clubs' => __('clubs', 'kkl-ligatool'),
+      'kkl_ligatool_teams' => __('teams', 'kkl-ligatool'),
+      'kkl_ligatool_players' => __('players', 'kkl-ligatool'),
+      'kkl_ligatool_locations' => __('locations', 'kkl-ligatool'),
+      'kkl_ligatool_stats' => __('stats', 'kkl-ligatool'),
+      'kkl_ligatool_settings' => __('settings', 'kkl-ligatool'),
     );
 
     $current = null;
@@ -39,35 +39,39 @@ class TeamAdminPage extends AdminPage {
 
     $kkl_twig = Service::getTemplateEngine();
     echo $kkl_twig->render('admin/navbar.twig', array(
-        "navitems" => $tabs,
-        "active" => $current
+      "navitems" => $tabs,
+      "active" => $current
     ));
   }
 
   function display_content() {
-    
+
     $team = $this->get_item();
 
-    $db = new DB\Wordpress();
-    $seasons = $db->getSeasons();
+    $seasonService = ServiceBroker::getSeasonService();
+    $clubService = ServiceBroker::getClubService();
+
+    $seasons = $seasonService->getAll(new OrderBy('start_date', 'ASC'));
     $season_options = array("" => __('please_select', 'kkl-ligatool'));
     foreach ($seasons as $season) {
       $season_options[$season->getId()] = $season->getName();
     }
 
-    $clubs = $db->getClubs();
+    $clubs = $clubService->getAll();
     $club_options = array("" => __('please_select', 'kkl-ligatool'));
     foreach ($clubs as $club) {
       $club_options[$club->getId()] = $club->getName();
     }
 
-    $players = $db->getPlayers();
+    $service = ServiceBroker::getPlayerService();
+    $players = $service->getAll(new OrderBy('first_name', 'ASC'));
     $captain_options = array("" => __('please_select', 'kkl-ligatool'));
     foreach ($players as $player) {
       $captain_options[$player->getId()] = $player->getFirstName() . " " . $player->getLastName() . " (" . $player->getEmail() . ")";
     }
 
-    $locations = $db->getLocations();
+    $locationService = ServiceBroker::getLocationService();
+    $locations = $locationService->getAll();
     $location_options = array("" => __('please_select', 'kkl-ligatool'));
     foreach ($locations as $location) {
       $location_options[$location->getId()] = $location->getTitle();
@@ -192,9 +196,9 @@ class TeamAdminPage extends AdminPage {
     if ($this->item)
       return $this->item;
     if ($_GET['id']) {
-      $db = new DB\Wordpress();
-      $this->setItem($db->getTeam($_GET['id']));
-    }else{
+      $teamService = ServiceBroker::getTeamService();
+      $this->setItem($teamService->byId($_GET['id']));
+    } else {
       $this->setItem(new Team());
     }
     return $this->item;
@@ -218,15 +222,15 @@ class TeamAdminPage extends AdminPage {
 
   function save() {
 
-    $team = new stdClass;
-    $team->ID = $_POST['id'];
-    $team->name = $_POST['name'];
-    $team->short_name = $_POST['short_name'];
-    $team->season_id = $_POST['season'];
-    $team->club_id = $_POST['club'];
+    $team = new Team();
+    $team->setId($_POST['id']);
+    $team->setName($_POST['name']);
+    $team->setShortName($_POST['short_name']);
+    $team->setSeasonId($_POST['season']);
+    $team->setClubId($_POST['club']);
 
-    $db = new DB\Wordpress();
-    $team = $db->createOrUpdateTeam($team);
+    $service = ServiceBroker::getTeamService();
+    $team = $service->createOrUpdate($team);
 
     $properties = array();
     $properties['location'] = false;
@@ -245,10 +249,12 @@ class TeamAdminPage extends AdminPage {
     if ($_POST['current_cup_winner'])
       $properties['current_cup_winner'] = "true";
 
-    if (!empty($properties))
+    if (!empty($properties)) {
+      $db = new DB\Wordpress();
       $db->setTeamProperties($team, $properties);
+    }
 
-    return $db->getTeam($team->ID);
+    return $service->byId($team->getId());
 
   }
 

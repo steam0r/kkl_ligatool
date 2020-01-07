@@ -2,8 +2,8 @@
 
 namespace KKL\Ligatool\Widget;
 
-use KKL\Ligatool\DB;
 use KKL\Ligatool\Plugin;
+use KKL\Ligatool\ServiceBroker;
 use KKL\Ligatool\Template;
 use WP_Widget;
 
@@ -27,11 +27,12 @@ class OtherLeagues extends WP_Widget {
 
     extract($args);
 
-    $db = new DB\Wordpress();
+    $leagueService = ServiceBroker::getLeagueService();
+    $seasonService = ServiceBroker::getSeasonService();
 
-    $leagues = $db->getInactiveLeagues();
+    $leagues = $leagueService->getInactive();
     foreach ($leagues as $league) {
-      $season = $db->getSeason($league->getCurrentSeason());
+      $season = $seasonService->byId($league->getCurrentSeason());
       $league->link = Plugin::getLink('league', array('league' => $league->getCode(), 'season' => date('Y', strtotime($season->getStartDate()))));
     }
     if (!empty($leagues)) {

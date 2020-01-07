@@ -3,13 +3,16 @@
 namespace KKL\Ligatool\Backend;
 
 use KKL\Ligatool\DB;
+use KKL\Ligatool\DB\OrderBy;
 use KKL\Ligatool\Model\GameDay;
 use KKL\Ligatool\Model\KKLModel;
 use KKL\Ligatool\Model\KKLModelService;
 use KKL\Ligatool\Model\League;
 use KKL\Ligatool\Model\Season;
 use KKL\Ligatool\Model\Team;
+use KKL\Ligatool\ServiceBroker;
 use KKL\Ligatool\Template\Service;
+use Symlink\ORM\Exceptions\PropertyDoesNotExistException;
 use WP_List_Table;
 
 abstract class ListTable extends WP_List_Table {
@@ -17,17 +20,12 @@ abstract class ListTable extends WP_List_Table {
   public static $ITEMS_PER_PAGE = 20;
   public $_args = array();
 
-  /**
-   * @var DB\Wordpress
-   */
-  private $db;
   private $total_items = null;
 
   private $leagues;
   private $seasons;
   private $gamedays;
   private $teams;
-  private $clubs;
 
   private $currentLeague;
   private $currentSeason;
@@ -35,7 +33,6 @@ abstract class ListTable extends WP_List_Table {
 
   function __construct() {
     parent::__construct();
-    $this->db = new DB\Wordpress();
     echo '<style type="text/css">';
     echo '.wp-list-table .column-id { width: 5%; }';
     echo '</style>';
@@ -168,13 +165,14 @@ abstract class ListTable extends WP_List_Table {
   }
 
   public function get_edit_page() {
-    $edit_page = $this->getModelService()->getTableName() . "_admin_page";
-    return $edit_page;
+    return $this->getModelService()->getTableName() . "_admin_page";
   }
 
   /**
    * @param KKLModel $item
    * @param string $column_name
+   * @return mixed
+   * @throws PropertyDoesNotExistException
    */
   public function column_default($item, $column_name) {
     return $item->get($column_name);
@@ -210,8 +208,8 @@ abstract class ListTable extends WP_List_Table {
     if ($this->teams) {
       return $this->teams;
     }
-    $db = new DB\Wordpress();
-    $this->teams = $db->getTeams();
+    $teamService = ServiceBroker::getTeamService();
+    $this->teams = $teamService->getAll();
     return $this->teams;
   }
 
@@ -221,9 +219,9 @@ abstract class ListTable extends WP_List_Table {
 
     foreach ($this->get_leagues() as $league) {
       $filterItem = array(
-          "label" => $league->getName(),
-          "id" => $league->getId(),
-          "selected" => false
+        "label" => $league->getName(),
+        "id" => $league->getId(),
+        "selected" => false
       );
 
       if ($cl && $cl->getId() == $league->getId()) {
@@ -235,10 +233,10 @@ abstract class ListTable extends WP_List_Table {
 
     $kkl_twig = Service::getTemplateEngine();
     echo $kkl_twig->render('admin/filter/select.twig', array(
-        "type" => "league_filter",
-        "label" => __('league', 'kkl-ligatool'),
-        "all" => __('display_all', 'kkl-ligatool'),
-        "filters" => $filters
+      "type" => "league_filter",
+      "label" => __('league', 'kkl-ligatool'),
+      "all" => __('display_all', 'kkl-ligatool'),
+      "filters" => $filters
     ));
   }
 
@@ -246,8 +244,8 @@ abstract class ListTable extends WP_List_Table {
     if ($this->leagues) {
       return $this->leagues;
     }
-    $db = new DB\Wordpress();
-    $this->leagues = $db->getLeagues();
+    $leagueService = ServiceBroker::getLeagueService();
+    $this->leagues = $leagueService->getAll();
     return $this->leagues;
   }
 
@@ -259,17 +257,19 @@ abstract class ListTable extends WP_List_Table {
       return $this->currentLeague;
     }
     $league = null;
-    $db = new DB\Wordpress();
+
+    $leagueService = ServiceBroker::getLeagueService();
+
     if ($_GET['game_day_filter']) {
-      $league = $db->getLeagueForGameday($_GET['game_day_filter']);
+      $league = $leagueService->byGameDay($_GET['game_day_filter']);
     } elseif ($_GET['season_filter']) {
-      $league = $db->getLeagueForSeason($_GET['season_filter']);
+      $league = $leagueService->bySeason($_GET['season_filter']);
     } elseif ($_GET['league_filter']) {
-      $league = $db->getLeague($_GET['league_filter']);
+      $league = $leagueService->byId($_GET['league_filter']);
     } else {
       $default_league = get_user_option('kkl_ligatool_default_league');
       if ($default_league) {
-        $league = $db->getLeague($default_league);
+        $league = $leagueService->byId($default_league);
       }
     }
     $this->currentLeague = $league;
@@ -288,9 +288,9 @@ abstract class ListTable extends WP_List_Table {
       }
 
       $filterItem = array(
-          "label" => $season->getName(),
-          "id" => $season->getId(),
-          "selected" => false
+        "label" => $season->getName(),
+        "id" => $season->getId(),
+        "selected" => false
       );
 
       if ($cs && $cs->getId() == $season->getId()) {
@@ -302,10 +302,10 @@ abstract class ListTable extends WP_List_Table {
 
     $kkl_twig = Service::getTemplateEngine();
     echo $kkl_twig->render('admin/filter/select.twig', array(
-        "type" => "season_filter",
-        "label" => __('season', 'kkl-ligatool'),
-        "all" => __('display_all', 'kkl-ligatool'),
-        "filters" => $filters
+      "type" => "season_filter",
+      "label" => __('season', 'kkl-ligatool'),
+      "all" => __('display_all', 'kkl-ligatool'),
+      "filters" => $filters
     ));
   }
 
@@ -316,8 +316,8 @@ abstract class ListTable extends WP_List_Table {
     if ($this->seasons) {
       return $this->seasons;
     }
-    $db = new DB\Wordpress();
-    $this->seasons = $db->getSeasons();
+    $seasonService = ServiceBroker::getSeasonService();
+    $this->seasons = $seasonService->getAll(new OrderBy('start_date', 'ASC'));
     return $this->seasons;
   }
 
@@ -325,17 +325,17 @@ abstract class ListTable extends WP_List_Table {
    * @return Season|null
    */
   function get_current_season() {
+    $seasonService = ServiceBroker::getSeasonService();
     if ($this->currentSeason) {
       return $this->currentSeason;
     }
     $season = null;
-    $db = new DB\Wordpress();
     if ($_GET['game_day_filter']) {
-      $season = $db->getSeasonForGameday($_GET['game_day_filter']);
+      $season = $seasonService->byGameDay($_GET['game_day_filter']);
     } elseif ($_GET['season_filter']) {
-      $season = $db->getSeason($_GET['season_filter']);
+      $season = $seasonService->byId($_GET['season_filter']);
     } elseif ($this->get_current_league()) {
-      $season = $db->getCurrentSeason($this->get_current_league()->getId());
+      $season = $seasonService->currentByLeague($this->get_current_league()->getId());
     }
     $this->currentSeason = $season;
 
@@ -353,9 +353,9 @@ abstract class ListTable extends WP_List_Table {
       }
 
       $filterItem = array(
-          "label" => $day->getNumber(),
-          "id" => $day->getId(),
-          "selected" => false
+        "label" => $day->getNumber(),
+        "id" => $day->getId(),
+        "selected" => false
       );
 
       if ($cgd && $cgd->getId() == $day->getId()) {
@@ -367,10 +367,10 @@ abstract class ListTable extends WP_List_Table {
 
     $kkl_twig = Service::getTemplateEngine();
     echo $kkl_twig->render('admin/filter/select.twig', array(
-        "type" => "game_day_filter",
-        "label" => __('game_day', 'kkl-ligatool'),
-        "all" => __('display_all', 'kkl-ligatool'),
-        "filters" => $filters
+      "type" => "game_day_filter",
+      "label" => __('game_day', 'kkl-ligatool'),
+      "all" => __('display_all', 'kkl-ligatool'),
+      "filters" => $filters
     ));
   }
 
@@ -381,8 +381,9 @@ abstract class ListTable extends WP_List_Table {
     if ($this->gamedays) {
       return $this->gamedays;
     }
-    $db = new DB\Wordpress();
-    $this->gamedays = $db->getGameDays();
+
+    $gameDayService = ServiceBroker::getGameDayService();
+    $this->gamedays = $gameDayService->getAll(new OrderBy('fixture', 'ASC'));
     return $this->gamedays;
   }
 
@@ -394,13 +395,14 @@ abstract class ListTable extends WP_List_Table {
       return $this->currentGameDay;
     }
     $day = null;
-    $db = new DB\Wordpress();
+    $gameDayService = ServiceBroker::getGameDayService();
+
     if ($_GET['game_day_filter']) {
-      $day = $db->getGameday($_GET['game_day_filter']);
+      $day = $gameDayService->byId($_GET['game_day_filter']);
     } elseif ($this->get_current_season()) {
-      $day = $db->getCurrentGameDayForSeason($this->get_current_season()->getId());
+      $day = $gameDayService->currentForSeason($this->get_current_season()->getId());
     } elseif ($this->get_current_league()) {
-      $day = $db->getCurrentGameDayForLeague($this->get_current_league()->getId());
+      $day = $gameDayService->currentForLeague($this->get_current_league()->getId());
     }
     $this->currentGameDay = $day;
 
@@ -410,14 +412,11 @@ abstract class ListTable extends WP_List_Table {
   function display_create_link() {
     $page = $this->get_create_page();
     $link = add_query_arg(compact('page', 'id'), admin_url('admin.php'));
-    $html = '<a class="button-primary" href="' . $link . '">' . __('create_new', 'kkl-ligatool') . '</a>';
-    
-    return $html;
+    return '<a class="button-primary" href="' . $link . '">' . __('create_new', 'kkl-ligatool') . '</a>';
   }
 
   public function get_create_page() {
-    $edit_page = $this->getModelService()->getTableName() . "_admin_page";
-    return $edit_page;
+    return $this->getModelService()->getTableName() . "_admin_page";
   }
 
 }

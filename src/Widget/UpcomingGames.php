@@ -4,6 +4,7 @@ namespace KKL\Ligatool\Widget;
 
 use KKL\Ligatool\DB;
 use KKL\Ligatool\Plugin;
+use KKL\Ligatool\ServiceBroker;
 use KKL\Ligatool\Template;
 use WP_Widget;
 
@@ -34,6 +35,7 @@ class UpcomingGames extends WP_Widget {
       echo $before_title . $title . $after_title;
 
     $db = new DB\Wordpress();
+    $leagueService = ServiceBroker::getLeagueService();
 
     $league_id = $instance['league'];
     if (!$league_id) {
@@ -54,7 +56,7 @@ class UpcomingGames extends WP_Widget {
             $games[$game->league_id][] = $game;
           }
           foreach (array_keys($leagues) as $league_id) {
-            $league = $db->getLeague($league_id);
+            $league = $leagueService->byId($league_id);
             echo $this->tpl->render('widgets/upcoming_games.twig', array('schedule' => $games[$league_id], 'league' => $league));
           }
         }
@@ -77,8 +79,9 @@ class UpcomingGames extends WP_Widget {
   }
 
   public function form($instance) {
-    $db = new DB\Wordpress();
-    $leagues = $db->getLeagues();
+
+    $leagueService = ServiceBroker::getLeagueService();
+    $leagues = $leagueService->getAll();
 
     if (isset($instance['title'])) {
       $title = $instance['title'];

@@ -88,4 +88,30 @@ class GameDayService extends KKLModelService {
   public function allForSeason($seasonId) {
     return $this->find(new Where('season_id', $seasonId, '='));
   }
+
+  /**
+   * @param GameDay $day
+   * @return GameDay|null
+   */
+  public function getNext(GameDay $day) {
+    $number = $day->getNumber() + 1;
+    $gameDayService = ServiceBroker::getGameDayService();
+    return $gameDayService->findOne([
+      new Where('season_id', $day->getSeasonId(), '='),
+      new Where('number', $number, '=')
+    ]);
+  }
+
+  /**
+   * @param GameDay $day
+   * @return GameDay|null
+   */
+  public function getPrevious(GameDay $day) {
+    $number = $day->getNumber() - 1;
+    $gameDayService = ServiceBroker::getGameDayService();
+    return $gameDayService->findOne([
+      new Where('season_id', $day->getSeasonId(), '='),
+      new Where('number', $number, '=')
+    ]);
+  }
 }

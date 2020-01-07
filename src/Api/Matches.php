@@ -4,8 +4,10 @@ namespace KKL\Ligatool\Api;
 
 use KKL\Ligatool\DB;
 use KKL\Ligatool\Events;
+use KKL\Ligatool\ServiceBroker;
 use WP_Error;
 use WP_REST_Request;
+use WP_REST_Response;
 use WP_REST_Server;
 
 class Matches extends Controller
@@ -103,7 +105,7 @@ class Matches extends Controller
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_matches(WP_REST_Request $request)
   {
@@ -129,7 +131,7 @@ class Matches extends Controller
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_match(WP_REST_Request $request)
   {
@@ -156,7 +158,7 @@ class Matches extends Controller
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_properties_for_match(WP_REST_Request $request)
   {
@@ -182,7 +184,7 @@ class Matches extends Controller
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_info_for_match(WP_REST_Request $request)
   {
@@ -193,7 +195,7 @@ class Matches extends Controller
 
   /**
    * @param WP_REST_Request $request
-   * @return WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function set_match_fixture(WP_REST_Request $request)
   {
@@ -232,9 +234,9 @@ class Matches extends Controller
     $db = new DB\Api();
     $match = $db->getMatch($request->get_param('id'));
     $match = $this->updateMatchFromRequest($request, $match);
-    $db = new DB\Wordpress();
-    $match = $db->createOrUpdateMatch($match);
-    return new \WP_REST_Response($match, 200);
+    $matchService = ServiceBroker::getMatchService();
+    $match = $matchService->createOrUpdate($match);
+    return new WP_REST_Response($match, 200);
   }
 
   public function set_final_match_result(WP_REST_Request $request)
@@ -243,9 +245,9 @@ class Matches extends Controller
     $match = $db->getMatch($request->get_param('id'));
     $match = $this->updateMatchFromRequest($request, $match);
     $match->status = 3;
-    $db = new DB\Wordpress();
-    $match = $db->createOrUpdateMatch($match);
-    return new \WP_REST_Response($match, 200);
+    $matchService = ServiceBroker::getMatchService();
+    $match = $matchService->createOrUpdate($match);
+    return new WP_REST_Response($match, 200);
 
   }
 

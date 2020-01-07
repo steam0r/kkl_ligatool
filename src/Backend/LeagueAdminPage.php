@@ -2,10 +2,9 @@
 
 namespace KKL\Ligatool\Backend;
 
-use KKL\Ligatool\DB;
-use KKL\Ligatool\Model\Club;
+use KKL\Ligatool\DB\OrderBy;
 use KKL\Ligatool\Model\League;
-use stdClass;
+use KKL\Ligatool\ServiceBroker;
 
 class LeagueAdminPage extends AdminPage {
 
@@ -22,8 +21,8 @@ class LeagueAdminPage extends AdminPage {
 
     $league = $this->get_item();
 
-    $db = new DB\Wordpress();
-    $seasons = $db->getSeasons();
+    $seasonService = ServiceBroker::getSeasonService();
+    $seasons = $seasonService->getAll(new OrderBy('start_date', 'ASC'));
     $season_options = array("" => __('please_select', 'kkl-ligatool'));
     foreach ($seasons as $season) {
       $season_options[$season->getId()] = $season->getName();
@@ -80,9 +79,9 @@ class LeagueAdminPage extends AdminPage {
     if ($this->item)
       return $this->item;
     if ($_GET['id']) {
-      $db = new DB\Wordpress();
-      $this->setItem($db->getLeague($_GET['id']));
-    } else{
+      $leagueService = ServiceBroker::getLeagueService();
+      $this->setItem($leagueService->byId($_GET['id']));
+    } else {
       $this->setItem(new League());
     }
     return $this->item;
@@ -102,15 +101,15 @@ class LeagueAdminPage extends AdminPage {
 
   function save() {
 
-    $league = new stdClass;
-    $league->ID = $_POST['id'];
-    $league->name = $_POST['name'];
-    $league->code = $_POST['url_code'];
-    $league->active = ($_POST['active']) ? 1 : 0;
-    $league->current_season = $_POST['season'];
+    $league = new League();
+    $league->setId($_POST['id']);
+    $league->setName($_POST['name']);
+    $league->setCode($_POST['url_code']);
+    $league->setActive($_POST['active'] ? 1 : 0);
+    $league->setCurrentSeason($_POST['season']);
 
-    $db = new DB\Wordpress();
-    $league = $db->createOrUpdateLeague($league);
+    $service = ServiceBroker::getLeagueService();
+    $league = $service->createOrUpdate($league);
 
     return $league;
 

@@ -9,6 +9,8 @@
 namespace KKL\Ligatool\Model;
 
 
+use KKL\Ligatool\DB\Where;
+
 class ClubService extends KKLModelService {
 
   /**
@@ -54,4 +56,11 @@ class ClubService extends KKLModelService {
     return parent::findOne($where, $orderBy, $limit);
   }
 
+  /**
+   * @param $code
+   * @return Club
+   */
+  public function byCode($code) {
+    return $this->findOne(new Where('code', $code, '='));
+  }
 }

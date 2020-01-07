@@ -3,15 +3,16 @@
 namespace KKL\Ligatool\Api;
 
 use KKL\Ligatool\DB;
+use KKL\Ligatool\ServiceBroker;
 use stdClass;
+use WP_Error;
 use WP_REST_Request;
+use WP_REST_Response;
 use WP_REST_Server;
 
-class Seasons extends Controller
-{
+class Seasons extends Controller {
 
-  public function register_routes()
-  {
+  public function register_routes() {
     register_rest_route(
       $this->getNamespace(),
       '/' . $this->getBaseName(),
@@ -144,8 +145,7 @@ class Seasons extends Controller
 
   }
 
-  public function getBaseName()
-  {
+  public function getBaseName() {
     return 'seasons';
   }
 
@@ -160,10 +160,9 @@ class Seasons extends Controller
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
-  public function get_seasons(WP_REST_Request $request)
-  {
+  public function get_seasons(WP_REST_Request $request) {
     $db = new DB\Api();
     $items = $db->getSeasons();
 
@@ -187,10 +186,9 @@ class Seasons extends Controller
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
-  public function get_season(WP_REST_Request $request)
-  {
+  public function get_season(WP_REST_Request $request) {
     $db = new DB\Api();
     $items = array($db->getSeason($request->get_param('id')));
 
@@ -214,10 +212,9 @@ class Seasons extends Controller
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
-  public function get_teams_for_season(WP_REST_Request $request)
-  {
+  public function get_teams_for_season(WP_REST_Request $request) {
     $db = new DB\Api();
     $items = $db->getTeamsForSeason($request->get_param('id'));
     $teamEndpoint = new Teams();
@@ -227,10 +224,9 @@ class Seasons extends Controller
 
   /**
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
-  public function add_teams_to_season(WP_REST_Request $request)
-  {
+  public function add_teams_to_season(WP_REST_Request $request) {
     $db = new DB\Api();
     $seasonId = $request->get_param('id');
     foreach (json_decode($request->get_body()) as $newTeam) {
@@ -245,7 +241,7 @@ class Seasons extends Controller
       }
 
       if (!$club) {
-        $club = new \stdClass();
+        $club = new stdClass();
         $club->name = $newTeam->name;
         $club->short_name = $newTeam->shortName;
         $club->description = "";
@@ -261,8 +257,7 @@ class Seasons extends Controller
     return $teamEndpoint->getResponse($request, $items);
   }
 
-  public function set_schedule_for_season(WP_REST_Request $request)
-  {
+  public function set_schedule_for_season(WP_REST_Request $request) {
     $db = new DB\Api();
     $seasonId = $request->get_param('id');
     foreach (json_decode($request->get_body()) as $gamedayData) {
@@ -300,10 +295,9 @@ class Seasons extends Controller
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
-  public function get_gamedays_for_season(WP_REST_Request $request)
-  {
+  public function get_gamedays_for_season(WP_REST_Request $request) {
     $db = new DB\Api();
     $items = $db->getGameDaysForSeason($request->get_param('id'));
     $gameDayEndpoint = new GameDays();
@@ -328,10 +322,9 @@ class Seasons extends Controller
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
-  public function get_current_game_day_for_season(WP_REST_Request $request)
-  {
+  public function get_current_game_day_for_season(WP_REST_Request $request) {
     $db = new DB\Api();
     $items = array($db->getCurrentGameDayForSeason($request->get_param('id')));
     $gameDayEndpoint = new GameDays();
@@ -356,10 +349,9 @@ class Seasons extends Controller
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
-  public function get_info_for_season(WP_REST_Request $request)
-  {
+  public function get_info_for_season(WP_REST_Request $request) {
     $db = new DB\Api();
     $items = $db->getSeasonProperties($request->get_param('id'));
 
@@ -383,10 +375,9 @@ class Seasons extends Controller
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
-  public function get_schedule_for_season(WP_REST_Request $request)
-  {
+  public function get_schedule_for_season(WP_REST_Request $request) {
     $db = new DB\Api();
     $items = $db->getScheduleForSeason($db->getSeason($request->get_param('id')));
 
@@ -410,10 +401,9 @@ class Seasons extends Controller
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
-  public function get_ranking_for_season(WP_REST_Request $request)
-  {
+  public function get_ranking_for_season(WP_REST_Request $request) {
     $seasonId = $request->get_param('id');
     $db = new DB\Api();
     $gameDay = $db->getCurrentGameDayForSeason($seasonId);
@@ -422,8 +412,7 @@ class Seasons extends Controller
     return $this->getResponse($request, $items, true);
   }
 
-  public function get_liveranking_for_season(WP_REST_Request $request)
-  {
+  public function get_liveranking_for_season(WP_REST_Request $request) {
     $seasonId = $request->get_param('id');
     $db = new DB\Api();
     $gameDay = $db->getCurrentGameDayForSeason($seasonId);
@@ -432,8 +421,7 @@ class Seasons extends Controller
     return $this->getResponse($request, $items, true);
   }
 
-  public function create_season_from_import(WP_REST_Request $request)
-  {
+  public function create_season_from_import(WP_REST_Request $request) {
 
     $db = new DB\Api();
     $data = json_decode($request->get_body());
@@ -443,8 +431,8 @@ class Seasons extends Controller
       $seasons[$seasonId] = array();
       foreach ($matches as $match) {
 
-        if($match->team_home !== null) {
-          $teamHome = new \stdClass();
+        if ($match->team_home !== null) {
+          $teamHome = new stdClass();
           $teamHome->name = $match->team_home->name;
           $teamHome->short_name = $match->team_home->shortName;
           $teamHome->season_id = $season->ID;
@@ -456,26 +444,53 @@ class Seasons extends Controller
             $homeClub = $db->getClubByCode($match->team_home->shortName);
           }
 
+          $homeTeamProperties = [];
           if (!$homeClub) {
-            $homeClub = new \stdClass();
+            $homeClub = new stdClass();
             $homeClub->name = $match->team_home->name;
             $homeClub->short_name = $match->team_home->shortName;
             $homeClub->description = "";
             $homeClub = $db->createClub($homeClub);
+          } else {
+            $teams = $db->getTeamsForClub($homeClub->id);
+            if ($teams && is_array($teams)) {
+              uasort($teams, function ($a, $b) {
+                if ($a->id == $b->id) {
+                  return 0;
+                }
+                return ($a->id > $b->id) ? -1 : 1;
+              });
+              if ($teams[0]) {
+                $prevHomeTeam = $teams[0];
+                if (array_key_exists('captain', $prevHomeTeam) && $prevHomeTeam->properties['captain']) {
+                  $homeTeamProperties['captain'] = $prevHomeTeam->properties['captain'];
+                }
+                if (array_key_exists('vice_captain', $prevHomeTeam) && $prevHomeTeam->properties['vice_captain']) {
+                  $homeTeamProperties['vice_captain'] = $prevHomeTeam->properties['vice_captain'];
+                }
+                if (array_key_exists('location', $prevHomeTeam) && $prevHomeTeam->properties['location']) {
+                  $homeTeamProperties['location'] = $prevHomeTeam->properties['location'];
+                }
+              }
+            }
           }
 
           $teamHome->club_id = $homeClub->ID;
           $teamHome = $db->createTeam($teamHome);
+          if (!empty($homeTeamProperties)) {
+            $db->setTeamProperties($teamHome, $homeTeamProperties);
+          }
 
         }
 
-        if($match->team_away->name !== null) {
+        if ($match->team_away->name !== null) {
           $awayClub = null;
-          $teamAway = new \stdClass();
+          $teamAway = new stdClass();
           $teamAway->name = $match->team_away->name;
           $teamAway->short_name = $match->team_away->shortName;
           $teamAway->season_id = $season->ID;
 
+          $awayTeamProperties = [];
           if ($match->team_away->clubId) {
             $awayClub = $db->getClub($match->team_away->clubId);
           } elseif ($match->team_away->shortName) {
@@ -483,26 +498,52 @@ class Seasons extends Controller
           }
 
           if (!$awayClub) {
-            $awayClub = new \stdClass();
+            $awayClub = new stdClass();
             $awayClub->name = $match->team_away->name;
             $awayClub->short_name = $match->team_away->shortName;
             $awayClub->description = "";
             $awayClub = $db->createClub($awayClub);
+          } else {
+            $teamService = ServiceBroker::getTeamService();
+            $teams = $teamService->byClub($awayClub->id);
+            if ($teams && is_array($teams)) {
+              uasort($teams, function ($a, $b) {
+                if ($a->getId() == $b->getId()) {
+                  return 0;
+                }
+                return ($a->getId() > $b->getId()) ? -1 : 1;
+              });
+              if ($teams[0]) {
+                $prevAwayTeam = $teams[0];
+                if (array_key_exists('captain', $prevAwayTeam) && $prevHomeTeam->properties['captain']) {
+                  $awayTeamProperties['captain'] = $prevAwayTeam->properties['captain'];
+                }
+                if (array_key_exists('vice_captain', $prevAwayTeam) && $prevAwayTeam->properties['vice_captain']) {
+                  $awayTeamProperties['vice_captain'] = $prevAwayTeam->properties['vice_captain'];
+                }
+                if (array_key_exists('location', $prevAwayTeam) && $prevAwayTeam->properties['location']) {
+                  $awayTeamProperties['location'] = $prevAwayTeam->properties['location'];
+                }
+              }
+            }
           }
 
           $teamAway->club_id = $awayClub->ID;
           $teamAway = $db->createTeam($teamAway);
+          if (!empty($awayTeamProperties)) {
+            $db->setTeamProperties($teamAway, $awayTeamProperties);
+          }
         }
 
-        $newMatch = new \stdClass();
-        if($teamHome) {
+        $newMatch = new stdClass();
+        if ($teamHome) {
           $newMatch->home = $teamHome->ID;
-        }else{
+        } else {
           $newMatch->home = null;
         }
-        if($teamAway) {
+        if ($teamAway) {
           $newMatch->away = $teamAway->ID;
-        }else{
+        } else {
           $newMatch->away = null;
         }
         $seasons[$seasonId][] = $newMatch;
@@ -563,7 +604,7 @@ class Seasons extends Controller
         $gameDay = $db->getGameDayBySeasonAndPosition($seasonId, $dayData['number']);
 
         foreach ($dayData['matches'] as $match) {
-          $newMatch = new \stdClass();
+          $newMatch = new stdClass();
           $newMatch->game_day_id = $gameDay->ID;
           $newMatch->score_away = null;
           $newMatch->score_home = null;
@@ -583,8 +624,7 @@ class Seasons extends Controller
   }
 
 
-  protected function getLinks($itemId)
-  {
+  protected function getLinks($itemId) {
     $leagueEndpoint = new Leagues();
 
     return array("gameDays" => array("href" => $this->getFullBaseUrl() . '/<id>/gamedays',

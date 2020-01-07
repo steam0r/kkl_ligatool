@@ -2,7 +2,6 @@
 
 namespace KKL\Ligatool;
 
-use KKL\Ligatool\DB\Wordpress;
 use KKL\Ligatool\Model\ApiKey;
 
 class Backend {
@@ -59,6 +58,8 @@ class Backend {
 
   public static function add_screen_options() {
 
+    $leagueService = ServiceBroker::getLeagueService();
+
     $default_league = get_user_option('kkl_ligatool_default_league'); // load values from db
 
     if ($default_league === false) { // if values exist
@@ -68,15 +69,14 @@ class Backend {
     $column_id = 'screen_options_hack'; // this id will be used to identify and hide checkbox which will be automatically created by WP
 
     $html = '</label><script type="text/javascript">jQuery("label[for=\'' . $column_id .
-            '-hide\']").hide()</script>'; // using jQuery to hide unnecessary checkbox
+      '-hide\']").hide()</script>'; // using jQuery to hide unnecessary checkbox
 
     $html .= '<div class="screen-options"><label for="kkl_ligatool_default_league">' .
-             __('default league', 'kkl-ligatool') . ':</label>';
+      __('default league', 'kkl-ligatool') . ':</label>';
 
     $html .= '<select id="kkl_ligatool_default_league" name="wp_screen_options[value][kkl_ligatool_default_league]" value="' .
       $default_league . '">';
-    $db = new DB\Wordpress();
-    $leagues = $db->getLeagues();
+    $leagues = $leagueService->getAll();
     $html .= '<option value="0">' . __('please select', 'kkl-ligatool') . '</option>';
     foreach ($leagues as $league) {
       if ($league->getId() == $default_league) {
@@ -104,8 +104,8 @@ class Backend {
   }
 
   public static function add_help_screen($help_content) {
-    $help_content['toplevel_page_kkl_ligatool'] = array('title'   => 'test',
-                                                        "content" => 'Help for plugin settings page'); // using self::$plugin_page_id as array key adds your text only to plugin settings page.
+    $help_content['toplevel_page_kkl_ligatool'] = array('title' => 'test',
+      "content" => 'Help for plugin settings page'); // using self::$plugin_page_id as array key adds your text only to plugin settings page.
 
     return $help_content;
   }
@@ -114,7 +114,7 @@ class Backend {
     $kkl_twig = Template\Service::getTemplateEngine();
     self::display_tabs();
     $cards = array();
-    if(Plugin::hasNoLeague()) {
+    if (Plugin::hasNoLeague()) {
       $cards[] = array(
         'headline' => __('cards_noleague_headline', 'kkl-ligatool'),
         'content' => __('cards_noleague_content', 'kkl-ligatool'),
@@ -129,16 +129,16 @@ class Backend {
 
   public static function display_tabs() {
     $tabs = array(
-        'kkl_ligatool_leagues' => __('leagues', 'kkl-ligatool'),
-        'kkl_ligatool_seasons' => __('seasons', 'kkl-ligatool'),
-        'kkl_ligatool_gamedays' => __('game_days', 'kkl-ligatool'),
-        'kkl_ligatool_matches' => __('matches', 'kkl-ligatool'),
-        'kkl_ligatool_clubs' => __('clubs', 'kkl-ligatool'),
-        'kkl_ligatool_teams' => __('teams', 'kkl-ligatool'),
-        'kkl_ligatool_players' => __('players', 'kkl-ligatool'),
-        'kkl_ligatool_locations' => __('locations', 'kkl-ligatool'),
-        'kkl_ligatool_stats' => __('stats', 'kkl-ligatool'),
-        'kkl_ligatool_settings' => __('settings', 'kkl-ligatool')
+      'kkl_ligatool_leagues' => __('leagues', 'kkl-ligatool'),
+      'kkl_ligatool_seasons' => __('seasons', 'kkl-ligatool'),
+      'kkl_ligatool_gamedays' => __('game_days', 'kkl-ligatool'),
+      'kkl_ligatool_matches' => __('matches', 'kkl-ligatool'),
+      'kkl_ligatool_clubs' => __('clubs', 'kkl-ligatool'),
+      'kkl_ligatool_teams' => __('teams', 'kkl-ligatool'),
+      'kkl_ligatool_players' => __('players', 'kkl-ligatool'),
+      'kkl_ligatool_locations' => __('locations', 'kkl-ligatool'),
+      'kkl_ligatool_stats' => __('stats', 'kkl-ligatool'),
+      'kkl_ligatool_settings' => __('settings', 'kkl-ligatool')
     );
 
     $current = null;
@@ -148,8 +148,8 @@ class Backend {
 
     $kkl_twig = Template\Service::getTemplateEngine();
     echo $kkl_twig->render('admin/navbar.twig', array(
-        "navitems" => $tabs,
-        "active" => $current
+      "navitems" => $tabs,
+      "active" => $current
     ));
   }
 
@@ -261,9 +261,8 @@ class Backend {
 
     $vars['save'] = esc_attr('Save Changes');
 
-
-    $db = new DB\Wordpress();
-    $apikeys = $db->getApiKeys();
+    $apiKeyService = ServiceBroker::getApiKeyService();
+    $apikeys = $apiKeyService->getAll();
     $vars['keys'] = $apikeys;
     $vars['action_url'] = esc_url(admin_url('admin-post.php'));
 
@@ -282,28 +281,28 @@ class Backend {
 
   public static function display() {
     static::enqueue_scripts(
+      array(
         array(
-            array(
-                'handle' => 'kkl_datepicker',
-                'src' => 'jquery.datetimepicker.js',
-                'type' => 'js'
-            ),
-            array(
-                'handle' => 'kkl_datepicker',
-                'src' => 'jquery.datetimepicker.css',
-                'type' => 'css'
-            ),
-            array(
-                'handle' => 'kkl_backend',
-                'src' => 'kkl_backend.js',
-                'type' => 'js'
-            ),
-            array(
-                'handle' => 'kkl_backend',
-                'src' => 'ligatool_admin.css',
-                'type' => 'css'
-            )
+          'handle' => 'kkl_datepicker',
+          'src' => 'jquery.datetimepicker.js',
+          'type' => 'js'
+        ),
+        array(
+          'handle' => 'kkl_datepicker',
+          'src' => 'jquery.datetimepicker.css',
+          'type' => 'css'
+        ),
+        array(
+          'handle' => 'kkl_backend',
+          'src' => 'kkl_backend.js',
+          'type' => 'js'
+        ),
+        array(
+          'handle' => 'kkl_backend',
+          'src' => 'ligatool_admin.css',
+          'type' => 'css'
         )
+      )
     );
 
     add_action('admin_menu', array(__CLASS__, 'admin_menu'));
@@ -418,11 +417,12 @@ class Backend {
   public function kkl_create_api_key() {
     status_header(200);
 
-    $db = new Wordpress();
+    $apiKeyService = ServiceBroker::getApiKeyService();
+
     $delete = $_REQUEST['delete'];
     if (is_array($delete)) {
       foreach ($delete as $key => $value) {
-        $apiKey = $db->getApiKey($key);
+        $apiKey = $apiKeyService->byKey($key);
         if ($apiKey) {
           $apiKey->delete();
         }
@@ -433,7 +433,7 @@ class Backend {
       $apiKey->setName($name);
 
       $key = uniqid('kkl_');
-      while ($db->getApiKey($key) != null) {
+      while ($apiKeyService->byKey($key) != null) {
         $key = uniqid('kkl_');
       }
       $apiKey->setApiKey($key);
@@ -484,16 +484,15 @@ class Backend {
     $league->save();
 
 
-
     $teams = array();
-    for($i = 0; $i < 4; $i++) {
+    for ($i = 0; $i < 4; $i++) {
       $club = $clubService->getModel();
       $club->setName($i . ". FC Köln");
       $club->setShortName($i . "fck");
       $club->save();
 
       $team = $teamService->getModel();
-      $team->setName($i  . ". FC Köln");
+      $team->setName($i . ". FC Köln");
       $team->setShortName($i . "fck");
       $team->setSeasonId($season->getId());
       $team->setClubId($club->getId());

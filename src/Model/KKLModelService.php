@@ -9,6 +9,7 @@
 namespace KKL\Ligatool\Model;
 
 
+use Exception;
 use KKL\Ligatool\DB\Limit;
 use KKL\Ligatool\DB\Manager;
 use KKL\Ligatool\DB\OrderBy;
@@ -39,9 +40,19 @@ abstract class KKLModelService {
 
   /**
    * @param KKLModel $model
+   * @return false|KKLModel
    */
   public function save($model) {
     $model->save();
+    return $this->byId($model->getId());
+  }
+
+  /**
+   * @param KKLModel $model
+   * @return false|KKLModel
+   */
+  public function createOrUpdate($model) {
+    return $this->save($model);
   }
 
   /**
@@ -76,7 +87,7 @@ abstract class KKLModelService {
         $builder->orderBy($order->getField(), $order->getDirection());
       }
       $result = $builder->buildQuery()->getResults(true);
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
       error_log($e->getMessage());
     }
     return $result;
@@ -112,7 +123,7 @@ abstract class KKLModelService {
         $builder->limit($limit->getLimit(), $limit->getOffset());
       }
       $result = $builder->buildQuery()->getResults(true);
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
       error_log($e->getMessage());
     }
     return $result;

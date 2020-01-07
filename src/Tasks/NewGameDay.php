@@ -2,7 +2,7 @@
 
 namespace KKL\Ligatool\Tasks;
 
-use KKL\Ligatool\DB;
+use KKL\Ligatool\ServiceBroker;
 
 class NewGameDay {
 
@@ -10,18 +10,22 @@ class NewGameDay {
 
     error_log("RUNNING GAMEDAY CHECKER:");
 
-    $db = new DB\Wordpress();
+    $gameDayService = ServiceBroker::getGameDayService();
+    $seasonService = ServiceBroker::getSeasonService();
+    $leagueService = ServiceBroker::getLeagueService();
 
-    $leagues = $db->getLeagues();
+    $leagues = $leagueService->getAll();
     foreach ($leagues as $league) {
       error_log("checking league: " . utf8_decode($league->getName()));
-      $current_season = $db->getSeason($league->getCurrentSeason());
+      $current_season = $seasonService->byId($league->getCurrentSeason());
       if ($current_season && $current_season->isActive()) {
         error_log("- current season is " . utf8_decode($current_season->getName()));
-        $current_day = $db->getGameDay($current_season->getCurrentGameDay());
+        $current_day = $gameDayService->byId($current_season->getCurrentGameDay());
         if ($current_day) {
           error_log("-- current day is " . $current_day->getNumber());
-          $next_day = $db->getNextGameDay($current_day);
+
+          $gameDayService = ServiceBroker::getGameDayService();
+          $next_day = $gameDayService->getNext($current_day);
           $now = time();
           if ($next_day->getFixture()) {
             error_log("-- next day is " . $next_day->getNumber());
@@ -31,7 +35,8 @@ class NewGameDay {
             error_log("--- diff: " . ($now - $fixture));
             if ($fixture < $now) {
               error_log("--- setting next day");
-              $db->setCurrentGameDay($current_season, $next_day);
+              $current_season->setCurrentGameDay($next_day->getId());
+              $current_season->save();
             }
           }
         }

@@ -80,4 +80,17 @@ class PlayerService extends KKLModelService {
     return $result;
   }
 
+  /**
+   * @param $mailAddress
+   * @return Player|null
+   */
+  public function byMailAddress($mailAddress) {
+    $playerService = ServiceBroker::getPlayerService();
+    return $playerService->findOne(new Where('email', $mailAddress, '='));
+  }
+
+  public function getLeagueAdmins() {
+    return $this->findByProperty('member_ligaleitung', 'true');
+  }
+
 }

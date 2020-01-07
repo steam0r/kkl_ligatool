@@ -1,8 +1,9 @@
 <?php
 namespace KKL\Ligatool;
 
-$db = new DB\Wordpress();
-$currentGameDay = $db->getCurrentGameDayForLeague(1);
+$gameDayService = ServiceBroker::getGameDayService();
+$currentGameDay = $gameDayService->currentForLeague(1);
+
 /*
 Template Name: Spieltag Übersicht
 
@@ -19,10 +20,10 @@ Template Name: Spieltag Übersicht
                   <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
                       <header class="text-center">
                           <small class="entry-metadata">
-                            <?php echo date('d.m.Y', strtotime($currentGameDay->fixture)); ?>
-                              - <?php echo date('d.m.Y', strtotime($currentGameDay->end)); ?>
+                            <?php echo date('d.m.Y', strtotime($currentGameDay->getFixture())); ?>
+                              - <?php echo date('d.m.Y', strtotime($currentGameDay->getEnd())); ?>
                           </small>
-                          <h2><?php echo $currentGameDay->number; ?>. Spieltag</h2>
+                          <h2><?php echo $currentGameDay->getNumber(); ?>. Spieltag</h2>
                       </header>
 
                       <div class="entry-content">

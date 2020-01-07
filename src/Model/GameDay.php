@@ -104,4 +104,19 @@ class GameDay extends KKLModel {
     $this->fixture = $fixture;
   }
 
+  /**
+   * @return string
+   */
+  public function getStart() {
+    return $this->fixture;
+  }
+
+  /**
+   * @param string $fixture
+   */
+  public function setStart($fixture) {
+    $this->fixture = $fixture;
+  }
+
+
 }

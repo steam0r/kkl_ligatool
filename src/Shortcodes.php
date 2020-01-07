@@ -21,29 +21,32 @@ class Shortcodes {
     $db = new DB\Wordpress();
     $data = $db->getAllGamesForNextGameday();
 
+    $leagueService = ServiceBroker::getLeagueService();
+
     $all_matches = array();
-    foreach($data as $game) {
+    foreach ($data as $game) {
       $teamProperties = $db->getTeamProperties($game->homeid);
 
-      $leagueData = $db->getLeague($game->league_id);
+      $leagueData = $leagueService->byId($game->league_id);
       $all_matches[$game->league_id]["id"] = $game->league_id;
       $all_matches[$game->league_id]["name"] = $leagueData->getName();
       $all_matches[$game->league_id]["code"] = $leagueData->getCode();
       $all_matches[$game->league_id]["matches"][] = array(
-          "match" => $game,
-          "location_id" => $teamProperties["location"]
+        "match" => $game,
+        "location_id" => $teamProperties["location"]
       );
     }
 
-    $all_locations = $db->getLocations();
+    $locationService = ServiceBroker::getLocationService();
+    $all_locations = $locationService->getAll();
 
     return $templateEngine->render(
-        self::TEMPLATE_PATH . '/set_match_fixture.twig',
-        array(
-            'api_url' => get_site_url(),
-            'all_matches' => $all_matches,
-            'all_locations' => $all_locations
-        )
+      self::TEMPLATE_PATH . '/set_match_fixture.twig',
+      array(
+        'api_url' => get_site_url(),
+        'all_matches' => $all_matches,
+        'all_locations' => $all_locations
+      )
     );
   }
 
@@ -61,16 +64,16 @@ class Shortcodes {
     $season = isset($atts['season']) ? $atts['season'] : null;
     $gameday = isset($atts['gameday']) ? $atts['gameday'] : null;
 
-    if(isset($league)) {
+    if (isset($league)) {
       $pageContext = Pages::leagueContext($league, $season, $gameday);
       $templateContext = array(
-          'rankings' => $ranking->getSingleLeague($pageContext)
+        'rankings' => $ranking->getSingleLeague($pageContext)
       );
     }
 
     return $templateEngine->render(
-        self::TEMPLATE_PATH . '/ranking.twig',
-        $templateContext
+      self::TEMPLATE_PATH . '/ranking.twig',
+      $templateContext
     );
   }
 

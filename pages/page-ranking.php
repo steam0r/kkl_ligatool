@@ -29,15 +29,20 @@ if (isset($wp_query->query_vars['json'])) {
   $rankings = array();
 
   $output = array();
+  $clubService = ServiceBroker::getClubService();
+  $teamService = ServiceBroker::getTeamService();
+  $gameDayService = ServiceBroker::getGameDayService();
+  $leagueService = ServiceBroker::getLeagueService();
+  $seasonService = ServiceBroker::getSeasonService();
 
   if (!$overview) {
     $ranking = new \stdClass;
     $ranking->league = $context['league'];
     $ranking->ranks = $db->getRankingForLeagueAndSeasonAndGameDay($context['league']->id, $context['season']->id, $context['game_day']->number);
     foreach ($ranking->ranks as $rank) {
-      $team = $db->getTeam($rank->team_id);
-      $club = $db->getClub($team->club_id);
-      $rank->team->link = get_site_url().'/team/'.Plugin::getLink('club', array('club' => $club->short_name));
+      $team = $teamService->byId($rank->team_id);
+      $club = $clubService->byId($team->getClubId());
+      $rank->team->link = get_site_url() . '/team/' . Plugin::getLink('club', array('club' => $club->getShortName()));
     }
 
     $rankings[] = $ranking;
@@ -46,31 +51,37 @@ if (isset($wp_query->query_vars['json'])) {
     $schedules = array();
     $schedule = $db->getScheduleForGameDay($context['game_day']);
     foreach ($schedule->matches as $match) {
-      $home_club = $db->getClub($match->home->club_id);
-      $away_club = $db->getClub($match->away->club_id);
-      $match->home->link = get_site_url().'/team/'.Plugin::getLink('club', array('club' => $home_club->short_name));
-      $match->away->link = get_site_url().'/team/'.Plugin::getLink('club', array('club' => $away_club->short_name));
+      $home_club = $clubService->byId($match->home->club_id);
+      $away_club = $clubService->byId($match->away->club_id);
+      $match->home->link = get_site_url() . '/team/' . Plugin::getLink('club', array('club' => $home_club->getShortName()));
+      $match->away->link = get_site_url() . '/team/' . Plugin::getLink('club', array('club' => $away_club->getShortName()));
     }
-    $schedule->link = get_site_url().'/spielplan/'.Plugin::getLink('schedule', array('league' => $context['league']->code, 'season' => date('Y', strtotime($context['season']->start_date))));
+    $schedule->link = get_site_url() . '/spielplan/' . Plugin::getLink('schedule', array('league' => $context['league']->code, 'season' => date('Y', strtotime($context['season']->start_date))));
 
     $schedules[] = $schedule;
 
     $output['schedules'] = $schedules;
 
   } else {
-    foreach ($db->getLeagues() as $league) {
-      if ($league->active != 1) continue;
-      $season = $db->getSeason($league->current_season);
-      $day = $db->getGameDay($season->current_game_day);
+    foreach ($leagueService->getAll() as $league) {
+      if ($league->isActive() != 1) continue;
+      $season = $seasonService->byId($league->getCurrentSeason());
+      $day = $gameDayService->byId($season->getCurrentGameDay());
       $ranking = new \stdClass;
       $ranking->league = $league;
-      $ranking->ranks = $db->getRankingForLeagueAndSeasonAndGameDay($league->id, $season->id, $day->number);
+      $ranking->ranks = $db->getRankingForLeagueAndSeasonAndGameDay($league->getId(), $season->getId(), $day->getNumber());
       foreach ($ranking->ranks as $rank) {
-        $team = $db->getTeam($rank->team_id);
-        $club = $db->getClub($team->club_id);
-        $rank->team->link = get_site_url().'/team/'.Plugin::getLink('club', array('club' => $club->short_name));
+        $team = $teamService->byId($rank->team_id);
+        $club = $clubService->byId($team->getClubId());
+        $rank->team->link = get_site_url() . '/team/' . Plugin::getLink('club', array('club' => $club->getShortName()));
       }
-      $ranking->league->link = get_site_url().'/spielplan/'.Plugin::getLink('league', array('league' => $league->code, 'season' => date('Y', strtotime($season->start_date)), 'game_day' => $day->number));
+      $ranking->league->link = get_site_url() . '/spielplan/' . Plugin::getLink(
+          'league',
+          array(
+            'league' => $league->getCode(),
+            'season' => date('Y', strtotime($season->getStartDate())),
+            'game_day' => $day->getNumber())
+        );
       $rankings[] = $ranking;
     }
     $output['rankings'] = $rankings;

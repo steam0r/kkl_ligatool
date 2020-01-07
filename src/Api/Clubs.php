@@ -3,7 +3,9 @@
 namespace KKL\Ligatool\Api;
 
 use KKL\Ligatool\DB;
+use WP_Error;
 use WP_REST_Request;
+use WP_REST_Response;
 use WP_REST_Server;
 
 class Clubs extends Controller {
@@ -50,7 +52,7 @@ class Clubs extends Controller {
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_clubs(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -75,7 +77,7 @@ class Clubs extends Controller {
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_club(WP_REST_Request $request) {
     $items = array($this->getClubFromRequest($request));
@@ -109,7 +111,7 @@ class Clubs extends Controller {
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_teams_for_club(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -136,7 +138,7 @@ class Clubs extends Controller {
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_awards_for_club(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -162,7 +164,7 @@ class Clubs extends Controller {
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_current_team_for_club(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -189,7 +191,7 @@ class Clubs extends Controller {
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_info_for_club(WP_REST_Request $request) {
     $db = new DB\Api();

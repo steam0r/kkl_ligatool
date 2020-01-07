@@ -2,8 +2,9 @@
 
 namespace KKL\Ligatool\Pages;
 
-use KKL\Ligatool\Plugin;
 use KKL\Ligatool\DB;
+use KKL\Ligatool\Plugin;
+use KKL\Ligatool\ServiceBroker;
 use KKL\Ligatool\Utils\LinkUtils;
 
 class Schedule {
@@ -30,16 +31,18 @@ class Schedule {
     $schedules = array();
     $schedule = $this->db->getScheduleForGameDay($pageContext['game_day']);
 
-    foreach($schedule->matches as $match) {
-      $home_club = $this->db->getClub($match->home->club_id);
-      $away_club = $this->db->getClub($match->away->club_id);
-      $match->home->link = LinkUtils::getLink('club', array('pathname' => $home_club->short_name));
-      $match->away->link = LinkUtils::getLink('club', array('pathname' => $away_club->short_name));
+    $clubService = ServiceBroker::getClubService();
+
+    foreach ($schedule->matches as $match) {
+      $home_club = $clubService->byId($match->home->club_id);
+      $away_club = $clubService->byId($match->away->club_id);
+      $match->home->link = LinkUtils::getLink('club', array('pathname' => $home_club->getShortName()));
+      $match->away->link = LinkUtils::getLink('club', array('pathname' => $away_club->getShortName()));
     }
 
     $schedule->link = LinkUtils::getLink('schedule', array(
-        'league' => $pageContext['league']->code,
-        'season' => date('Y', strtotime($pageContext['season']->start_date))
+      'league' => $pageContext['league']->code,
+      'season' => date('Y', strtotime($pageContext['season']->start_date))
     ));
 
     $schedules[] = $schedule;
@@ -55,12 +58,14 @@ class Schedule {
   public function getSeason($pageContext) {
     $schedules = $this->db->getScheduleForSeason($pageContext['season']);
 
-    foreach($schedules as $schedule) {
-      foreach($schedule->matches as $match) {
-        $home_club = $this->db->getClub($match->home->club_id);
-        $away_club = $this->db->getClub($match->away->club_id);
-        $match->home->link = LinkUtils::getLink('clubs', array('pathname' => $home_club->short_name));
-        $match->away->link = LinkUtils::getLink('clubs', array('pathname' => $away_club->short_name));
+    $clubService = ServiceBroker::getClubService();
+
+    foreach ($schedules as $schedule) {
+      foreach ($schedule->matches as $match) {
+        $home_club = $clubService->byId($match->home->club_id);
+        $away_club = $clubService->byId($match->away->club_id);
+        $match->home->link = LinkUtils::getLink('clubs', array('pathname' => $home_club->getShortName()));
+        $match->away->link = LinkUtils::getLink('clubs', array('pathname' => $away_club->getShortName()));
       }
     }
 
@@ -74,27 +79,32 @@ class Schedule {
   public function getCurrentGameday() {
     $schedules = array();
 
-    foreach($this->db->getActiveLeagues() as $league) {
-      $season = $this->db->getSeason($league->current_season);
-      $day = $this->db->getGameDay($season->current_game_day);
+    $leagueService = ServiceBroker::getLeagueService();
+    $clubService = ServiceBroker::getClubService();
+    $seasonService = ServiceBroker::getSeasonService();
+    $dayService = ServiceBroker::getGameDayService();
+
+    foreach ($leagueService->getActive() as $league) {
+      $season = $seasonService->byId($league->getCurrentSeason());
+      $day = $dayService->byId($season->getCurrentGameDay());
 
       $schedule = $this->db->getScheduleForGameDay($day);
 
-      foreach($schedule->matches as $match) {
-        $home_club = $this->db->getClub($match->home->club_id);
-        $away_club = $this->db->getClub($match->away->club_id);
-        $match->home->link = LinkUtils::getLink('club', array('pathname' => $home_club->short_name));
-        $match->away->link = LinkUtils::getLink('club', array('pathname' => $away_club->short_name));
+      foreach ($schedule->matches as $match) {
+        $home_club = $clubService->byId($match->home->club_id);
+        $away_club = $clubService->byId($match->away->club_id);
+        $match->home->link = LinkUtils::getLink('club', array('pathname' => $home_club->getShortName()));
+        $match->away->link = LinkUtils::getLink('club', array('pathname' => $away_club->getShortName()));
       }
 
       $schedule->link = LinkUtils::getLink('schedule', array(
-          'league' => $league->code,
-          'season' => date('Y', strtotime($season->start_date))
+        'league' => $league->getCode(),
+        'season' => date('Y', strtotime($season->getStartDate()))
       ));
 
-      $schedules[$league->id]['league'] = $league;
-      $schedules[$league->id]['game_day'] = $day;
-      $schedules[$league->id]['schedules'] = $schedule;
+      $schedules[$league->getId()]['league'] = $league;
+      $schedules[$league->getId()]['game_day'] = $day;
+      $schedules[$league->getId()]['schedules'] = $schedule;
 
     }
 

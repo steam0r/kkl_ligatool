@@ -4,7 +4,7 @@ namespace KKL\Ligatool\Backend;
 
 use KKL\Ligatool\DB;
 use KKL\Ligatool\Model\Player;
-use stdClass;
+use KKL\Ligatool\ServiceBroker;
 
 class PlayerAdminPage extends AdminPage {
 
@@ -125,10 +125,10 @@ class PlayerAdminPage extends AdminPage {
     if ($this->item)
       return $this->item;
     if ($_GET['id']) {
-      $db = new DB\Wordpress();
-      $player = $db->getPlayer($_GET['id']);
+      $playerService = ServiceBroker::getPlayerService();
+      $player = $playerService->byId($_GET['id']);
       $this->setItem($player);
-    }else{
+    } else {
       $this->setItem(new Player());
     }
     return $this->item;
@@ -148,15 +148,15 @@ class PlayerAdminPage extends AdminPage {
 
   function save() {
 
-    $player = new stdClass;
-    $player->ID = $_POST['id'];
-    $player->first_name = $_POST['first_name'];
-    $player->last_name = $_POST['last_name'];
-    $player->email = $_POST['email'];
-    $player->phone = $_POST['phone'];
+    $player = new Player();
+    $player->setId($_POST['id']);
+    $player->setFirstName($_POST['first_name']);
+    $player->setLastName($_POST['last_name']);
+    $player->setEmail($_POST['email']);
+    $player->setPhone($_POST['phone']);
 
-    $db = new DB\Wordpress();
-    $player = $db->createOrUpdatePlayer($player);
+    $service = ServiceBroker::getPlayerService();
+    $player = $service->createOrUpdate($player);
 
     $properties = array();
     $properties['member_ligaleitung'] = false;
@@ -169,10 +169,12 @@ class PlayerAdminPage extends AdminPage {
     if ($_POST['ligaleitung_address'])
       $properties['ligaleitung_address'] = $_POST['ligaleitung_address'];
 
-    if (!empty($properties))
+    if (!empty($properties)) {
+      $db = new DB\Wordpress();
       $db->setPlayerProperties($player, $properties);
+    }
 
-    return $db->getPlayer($player->ID);
+    return $service->byId($player->getId());
 
   }
 

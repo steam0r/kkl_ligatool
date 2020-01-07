@@ -2,7 +2,6 @@
 
 namespace KKL\Ligatool\Backend;
 
-use KKL\Ligatool\DB;
 use KKL\Ligatool\DB\Where;
 use KKL\Ligatool\Model\Match;
 use KKL\Ligatool\ServiceBroker;
@@ -94,8 +93,8 @@ class MatchListTable extends ListTable {
    * @return mixed
    */
   function column_location($item) {
-    $db = new DB\Wordpress();
-    $location = $db->getLocation($item->getLocation());
+    $locationService = ServiceBroker::getLocationService();
+    $location = $locationService->byId($item->getLocation());
     return $location ? $location->getTitle() : "";
   }
 
@@ -104,8 +103,8 @@ class MatchListTable extends ListTable {
    * @return mixed
    */
   function column_goals_home($item) {
-    $db = new DB\Wordpress();
-    $match = $db->getMatch($item->getId());
+    $matchService = ServiceBroker::getMatchService();
+    $match = $matchService->byId($item->getId());
     return $match->goals_home;
   }
 
@@ -114,8 +113,8 @@ class MatchListTable extends ListTable {
    * @return mixed
    */
   function column_goals_away($item) {
-    $db = new DB\Wordpress();
-    $match = $db->getMatch($item->getId());
+    $matchService = ServiceBroker::getMatchService();
+    $match = $matchService->byId($item->getId());
     return $match->goals_away;
   }
 
@@ -133,8 +132,7 @@ class MatchListTable extends ListTable {
     if ($game_day) {
       $link = add_query_arg(array(compact('page', 'id'), 'gameDayId' => $game_day->getId()), admin_url('admin.php'));
     }
-    $html = '<a href="' . $link . '">' . __('create_new', 'kkl-ligatool') . '</a>';
-    return $html;
+    return '<a href="' . $link . '">' . __('create_new', 'kkl-ligatool') . '</a>';
   }
 
 }

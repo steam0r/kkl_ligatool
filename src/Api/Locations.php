@@ -3,7 +3,9 @@
 namespace KKL\Ligatool\Api;
 
 use KKL\Ligatool\DB;
+use WP_Error;
 use WP_REST_Request;
+use WP_REST_Response;
 use WP_REST_Server;
 
 class Locations extends Controller {
@@ -63,7 +65,7 @@ class Locations extends Controller {
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_locations(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -88,7 +90,7 @@ class Locations extends Controller {
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_location(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -113,7 +115,7 @@ class Locations extends Controller {
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_teams_for_location(WP_REST_Request $request) {
     $db = new DB\Api();

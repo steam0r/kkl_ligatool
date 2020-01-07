@@ -3,6 +3,7 @@
 namespace KKL\Ligatool\Pages;
 
 
+use KKL\Ligatool\ServiceBroker;
 use KKL\Ligatool\Template;
 use KKL\Ligatool\DB;
 
@@ -19,20 +20,25 @@ class Pages {
    */
   public static function leagueContext($league, $season = null, $game_day = null) {
     $db = new DB\Wordpress();
+
+    $gameDayService = ServiceBroker::getGameDayService();
+    $leagueService = ServiceBroker::getLeagueService();
+    $seasonService = ServiceBroker::getSeasonService();
+
     $output = array(
-        'league' => $db->getLeagueBySlug($league)
+        'league' => $leagueService->bySlug($league)
     );
 
     if($season) {
-      $output['season'] = $db->getSeasonByLeagueAndYear($output['league']->id, $season);
+      $output['season'] = $db->getSeasonByLeagueAndYear($output['league']->getId(), $season);
     } else {
-      $output['season'] = $db->getSeason($output['league']->current_season);
+      $output['season'] = $seasonService->byId($output['league']->current_season);
     }
 
     if($game_day) {
-      $output['game_day'] = $db->getGameDayBySeasonAndPosition($output['season']->id, $game_day);
+      $output['game_day'] = $db->getGameDayBySeasonAndPosition($output['season']->getId(), $game_day);
     } else {
-      $output['game_day'] = $db->getGameDay($output['season']->current_game_day);
+      $output['game_day'] = $gameDayService->byId($output['season']->getCurrentGameDay());
     }
 
     return $output;
@@ -45,17 +51,22 @@ class Pages {
    */
   public static function contactList() {
     $kkl_twig = Template\Service::getTemplateEngine();
+
+    $leagueService = ServiceBroker::getLeagueService();
+
     $db = new DB\Wordpress();
 
-    $leagues = $db->getActiveLeagues();
-    $leagueadmins = $db->getLeagueAdmins();
+    $leagues = $leagueService->getActive();
+
+    $playerService = ServiceBroker::getPlayerService();
+    $leagueadmins = $playerService->getLeagueAdmins();
     $captains = $db->getCaptainsContactData();
     $vicecaptains = $db->getViceCaptainsContactData();
     $players = array_merge($leagueadmins, $captains, $vicecaptains);
 
     $leagueMap = array();
     foreach($leagues as $league) {
-      $leagueMap[$league->code] = $league;
+      $leagueMap[$league->getCode()] = $league;
     }
 
     $contactMap = array();

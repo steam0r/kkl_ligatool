@@ -2,10 +2,9 @@
 
 namespace KKL\Ligatool\Backend;
 
-use KKL\Ligatool\DB;
-use KKL\Ligatool\Model\Club;
+use KKL\Ligatool\DB\OrderBy;
 use KKL\Ligatool\Model\GameDay;
-use stdClass;
+use KKL\Ligatool\ServiceBroker;
 
 class GameDayAdminPage extends AdminPage {
 
@@ -26,8 +25,8 @@ class GameDayAdminPage extends AdminPage {
       $number_options[$i] = $i;
     }
 
-    $db = new DB\Wordpress();
-    $seasons = $db->getSeasons();
+    $seasonService = ServiceBroker::getSeasonService();
+    $seasons = $seasonService->getAll(new OrderBy('start_date', 'ASC'));
     $season_options = array("" => __('please_select', 'kkl-ligatool'));
     foreach ($seasons as $season) {
       $season_options[$season->getId()] = $season->getName();
@@ -80,9 +79,9 @@ class GameDayAdminPage extends AdminPage {
     if ($this->item)
       return $this->item;
     if ($_GET['id']) {
-      $db = new DB\Wordpress();
-      $this->setItem($db->getGameDay($_GET['id']));
-    }else{
+      $gameDayService = ServiceBroker::getGameDayService();
+      $this->setItem($gameDayService->byId($_GET['id']));
+    } else {
       $this->setItem(new GameDay());
     }
     return $this->item;
@@ -105,15 +104,15 @@ class GameDayAdminPage extends AdminPage {
     $start_date = date('Y-m-d H:i:s', strtotime(str_replace('-', '/', $_POST['start_date'])));
     $end_date = date('Y-m-d H:i:s', strtotime(str_replace('-', '/', $_POST['end_date'])));
 
-    $day = new stdClass;
-    $day->ID = $_POST['id'];
-    $day->number = $_POST['number'];
-    $day->start_date = $start_date;
-    $day->end_date = $end_date;
-    $day->season_id = $_POST['season'];
+    $day = new GameDay();
+    $day->setId($_POST['id']);
+    $day->setNumber($_POST['number']);
+    $day->setStart($start_date);
+    $day->setEnd($end_date);
+    $day->setSeasonId($_POST['season']);
 
-    $db = new DB\Wordpress();
-    $day = $db->createOrUpdateGameDay($day);
+    $service = ServiceBroker::getGameDayService();
+    $day = $service->createOrUpdate($day);
 
     return $day;
 

@@ -2,10 +2,8 @@
 
 namespace KKL\Ligatool\Backend;
 
-use KKL\Ligatool\DB;
-use KKL\Ligatool\Model\Club;
 use KKL\Ligatool\Model\Match;
-use stdClass;
+use KKL\Ligatool\ServiceBroker;
 
 class MatchAdminPage extends AdminPage {
 
@@ -20,15 +18,17 @@ class MatchAdminPage extends AdminPage {
 
     $match = $this->get_item();
 
-    $db = new DB\Wordpress();
-    $db_locations = $db->getLocations();
+    $locationService = ServiceBroker::getLocationService();
+    $teamService = ServiceBroker::getTeamService();
+
+    $db_locations = $locationService->getAll();
     $locations = array();
     $locations[0] = __('unknown location', 'kkl-ligatool');
     foreach ($db_locations as $location) {
       $locations[$location->getId()] = $location->getTitle();
     }
     if (!$match->getLocation() && !$_POST['location']) {
-      $home = $db->getTeam($match->getHomeTeam());
+      $home = $teamService->byId($match->getHomeTeam());
       if ($home) {
         $match->setLocation($home->getProperty('location'));
       }
@@ -42,19 +42,21 @@ class MatchAdminPage extends AdminPage {
       $game_days[$game_day->getId()] = $game_day->getNumber();
     }
 
-    $db_teams = $db->getTeamsForSeason($current_game_day->getSeasonId());
+    $teamService = ServiceBroker::getTeamService();
+    $db_teams = $teamService->forSeason($current_game_day->getSeasonId());
     $teams = array();
     foreach ($db_teams as $team) {
       $teams[$team->getId()] = $team->getName();
     }
 
-    $db_games = $db->getMatchesByGameDay($current_game_day->getId());
+    $matchService = ServiceBroker::getMatchService();
+    $db_games = $matchService->byGameDay($current_game_day->getId());
     $games = array();
     $games[0] = __('back to overview', 'kkl-ligatool');
     $games[1] = __('create new game', 'kkl-ligatool');
     foreach ($db_games as $game) {
-      $home = $db->getTeam($game->getHomeTeam());
-      $away = $db->getTeam($game->getAwayTeam());
+      $home = $teamService->byId($game->getHomeTeam());
+      $away = $teamService->byId($game->getAwayTeam());
       $games[$game->getId()] = $home->getName() . " - " . $away->getName();
     }
 
@@ -159,9 +161,9 @@ class MatchAdminPage extends AdminPage {
     if ($this->match)
       return $this->match;
     if ($_GET['id']) {
-      $db = new DB\Wordpress();
-      $this->match = $db->getMatch($_GET['id']);
-    }else{
+      $matchService = ServiceBroker::getMatchService();
+      $this->match = $matchService->byId($_GET['id']);
+    } else {
       $this->setItem(new Match());
     }
     return $this->match;
@@ -170,20 +172,21 @@ class MatchAdminPage extends AdminPage {
   function get_game_day() {
     if ($this->game_day)
       return $this->game_day;
+
+    $gameDayService = ServiceBroker::getGameDayService();
+
     $item = $this->get_item();
     if ($item) {
-      $db = new DB\Wordpress();
-      $this->game_day = $db->getGameDay($item->getGameDayId());
+      $this->game_day = $gameDayService->byId($item->getGameDayId());
     } elseif ($_GET['gameDayId']) {
-      $db = new DB\Wordpress();
-      $this->game_day = $db->getGameDay($_GET['gameDayId']);
+      $this->game_day = $gameDayService->byId($_GET['gameDayId']);
     }
     return $this->game_day;
   }
 
   function get_game_days() {
-    $db = new DB\Wordpress();
-    return $db->getGameDaysForSeason($this->get_game_day()->getSeasonId());
+    $gameDayService = ServiceBroker::getGameDayService();
+    return $gameDayService->allForSeason($this->get_game_day()->getSeasonId());
   }
 
   function get_goals_array() {
@@ -217,27 +220,26 @@ class MatchAdminPage extends AdminPage {
 
   function save() {
 
-    $match = new stdClass;
-    $match->ID = $_POST['id'];
-    $match->game_day_id = $_POST['game_day'];
-    $match->fixture = $this->cleanDate($_POST['fixture']);
-    $match->home_team = $_POST['team_home'];
-    $match->away_team = $_POST['team_away'];
-    $match->location = $_POST['location'];
-    $match->goals_home = $_POST['goals_home'];
-    $match->goals_away = $_POST['goals_away'];
-    $match->score_home = $_POST['score_home'];
-    $match->score_away = $_POST['score_away'];
-    $match->notes = $_POST['description'];
+    $match = new Match();
+    $match->setId($_POST['id']);
+    $match->setGameDayId($_POST['game_day']);
+    $match->setFixture($this->cleanDate($_POST['fixture']));
+    $match->setHomeTeam($_POST['team_home']);
+    $match->setAwayTeam($_POST['team_away']);
+    $match->setLocation($_POST['location']);
+    $match->setGoalsHome($_POST['goals_home']);
+    $match->setGoalsAway($_POST['goals_away']);
+    $match->setScoreHome($_POST['score_home']);
+    $match->setScoreAway($_POST['score_away']);
+    $match->setNotes($_POST['description']);
     if ($_POST['final_score']) {
-      $match->status = 3;
+      $match->setStatus(3);
     } else {
-      $match->status = -1;
+      $match->setStatus(-1);
     }
 
-    $db = new DB\Wordpress();
-    $this->match = $db->createOrUpdateMatch($match);
-
+    $service = ServiceBroker::getMatchService();
+    $this->match = $service->createOrUpdate($match);
     return $this->match;
 
   }

@@ -3,6 +3,8 @@
 namespace KKL\Ligatool\Api;
 
 use KKL\Ligatool\DB;
+use stdClass;
+use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
@@ -45,7 +47,6 @@ class Mailinglists extends Controller {
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
    */
   public function get_league_list(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -85,7 +86,6 @@ class Mailinglists extends Controller {
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
    */
   public function get_admin_list(WP_REST_Request $request) {
     
@@ -120,11 +120,11 @@ class Mailinglists extends Controller {
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function resolve_mail_address(WP_REST_Request $request) {
     $query = $request->get_param('email');
-    $response = new \stdClass();
+    $response = new stdClass();
     if(isset($query)) {
       $db = new DB\Api();
       $result = $db->getInfoByEmailAddress($query);
@@ -137,7 +137,7 @@ class Mailinglists extends Controller {
 
   public function resolve_matchinfo(WP_REST_Request $request) {
     $query = $request->get_param('id');
-    $response = new \stdClass();
+    $response = new stdClass();
     if(isset($query)) {
       $db = new DB\Api();
       $match = $db->getMatch($query);

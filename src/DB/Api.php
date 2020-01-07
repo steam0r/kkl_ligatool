@@ -3,17 +3,13 @@
 namespace KKL\Ligatool\DB;
 
 use KKL\Ligatool\DB;
+use KKL\Ligatool\Model\ApiKey;
+use stdClass;
+use Symlink\ORM\Exceptions\InvalidOperatorException;
+use Symlink\ORM\Exceptions\NoQueryException;
+use Symlink\ORM\Exceptions\PropertyDoesNotExistException;
 
 class Api extends DB {
-
-  public function getClubData($id) {
-
-    $query = $this->getDb()->prepare("SELECT * FROM " . static::$prefix . "clubs WHERE short_name = '%s' LIMIT 1", array($id));
-    $result = $this->getDb()->get_row($query);
-
-    return $result;
-
-  }
 
   public function getLeagueAdmins() {
     $sql = "SELECT p.* FROM " . static::$prefix . "players AS p " . "JOIN " . static::$prefix . "player_properties AS pp ON pp.objectId = p.id " . "AND pp.property_key = 'member_ligaleitung' " . "AND pp.value = 'true' " . "ORDER BY p.first_name, p.last_name ASC";
@@ -56,7 +52,7 @@ class Api extends DB {
                   $has_score = true;
               }
               if (!$has_score) {
-                $new_score = new \stdClass;
+                $new_score = new stdClass;
                 $new_score->team_id = $team->ID;
                 $new_score->wins = 0;
                 $new_score->draws = 0;
@@ -80,7 +76,7 @@ class Api extends DB {
                   $has_score = true;
               }
               if (!$has_score) {
-                $new_score = new \stdClass;
+                $new_score = new stdClass;
                 $new_score->team_id = $team->ID;
                 $new_score->wins = 0;
                 $new_score->draws = 0;
@@ -106,7 +102,7 @@ class Api extends DB {
               $has_score = true;
           }
           if (!$has_score) {
-            $new_score = new \stdClass;
+            $new_score = new stdClass;
             $new_score->team_id = $team->ID;
             $new_score->wins = 0;
             $new_score->draws = 0;
@@ -167,7 +163,7 @@ class Api extends DB {
         } elseif ($score->win) {
           $scorePlus = 2;
         }
-        $rank = new \stdClass();
+        $rank = new stdClass();
         $rank->team_id = $teamId;
         $rank->running = true;
         if ($prevDay) {
@@ -218,7 +214,7 @@ class Api extends DB {
 
     $score = $this->getDb()->get_row($sql);
     if ($score == null) {
-      $score = new \stdClass;
+      $score = new stdClass;
       $score->team_id = $team->ID;
       $score->gameDay_id = $day->ID;
       $score->final = false;
@@ -273,9 +269,9 @@ class Api extends DB {
   }
 
   /**
-   * @deprecated
    * @param $mail
    * @return array|null|object|void
+   * @deprecated
    */
   public function getInfoByEmailAddress($mail) {
     $sql = "
@@ -296,132 +292,8 @@ class Api extends DB {
       left join players AS adm ON adm.id = sp.value
       left join player_properties as slack ON adm.id = slack.objectId AND slack.property_key = 'slack_alias'
       where p.email = '$mail' order by s.id DESC limit 1;";
-    $result = $this->getDb()->get_row($sql);
-    return $result;
+    return $this->getDb()->get_row($sql);
   }
-
-  public function getUpcomingGames($league_id) {
-
-    $sql = "SELECT 	m.id,
-						m.score_away,
-						m.fixture,
-						m.score_home,
-						m.location,
-            m.status,
-						ht.name AS homename,
-						at.name AS awayname,
-						at.id AS awayid,
-						ht.id AS homeid
-				FROM 	" . static::$prefix . "leagues AS l,
-						" . static::$prefix . "seasons AS s,
-						" . static::$prefix . "game_days AS gd,
-						" . static::$prefix . "matches AS m,
-						" . static::$prefix . "teams AS at,
-						" . static::$prefix . "teams AS ht
-				WHERE 	l.id = '%s'
-				AND 	s.id = l.current_season
-				AND 	gd.id = s.current_game_day
-				AND 	m.game_day_id = gd.id
-				AND 	at.id = m.away_team
-				AND 	ht.id = m.home_team";
-
-    $query = $this->getDb()->prepare($sql, $league_id);
-    $result = $this->getDb()->get_results($query);
-
-    return $result;
-
-  }
-
-  public function getGamesForTeam($teamid) {
-
-    $sql = "SELECT  m.id,
-                        m.score_away,
-                        m.fixture,
-                        m.score_home,
-                        m.location,
-                        ht.name AS homename,
-                        at.name AS awayname,
-                        at.id AS awayid,
-                        ht.id AS homeid
-                FROM    " . static::$prefix . "game_days AS gd,
-                        " . static::$prefix . "matches AS m,
-                        " . static::$prefix . "teams AS at,
-                        " . static::$prefix . "teams AS ht
-                WHERE   (m.home_team = '" . esc_sql($teamid) . "' OR m.away_team = '" . esc_sql($teamid) . "')
-                AND     m.game_day_id = gd.id
-                AND     at.id = m.away_team
-                AND     ht.id = m.home_team
-                ORDER BY m.fixture ASC";
-
-    $query = $this->getDb()->prepare($sql, array());
-    $result = $this->getDb()->get_results($query);
-
-    return $result;
-
-  }
-
-  public function getAllUpcomingGames() {
-
-    $sql = "SELECT  m.id,
-                        m.score_away,
-                        m.fixture,
-                        m.score_home,
-                        m.location,
-                        l.id AS league_id,
-                        ht.name AS homename,
-                        at.name AS awayname,
-                        at.id AS awayid,
-                        ht.id AS homeid
-                FROM    " . static::$prefix . "leagues AS l,
-                        " . static::$prefix . "seasons AS s,
-                        " . static::$prefix . "game_days AS gd,
-                        " . static::$prefix . "matches AS m,
-                        " . static::$prefix . "teams AS at,
-                        " . static::$prefix . "teams AS ht
-                WHERE     s.id = l.current_season
-                AND     l.active = 1
-                AND     gd.id = s.current_game_day
-                AND     m.game_day_id = gd.id
-                AND     at.id = m.away_team
-                AND     ht.id = m.home_team ORDER BY l.name ASC";
-
-    $result = $this->getDb()->get_results($sql);
-
-    return $result;
-
-  }
-
-  public function getAllGamesForNextGameday() {
-
-    $sql = "SELECT  m.id,
-                        m.score_away,
-                        m.fixture,
-                        m.score_home,
-                        m.location,
-                        l.id AS league_id,
-                        ht.name AS homename,
-                        at.name AS awayname,
-                        at.id AS awayid,
-                        ht.id AS homeid
-                FROM    " . static::$prefix . "leagues AS l,
-                        " . static::$prefix . "matches AS m,
-                        " . static::$prefix . "teams AS at,
-                        " . static::$prefix . "teams AS ht
-                JOIN " . static::$prefix . "seasons AS s
-                JOIN " . static::$prefix . "game_days AS cgd ON cgd.id = s.current_game_day
-                JOIN " . static::$prefix . "game_days AS gd ON gd.season_id = s.id AND gd.number = (cgd.number + 1)
-                WHERE   l.active = 1
-                AND     s.id = l.current_season
-                AND     m.game_day_id = gd.id
-                AND     at.id = m.away_team
-                AND     ht.id = m.home_team ORDER BY l.name ASC";
-
-    $result = $this->getDb()->get_results($sql);
-
-    return $result;
-
-  }
-
 
   public function getClubs() {
     $sql = "SELECT * FROM " . static::$prefix . "clubs ORDER BY name ASC";
@@ -534,26 +406,6 @@ class Api extends DB {
     return $leagues;
   }
 
-  public function getActiveLeagues() {
-    $sql = "SELECT * FROM " . static::$prefix . "leagues WHERE active = 1 ORDER BY name ASC";
-    $leagues = $this->getDb()->get_results($sql);
-    foreach ($leagues as $league) {
-      $league->active = boolval($league->active);
-    }
-
-    return $leagues;
-  }
-
-  public function getInactiveLeagues() {
-    $sql = "SELECT * FROM " . static::$prefix . "leagues WHERE active = 0 ORDER BY name ASC";
-    $leagues = $this->getDb()->get_results($sql);
-    foreach ($leagues as $league) {
-      $league->active = boolval($league->active);
-    }
-
-    return $leagues;
-  }
-
   public function getLeagueBySlug($slug) {
     $sql = "SELECT * FROM " . static::$prefix . "leagues WHERE code = '" . esc_sql($slug) . "'";
     $league = $this->getDb()->get_row($sql);
@@ -577,21 +429,6 @@ class Api extends DB {
     }
 
     return $properties;
-  }
-
-  public function setSeasonProperties($season, $properties) {
-    foreach ($properties as $key => $value) {
-      $this->getDb()->delete(static::$prefix . 'season_properties', array('objectId' => $season->ID, 'property_key' => $key));
-      if ($value !== false) {
-        $this->getDb()->insert(static::$prefix . 'season_properties', array('objectId' => $season->ID, 'property_key' => $key, 'value' => $value,), array('%d', '%s', '%s'));
-      }
-    }
-  }
-
-  public function getSeasonByLeagueAndYear($league, $year) {
-    $sql = "SELECT * FROM " . static::$prefix . "seasons WHERE league_id = '" . esc_sql($league) . "' AND YEAR(start_date) = '" . esc_sql($year) . "'";
-
-    return $this->getDb()->get_row($sql);
   }
 
   public function getSeasonsByLeague($league) {
@@ -652,12 +489,6 @@ class Api extends DB {
     return $result;
   }
 
-  public function getCurrentGameDayForLeague($leagueId) {
-    $sql = "SELECT * FROM " . static::$prefix . "game_days WHERE ID = (SELECT current_game_day AS ID FROM " . static::$prefix . "seasons WHERE ID = (SELECT current_season AS ID FROM " . static::$prefix . "leagues WHERE ID = '" . esc_sql($leagueId) . "'))";
-
-    return $this->getDb()->get_row($sql);
-  }
-
   public function getCurrentGameDayForSeason($seasonId) {
     $sql = "SELECT * FROM " . static::$prefix . "game_days WHERE ID = (SELECT current_game_day AS ID FROM " . static::$prefix . "seasons WHERE ID = '" . esc_sql($seasonId) . "')";
 
@@ -670,26 +501,6 @@ class Api extends DB {
     $league->active = boolval($league->active);
 
     return $league;
-  }
-
-  public function getLeagueForSeason($seasonId) {
-    $sql = "SELECT * FROM " . static::$prefix . "leagues WHERE ID = (SELECT league_id AS ID FROM " . static::$prefix . "seasons WHERE ID = '" . esc_sql($seasonId) . "')";
-    $league = $this->getDb()->get_row($sql);
-    $league->active = boolval($league->active);
-
-    return $league;
-  }
-
-  public function getSeasonForGameday($dayId) {
-    $sql = "SELECT * FROM " . static::$prefix . "seasons WHERE ID = (SELECT season_id AS ID FROM " . static::$prefix . "game_days WHERE ID = '" . esc_sql($dayId) . "')";
-
-    return $this->getDb()->get_row($sql);
-  }
-
-  public function setCurrentGameDay($season, $day) {
-    $columns = array();
-    $columns['current_game_day'] = $day->ID;
-    $this->getDb()->update(static::$prefix . 'seasons', $columns, array('ID' => $season->ID));
   }
 
   public function getMatches() {
@@ -705,12 +516,6 @@ class Api extends DB {
 
   }
 
-  public function getMatchesForSeason($seasonId) {
-    $sql = "SELECT * FROM " . static::$prefix . "game_days WHERE season_id = '" . esc_sql($seasonId) . "' ORDER BY number ASC";
-
-    return $this->getDb()->get_results($sql);
-  }
-
   public function getMatchesForTeam($teamId) {
     $sql = "SELECT * FROM " . static::$prefix . "matches WHERE (home_team = '" . esc_sql($teamId) . "' OR away_team = '" . esc_sql($teamId) . "') ORDER BY fixture ASC";
 
@@ -721,15 +526,6 @@ class Api extends DB {
     $sql = "SELECT * FROM " . static::$prefix . "matches WHERE game_day_id = '" . esc_sql($dayId) . "' ORDER BY fixture ASC";
 
     return $this->getDb()->get_results($sql);
-  }
-
-  public function getPlayerByMailAddress($mailAddress) {
-    $sql = "SELECT * FROM " . static::$prefix . "players WHERE email = '" . esc_sql($mailAddress) . "'";
-    $player = $this->getDb()->get_row($sql);
-    $properties = $this->getPlayerProperties($player->ID);
-    $player->properties = $properties;
-
-    return $player;
   }
 
   public function getClubProperties($clubId) {
@@ -754,40 +550,6 @@ class Api extends DB {
     return $properties;
   }
 
-  public function getCaptainsContactData() {
-    $sql = "SELECT " . "p.first_name as first_name, p.last_name as last_name, p.email as email, p.phone as phone, " . "t.name as team, t.short_name as team_short, " . "l.name as league, l.code as league_short, loc.title as location " . "FROM " . static::$prefix . "team_properties AS tp " . "JOIN " . static::$prefix . "players AS p ON p.id = tp.value " . "JOIN " . static::$prefix . "teams AS t ON t.id = tp.objectId " . "JOIN " . static::$prefix . "seasons AS s ON s.id = t.season_id AND s.active = '1' " . "JOIN " . static::$prefix . "leagues AS l ON l.id = s.league_id " . "LEFT JOIN " . static::$prefix . "team_properties AS lp ON t.id = lp.objectId AND lp.property_key = 'location' " . "LEFT JOIN " . static::$prefix . "locations AS loc ON loc.id = lp.value " . "WHERE tp.property_key = 'captain' ";
-    $data = $this->getDb()->get_results($sql);
-    $captains = array();
-    foreach ($data as $d) {
-      $d->role = 'captain';
-      $captains[] = $d;
-    }
-
-    return $captains;
-  }
-
-  public function getViceCaptainsContactData() {
-    $sql = "SELECT " . "p.first_name as first_name, p.last_name as last_name, p.email as email, p.phone as phone, " . "t.name as team, t.short_name as team_short, " . "l.name as league, l.code as league_short, loc.title as location " . "FROM " . static::$prefix . "team_properties AS tp " . "JOIN " . static::$prefix . "players AS p ON p.id = tp.value " . "JOIN " . static::$prefix . "teams AS t ON t.id = tp.objectId " . "JOIN " . static::$prefix . "seasons AS s ON s.id = t.season_id AND s.active = '1' " . "JOIN " . static::$prefix . "leagues AS l ON l.id = s.league_id " . "LEFT JOIN " . static::$prefix . "team_properties AS lp ON t.id = lp.objectId AND lp.property_key = 'location' " . "LEFT JOIN " . static::$prefix . "locations AS loc ON loc.id = lp.value " . "WHERE tp.property_key = 'vice_captain' ";
-    $data = $this->getDb()->get_results($sql);
-    $captains = array();
-    foreach ($data as $d) {
-      $d->role = 'vice_captain';
-      $captains[] = $d;
-    }
-
-    return $captains;
-
-  }
-
-  public function getTeamByCode($teamCode) {
-    $sql = "SELECT * FROM " . static::$prefix . "teams WHERE short_name = '" . esc_sql($teamCode) . "'";
-    $team = $this->getDb()->get_row($sql);
-    $properties = $this->getTeamProperties($team->ID);
-    $team->properties = $properties;
-
-    return $team;
-  }
-
   public function getTeamByCodeAndSeason($teamCode, $seasonId) {
     $sql = "SELECT * FROM " . static::$prefix . "teams WHERE short_name = '" . esc_sql($teamCode) . "' AND season_id = '" . esc_sql($seasonId) . "'";
     $team = $this->getDb()->get_row($sql);
@@ -795,17 +557,6 @@ class Api extends DB {
     $team->properties = $properties;
 
     return $team;
-  }
-
-  public function getTeamsByName($teamName) {
-    $sql = "SELECT ID FROM " . static::$prefix . "teams WHERE name = '" . esc_sql($teamName) . "'";
-    $teamIds = $this->getDb()->get_results($sql);
-    $teams = array();
-    foreach ($teamIds as $teamId) {
-      $teams[] = $this->getTeam($teamId->ID);
-    }
-
-    return $teams;
   }
 
   public function getTeam($teamId) {
@@ -840,9 +591,7 @@ class Api extends DB {
 
     $sql = "SELECT " . "team_scores.team_id, " . "sum(team_scores.score) as score, " . "sum(team_scores.win) as wins, " . "sum(team_scores.loss) as losses, " . "sum(team_scores.draw) as draws, " . "sum(team_scores.goalsFor) as goalsFor, " . "sum(team_scores.goalsAgainst) as goalsAgainst " . "FROM " . static::$prefix . "game_days, " . "" . static::$prefix . "team_scores  " . "WHERE game_days.season_id='" . $day->season_id . "' " . "AND game_days.number <= '" . $day->number . "' " . "AND gameDay_id=game_days.id " . "AND team_id=" . $team_id;
 
-    $scores = $this->getDb()->get_row($sql);
-
-    return $scores;
+    return $this->getDb()->get_row($sql);
 
   }
 
@@ -883,16 +632,6 @@ class Api extends DB {
     return $schedule;
   }
 
-  public function getAllLocations() {
-    $sql = "SELECT * FROM " . static::$prefix . "locations";
-    $locations = $this->getDb()->get_results($sql);
-    foreach ($locations as $location) {
-      $location->teams = $this->getTeamsForLocation($location);
-    }
-
-    return $locations;
-  }
-
   public function getTeamsForLocation($location) {
     $sql = "SELECT objectId FROM " . static::$prefix . "team_properties WHERE property_key = 'location' AND value = '" . esc_sql($location->ID) . "'";
     $teamIds = $this->getDb()->get_results($sql);
@@ -912,85 +651,11 @@ class Api extends DB {
     return $this->getDb()->get_results($sql);
   }
 
-  public function getAllGoals() {
-    $sql = "SELECT SUM( goals_away ) FROM  `" . static::$prefix . "games` WHERE goals_away IS NOT NULL";
-
-    return $this->getDb()->get_row($sql);
-  }
-
-  public function getAllGames() {
-    $sql = "SELECT SUM( score_home ) FROM  `" . static::$prefix . "sets` WHERE score_home IS NOT NULL";
-
-    return $this->getDb()->get_row($sql);
-  }
-
-  public function createOrUpdateTeam($team) {
-    if ($team->ID) {
-      $team = $this->updateTeam($team);
-    } else {
-      $team = $this->createTeam($team);
-    }
-
-    return $team;
-  }
-
-  public function updateTeam($team) {
-    $columns = array();
-    $columns['name'] = $team->name;
-    $columns['short_name'] = $team->short_name;
-    $columns['season_id'] = $team->season_id;
-    $columns['club_id'] = $team->club_id;
-    $this->getDb()->update(static::$prefix . 'teams', $columns, array('ID' => $team->ID), array('%s', '%s', '%d', '%d',), array('%d'));
-
-    return $this->getTeam($team->ID);
-  }
-
   public function createTeam($team) {
     $values = array('name' => $team->name, 'description' => $team->description, 'short_name' => $team->short_name, 'club_id' => $team->club_id, 'season_id' => $team->season_id,);
     $this->getDb()->insert(static::$prefix . 'teams', $values, array('%s', '%s', '%s', '%d', '%d'));
 
     return $this->getTeam($this->getDb()->insert_id);
-  }
-
-  public function createOrUpdatePlayer($player) {
-    if ($player->ID) {
-      $player = $this->updatePlayer($player);
-    } else {
-      $player = $this->createPlayer($player);
-    }
-
-    return $player;
-  }
-
-  public function updatePlayer($player) {
-    $columns = array();
-    $columns['first_name'] = $player->first_name;
-    $columns['last_name'] = $player->last_name;
-    $columns['email'] = $player->email;
-    $columns['phone'] = $player->phone;
-    $this->getDb()->update(static::$prefix . 'players', $columns, array('ID' => $player->ID), array('%s', '%s', '%s', '%s',), array('%d'));
-
-    return $this->getPlayer($player->ID);
-  }
-
-  public function createPlayer($player) {
-    $values = array('first_name' => $player->first_name, 'last_name' => $player->last_name, 'email' => $player->email, 'phone' => $player->phone,);
-    $this->getDb()->insert(static::$prefix . 'players', $values, array('%s', '%s', '%s', '%s'));
-
-    return $this->getPlayer($this->getDb()->insert_id);
-  }
-
-  public function createOrUpdateMatch($match) {
-    if ($match->ID) {
-      $match = $this->updateMatch($match);
-    } else {
-      $match = $this->createMatch($match);
-    }
-    if ($match->status == 3) {
-      $this->calculateScores($match);
-    }
-
-    return $match;
   }
 
   public function updateMatch($match) {
@@ -1091,80 +756,6 @@ class Api extends DB {
     return $this->getMatch($match_id);
   }
 
-  public function calculateScores($match) {
-
-    $home = $this->getTeam($match->home_team);
-    $away = $this->getTeam($match->away_team);
-
-    $this->calculateScoresForTeamAndMatch($match, $home);
-    $this->calculateScoresForTeamAndMatch($match, $away);
-
-  }
-
-  public function calculateScoresForTeamAndMatch($match, $team) {
-
-    $day = $this->getGameDay($match->game_day_id);
-
-    $sql = "SELECT " . "* " . "FROM " . "" . static::$prefix . "team_scores  " . "WHERE gameDay_id ='" . esc_sql($day->ID) . "' " . "AND team_id = '" . esc_sql($team->ID) . "';";
-
-    $score = $this->getDb()->get_row($sql);
-    if ($score == null) {
-      $score = new stdClass;
-      $score->team_id = $team->ID;
-      $score->gameDay_id = $day->ID;
-    }
-
-    $score->win = 0;
-    $score->draw = 0;
-    $score->loss = 0;
-    $score->gamesAgainst = 0;
-    $score->gamesFor = 0;
-    $score->goalsAgainst = 0;
-    $score->goalsFor = 0;
-    $score->score = 0;
-
-    if ($match->home_team == $team->ID) {
-      $score->goalsFor = $this->getGoalsForTeam($match, $match->home_team);
-      $score->goalsAgainst = $this->getGoalsForTeam($match, $match->away_team);
-      $score->gamesFor = $match->score_home;
-      $score->gamesAgainst = $match->score_away;
-      if ($match->score_home > $match->score_away) {
-        $score->score = $this->getScore("win");
-        $score->win = 1;
-      } elseif ($match->score_home < $match->score_away) {
-        $score->score = $this->getScore("loss");
-        $score->loss = 1;
-      } else {
-        $score->score = $this->getScore("draw");
-        $score->draw = 1;
-      }
-    }
-
-    if ($match->away_team == $team->ID) {
-      $score->goalsFor = $this->getGoalsForTeam($match, $match->away_team);
-      $score->goalsAgainst = $this->getGoalsForTeam($match, $match->home_team);
-      $score->gamesFor = $match->score_away;
-      $score->gamesAgainst = $match->score_home;
-      if ($match->score_home > $match->score_away) {
-        $score->score = $this->getScore("loss");
-        $score->loss = 1;
-      } elseif ($match->score_home < $match->score_away) {
-        $score->score = $this->getScore("win");
-        $score->win = 1;
-      } else {
-        $score->score = $this->getScore("draw");
-        $score->draw = 1;
-      }
-    }
-
-    if ($score->ID) {
-      $this->getDb()->update(static::$prefix . 'team_scores', get_object_vars($score), array('ID' => $score->ID));
-    } else {
-      $this->getDb()->insert('team_scores', get_object_vars($score));
-    }
-
-  }
-
   protected function getGoalsForTeam($match, $team_id) {
 
     $sql = "SELECT sum(`goals_away`) AS goals_away, sum(goals_home) AS goals_home FROM " . static::$prefix . "matches AS m " . "JOIN " . static::$prefix . "sets AS s ON s.match_id = m.id " . "JOIN " . static::$prefix . "games AS g ON g.set_id = s.id " . "WHERE m.id = " . esc_sql($match->ID);
@@ -1214,88 +805,12 @@ class Api extends DB {
     }
   }
 
-  public function setPlayerProperties($player, $properties) {
-    foreach ($properties as $key => $value) {
-      $this->getDb()->delete(static::$prefix . 'player_properties', array('objectId' => $player->ID, 'property_key' => $key));
-      if ($value !== false) {
-        $this->getDb()->insert(static::$prefix . 'player_properties', array('objectId' => $player->ID, 'property_key' => $key, 'value' => $value,), array('%d', '%s', '%s'));
-      }
-    }
-  }
-
-  public function createOrUpdateLocation($location) {
-    if ($location->ID) {
-      $location = $this->updateLocation($location);
-    } else {
-      $location = $this->createLocation($location);
-    }
-
-    return $location;
-  }
-
-  public function updateLocation($location) {
-    $columns = array();
-    $columns['title'] = $location->title;
-    $columns['description'] = $location->description;
-    $columns['lat'] = $location->lat;
-    $columns['lng'] = $location->lng;
-    $this->getDb()->update(static::$prefix . 'locations', $columns, array('ID' => $location->ID), array('%s', '%s', '%s', '%s',), array('%d'));
-
-    return $this->getLocation($location->ID);
-  }
-
-  public function createLocation($location) {
-    $values = array('title' => $location->title, 'description' => $location->description, 'lat' => $location->lat, 'lng' => $location->lng,);
-    $this->getDb()->insert(static::$prefix . 'locations', $values, array('%s', '%s', '%s', '%s'));
-
-    return $this->getLocation($this->getDb()->insert_id);
-  }
-
-  public function createOrUpdateLeague($league) {
-    if ($league->ID) {
-      $league = $this->updateLeague($league);
-    } else {
-      $league = $this->createLeague($league);
-    }
-
-    return $league;
-  }
-
-  public function updateLeague($league) {
-    $columns = array();
-    $columns['name'] = $league->name;
-    $columns['code'] = $league->code;
-    $columns['active'] = $league->active;
-    $columns['current_season'] = $league->current_season;
-
-    $this->getDb()->update(static::$prefix . 'leagues', $columns, array('ID' => $league->ID), array('%s', '%s', '%d', '%d',), array('%d'));
-
-    return $this->getLeague($league->ID);
-  }
-
   public function getLeague($leagueId) {
     $sql = "SELECT * FROM " . static::$prefix . "leagues WHERE ID = '" . esc_sql($leagueId) . "'";
     $league = $this->getDb()->get_row($sql);
     $league->active = boolval($league->active);
 
     return $league;
-  }
-
-  public function createLeague($league) {
-    $values = array('name' => $league->name, 'code' => $league->code, 'active' => $league->active, 'current_season' => $league->current_season,);
-    $this->getDb()->insert(static::$prefix . 'leagues', $values, array('%s', '%s', '%s'));
-
-    return $this->getLeague($this->getDb()->insert_id);
-  }
-
-  public function createOrUpdateSeason($season) {
-    if ($season->ID) {
-      $season = $this->updateSeason($season);
-    } else {
-      $season = $this->createSeason($season);
-    }
-
-    return $season;
   }
 
   public function updateSeason($season) {
@@ -1339,31 +854,6 @@ class Api extends DB {
     return $this->getSeason($this->getDb()->insert_id);
   }
 
-  public function createOrUpdateClub($club) {
-    if ($club->ID) {
-      $club = $this->updateClub($club);
-    } else {
-      $club = $this->createClub($club);
-    }
-
-    return $club;
-  }
-
-  public function updateClub($club) {
-    $columns = array();
-    $columns['name'] = $club->name;
-    $columns['short_name'] = $club->short_name;
-    $columns['description'] = $club->description;
-    if ($club->logo) {
-      $columns['logo'] = $club->logo;
-      $this->getDb()->update(static::$prefix . 'clubs', $columns, array('ID' => $club->ID), array('%s', '%s', '%s', '%s',), array('%d'));
-    } else {
-      $this->getDb()->update(static::$prefix . 'clubs', $columns, array('ID' => $club->ID), array('%s', '%s', '%s',), array('%d'));
-    }
-
-    return $this->getClub($club->ID);
-  }
-
   public function getClub($clubId) {
     $sql = "SELECT * FROM " . static::$prefix . "clubs WHERE ID = '" . esc_sql($clubId) . "'";
 
@@ -1382,28 +872,6 @@ class Api extends DB {
     return $this->getClub($this->getDb()->insert_id);
   }
 
-  public function createOrUpdateGameDay($day) {
-    if ($day->ID) {
-      $day = $this->updateGameDay($day);
-    } else {
-      $day = $this->createGameDay($day);
-    }
-
-    return $day;
-  }
-
-  public function updateGameDay($day) {
-    $columns = array();
-    $columns['number'] = $day->number;
-    $columns['fixture'] = $day->start_date;
-    $columns['end'] = $day->end_date;
-    $columns['season_id'] = $day->season_id;
-
-    $this->getDb()->update(static::$prefix . 'game_days', $columns, array('ID' => $day->ID), array('%d', '%s', '%s', '%d',), array('%d'));
-
-    return $this->getGameDay($day->ID);
-  }
-
   public function createGameDay($day) {
     $values = array('number' => $day->number, 'fixture' => $day->start_date, 'end' => $day->end_date, 'season_id' => $day->season_id,);
     $this->getDb()->insert(static::$prefix . 'game_days', $values, array('%d', '%s', '%s', '%d'));
@@ -1412,21 +880,11 @@ class Api extends DB {
   }
 
   /**
-   * @return ApiKey[]
-   */
-  public function getApiKeys() {
-    $orm = $this->getOrm();
-    $repo = $orm->getRepository(ApiKey::class);
-    $results = $repo->createQueryBuilder()->orderBy('ID', 'ASC')->buildQuery()->getResults(true);
-    if (!is_array($results)) {
-      $results = array();
-    }
-    return $results;
-  }
-
-  /**
    * @param string $key
    * @return ApiKey|null
+   * @throws InvalidOperatorException
+   * @throws NoQueryException
+   * @throws PropertyDoesNotExistException
    */
   public function getApiKey($key) {
     $orm = $this->getOrm();

@@ -2,9 +2,8 @@
 
 namespace KKL\Ligatool\Backend;
 
-use KKL\Ligatool\DB;
 use KKL\Ligatool\Model\Club;
-use stdClass;
+use KKL\Ligatool\ServiceBroker;
 
 class ClubAdminPage extends AdminPage {
 
@@ -77,9 +76,9 @@ class ClubAdminPage extends AdminPage {
     if ($this->item)
       return $this->item;
     if ($_GET['id']) {
-      $db = new DB\Wordpress();
-      $this->setItem($db->getClub($_GET['id']));
-    }else{
+      $clubService = ServiceBroker::getClubService();
+      $this->setItem($clubService->byId($_GET['id']));
+    } else {
       $this->setItem(new Club());
     }
     return $this->item;
@@ -99,18 +98,18 @@ class ClubAdminPage extends AdminPage {
 
   function save() {
 
-    $club = new stdClass;
-    $club->ID = $_POST['id'];
-    $club->name = $_POST['name'];
-    $club->short_name = $_POST['short_name'];
-    $club->description = $_POST['description'];
+    $club = new Club();
+    $club->setId($_POST['id']);
+    $club->setName($_POST['name']);
+    $club->setShortName($_POST['short_name']);
+    $club->setDescription($_POST['description']);
 
     if ($_FILES['logo']['name']) {
-      $club->logo = $this->handleLogoChange();
+      $club->setLogo($this->handleLogoChange());
     }
 
-    $db = new DB\Wordpress();
-    $club = $db->createOrUpdateClub($club);
+    $service = ServiceBroker::getClubService();
+    $club = $service->createOrUpdate($club);
 
     return $club;
 

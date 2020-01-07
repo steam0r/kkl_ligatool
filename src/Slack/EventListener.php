@@ -2,8 +2,8 @@
 
 namespace KKL\Ligatool\Slack;
 
-use KKL\Ligatool\DB;
 use KKL\Ligatool\Events;
+use KKL\Ligatool\ServiceBroker;
 use tigokr\Slack\Slack;
 
 class EventListener {
@@ -19,18 +19,21 @@ class EventListener {
 
   public function post_new_fixture(Events\MatchFixtureUpdatedEvent $event) {
     $slack = $this->getSlack();
-    $db = new DB\Wordpress();
     $match = $event->getMatch();
-    $home = $db->getTeam($match->home_team);
-    $away = $db->getTeam($match->away_team);
-    $league = $db->getLeagueForGameday($match->game_day_id);
+    $teamService = ServiceBroker::getTeamService();
+    $leagueService = ServiceBroker::getLeagueService();
+
+    $home = $teamService->byId($match->home_team);
+    $away = $teamService->byId($match->away_team);
+    $league = $leagueService->byGameDay($match->game_day_id);
     $attachment = array();
     $attachment['title'] = $league->getName() . ': ' . $home->getName() . ' gegen ' . $away->getName();
     $time = strtotime($match->fixture);
     setlocale(LC_TIME, 'de_DE');
     $text = strftime("%d. %B %Y %H:%M:%S", $time);
     if ($match->location) {
-      $location = $db->getLocation($match->location);
+      $locationService = ServiceBroker::getLocationService();
+      $location = $locationService->byId($match->getLocation());
       if ($location) {
         $text .= ", Spielort: " . $location->getTitle();
       }
@@ -44,8 +47,7 @@ class EventListener {
 
   private function getSlack() {
     $options = get_option('kkl_ligatool');
-    $slack = new Slack($options['slackid']);
-    return $slack;
+    return new Slack($options['slackid']);
   }
 
   public function post_new_gameday(Events\GameDayReminderEvent $event) {

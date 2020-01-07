@@ -3,7 +3,9 @@
 namespace KKL\Ligatool\Api;
 
 use KKL\Ligatool\DB;
+use WP_Error;
 use WP_REST_Request;
+use WP_REST_Response;
 use WP_REST_Server;
 
 class Admins extends Controller {
@@ -55,7 +57,7 @@ class Admins extends Controller {
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_admins(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -80,7 +82,7 @@ class Admins extends Controller {
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_admin(WP_REST_Request $request) {
     $db = new DB\Api();
@@ -105,7 +107,7 @@ class Admins extends Controller {
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_info_for_admin(WP_REST_Request $request) {
     $db = new DB\Api();

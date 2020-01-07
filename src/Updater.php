@@ -3,6 +3,7 @@
 namespace KKL\Ligatool;
 
 use Parsedown;
+use stdClass;
 
 class Updater {
 
@@ -30,7 +31,6 @@ class Updater {
    * @param  string $gitHubProjectName
    * @param  string $accessToken
    *
-   * @return null
    */
   function __construct($pluginFile, $gitHubUsername, $gitHubProjectName, $accessToken = '') {
     add_filter("pre_set_site_transient_update_plugins", array($this, "setTransitent"));
@@ -70,7 +70,7 @@ class Updater {
       }
 
       // Plugin object
-      $obj = new \stdClass();
+      $obj = new stdClass();
       $obj->slug = $this->slug;
       $obj->new_version = $this->githubAPIResult->tag_name;
       $obj->url = $this->pluginData["PluginURI"];
@@ -85,7 +85,6 @@ class Updater {
   /**
    * Get information regarding our plugin from WordPress
    *
-   * @return null
    */
   private function initPluginData() {
     $this->slug = plugin_basename($this->pluginFile);
@@ -96,7 +95,6 @@ class Updater {
   /**
    * Get information regarding our plugin from GitHub
    *
-   * @return null
    */
   private function getRepoReleaseInfo() {
     if (!empty($this->githubAPIResult)) {
@@ -194,7 +192,6 @@ class Updater {
    * @param  boolean $true
    * @param  array $args
    *
-   * @return null
    */
   public function preInstall($true, $args) {
     // Get plugin information

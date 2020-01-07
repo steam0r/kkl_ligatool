@@ -10,6 +10,7 @@ namespace KKL\Ligatool\Template;
 
 use Twig_Extension_Debug;
 use Twig_Loader_Filesystem;
+use Twig_SimpleFilter;
 
 class Service {
 
@@ -51,12 +52,12 @@ class Service {
     $filters = array();
 
     // usage: {{ '/image.png'|imgSrc }}
-    $filters[] = new \Twig_SimpleFilter( 'imgSrc', function( $image ) {
+    $filters[] = new Twig_SimpleFilter( 'imgSrc', function( $image ) {
       return plugins_url( '../../images' . $image, __FILE__ );
     } );
 
     // usage: {{ '/teams/rakete'|baseUrl }}
-    $filters[] = new \Twig_SimpleFilter( 'baseUrl', function( $path, $pre = '' ) {
+    $filters[] = new Twig_SimpleFilter( 'baseUrl', function( $path, $pre = '' ) {
       return site_url( $pre . $path );
     } );
 

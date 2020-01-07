@@ -3,7 +3,10 @@
 namespace KKL\Ligatool\Api;
 
 use KKL\Ligatool\DB;
+use stdClass;
+use WP_Error;
 use WP_REST_Request;
+use WP_REST_Response;
 use WP_REST_Server;
 
 class Leagues extends Controller
@@ -50,7 +53,7 @@ class Leagues extends Controller
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_leagues(WP_REST_Request $request)
   {
@@ -91,7 +94,7 @@ class Leagues extends Controller
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_league(WP_REST_Request $request)
   {
@@ -142,7 +145,7 @@ class Leagues extends Controller
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_properties_for_league(WP_REST_Request $request)
   {
@@ -184,7 +187,7 @@ class Leagues extends Controller
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_seasons_for_league(WP_REST_Request $request)
   {
@@ -227,7 +230,7 @@ class Leagues extends Controller
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_current_season_for_league(WP_REST_Request $request)
   {
@@ -254,7 +257,7 @@ class Leagues extends Controller
     $days = $data->days;
 
     if($league && !empty($days)) {
-      $season = new \stdClass();
+      $season = new stdClass();
       $season->name = $name . " - " . $league->name;
       $season->start_date = $start_date;
       $season->end_date = $end_date;
@@ -263,7 +266,7 @@ class Leagues extends Controller
       $season = $db->createSeason($season);
       $i = 1;
       foreach ($days as $day) {
-        $d = new \stdClass();
+        $d = new stdClass();
         $d->number = $i;
         $d->start_date = $day->start;
         $d->end_date = $day->end;

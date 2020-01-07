@@ -1,10 +1,15 @@
 <?php
+
 namespace KKL\Ligatool;
 
-use stdClass;
+use KKL\Ligatool\Model\GameDay;
+use KKL\Ligatool\Model\Season;
 
 require __DIR__ . '../vendor/autoload.php';
 $db = new DB\Wordpress();
+$seasonService = ServiceBroker::getSeasonService();
+$leagueService = ServiceBroker::getLeagueService();
+$gameDayService = ServiceBroker::getGameDayService();
 
 // DATA
 $name = "Saison 2018";
@@ -31,25 +36,25 @@ $days[] = array('2018-11-12 00:00:00', '2018-11-15 23:59:00');
 $days[] = array('2018-12-03 00:00:00', '2018-12-16 23:59:00');
 
 foreach ($slugs as $slug) {
-  $league = $db->getLeagueBySlug($slug);
-  $season = new stdClass();
-  $season->name = $name . " - " . $league->name;
-  $season->start_date = $start_date;
-  $season->end_date = $end_date;
-  $season->active = true;
-  $season->league_id = $league->id;
-  $season = $db->createSeason($season);
+  $league = $leagueService->bySlug($slug);
+  $season = new Season();
+  $season->setName($name . " - " . $league->getName());
+  $season->setStartDate($start_date);
+  $season->setEndDate($end_date);
+  $season->setActive(true);
+  $season->setLeagueId($league->id);
+  $season = $seasonService->save($season);
   $i = 1;
   foreach ($days as $day) {
-    $d = new stdClass();
-    $d->number = $i;
-    $d->start_date = $day[0];
-    $d->end_date = $day[1];
-    $d->season_id = $season->id;
-    $d = $db->createGameDay($d);
+    $d = new GameDay();
+    $d->setNumber($i);
+    $d->setStart($day[0]);
+    $d->setEnd($day[1]);
+    $d->setSeasonId($season->id);
+    $d = $gameDayService->save($d);
     if ($i == 1) {
-      $season->current_game_day = $d->id;
-      $season = $db->updateSeason($season);
+      $season->setCurrentGameDay($d->getId());
+      $season = $seasonService->save($season);
     }
     $i++;
   }

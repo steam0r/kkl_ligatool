@@ -9,6 +9,8 @@
 namespace KKL\Ligatool\Model;
 
 
+use KKL\Ligatool\DB\Where;
+
 class ApiKeyService extends KKLModelService {
 
   /**
@@ -52,6 +54,14 @@ class ApiKeyService extends KKLModelService {
    */
   public function findOne($where = null, $orderBy = null, $limit = null) {
     return parent::findOne($where, $orderBy, $limit);
+  }
+
+  /**
+   * @param $key
+   * @return ApiKey|null
+   */
+  public function byKey($key) {
+    return $this->findOne(new Where('api_key', $key, '='));
   }
 
 

@@ -2,10 +2,8 @@
 
 namespace KKL\Ligatool\Backend;
 
-use KKL\Ligatool\DB;
-use KKL\Ligatool\Model\Club;
 use KKL\Ligatool\Model\Location;
-use stdClass;
+use KKL\Ligatool\ServiceBroker;
 
 class LocationAdminPage extends AdminPage {
 
@@ -66,9 +64,9 @@ class LocationAdminPage extends AdminPage {
     if ($this->item)
       return $this->item;
     if ($_GET['id']) {
-      $db = new DB\Wordpress();
-      $this->setItem($db->getLocation($_GET['id']));
-    }else{
+      $locationService = ServiceBroker::getLocationService();
+      $this->setItem($locationService->byId($_GET['id']));
+    } else {
       $this->setItem(new Location());
     }
     return $this->item;
@@ -89,15 +87,15 @@ class LocationAdminPage extends AdminPage {
 
   function save() {
 
-    $location = new stdClass;
-    $location->ID = $_POST['id'];
-    $location->title = $_POST['title'];
-    $location->description = $_POST['description'];
-    $location->lat = $_POST['lat'];
-    $location->lng = $_POST['lng'];
+    $location = new Location();
+    $location->setId($_POST['id']);
+    $location->setTitle($_POST['title']);
+    $location->setDescription($_POST['description']);
+    $location->setLatitude($_POST['lat']);
+    $location->setLongitude($_POST['lng']);
 
-    $db = new DB\Wordpress();
-    return $db->createOrUpdateLocation($location);
+    $service = ServiceBroker::getLocationService();
+    return $service->createOrUpdate($location);
 
   }
 

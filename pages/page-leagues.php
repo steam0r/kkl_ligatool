@@ -9,28 +9,40 @@ if (isset($wp_query->query_vars['json'])) {
 
   header('Content-Type: application/json');
 
-  $db = new DB\Wordpress();
-  $all_leagues = $db->getActiveLeagues();
+  $leagueService = ServiceBroker::getLeagueService();
+  $seasonService = ServiceBroker::getSeasonService();
+  $teamService = ServiceBroker::getTeamService();
+  $gameDayService = ServiceBroker::getGameDayService();
+  $clubService = ServiceBroker::getClubService();
+
+  $all_leagues = $leagueService->getActive();
   $leagues = array();
   foreach ($all_leagues as $league) {
-    $league->season = $db->getSeason($league->current_season);
-    $league->teams = $db->getTeamsForSeason($league->season->id);
+    $league->season = $seasonService->currentByLeague($league->getId());
+    $league->teams = $teamService->forSeason($league->season->getId());
     foreach ($league->teams as $team) {
-      $club = $db->getClub($team->club_id);
-      if (!$team->logo) {
-        $team->logo = $club->logo;
-        if (!$club->logo) {
-          $team->logo = "https://www.kickerligakoeln.de/wp-content/themes/kkl_2/img/kkl-logo_172x172.png";
+      $club = $clubService->byId($team->getClubId());
+      if (!$team->getLogo()) {
+        $team->setLogo($club->getLogo());
+        if (!$club->getLogo()) {
+          $team->setLogo("https://www.kickerligakoeln.de/wp-content/themes/kkl_2/img/kkl-logo_172x172.png");
         }
       } else {
-        $team->logo = "/images/team/".$team->logo;
+        $team->setLogo("/images/team/" . $team->getLogo());
       }
       // HACK
-      $team->link = Plugin::getLink('club', array('club' => $club->short_name));
+      $team->link = Plugin::getLink('club', array('club' => $club->getShortName()));
     }
 
-    $day = $db->getGameDay($league->season->current_game_day);
-    $league->link = Plugin::getLink('league', array('league' => $league->code, 'season' => date('Y', strtotime($league->season->start_date)), 'game_day' => $day->number));
+    $day = $gameDayService->byId($league->season->getCurrentGameDay());
+    $league->link = Plugin::getLink(
+      'league',
+      array(
+        'league' => $league->getCode(),
+        'season' => date('Y', strtotime($league->season->getStartDate())),
+        'game_day' => $day->getNumber()
+      )
+    );
     $leagues[] = $league;
   }
 

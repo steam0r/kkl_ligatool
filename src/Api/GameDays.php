@@ -3,7 +3,10 @@
 namespace KKL\Ligatool\Api;
 
 use KKL\Ligatool\DB;
+use stdClass;
+use WP_Error;
 use WP_REST_Request;
+use WP_REST_Response;
 use WP_REST_Server;
 
 class GameDays extends Controller
@@ -90,7 +93,7 @@ class GameDays extends Controller
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_gamedays(WP_REST_Request $request)
   {
@@ -116,7 +119,7 @@ class GameDays extends Controller
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_gameday(WP_REST_Request $request)
   {
@@ -142,7 +145,7 @@ class GameDays extends Controller
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_matches_for_gameday(WP_REST_Request $request)
   {
@@ -169,7 +172,7 @@ class GameDays extends Controller
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_next_gameday(WP_REST_Request $request)
   {
@@ -195,7 +198,7 @@ class GameDays extends Controller
    *     )
    * )
    * @param WP_REST_Request $request
-   * @return \WP_Error|\WP_REST_Response
+   * @return WP_Error|WP_REST_Response
    */
   public function get_previous_gameday(WP_REST_Request $request)
   {
@@ -210,7 +213,7 @@ class GameDays extends Controller
 
     $data = json_decode($request->get_body());
 
-    $match = new \stdClass();
+    $match = new stdClass();
     $match->game_day_id = $request->get_param('id');
     $match->score_away = null;
     $match->score_home = null;

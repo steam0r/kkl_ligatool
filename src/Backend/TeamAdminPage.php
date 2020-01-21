@@ -2,7 +2,6 @@
 
 namespace KKL\Ligatool\Backend;
 
-use KKL\Ligatool\DB;
 use KKL\Ligatool\DB\OrderBy;
 use KKL\Ligatool\Model\Team;
 use KKL\Ligatool\ServiceBroker;
@@ -250,8 +249,8 @@ class TeamAdminPage extends AdminPage {
       $properties['current_cup_winner'] = "true";
 
     if (!empty($properties)) {
-      $db = new DB\Wordpress();
-      $db->setTeamProperties($team, $properties);
+      $teamPropertyService = ServiceBroker::getTeamPropertyService();
+      $teamPropertyService->setTeamProperties($team, $properties);
     }
 
     return $service->byId($team->getId());

@@ -35,7 +35,7 @@ abstract class DB {
   }
 
   /**
-   * @deprecated user orm layer for new functions, implement databse-code in db-layer not in modules
+   * @deprecated user orm layer for new functions, implement database-code in db-layer not in modules
    * @return wpdb
    */
   public function getDb() {

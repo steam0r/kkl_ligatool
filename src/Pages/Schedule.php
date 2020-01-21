@@ -9,19 +9,14 @@ use KKL\Ligatool\Utils\LinkUtils;
 
 class Schedule {
 
-  private $db;
   private $plugin;
 
   public function __construct() {
-    $this->db = new DB\Wordpress();
-
     $pluginFile = __FILE__;
     $baseUrl = plugin_dir_url(__FILE__);
     $basePath = plugin_dir_path(__FILE__);
-
     $this->plugin = new Plugin($pluginFile, $baseUrl, $basePath);
   }
-
 
   /**
    * @param $pageContext
@@ -29,7 +24,8 @@ class Schedule {
    */
   public function getSingleLeague($pageContext) {
     $schedules = array();
-    $schedule = $this->db->getScheduleForGameDay($pageContext['game_day']);
+    $scheduleService = ServiceBroker::getScheduleService();
+    $schedule = $scheduleService->getScheduleForGameDay($pageContext['game_day']);
 
     $clubService = ServiceBroker::getClubService();
 
@@ -56,7 +52,9 @@ class Schedule {
    * @return array
    */
   public function getSeason($pageContext) {
-    $schedules = $this->db->getScheduleForSeason($pageContext['season']);
+
+    $scheduleService = ServiceBroker::getScheduleService();
+    $schedules = $scheduleService->getScheduleForSeason($pageContext['season']);
 
     $clubService = ServiceBroker::getClubService();
 
@@ -83,12 +81,13 @@ class Schedule {
     $clubService = ServiceBroker::getClubService();
     $seasonService = ServiceBroker::getSeasonService();
     $dayService = ServiceBroker::getGameDayService();
+    $scheduleService = ServiceBroker::getScheduleService();
 
     foreach ($leagueService->getActive() as $league) {
       $season = $seasonService->byId($league->getCurrentSeason());
       $day = $dayService->byId($season->getCurrentGameDay());
 
-      $schedule = $this->db->getScheduleForGameDay($day);
+      $schedule = $scheduleService->getScheduleForGameDay($day);
 
       foreach ($schedule->matches as $match) {
         $home_club = $clubService->byId($match->home->club_id);

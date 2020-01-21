@@ -2,7 +2,6 @@
 
 namespace KKL\Ligatool\Backend;
 
-use KKL\Ligatool\DB;
 use KKL\Ligatool\Model\Season;
 use KKL\Ligatool\ServiceBroker;
 
@@ -190,8 +189,8 @@ class SeasonAdminPage extends AdminPage {
       $properties['relegation_explanation'] = $_POST['relegation_explanation'];
     }
     if (!empty($properties)) {
-      $db = new DB\Wordpress();
-      $db->setSeasonProperties($season, $properties);
+      $seasonPropertyService = ServiceBroker::getSeasonPropertyService();
+      $seasonPropertyService->setSeasonProperties($season, $properties);
     }
 
     return $season;

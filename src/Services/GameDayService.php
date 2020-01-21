@@ -6,10 +6,11 @@
  * Time: 10:43
  */
 
-namespace KKL\Ligatool\Model;
+namespace KKL\Ligatool\Services;
 
 
 use KKL\Ligatool\DB\Where;
+use KKL\Ligatool\Model\GameDay;
 use KKL\Ligatool\ServiceBroker;
 
 class GameDayService extends KKLModelService {
@@ -112,6 +113,18 @@ class GameDayService extends KKLModelService {
     return $gameDayService->findOne([
       new Where('season_id', $day->getSeasonId(), '='),
       new Where('number', $number, '=')
+    ]);
+  }
+
+  /**
+   * @param GameDay $day
+   * @return GameDay|null
+   */
+  public function bySeasonAndPosition($seasonId, $position) {
+    $gameDayService = ServiceBroker::getGameDayService();
+    return $gameDayService->findOne([
+      new Where('season_id', $seasonId, '='),
+      new Where('number', $position, '=')
     ]);
   }
 }

@@ -2,7 +2,6 @@
 
 namespace KKL\Ligatool\Backend;
 
-use KKL\Ligatool\DB;
 use KKL\Ligatool\Model\Player;
 use KKL\Ligatool\ServiceBroker;
 
@@ -170,8 +169,8 @@ class PlayerAdminPage extends AdminPage {
       $properties['ligaleitung_address'] = $_POST['ligaleitung_address'];
 
     if (!empty($properties)) {
-      $db = new DB\Wordpress();
-      $db->setPlayerProperties($player, $properties);
+      $playerPropertyService = ServiceBroker::getPlayerPropertyService();
+      $playerPropertyService->setPlayerProperties($player, $properties);
     }
 
     return $service->byId($player->getId());

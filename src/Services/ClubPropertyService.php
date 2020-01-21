@@ -6,23 +6,23 @@
  * Time: 10:43
  */
 
-namespace KKL\Ligatool\Model;
+namespace KKL\Ligatool\Services;
 
 
-use KKL\Ligatool\DB\Where;
+use KKL\Ligatool\Model\ClubProperty;
 
-class ApiKeyService extends KKLModelService {
+class ClubPropertyService extends KKLModelService {
 
   /**
-   * @return ApiKey
+   * @return ClubProperty
    */
   public function getModel() {
-    return new ApiKey();
+    return new ClubProperty();
   }
 
   /**
    * @param int $id
-   * @return ApiKey|false
+   * @return ClubProperty|false
    */
   public function byId($id) {
     return parent::byId($id);
@@ -30,7 +30,7 @@ class ApiKeyService extends KKLModelService {
 
   /**
    * @param null $orderBy
-   * @return ApiKey[]
+   * @return ClubProperty[]
    */
   public function getAll($orderBy = null) {
     return parent::getAll($orderBy);
@@ -40,7 +40,7 @@ class ApiKeyService extends KKLModelService {
    * @param null $where
    * @param null $orderBy
    * @param null $limit
-   * @return ApiKey[]
+   * @return ClubProperty[]
    */
   public function find($where = null, $orderBy = null, $limit = null) {
     return parent::find($where, $orderBy, $limit);
@@ -50,19 +50,9 @@ class ApiKeyService extends KKLModelService {
    * @param null $where
    * @param null $orderBy
    * @param null $limit
-   * @return ApiKey|null
+   * @return ClubProperty|null
    */
   public function findOne($where = null, $orderBy = null, $limit = null) {
     return parent::findOne($where, $orderBy, $limit);
   }
-
-  /**
-   * @param $key
-   * @return ApiKey|null
-   */
-  public function byKey($key) {
-    return $this->findOne(new Where('api_key', $key, '='));
-  }
-
-
 }

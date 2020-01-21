@@ -6,7 +6,6 @@ use KKL\Ligatool\Model\GameDay;
 use KKL\Ligatool\Model\Season;
 
 require __DIR__ . '../vendor/autoload.php';
-$db = new DB\Wordpress();
 $seasonService = ServiceBroker::getSeasonService();
 $leagueService = ServiceBroker::getLeagueService();
 $gameDayService = ServiceBroker::getGameDayService();

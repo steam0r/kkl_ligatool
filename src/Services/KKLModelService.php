@@ -6,7 +6,7 @@
  * Time: 10:43
  */
 
-namespace KKL\Ligatool\Model;
+namespace KKL\Ligatool\Services;
 
 
 use Exception;
@@ -14,6 +14,7 @@ use KKL\Ligatool\DB\Limit;
 use KKL\Ligatool\DB\Manager;
 use KKL\Ligatool\DB\OrderBy;
 use KKL\Ligatool\DB\Where;
+use KKL\Ligatool\Model\KKLModel;
 use Symlink\ORM\Repositories\BaseRepository;
 
 abstract class KKLModelService {

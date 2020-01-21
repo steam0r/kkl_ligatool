@@ -6,21 +6,23 @@
  * Time: 10:43
  */
 
-namespace KKL\Ligatool\Model;
+namespace KKL\Ligatool\Services;
 
 
-class GameService extends KKLModelService {
+use KKL\Ligatool\Model\Location;
+
+class LocationService extends KKLModelService {
 
   /**
-   * @return Game
+   * @return Location
    */
   public function getModel() {
-    return new Game();
+    return new Location();
   }
 
   /**
    * @param int $id
-   * @return Game|false
+   * @return Location|false
    */
   public function byId($id) {
     return parent::byId($id);
@@ -28,7 +30,7 @@ class GameService extends KKLModelService {
 
   /**
    * @param null $orderBy
-   * @return Game[]
+   * @return Location[]
    */
   public function getAll($orderBy = null) {
     return parent::getAll($orderBy);
@@ -38,20 +40,20 @@ class GameService extends KKLModelService {
    * @param null $where
    * @param null $orderBy
    * @param null $limit
-   * @return Game|null
+   * @return Location[]
    */
-  public function findOne($where = null, $orderBy = null, $limit = null) {
-    return parent::findOne($where, $orderBy, $limit);
+  public function find($where = null, $orderBy = null, $limit = null) {
+    return parent::find($where, $orderBy, $limit);
   }
 
   /**
    * @param null $where
    * @param null $orderBy
    * @param null $limit
-   * @return Game[]
+   * @return Location|null
    */
-  public function find($where = null, $orderBy = null, $limit = null) {
-    return parent::find($where, $orderBy, $limit);
+  public function findOne($where = null, $orderBy = null, $limit = null) {
+    return parent::findOne($where, $orderBy, $limit);
   }
 
 }

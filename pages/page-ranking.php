@@ -23,8 +23,6 @@ if (isset($wp_query->query_vars['json'])) {
 
   header('Content-Type: application/json');
 
-  $db = new DB\Wordpress();
-
   $context = Plugin::getContext();
   $rankings = array();
 
@@ -34,11 +32,17 @@ if (isset($wp_query->query_vars['json'])) {
   $gameDayService = ServiceBroker::getGameDayService();
   $leagueService = ServiceBroker::getLeagueService();
   $seasonService = ServiceBroker::getSeasonService();
+  $rankingService = ServiceBroker::getRankingService();
+  $scheduleService = ServiceBroker::getScheduleService();
 
   if (!$overview) {
     $ranking = new \stdClass;
     $ranking->league = $context['league'];
-    $ranking->ranks = $db->getRankingForLeagueAndSeasonAndGameDay($context['league']->id, $context['season']->id, $context['game_day']->number);
+    $ranking->ranks = $rankingService->getRankingForLeagueAndSeasonAndGameDay(
+      $context['league']->id,
+      $context['season']->id,
+      $context['game_day']->number
+    );
     foreach ($ranking->ranks as $rank) {
       $team = $teamService->byId($rank->team_id);
       $club = $clubService->byId($team->getClubId());
@@ -49,7 +53,7 @@ if (isset($wp_query->query_vars['json'])) {
     $output['rankings'] = $rankings;
 
     $schedules = array();
-    $schedule = $db->getScheduleForGameDay($context['game_day']);
+    $schedule = $scheduleService->getScheduleForGameDay($context['game_day']);
     foreach ($schedule->matches as $match) {
       $home_club = $clubService->byId($match->home->club_id);
       $away_club = $clubService->byId($match->away->club_id);
@@ -69,7 +73,11 @@ if (isset($wp_query->query_vars['json'])) {
       $day = $gameDayService->byId($season->getCurrentGameDay());
       $ranking = new \stdClass;
       $ranking->league = $league;
-      $ranking->ranks = $db->getRankingForLeagueAndSeasonAndGameDay($league->getId(), $season->getId(), $day->getNumber());
+      $ranking->ranks = $rankingService->getRankingForLeagueAndSeasonAndGameDay(
+        $league->getId(),
+        $season->getId(),
+        $day->getNumber()
+      );
       foreach ($ranking->ranks as $rank) {
         $team = $teamService->byId($rank->team_id);
         $club = $clubService->byId($team->getClubId());

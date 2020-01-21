@@ -6,23 +6,23 @@
  * Time: 10:43
  */
 
-namespace KKL\Ligatool\Model;
+namespace KKL\Ligatool\Services;
 
 
-use KKL\Ligatool\DB\Where;
+use KKL\Ligatool\Model\MatchProperty;
 
-class MatchService extends KKLModelService {
+class MatchPropertyService extends KKLModelService {
 
   /**
-   * @return Match
+   * @return MatchProperty
    */
   public function getModel() {
-    return new Match();
+    return new MatchProperty();
   }
 
   /**
    * @param int $id
-   * @return Match|false
+   * @return MatchProperty|false
    */
   public function byId($id) {
     return parent::byId($id);
@@ -30,7 +30,7 @@ class MatchService extends KKLModelService {
 
   /**
    * @param null $orderBy
-   * @return Match[]
+   * @return MatchProperty[]
    */
   public function getAll($orderBy = null) {
     return parent::getAll($orderBy);
@@ -40,7 +40,7 @@ class MatchService extends KKLModelService {
    * @param null $where
    * @param null $orderBy
    * @param null $limit
-   * @return Match[]
+   * @return MatchProperty[]
    */
   public function find($where = null, $orderBy = null, $limit = null) {
     return parent::find($where, $orderBy, $limit);
@@ -50,13 +50,10 @@ class MatchService extends KKLModelService {
    * @param null $where
    * @param null $orderBy
    * @param null $limit
-   * @return Match|null
+   * @return MatchProperty|null
    */
   public function findOne($where = null, $orderBy = null, $limit = null) {
     return parent::findOne($where, $orderBy, $limit);
   }
 
-  public function byGameDay($gameDayId) {
-    return $this->find(new Where("game_day_id", $gameDayId, '='));
-  }
 }

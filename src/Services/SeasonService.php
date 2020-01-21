@@ -6,10 +6,11 @@
  * Time: 10:43
  */
 
-namespace KKL\Ligatool\Model;
+namespace KKL\Ligatool\Services;
 
 
 use KKL\Ligatool\DB\Where;
+use KKL\Ligatool\Model\Season;
 use KKL\Ligatool\ServiceBroker;
 
 class SeasonService extends KKLModelService {
@@ -89,5 +90,19 @@ class SeasonService extends KKLModelService {
     $seasonService = ServiceBroker::getSeasonService();
     return $seasonService->find(new Where('league_id', $leagueId, '='));
   }
+
+  /**
+   * @param $leagueId
+   * @return Season
+   */
+  public function byLeagueAndYear($leagueId, $year) {
+    $seasonService = ServiceBroker::getSeasonService();
+    return $seasonService->findOne(
+      new Where('league_id', $leagueId, '='),
+      new Where('start_date', $year . '-01-01', '>='),
+      new Where('start_date', $year . '-12-31', '<=')
+    );
+  }
+
 
 }

@@ -6,8 +6,6 @@ use KKL\Ligatool\DB\OrderBy;
 
 require __DIR__ . '../vendor/autoload.php';
 
-$db = new DB\Wordpress();
-
 $service = ServiceBroker::getPlayerService();
 $players = $service->getAll(new OrderBy('first_name', 'ASC'));
 foreach ($players as $player) {
@@ -33,7 +31,8 @@ foreach ($players as $player) {
   foreach ($api_data['Teams'] as $team) {
     $name = $api_data[$team][0];
     if ($name) {
-      $teams = $db->getTeamsByName($name);
+      $teamService = ServiceBroker::getTeamService();
+      $teams = $teamService->byName($name);
       $current = array_pop($teams);
       if ($current) {
         $sql .= "'" . $current->id . "');";

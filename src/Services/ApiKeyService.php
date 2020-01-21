@@ -6,24 +6,24 @@
  * Time: 10:43
  */
 
-namespace KKL\Ligatool\Model;
+namespace KKL\Ligatool\Services;
 
 
 use KKL\Ligatool\DB\Where;
-use KKL\Ligatool\ServiceBroker;
+use KKL\Ligatool\Model\ApiKey;
 
-class TeamService extends KKLModelService {
+class ApiKeyService extends KKLModelService {
 
   /**
-   * @return Team
+   * @return ApiKey
    */
   public function getModel() {
-    return new Team();
+    return new ApiKey();
   }
 
   /**
    * @param int $id
-   * @return Team|false
+   * @return ApiKey|false
    */
   public function byId($id) {
     return parent::byId($id);
@@ -31,7 +31,7 @@ class TeamService extends KKLModelService {
 
   /**
    * @param null $orderBy
-   * @return Team[]
+   * @return ApiKey[]
    */
   public function getAll($orderBy = null) {
     return parent::getAll($orderBy);
@@ -41,7 +41,7 @@ class TeamService extends KKLModelService {
    * @param null $where
    * @param null $orderBy
    * @param null $limit
-   * @return Team[]
+   * @return ApiKey[]
    */
   public function find($where = null, $orderBy = null, $limit = null) {
     return parent::find($where, $orderBy, $limit);
@@ -51,27 +51,19 @@ class TeamService extends KKLModelService {
    * @param null $where
    * @param null $orderBy
    * @param null $limit
-   * @return Team|null
+   * @return ApiKey|null
    */
   public function findOne($where = null, $orderBy = null, $limit = null) {
     return parent::findOne($where, $orderBy, $limit);
   }
 
   /**
-   * @param $seasonId
-   * @return Team[]
+   * @param $key
+   * @return ApiKey|null
    */
-  public function forSeason($seasonId) {
-    $teamService = ServiceBroker::getTeamService();
-    return $teamService->find(new Where('season_id', $seasonId, '='));
+  public function byKey($key) {
+    return $this->findOne(new Where('api_key', $key, '='));
   }
 
-  /**
-   * @param $code
-   * @return Team[]
-   */
-  public function byClub($code) {
-    return $this->find(new Where('club_id', $code, '='));
-  }
 
 }

@@ -8,27 +8,29 @@
 
 namespace KKL\Ligatool;
 
-use KKL\Ligatool\Model\ApiKeyService;
-use KKL\Ligatool\Model\AwardService;
-use KKL\Ligatool\Model\ClubPropertyService;
-use KKL\Ligatool\Model\ClubService;
-use KKL\Ligatool\Model\GameDayService;
-use KKL\Ligatool\Model\GameService;
-use KKL\Ligatool\Model\LeaguePropertyService;
-use KKL\Ligatool\Model\LeagueService;
-use KKL\Ligatool\Model\LocationService;
-use KKL\Ligatool\Model\MatchPropertyService;
-use KKL\Ligatool\Model\MatchService;
-use KKL\Ligatool\Model\PlayerPropertyService;
-use KKL\Ligatool\Model\PlayerService;
-use KKL\Ligatool\Model\SeasonPropertyService;
-use KKL\Ligatool\Model\SeasonService;
-use KKL\Ligatool\Model\SetService;
-use KKL\Ligatool\Model\TeamPlayerPropertyService;
-use KKL\Ligatool\Model\TeamPlayerService;
-use KKL\Ligatool\Model\TeamPropertyService;
-use KKL\Ligatool\Model\TeamScoreService;
-use KKL\Ligatool\Model\TeamService;
+use KKL\Ligatool\Services\ApiKeyService;
+use KKL\Ligatool\Services\AwardService;
+use KKL\Ligatool\Services\ClubPropertyService;
+use KKL\Ligatool\Services\ClubService;
+use KKL\Ligatool\Services\GameDayService;
+use KKL\Ligatool\Services\GameService;
+use KKL\Ligatool\Services\LeaguePropertyService;
+use KKL\Ligatool\Services\LeagueService;
+use KKL\Ligatool\Services\LocationService;
+use KKL\Ligatool\Services\MatchPropertyService;
+use KKL\Ligatool\Services\MatchService;
+use KKL\Ligatool\Services\PlayerPropertyService;
+use KKL\Ligatool\Services\PlayerService;
+use KKL\Ligatool\Services\RankingService;
+use KKL\Ligatool\Services\ScheduleService;
+use KKL\Ligatool\Services\SeasonPropertyService;
+use KKL\Ligatool\Services\SeasonService;
+use KKL\Ligatool\Services\SetService;
+use KKL\Ligatool\Services\TeamPlayerPropertyService;
+use KKL\Ligatool\Services\TeamPlayerService;
+use KKL\Ligatool\Services\TeamPropertyService;
+use KKL\Ligatool\Services\TeamScoreService;
+use KKL\Ligatool\Services\TeamService;
 
 class ServiceBroker {
 
@@ -53,6 +55,8 @@ class ServiceBroker {
   private static $teamPlayerService;
   private static $teamPlayerPropertyService;
   private static $teamScoreService;
+  private static $rankingService;
+  private static $scheduleService;
 
   /**
    * @param string $environment
@@ -80,6 +84,8 @@ class ServiceBroker {
       self::$teamPlayerService = new TeamPlayerService();
       self::$teamPlayerPropertyService = new TeamPlayerPropertyService();
       self::$teamScoreService = new TeamScoreService();
+      self::$rankingService = new RankingService();
+      self::$scheduleService = new ScheduleService();
     }
   }
 
@@ -228,6 +234,20 @@ class ServiceBroker {
    */
   public static function getTeamScoreService() {
     return self::$teamScoreService;
+  }
+
+  /**
+   * @return RankingService
+   */
+  public static function getRankingService() {
+    return self::$rankingService;
+  }
+
+  /**
+   * @return ScheduleService
+   */
+  public static function getScheduleService() {
+    return self::$scheduleService;
   }
 
 }

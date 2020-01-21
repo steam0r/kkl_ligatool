@@ -9,13 +9,6 @@ use stdClass;
 
 class Ranking {
 
-  private $db;
-
-  public function __construct() {
-    $this->db = new DB\Wordpress();
-  }
-
-
   /**
    * @param $pageContext
    * @return array
@@ -25,10 +18,12 @@ class Ranking {
 
     $teamService = ServiceBroker::getTeamService();
     $clubService = ServiceBroker::getClubService();
+    $seasonService = ServiceBroker::getSeasonService();
+    $rankingService = ServiceBroker::getRankingService();
 
     $ranking = new stdClass;
     $ranking->league = $pageContext['league'];
-    $ranking->ranks = $this->db->getRankingForLeagueAndSeasonAndGameDay(
+    $ranking->ranks = $rankingService->getRankingForLeagueAndSeasonAndGameDay(
       $pageContext['league']->id,
       $pageContext['season']->id,
       $pageContext['game_day']->number
@@ -40,7 +35,7 @@ class Ranking {
       $rank->team->link = LinkUtils::getLink('club', array('pathname' => $club->getShortName()));
     }
 
-    $properties = $this->db->getSeasonProperties($pageContext['season']->id);
+    $properties = $seasonService->bySeason($pageContext['season']->id);
 
     if ($properties && array_key_exists('relegation_explanation', $properties)) {
       $ranking->relegation_explanation = $properties['relegation_explanation'];
@@ -61,6 +56,7 @@ class Ranking {
     $leagueService = ServiceBroker::getLeagueService();
     $gameDayService = ServiceBroker::getGameDayService();
     $seasonService = ServiceBroker::getSeasonService();
+    $rankingService = ServiceBroker::getRankingService();
 
     foreach ($leagueService->getActive() as $league) {
       $season = $seasonService->byId($league->getCurrentSeason());
@@ -68,7 +64,11 @@ class Ranking {
 
       $ranking = new stdClass;
       $ranking->league = $league;
-      $ranking->ranks = $this->db->getRankingForLeagueAndSeasonAndGameDay($league->id, $season->id, $day->getNumber());
+      $ranking->ranks = $rankingService->getRankingForLeagueAndSeasonAndGameDay(
+        $league->getId(),
+        $season->getId(),
+        $day->getNumber()
+      );
 
 
       $clubService = ServiceBroker::getClubService();

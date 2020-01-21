@@ -63,7 +63,6 @@ class Plugin {
     static::$basePath = $basePath;
     static::$pluginPath = plugins_url('/kkl_ligatool');
 
-    $this->db = new DB\Wordpress();
   }
 
   public static function getContext() {
@@ -136,24 +135,20 @@ class Plugin {
 
   }
 
-
-  public function getDB() {
-    return $this->db;
-  }
-
-
   public function init() {
 
     ServiceBroker::init('LIVE');
 
+    $db = new DB\Wordpress();
+
     add_option(DB\Wordpress::$VERSION_KEY, DB\Wordpress::$VERSION);
 
     register_activation_hook(static::getPluginFile(), array(
-      $this->getDB(),
+      $db,
       'installWordpressDatabase'
     ));
     register_activation_hook(static::getPluginFile(), array(
-      $this->getDB(),
+      $db,
       'installWordpressData'
     ));
 
@@ -466,15 +461,17 @@ class Plugin {
    * TODO:
    * try to remove!!
    */
-  public function getContextByLeagueAndSeasonAndGameDay($league, $season, $game_day) {
+  public function getContextByLeagueAndSeasonAndGameDay($league, $year, $game_day) {
 
     $data = array();
 
     $leagueService = ServiceBroker::getLeagueService();
+    $seasonService = ServiceBroker::getSeasonService();
+    $gameDayService = ServiceBroker::getGameDayService();
 
     $league = $leagueService->bySlug($league);
-    $season = $this->db->getSeasonByLeagueAndYear($league->getId(), $season);
-    $game_day = $this->db->getGameDayBySeasonAndPosition($season->ID, $game_day);
+    $season = $seasonService->byLeagueAndYear($league->getId(), $year);
+    $game_day = $gameDayService->bySeasonAndPosition($season->getId(), $game_day);
 
     $data['league'] = $league;
     $data['season'] = $season;
@@ -483,15 +480,16 @@ class Plugin {
     return $data;
   }
 
-  public function getContextByLeagueAndSeason($league, $season) {
+  public function getContextByLeagueAndSeason($league, $year) {
     $data = array();
 
     $leagueService = ServiceBroker::getLeagueService();
+    $seasonService = ServiceBroker::getSeasonService();
     $gameDayService = ServiceBroker::getGameDayService();
 
     $league = $leagueService->bySlug($league);
-    $season = $this->db->getSeasonByLeagueAndYear($league->getId(), $season);
-    $game_day = $gameDayService->byId($season->current_game_day);
+    $season = $seasonService->byLeagueAndYear($league->getId(), $year);
+    $game_day = $gameDayService->byId($season->getCurrentGameDay());
 
     $data['league'] = $league;
     $data['season'] = $season;

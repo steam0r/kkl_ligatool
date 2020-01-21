@@ -6,21 +6,23 @@
  * Time: 10:43
  */
 
-namespace KKL\Ligatool\Model;
+namespace KKL\Ligatool\Services;
 
 
-class ClubPropertyService extends KKLModelService {
+use KKL\Ligatool\Model\LeagueProperty;
+
+class LeaguePropertyService extends KKLModelService {
 
   /**
-   * @return ClubProperty
+   * @return LeagueProperty
    */
   public function getModel() {
-    return new ClubProperty();
+    return new LeagueProperty();
   }
 
   /**
    * @param int $id
-   * @return ClubProperty|false
+   * @return LeagueProperty|false
    */
   public function byId($id) {
     return parent::byId($id);
@@ -28,7 +30,7 @@ class ClubPropertyService extends KKLModelService {
 
   /**
    * @param null $orderBy
-   * @return ClubProperty[]
+   * @return LeagueProperty[]
    */
   public function getAll($orderBy = null) {
     return parent::getAll($orderBy);
@@ -38,7 +40,7 @@ class ClubPropertyService extends KKLModelService {
    * @param null $where
    * @param null $orderBy
    * @param null $limit
-   * @return ClubProperty[]
+   * @return LeagueProperty[]
    */
   public function find($where = null, $orderBy = null, $limit = null) {
     return parent::find($where, $orderBy, $limit);
@@ -48,9 +50,10 @@ class ClubPropertyService extends KKLModelService {
    * @param null $where
    * @param null $orderBy
    * @param null $limit
-   * @return ClubProperty|null
+   * @return LeagueProperty|null
    */
   public function findOne($where = null, $orderBy = null, $limit = null) {
     return parent::findOne($where, $orderBy, $limit);
   }
+
 }

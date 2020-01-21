@@ -2,8 +2,8 @@
 
 namespace KKL\Ligatool\Tasks;
 
-use KKL\Ligatool\DB;
 use KKL\Ligatool\Events;
+use KKL\Ligatool\ServiceBroker;
 
 class GameDayReminder {
 
@@ -17,13 +17,13 @@ class GameDayReminder {
   }
 
   private static function getMatches($days_off) {
-    $db = new DB\Wordpress();
-    return $db->getReminderMatches($days_off);
+    $matchService = ServiceBroker::getMatchService();
+    return $matchService->reminderMatches($days_off);
   }
 
   private static function getTopMatches($matches) {
-    $db = new DB\Wordpress();
-    return $db->getTopMatches($matches);
+    $matchService = ServiceBroker::getMatchService();
+    return $matchService->topMatches($matches);
   }
 
 }

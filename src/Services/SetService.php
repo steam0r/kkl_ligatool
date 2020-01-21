@@ -6,21 +6,23 @@
  * Time: 10:43
  */
 
-namespace KKL\Ligatool\Model;
+namespace KKL\Ligatool\Services;
 
 
-class TeamPlayerService extends KKLModelService {
+use KKL\Ligatool\Model\Set;
+
+class SetService extends KKLModelService {
 
   /**
-   * @return TeamPlayer
+   * @return Set
    */
   public function getModel() {
-    return new TeamPlayer();
+    return new Set();
   }
 
   /**
    * @param int $id
-   * @return TeamPlayer|false
+   * @return Set|false
    */
   public function byId($id) {
     return parent::byId($id);
@@ -28,7 +30,7 @@ class TeamPlayerService extends KKLModelService {
 
   /**
    * @param null $orderBy
-   * @return TeamPlayer[]
+   * @return Set[]
    */
   public function getAll($orderBy = null) {
     return parent::getAll($orderBy);
@@ -38,7 +40,7 @@ class TeamPlayerService extends KKLModelService {
    * @param null $where
    * @param null $orderBy
    * @param null $limit
-   * @return TeamPlayer[]
+   * @return Set[]
    */
   public function find($where = null, $orderBy = null, $limit = null) {
     return parent::find($where, $orderBy, $limit);
@@ -48,9 +50,10 @@ class TeamPlayerService extends KKLModelService {
    * @param null $where
    * @param null $orderBy
    * @param null $limit
-   * @return TeamPlayer|null
+   * @return Set|null
    */
   public function findOne($where = null, $orderBy = null, $limit = null) {
     return parent::findOne($where, $orderBy, $limit);
   }
+
 }

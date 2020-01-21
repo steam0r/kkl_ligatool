@@ -8,13 +8,6 @@ use KKL\Ligatool\Utils\LinkUtils;
 
 class Teams {
 
-  private $db;
-
-  public function __construct() {
-    $this->db = new DB\Wordpress();
-  }
-
-
   /**
    * @param $team_name
    * @return array
@@ -25,6 +18,7 @@ class Teams {
     $teamService = ServiceBroker::getTeamService();
     $seasonService = ServiceBroker::getSeasonService();
     $leagueService = ServiceBroker::getLeagueService();
+    $rankingService = ServiceBroker::getRankingService();
 
     $club = $clubService->byCode($team_name);
 
@@ -35,8 +29,10 @@ class Teams {
       $seasonTeam->season = $seasonService->byId($seasonTeam->getSeasonId());
       $seasonTeam->season->league = $leagueService->byId($seasonTeam->season->getLeagueId());
 
-      $ranking = $this->db->getRankingForLeagueAndSeasonAndGameDay(
-        $seasonTeam->season->getLeagueId(), $seasonTeam->season->getId(), $seasonTeam->season->getCurrentGameDay()->getId()
+      $ranking = $rankingService->getRankingForLeagueAndSeasonAndGameDay(
+        $seasonTeam->season->getLeagueId(),
+        $seasonTeam->season->getId(),
+        $seasonTeam->season->getCurrentGameDay()->getId()
       );
       $position = 1;
       foreach ($ranking as $rank) {
@@ -62,7 +58,7 @@ class Teams {
       $teams[$seasonTeam->getId()] = $seasonTeam;
     }
 
-    $currentTeam = $this->db->getCurrentTeamForClub($club->id);
+    $currentTeam = $teamService->getCurrentTeamForClub($club->id);
 
     $locationService = ServiceBroker::getLocationService();
     $currentLocation = $locationService->byId($currentTeam->properties['location']);

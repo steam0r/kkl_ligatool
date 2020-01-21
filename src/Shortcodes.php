@@ -18,14 +18,17 @@ class Shortcodes {
    */
   public static function setMatchFixture($atts, $content, $tag) {
     $templateEngine = Template\Service::getTemplateEngine();
-    $db = new DB\Wordpress();
-    $data = $db->getAllGamesForNextGameday();
 
+    $gameService = ServiceBroker::getGameService();
     $leagueService = ServiceBroker::getLeagueService();
+    $teamPropertyService = ServiceBroker::getTeamPropertyService();
+
+    $data = $gameService->getAllGamesForNextGameday();
+
 
     $all_matches = array();
     foreach ($data as $game) {
-      $teamProperties = $db->getTeamProperties($game->homeid);
+      $teamProperties = $teamPropertyService->byTeam($game->homeid);
 
       $leagueData = $leagueService->byId($game->league_id);
       $all_matches[$game->league_id]["id"] = $game->league_id;

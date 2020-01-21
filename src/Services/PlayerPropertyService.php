@@ -6,8 +6,10 @@
  * Time: 10:43
  */
 
-namespace KKL\Ligatool\Model;
+namespace KKL\Ligatool\Services;
 
+
+use KKL\Ligatool\Model\PlayerProperty;
 
 class PlayerPropertyService extends KKLModelService {
 
@@ -52,6 +54,20 @@ class PlayerPropertyService extends KKLModelService {
    */
   public function findOne($where = null, $orderBy = null, $limit = null) {
     return parent::findOne($where, $orderBy, $limit);
+  }
+
+  /**
+   * @param $player
+   * @param $properties
+   * @deprecated use orm
+   */
+  public function setPlayerProperties($player, $properties) {
+    foreach ($properties as $key => $value) {
+      $this->getDb()->delete(static::$prefix . 'player_properties', array('objectId' => $player->ID, 'property_key' => $key));
+      if ($value !== false) {
+        $this->getDb()->insert(static::$prefix . 'player_properties', array('objectId' => $player->ID, 'property_key' => $key, 'value' => $value,), array('%d', '%s', '%s'));
+      }
+    }
   }
 
 }

@@ -31,11 +31,13 @@ class UpcomingGames extends WP_Widget {
     $title = apply_filters('widget_title', $instance['title']);
 
     echo $before_widget;
-    if (!empty($title))
+    if (!empty($title)) {
       echo $before_title . $title . $after_title;
+    }
 
-    $db = new DB\Wordpress();
     $leagueService = ServiceBroker::getLeagueService();
+    $gameService = ServiceBroker::getGameService();
+    $teamService = ServiceBroker::getTeamService();
 
     $league_id = $instance['league'];
     if (!$league_id) {
@@ -44,11 +46,11 @@ class UpcomingGames extends WP_Widget {
       if (!$league_id) {
         $team = $context['team'];
         if ($team) {
-          $current_team = $db->getCurrentTeamForClub($team->club_id);
-          $data = $db->getGamesForTeam($current_team->ID);
+          $current_team = $teamService->getCurrentTeamForClub($team->club_id);
+          $data = $gameService->getGamesForTeam($current_team->ID);
           echo $this->tpl->render('widgets/upcoming_games.twig', array('schedule' => $data, 'display_result' => true));
         } else {
-          $data = $db->getAllUpcomingGames();
+          $data = $gameService->getAllUpcomingGames();
           $games = array();
           $leagues = array();
           foreach ($data as $game) {
@@ -61,7 +63,7 @@ class UpcomingGames extends WP_Widget {
           }
         }
       } else {
-        $data = $db->getUpcomingGames($league_id);
+        $data = $gameService->getUpcomingGames($league_id);
         echo $this->tpl->render('widgets/upcoming_games.twig', array('schedule' => $data));
       }
     }

@@ -6,21 +6,23 @@
  * Time: 10:43
  */
 
-namespace KKL\Ligatool\Model;
+namespace KKL\Ligatool\Services;
 
 
-class LocationService extends KKLModelService {
+use KKL\Ligatool\Model\TeamScore;
+
+class TeamScoreService extends KKLModelService {
 
   /**
-   * @return Location
+   * @return TeamScore
    */
   public function getModel() {
-    return new Location();
+    return new TeamScore();
   }
 
   /**
    * @param int $id
-   * @return Location|false
+   * @return TeamScore|false
    */
   public function byId($id) {
     return parent::byId($id);
@@ -28,7 +30,7 @@ class LocationService extends KKLModelService {
 
   /**
    * @param null $orderBy
-   * @return Location[]
+   * @return TeamScore[]
    */
   public function getAll($orderBy = null) {
     return parent::getAll($orderBy);
@@ -38,7 +40,7 @@ class LocationService extends KKLModelService {
    * @param null $where
    * @param null $orderBy
    * @param null $limit
-   * @return Location[]
+   * @return TeamScore[]
    */
   public function find($where = null, $orderBy = null, $limit = null) {
     return parent::find($where, $orderBy, $limit);
@@ -48,7 +50,7 @@ class LocationService extends KKLModelService {
    * @param null $where
    * @param null $orderBy
    * @param null $limit
-   * @return Location|null
+   * @return TeamScore|null
    */
   public function findOne($where = null, $orderBy = null, $limit = null) {
     return parent::findOne($where, $orderBy, $limit);

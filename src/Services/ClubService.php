@@ -6,10 +6,11 @@
  * Time: 10:43
  */
 
-namespace KKL\Ligatool\Model;
+namespace KKL\Ligatool\Services;
 
 
 use KKL\Ligatool\DB\Where;
+use KKL\Ligatool\Model\Club;
 
 class ClubService extends KKLModelService {
 

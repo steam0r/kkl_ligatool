@@ -6,11 +6,12 @@
  * Time: 10:43
  */
 
-namespace KKL\Ligatool\Model;
+namespace KKL\Ligatool\Services;
 
 
 use KKL\Ligatool\DB\OrderBy;
 use KKL\Ligatool\DB\Where;
+use KKL\Ligatool\Model\League;
 use KKL\Ligatool\ServiceBroker;
 
 class LeagueService extends KKLModelService {

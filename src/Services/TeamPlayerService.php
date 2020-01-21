@@ -6,21 +6,23 @@
  * Time: 10:43
  */
 
-namespace KKL\Ligatool\Model;
+namespace KKL\Ligatool\Services;
 
 
-class AwardService extends KKLModelService {
+use KKL\Ligatool\Model\TeamPlayer;
+
+class TeamPlayerService extends KKLModelService {
 
   /**
-   * @return Award
+   * @return TeamPlayer
    */
   public function getModel() {
-    return new Award();
+    return new TeamPlayer();
   }
 
   /**
    * @param int $id
-   * @return Award|false
+   * @return TeamPlayer|false
    */
   public function byId($id) {
     return parent::byId($id);
@@ -28,7 +30,7 @@ class AwardService extends KKLModelService {
 
   /**
    * @param null $orderBy
-   * @return Award[]
+   * @return TeamPlayer[]
    */
   public function getAll($orderBy = null) {
     return parent::getAll($orderBy);
@@ -38,7 +40,7 @@ class AwardService extends KKLModelService {
    * @param null $where
    * @param null $orderBy
    * @param null $limit
-   * @return Award[]
+   * @return TeamPlayer[]
    */
   public function find($where = null, $orderBy = null, $limit = null) {
     return parent::find($where, $orderBy, $limit);
@@ -48,10 +50,9 @@ class AwardService extends KKLModelService {
    * @param null $where
    * @param null $orderBy
    * @param null $limit
-   * @return Award|null
+   * @return TeamPlayer|null
    */
   public function findOne($where = null, $orderBy = null, $limit = null) {
     return parent::findOne($where, $orderBy, $limit);
   }
-
 }

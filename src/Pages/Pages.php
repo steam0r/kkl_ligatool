@@ -5,7 +5,6 @@ namespace KKL\Ligatool\Pages;
 
 use KKL\Ligatool\ServiceBroker;
 use KKL\Ligatool\Template;
-use KKL\Ligatool\DB;
 
 class Pages {
 
@@ -18,27 +17,28 @@ class Pages {
    * @param null $game_day
    * @return array
    */
-  public static function leagueContext($league, $season = null, $game_day = null) {
-    $db = new DB\Wordpress();
+  public static function leagueContext($league, $year = null, $game_day = null) {
 
     $gameDayService = ServiceBroker::getGameDayService();
     $leagueService = ServiceBroker::getLeagueService();
     $seasonService = ServiceBroker::getSeasonService();
 
+    $league = $leagueService->bySlug($league);
     $output = array(
-        'league' => $leagueService->bySlug($league)
+      'league' => $league
     );
 
-    if($season) {
-      $output['season'] = $db->getSeasonByLeagueAndYear($output['league']->getId(), $season);
+    $season = $seasonService->byLeagueAndYear($output['league']->getId(), $year);
+    if ($year) {
+      $output['season'] = $season;
     } else {
-      $output['season'] = $seasonService->byId($output['league']->current_season);
+      $output['season'] = $seasonService->byId($league->getCurrentSeason());
     }
 
-    if($game_day) {
-      $output['game_day'] = $db->getGameDayBySeasonAndPosition($output['season']->getId(), $game_day);
+    if ($game_day) {
+      $output['game_day'] = $gameDayService->bySeasonAndPosition($season->getId(), $game_day);
     } else {
-      $output['game_day'] = $gameDayService->byId($output['season']->getCurrentGameDay());
+      $output['game_day'] = $gameDayService->byId($season->getCurrentGameDay());
     }
 
     return $output;
@@ -54,35 +54,33 @@ class Pages {
 
     $leagueService = ServiceBroker::getLeagueService();
 
-    $db = new DB\Wordpress();
-
     $leagues = $leagueService->getActive();
 
     $playerService = ServiceBroker::getPlayerService();
     $leagueadmins = $playerService->getLeagueAdmins();
-    $captains = $db->getCaptainsContactData();
-    $vicecaptains = $db->getViceCaptainsContactData();
+    $captains = $playerService->getCaptainsContactData();
+    $vicecaptains = $playerService->getViceCaptainsContactData();
     $players = array_merge($leagueadmins, $captains, $vicecaptains);
 
     $leagueMap = array();
-    foreach($leagues as $league) {
+    foreach ($leagues as $league) {
       $leagueMap[$league->getCode()] = $league;
     }
 
     $contactMap = array();
-    foreach($players as $player) {
+    foreach ($players as $player) {
 
-      if($player->league_short) {
-        if(!isset($contactMap[$player->league_short])) {
+      if ($player->league_short) {
+        if (!isset($contactMap[$player->league_short])) {
           $contactMap[$player->league_short]['league'] = $leagueMap[$player->league_short];
         }
         $contactMap[$player->league_short]['players'][] = $player;
-      } else if($player->role === 'ligaleitung') {
-        if(!isset($contactMap['ligaleitung'])) {
+      } else if ($player->role === 'ligaleitung') {
+        if (!isset($contactMap['ligaleitung'])) {
           $contactMap['ligaleitung']['league'] = array(
-              'id' => 'ligaleitung',
-              'code' => 'ligaleitung',
-              'name' => 'Ligaleitung'
+            'id' => 'ligaleitung',
+            'code' => 'ligaleitung',
+            'name' => 'Ligaleitung'
           );
         }
 
@@ -91,10 +89,10 @@ class Pages {
     }
 
     return $kkl_twig->render(
-        self::TEMPLATE_PATH . '/contact_list.twig', array(
-            'leagues' => $leagues,
-            'contactMap' => $contactMap
-        )
+      self::TEMPLATE_PATH . '/contact_list.twig', array(
+        'leagues' => $leagues,
+        'contactMap' => $contactMap
+      )
     );
   }
 
@@ -109,13 +107,13 @@ class Pages {
 
     $team_name = get_query_var('team_name');
 
-    if($team_name) {
+    if ($team_name) {
       $templateName = '/team-single.twig';
       $templatContext = $teams->getSingleClub($team_name);
     } else {
       $templateName = '/team-all.twig';
       $templatContext = array(
-          'leagues' => $teams->getAllActiveTeams()
+        'leagues' => $teams->getAllActiveTeams()
       );
     }
 
@@ -135,17 +133,17 @@ class Pages {
     $season = get_query_var('season');
     $game_day = get_query_var('game_day');
 
-    if($league) {
+    if ($league) {
       $templateName = '/ranking-single.twig';
       $pageContext = Pages::leagueContext($league, $season, $game_day);
       $templateContext = array(
-          'rankings' => $ranking->getSingleLeague($pageContext),
-          'schedules' => $schedule->getSingleLeague($pageContext)
+        'rankings' => $ranking->getSingleLeague($pageContext),
+        'schedules' => $schedule->getSingleLeague($pageContext)
       );
     } else {
       $templateName = '/ranking-all.twig';
       $templateContext = array(
-          'rankings' => $ranking->getAllActiveLeagues()
+        'rankings' => $ranking->getAllActiveLeagues()
       );
     }
 
@@ -163,20 +161,20 @@ class Pages {
     $league = get_query_var('league');
     $season = get_query_var('season');
 
-    if($league) {
+    if ($league) {
       $templateName = '/fixtures.twig';
       $pageContext = Pages::leagueContext($league, $season);
       $templateContext = array(
-          'schedules' => $schedule->getSeason($pageContext)
+        'schedules' => $schedule->getSeason($pageContext)
       );
 
-      if(isset($_GET['team'])) {
+      if (isset($_GET['team'])) {
         $templateContext['activeTeam'] = $_GET['team'];
       }
     } else {
       $templateName = '/fixtures-all.twig';
       $templateContext = array(
-          'leagues' => $schedule->getCurrentGameday()
+        'leagues' => $schedule->getCurrentGameday()
       );
     }
 

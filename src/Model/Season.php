@@ -9,6 +9,7 @@
 namespace KKL\Ligatool\Model;
 
 use KKL\Ligatool\ServiceBroker;
+use KKL\Ligatool\Services\SeasonPropertyService;
 
 /**
  * @SWG\Definition(required={"name", "league", "startDate", "endDate"}, type="object")
@@ -151,7 +152,7 @@ class Season extends KKLPropertyModel {
   }
 
   /**
-   * @return KKLModelService
+   * @return SeasonPropertyService
    */
   protected function getPropertyService() {
     return ServiceBroker::getSeasonPropertyService();

@@ -2,7 +2,6 @@
 
 namespace KKL\Ligatool\Pages;
 
-use KKL\Ligatool\DB;
 use KKL\Ligatool\ServiceBroker;
 use KKL\Ligatool\Utils\LinkUtils;
 
@@ -32,7 +31,7 @@ class Teams {
       $ranking = $rankingService->getRankingForLeagueAndSeasonAndGameDay(
         $seasonTeam->season->getLeagueId(),
         $seasonTeam->season->getId(),
-        $seasonTeam->season->getCurrentGameDay()->getId()
+        $seasonTeam->season->getCurrentGameDay()
       );
       $position = 1;
       foreach ($ranking as $rank) {

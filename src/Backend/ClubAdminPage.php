@@ -98,8 +98,8 @@ class ClubAdminPage extends AdminPage {
 
   function save() {
 
-    $club = new Club();
-    $club->setId($_POST['id']);
+    $service = ServiceBroker::getClubService();
+    $club = $service->getOrCreate($_POST['id']);
     $club->setName($_POST['name']);
     $club->setShortName($_POST['short_name']);
     $club->setDescription($_POST['description']);
@@ -108,7 +108,6 @@ class ClubAdminPage extends AdminPage {
       $club->setLogo($this->handleLogoChange());
     }
 
-    $service = ServiceBroker::getClubService();
     $club = $service->createOrUpdate($club);
 
     return $club;

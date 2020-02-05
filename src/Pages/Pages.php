@@ -13,7 +13,7 @@ class Pages {
 
   /**
    * @param $league
-   * @param null $season
+   * @param null $year
    * @param null $game_day
    * @return array
    */
@@ -126,7 +126,7 @@ class Pages {
    */
   public static function ranking() {
     $kkl_twig = Template\Service::getTemplateEngine();
-    $ranking = new Ranking();
+    $ranking = new RankingPage();
     $schedule = new Schedule();
 
     $league = get_query_var('league');

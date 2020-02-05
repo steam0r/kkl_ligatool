@@ -9,6 +9,7 @@
 namespace KKL\Ligatool\Model;
 
 use KKL\Ligatool\ServiceBroker;
+use KKL\Ligatool\Services\MatchPropertyService;
 
 /**
  * @SWG\Definition(required={"home", "away"}, type="object")
@@ -221,9 +222,38 @@ class Match extends KKLPropertyModel {
   }
 
   /**
-   * @return KKLModelService
+   * @return MatchPropertyService
    */
   protected function getPropertyService() {
     return ServiceBroker::getMatchPropertyService();
   }
+
+  public function getGoalsHome() {
+    $gameService = ServiceBroker::getGameService();
+    $setService = ServiceBroker::getSetService();
+    $sets = $setService->byMatch($this);
+    $goals = 0;
+    foreach ($sets as $set) {
+      $games = $gameService->bySet($set);
+      foreach ($games as $game) {
+        $goals += $game->getGoalsHome();
+      }
+    }
+    return $goals;
+  }
+
+  public function getGoalsAway() {
+    $setService = ServiceBroker::getSetService();
+    $gameService = ServiceBroker::getGameService();
+    $sets = $setService->byMatch($this);
+    $goals = 0;
+    foreach ($sets as $set) {
+      $games = $gameService->bySet($set);
+      foreach ($games as $game) {
+        $goals += $game->getGoalsAway();
+      }
+    }
+    return $goals;
+  }
+
 }

@@ -221,14 +221,13 @@ class TeamAdminPage extends AdminPage {
 
   function save() {
 
-    $team = new Team();
-    $team->setId($_POST['id']);
+    $service = ServiceBroker::getTeamService();
+    $team = $service->getOrCreate($_POST['id']);
     $team->setName($_POST['name']);
     $team->setShortName($_POST['short_name']);
     $team->setSeasonId($_POST['season']);
     $team->setClubId($_POST['club']);
 
-    $service = ServiceBroker::getTeamService();
     $team = $service->createOrUpdate($team);
 
     $properties = array();

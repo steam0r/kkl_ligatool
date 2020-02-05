@@ -27,6 +27,7 @@ class Manager extends \Symlink\ORM\Manager {
    * Manager constructor.
    */
   public function __construct() {
+    parent::__construct();
     $this->tracked = new TrackedCollection;
   }
 

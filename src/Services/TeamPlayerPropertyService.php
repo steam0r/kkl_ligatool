@@ -56,18 +56,4 @@ class TeamPlayerPropertyService extends KKLModelService {
     return parent::findOne($where, $orderBy, $limit);
   }
 
-  /**
-   * @param $team
-   * @param $properties
-   * @deprecated use orm
-   */
-  public function setTeamProperties($team, $properties) {
-    foreach ($properties as $key => $value) {
-      $this->getDb()->delete(static::$prefix . 'team_properties', array('objectId' => $team->ID, 'property_key' => $key));
-      if ($value !== false) {
-        $this->getDb()->insert(static::$prefix . 'team_properties', array('objectId' => $team->ID, 'property_key' => $key, 'value' => $value,), array('%d', '%s', '%s'));
-      }
-    }
-  }
-
 }

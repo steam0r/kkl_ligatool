@@ -44,8 +44,24 @@ abstract class KKLModelService {
    * @return false|KKLModel
    */
   public function save($model) {
+    $model->setUpdatedAt(strftime("%Y-%m-%d %H:%M:%S"));
     $model->save();
     return $this->byId($model->getId());
+  }
+
+  /**
+   * @param $id int
+   * @return KKLModel
+   */
+  public function getOrCreate($id) {
+    $model = $this->byId($id);
+    if (!$model) {
+      $model = $this->getModel();
+      $model->setCreatedAt(strftime("%Y-%m-%d %H:%M:%S"));
+    }
+    $orm = Manager::getManager();
+    $orm->track($model);
+    return $model;
   }
 
   /**
@@ -88,6 +104,9 @@ abstract class KKLModelService {
         $builder->orderBy($order->getField(), $order->getDirection());
       }
       $result = $builder->buildQuery()->getResults(true);
+      if (!$result) {
+        return [];
+      }
     } catch (Exception $e) {
       error_log($e->getMessage());
     }
@@ -124,6 +143,9 @@ abstract class KKLModelService {
         $builder->limit($limit->getLimit(), $limit->getOffset());
       }
       $result = $builder->buildQuery()->getResults(true);
+      if (!$result) {
+        return [];
+      }
     } catch (Exception $e) {
       error_log($e->getMessage());
     }

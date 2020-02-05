@@ -104,14 +104,13 @@ class GameDayAdminPage extends AdminPage {
     $start_date = date('Y-m-d H:i:s', strtotime(str_replace('-', '/', $_POST['start_date'])));
     $end_date = date('Y-m-d H:i:s', strtotime(str_replace('-', '/', $_POST['end_date'])));
 
-    $day = new GameDay();
-    $day->setId($_POST['id']);
+    $service = ServiceBroker::getGameDayService();
+    $day = $service->getOrCreate($_POST['id']);
     $day->setNumber($_POST['number']);
     $day->setStart($start_date);
     $day->setEnd($end_date);
     $day->setSeasonId($_POST['season']);
 
-    $service = ServiceBroker::getGameDayService();
     $day = $service->createOrUpdate($day);
 
     return $day;

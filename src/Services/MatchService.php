@@ -10,6 +10,7 @@ namespace KKL\Ligatool\Services;
 
 
 use KKL\Ligatool\DB\Where;
+use KKL\Ligatool\DB\Wordpress;
 use KKL\Ligatool\Model\Match;
 
 class MatchService extends KKLModelService {
@@ -75,9 +76,19 @@ class MatchService extends KKLModelService {
     }
 
     $potentialMatches = array();
+    $dbh = $this->getDb();
     foreach ($days as $season => $day) {
-      $sql = "SELECT " . "team_scores.team_id, " . "sum(team_scores.score) as score, " . "sum(team_scores.gamesFor - team_scores.gamesAgainst) as gameDiff " . "FROM game_days, " . "team_scores  " . "WHERE game_days.season_id='" . $season . "' " . "AND game_days.number <= '" . $day . "' " . "AND gameDay_id=game_days.id " . "GROUP BY team_id " . "ORDER BY score DESC, gameDiff DESC ";
-      $dbh = $this->getDb();
+      $sql = "SELECT " .
+        "team_scores.team_id, " .
+        "sum(team_scores.score) as score, " .
+        "sum(team_scores.gamesFor - team_scores.gamesAgainst) as gameDiff " .
+        "FROM " . $dbh->getPrefix() . "game_days, " .
+        $dbh->getPrefix() . "team_scores  " .
+        "WHERE game_days.season_id='" . $season . "' " .
+        "AND game_days.number <= '" . $day . "' " .
+        "AND gameDay_id=game_days.id " .
+        "GROUP BY team_id " .
+        "ORDER BY score DESC, gameDiff DESC ";
       $stmt = $dbh->prepare($sql, array());
       $ranking = $dbh->get_results($stmt);
       $first = $ranking[0];
@@ -108,9 +119,30 @@ class MatchService extends KKLModelService {
    * @return mixed
    */
   public function reminderMatches($days_off) {
-    $sql = "select l.name as league, s.id as season_id, g.number as day_number, l.code as leaguecode, home.name as home, away.name as away, home.id as home_id, away.id as away_id, loc.title as location, CONCAT(home.name,' gg. ', away.name) as title, slack.value as slack " . "from leagues as l " . "JOIN seasons as s ON s.id = l.current_season " . "JOIN game_days AS g ON g.id = s.current_game_day " . "JOIN game_days AS ug ON ug.season_id = s.id and ug.number = g.number + 1 AND date(ug.fixture) = date(NOW() + INTERVAL " . $days_off . " DAY) " . "JOIN `matches` AS m ON m.game_day_id = ug.id " . "JOIN teams as home ON m.home_team = home.id " . "JOIN teams AS away ON m.away_team = away.id " . "LEFT JOIN team_properties AS p ON p.objectId = home.id AND p.property_key = 'location' " . "LEFT JOIN locations AS loc ON loc.id = p.value " . "left join season_properties AS sp ON sp.objectId = s.id AND sp.property_key = 'season_admin' " . "left join players AS adm ON adm.id = sp.value " . "left join player_properties as slack ON adm.id = slack.objectId AND slack.property_key = 'slack_alias' " . "where l.active = 1 order by l.name ASC";
     $dbh = $this->getDb();
+    $sql = "select l.name as league, s.id as season_id, g.number as day_number, l.code as leaguecode, home.name as home, away.name as away, home.id as home_id, away.id as away_id, loc.title as location, CONCAT(home.name,' gg. ', away.name) as title, slack.value as slack " .
+      "from leagues as l " .
+      "JOIN " . $dbh->getPrefix() . "seasons as s ON s.id = l.current_season " .
+      "JOIN " . $dbh->getPrefix() . "game_days AS g ON g.id = s.current_game_day " .
+      "JOIN " . $dbh->getPrefix() . "game_days AS ug ON ug.season_id = s.id and ug.number = g.number + 1 AND date(ug.fixture) = date(NOW() + INTERVAL " . $days_off . " DAY) " .
+      "JOIN `" . $dbh->getPrefix() . "matches` AS m ON m.game_day_id = ug.id " .
+      "JOIN " . $dbh->getPrefix() . "teams as home ON m.home_team = home.id " .
+      "JOIN " . $dbh->getPrefix() . "teams AS away ON m.away_team = away.id " .
+      "LEFT JOIN " . $dbh->getPrefix() . "team_properties AS p ON p.objectId = home.id AND p.property_key = 'location' " .
+      "LEFT JOIN " . $dbh->getPrefix() . "locations AS loc ON loc.id = p.value " .
+      "left join " . $dbh->getPrefix() . "season_properties AS sp ON sp.objectId = s.id AND sp.property_key = 'season_admin' " .
+      "left join " . $dbh->getPrefix() . "players AS adm ON adm.id = sp.value " .
+      "left join " . $dbh->getPrefix() . "player_properties as slack ON adm.id = slack.objectId AND slack.property_key = 'slack_alias' " .
+      "where l.active = 1 order by l.name ASC";
     $stmt = $dbh->prepare($sql, array());
     return $dbh->get_results($stmt);
+  }
+
+  /**
+   * @return Wordpress
+   * @deprecated use orm layer
+   */
+  private function getDb() {
+    return new Wordpress();
   }
 }

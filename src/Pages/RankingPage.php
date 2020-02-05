@@ -2,12 +2,11 @@
 
 namespace KKL\Ligatool\Pages;
 
-use KKL\Ligatool\DB;
 use KKL\Ligatool\ServiceBroker;
 use KKL\Ligatool\Utils\LinkUtils;
 use stdClass;
 
-class Ranking {
+class RankingPage {
 
   /**
    * @param $pageContext
@@ -35,7 +34,7 @@ class Ranking {
       $rank->team->link = LinkUtils::getLink('club', array('pathname' => $club->getShortName()));
     }
 
-    $properties = $seasonService->bySeason($pageContext['season']->id);
+    $properties = $seasonService->byId($pageContext['season']->id);
 
     if ($properties && array_key_exists('relegation_explanation', $properties)) {
       $ranking->relegation_explanation = $properties['relegation_explanation'];

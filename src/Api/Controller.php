@@ -309,6 +309,9 @@ abstract class Controller extends WP_REST_Controller {
   /**
    * @param WP_REST_Request $request
    * @return bool
+   * @throws \Symlink\ORM\Exceptions\InvalidOperatorException
+   * @throws \Symlink\ORM\Exceptions\NoQueryException
+   * @throws \Symlink\ORM\Exceptions\PropertyDoesNotExistException
    */
   public function authenticate_api_key($request) {
     $key = $request->get_header('X-Api-Key');
@@ -347,7 +350,7 @@ abstract class Controller extends WP_REST_Controller {
               }
             }
           }
-          $dbEmbeddable = $db->getEmbeddable(static::$prefix . $config['table'], $config['field'], $id);
+          $dbEmbeddable = $db->getEmbeddable($db->getPrefix() . $config['table'], $config['field'], $id);
           if (is_array($dbEmbeddable) && count($dbEmbeddable) == 1) {
             $thisEmbed = $dbEmbeddable[0];
           } else {

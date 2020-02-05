@@ -93,14 +93,17 @@ class SeasonService extends KKLModelService {
 
   /**
    * @param $leagueId
+   * @param $year
    * @return Season
    */
   public function byLeagueAndYear($leagueId, $year) {
     $seasonService = ServiceBroker::getSeasonService();
     return $seasonService->findOne(
-      new Where('league_id', $leagueId, '='),
-      new Where('start_date', $year . '-01-01', '>='),
-      new Where('start_date', $year . '-12-31', '<=')
+      [
+        new Where('league_id', $leagueId, '='),
+        new Where('start_date', $year . '-01-01', '>='),
+        new Where('start_date', $year . '-12-31', '<=')
+      ]
     );
   }
 

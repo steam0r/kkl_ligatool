@@ -105,7 +105,7 @@ class MatchListTable extends ListTable {
   function column_goals_home($item) {
     $matchService = ServiceBroker::getMatchService();
     $match = $matchService->byId($item->getId());
-    return $match->goals_home;
+    return $match->getGoalsHome();
   }
 
   /**
@@ -115,7 +115,7 @@ class MatchListTable extends ListTable {
   function column_goals_away($item) {
     $matchService = ServiceBroker::getMatchService();
     $match = $matchService->byId($item->getId());
-    return $match->goals_away;
+    return $match->getGoalsAway();
   }
 
   function display() {
@@ -129,6 +129,7 @@ class MatchListTable extends ListTable {
   function display_create_link() {
     $game_day = $this->get_current_game_day();
     $page = $this->get_create_page();
+    $link = '';
     if ($game_day) {
       $link = add_query_arg(array(compact('page', 'id'), 'gameDayId' => $game_day->getId()), admin_url('admin.php'));
     }

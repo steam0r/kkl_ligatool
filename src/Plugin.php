@@ -3,6 +3,17 @@
 namespace KKL\Ligatool;
 
 use KKL\Ligatool\Backend\PageTemplater;
+use KKL\Ligatool\Shortcode\ClubDetail;
+use KKL\Ligatool\Shortcode\ContactList;
+use KKL\Ligatool\Shortcode\GameDayOverview;
+use KKL\Ligatool\Shortcode\GameDayPager;
+use KKL\Ligatool\Shortcode\GameDayTable;
+use KKL\Ligatool\Shortcode\LeagueOverview;
+use KKL\Ligatool\Shortcode\LeagueTable;
+use KKL\Ligatool\Shortcode\RankingCode;
+use KKL\Ligatool\Shortcode\SeasonSchedule;
+use KKL\Ligatool\Shortcode\SetMatchFixture;
+use KKL\Ligatool\Shortcode\TableOverview;
 use KKL\Ligatool\Widget\OtherLeagues;
 use KKL\Ligatool\Widget\OtherSeasons;
 use KKL\Ligatool\Widget\UpcomingGames;
@@ -324,15 +335,18 @@ class Plugin {
    *
    */
   public function init_shortcodes() {
-    add_shortcode('kl-set-fixture', array(
-      Shortcodes::class,
-      'setMatchFixture'
-    ));
-
-    add_shortcode('kl-ranking', array(
-      Shortcodes::class,
-      'ranking'
-    ));
+    add_shortcode('kl-set-fixture', array(SetMatchFixture::class, 'render'));
+    add_shortcode('kl-ranking', array(RankingCode::class, 'render'));
+    add_shortcode('league_table', array(LeagueTable::class, 'render'));
+    add_shortcode('table_overview', array(TableOverview::class, 'render'));
+    add_shortcode('gameday_table', array(GameDayTable::class, 'render'));
+    add_shortcode('gameday_overview', array(GameDayOverview::class, 'render'));
+    add_shortcode('league_overview', array(LeagueOverview::class, 'render'));
+    add_shortcode('club_detail', array(ClubDetail::class, 'render'));
+    add_shortcode('gameday_pager', array(GameDayPager::class, 'render'));
+    add_shortcode('season_schedule', array(SeasonSchedule::class, 'render'));
+    add_shortcode('contact_list', array(ContactList::class, 'render'));
+    add_shortcode('set_match_fixture', array(SetMatchFixture::class, 'render'));
   }
 
 

@@ -220,8 +220,8 @@ class MatchAdminPage extends AdminPage {
 
   function save() {
 
-    $match = new Match();
-    $match->setId($_POST['id']);
+    $service = ServiceBroker::getMatchService();
+    $match = $service->getOrCreate($_POST['id']);
     $match->setGameDayId($_POST['game_day']);
     $match->setFixture($this->cleanDate($_POST['fixture']));
     $match->setHomeTeam($_POST['team_home']);
@@ -238,7 +238,6 @@ class MatchAdminPage extends AdminPage {
       $match->setStatus(-1);
     }
 
-    $service = ServiceBroker::getMatchService();
     $this->match = $service->createOrUpdate($match);
     return $this->match;
 

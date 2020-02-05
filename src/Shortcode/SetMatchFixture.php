@@ -1,22 +1,14 @@
 <?php
 
-namespace KKL\Ligatool;
 
-use KKL\Ligatool\Pages\Pages;
-use KKL\Ligatool\Pages\Ranking;
+namespace KKL\Ligatool\Shortcode;
 
-class Shortcodes {
+use KKL\Ligatool\ServiceBroker;
+use KKL\Ligatool\Template;
 
-  const TEMPLATE_PATH = 'shortcodes';
+class SetMatchFixture extends Shortcode {
 
-
-  /**
-   * @param $atts
-   * @param $content
-   * @param $tag
-   * @return mixed
-   */
-  public static function setMatchFixture($atts, $content, $tag) {
+  public static function render($atts, $content, $tag) {
     $templateEngine = Template\Service::getTemplateEngine();
 
     $gameService = ServiceBroker::getGameService();
@@ -24,7 +16,6 @@ class Shortcodes {
     $teamPropertyService = ServiceBroker::getTeamPropertyService();
 
     $data = $gameService->getAllGamesForNextGameday();
-
 
     $all_matches = array();
     foreach ($data as $game) {
@@ -44,39 +35,12 @@ class Shortcodes {
     $all_locations = $locationService->getAll();
 
     return $templateEngine->render(
-      self::TEMPLATE_PATH . '/set_match_fixture.twig',
+      self::$TEMPLATE_PATH . '/set_match_fixture.twig',
       array(
         'api_url' => get_site_url(),
         'all_matches' => $all_matches,
         'all_locations' => $all_locations
       )
-    );
-  }
-
-
-  /**
-   * @param $atts
-   * @return mixed
-   */
-  public static function ranking($atts) {
-    $templateEngine = Template\Service::getTemplateEngine();
-    $ranking = new Ranking();
-    $templateContext = array();
-
-    $league = isset($atts['league']) ? $atts['league'] : null;
-    $season = isset($atts['season']) ? $atts['season'] : null;
-    $gameday = isset($atts['gameday']) ? $atts['gameday'] : null;
-
-    if (isset($league)) {
-      $pageContext = Pages::leagueContext($league, $season, $gameday);
-      $templateContext = array(
-        'rankings' => $ranking->getSingleLeague($pageContext)
-      );
-    }
-
-    return $templateEngine->render(
-      self::TEMPLATE_PATH . '/ranking.twig',
-      $templateContext
     );
   }
 

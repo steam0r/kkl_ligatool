@@ -4,6 +4,8 @@ namespace KKL\Ligatool\DB;
 
 use KKL\Ligatool\DB;
 use KKL\Ligatool\Model\ApiKey;
+use KKL\Ligatool\ServiceBroker;
+use KKL\Ligatool\Services\ScoringService;
 use stdClass;
 use Symlink\ORM\Exceptions\InvalidOperatorException;
 use Symlink\ORM\Exceptions\NoQueryException;
@@ -208,6 +210,8 @@ class Api extends DB {
 
   public function getScoresForTeamAndMatch($match, $team) {
 
+    $scoringService = ServiceBroker::getScoringService();
+    
     $day = $this->getGameDay($match->game_day_id);
 
     $sql = "SELECT " . "* " . "FROM " . "" . static::$prefix . "team_scores  " . "WHERE gameDay_id ='" . esc_sql($day->ID) . "' " . "AND team_id = '" . esc_sql($team->ID) . "';";
@@ -237,13 +241,13 @@ class Api extends DB {
       $score->gamesFor = $match->score_home;
       $score->gamesAgainst = $match->score_away;
       if ($match->score_home > $match->score_away) {
-        $score->score = $this->getScore("win");
+        $score->score = $scoringService->getPointsForMatchResult(ScoringService::$WIN);
         $score->win = 1;
       } elseif ($match->score_home < $match->score_away) {
-        $score->score = $this->getScore("loss");
+        $score->score = $scoringService->getPointsForMatchResult(ScoringService::$LOSS);
         $score->loss = 1;
       } else {
-        $score->score = $this->getScore("draw");
+        $score->score = $scoringService->getPointsForMatchResult(ScoringService::$DRAW);
         $score->draw = 1;
       }
     }
@@ -254,13 +258,13 @@ class Api extends DB {
       $score->gamesFor = $match->score_away;
       $score->gamesAgainst = $match->score_home;
       if ($match->score_home > $match->score_away) {
-        $score->score = $this->getScore("loss");
+        $score->score = $scoringService->getPointsForMatchResult(ScoringService::$LOSS);
         $score->loss = 1;
       } elseif ($match->score_home < $match->score_away) {
-        $score->score = $this->getScore("win");
+        $score->score = $scoringService->getPointsForMatchResult(ScoringService::$WIN);
         $score->win = 1;
       } else {
-        $score->score = $this->getScore("draw");
+        $score->score = $scoringService->getPointsForMatchResult(ScoringService::$DRAW);
         $score->draw = 1;
       }
     }
@@ -773,27 +777,6 @@ class Api extends DB {
     } else {
       return 0;
     }
-  }
-
-  public function getScore($key) {
-    // TODO: maybe store this in database on a per season base, to make 3 point per win possible...
-    $score = 0;
-    switch ($key) {
-      case "win":
-        $score = 2;
-        break;
-
-      case "draw":
-        $score = 1;
-        break;
-
-      case "loss":
-      default:
-        $score = 0;
-        break;
-    }
-
-    return $score;
   }
 
   public function setTeamProperties($team, $properties) {

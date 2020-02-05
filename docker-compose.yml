@@ -7,6 +7,7 @@ wordpress:
   environment:
     WORDPRESS_DB_PASSWORD: db4wp
   volumes:
+    - ../kickerligakoeln/:/var/www/html/wp-content/themes/kickerligakoeln
     - ./:/var/www/html/wp-content/plugins/kkl_ligatool
     - ./scripts/docker_php_config.ini:/usr/local/etc/php/conf.d/uploads.ini
     - ./scripts/.htaccess:/var/www/html/.htaccess

@@ -9,6 +9,8 @@
 namespace KKL\Ligatool\Services;
 
 
+use KKL\Ligatool\DB\Where;
+use KKL\Ligatool\Model\Match;
 use KKL\Ligatool\Model\Set;
 
 class SetService extends KKLModelService {
@@ -54,6 +56,14 @@ class SetService extends KKLModelService {
    */
   public function findOne($where = null, $orderBy = null, $limit = null) {
     return parent::findOne($where, $orderBy, $limit);
+  }
+
+  /**
+   * @param $match Match
+   * @return Set[]
+   */
+  public function byMatch($match) {
+    return $this->find(new Where('match_id', $match->getId()));
   }
 
 }

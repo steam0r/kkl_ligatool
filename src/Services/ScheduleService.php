@@ -4,40 +4,42 @@
 namespace KKL\Ligatool\Services;
 
 
-use KKL\Ligatool\DB\Wordpress;
+use KKL\Ligatool\DB\Where;
+use KKL\Ligatool\Model\GameDay;
+use KKL\Ligatool\Model\Schedule;
+use KKL\Ligatool\Model\Season;
 use KKL\Ligatool\ServiceBroker;
 
 class ScheduleService {
 
   /**
-   * FIXME use orm
-   * @param $day
-   * @return stdClass
+   * @param $day GameDay
+   * @return Schedule
    */
   public function getScheduleForGameDay($day) {
-    $sql = "SELECT * FROM " . static::$prefix . "matches WHERE game_day_id = '" . esc_sql($day->ID) . "'";
-    $schedule = new stdClass;
-    $schedule->matches = $this->getDb()->get_results($sql);
-    $schedule->number = $day->number;
-    $schedule->day = $day;
+    $matchService = ServiceBroker::getMatchService();
+    $matches = $matchService->find(new Where('game_day_id', $day->getId()));
+    $schedule = new Schedule();
+    $schedule->setMatches($matches);
+    $schedule->setNumber($day->getNumber());
+    $schedule->setDay($day);
     $teamService = ServiceBroker::getTeamService();
-    foreach ($schedule->matches as $match) {
-      $match->home = $teamService->byId($match->home_team);
-      $match->away = $teamService->byId($match->away_team);
+    foreach ($schedule->getMatches() as $match) {
+      $match->home = $teamService->byId($match->getHomeTeam());
+      $match->away = $teamService->byId($match->getAwayTeam());
     }
 
     return $schedule;
   }
 
   /**
-   * FIXME use orm
-   * @param $season
-   * @return array
+   * @param $season Season
+   * @return Schedule[]
    */
   public function getScheduleForSeason($season) {
 
     $gameDayService = ServiceBroker::getGameDayService();
-    $days = $gameDayService->allForSeason($season->ID);
+    $days = $gameDayService->allForSeason($season->getId());
     $schedules = array();
     foreach ($days as $day) {
       $schedules[] = $this->getScheduleForGameDay($day);
@@ -46,12 +48,4 @@ class ScheduleService {
     return $schedules;
   }
 
-
-  /**
-   * @return Wordpress
-   * @deprecated use orm layer
-   */
-  private function getDb() {
-    return new Wordpress();
-  }
 }

@@ -9,6 +9,7 @@
 namespace KKL\Ligatool\Services;
 
 
+use KKL\Ligatool\DB\Wordpress;
 use KKL\Ligatool\Model\PlayerProperty;
 
 class PlayerPropertyService extends KKLModelService {
@@ -62,12 +63,21 @@ class PlayerPropertyService extends KKLModelService {
    * @deprecated use orm
    */
   public function setPlayerProperties($player, $properties) {
+    $db = $this->getDb();
     foreach ($properties as $key => $value) {
-      $this->getDb()->delete(static::$prefix . 'player_properties', array('objectId' => $player->ID, 'property_key' => $key));
+      $db->delete($db->getPrefix() . 'player_properties', array('objectId' => $player->ID, 'property_key' => $key));
       if ($value !== false) {
-        $this->getDb()->insert(static::$prefix . 'player_properties', array('objectId' => $player->ID, 'property_key' => $key, 'value' => $value,), array('%d', '%s', '%s'));
+        $db->insert($db->getPrefix() . 'player_properties', array('objectId' => $player->ID, 'property_key' => $key, 'value' => $value,), array('%d', '%s', '%s'));
       }
     }
+  }
+
+  /**
+   * @return Wordpress
+   * @deprecated use orm layer
+   */
+  private function getDb() {
+    return new Wordpress();
   }
 
 }

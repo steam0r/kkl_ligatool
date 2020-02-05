@@ -147,14 +147,13 @@ class PlayerAdminPage extends AdminPage {
 
   function save() {
 
-    $player = new Player();
-    $player->setId($_POST['id']);
+    $service = ServiceBroker::getPlayerService();
+    $player = $service->getOrCreate($_POST['id']);
     $player->setFirstName($_POST['first_name']);
     $player->setLastName($_POST['last_name']);
     $player->setEmail($_POST['email']);
     $player->setPhone($_POST['phone']);
 
-    $service = ServiceBroker::getPlayerService();
     $player = $service->createOrUpdate($player);
 
     $properties = array();

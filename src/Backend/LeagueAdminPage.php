@@ -101,16 +101,13 @@ class LeagueAdminPage extends AdminPage {
 
   function save() {
 
-    $league = new League();
-    $league->setId($_POST['id']);
+    $service = ServiceBroker::getLeagueService();
+    $league = $service->getOrCreate($_POST['id']);
     $league->setName($_POST['name']);
     $league->setCode($_POST['url_code']);
     $league->setActive($_POST['active'] ? 1 : 0);
     $league->setCurrentSeason($_POST['season']);
-
-    $service = ServiceBroker::getLeagueService();
     $league = $service->createOrUpdate($league);
-
     return $league;
 
   }

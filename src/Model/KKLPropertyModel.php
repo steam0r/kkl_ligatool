@@ -9,6 +9,7 @@
 namespace KKL\Ligatool\Model;
 
 use KKL\Ligatool\DB\Where;
+use KKL\Ligatool\Services\KKLModelService;
 
 /**
  * Class KKLPropertyModel

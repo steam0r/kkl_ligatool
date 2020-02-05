@@ -9,6 +9,8 @@
 namespace KKL\Ligatool\Services;
 
 
+use KKL\Ligatool\DB\Where;
+use KKL\Ligatool\DB\Wordpress;
 use KKL\Ligatool\Model\SeasonProperty;
 
 class SeasonPropertyService extends KKLModelService {
@@ -57,7 +59,6 @@ class SeasonPropertyService extends KKLModelService {
   }
 
   /**
-   * FIXME use orm
    * @param null $seasonId
    * @return array
    */
@@ -71,17 +72,26 @@ class SeasonPropertyService extends KKLModelService {
   }
 
   /**
+   * FIXME: use orm
    * @param $season
    * @param $properties
-   * @deprecated use orm
    */
   public function setSeasonProperties($season, $properties) {
+    $db = $this->getDb();
     foreach ($properties as $key => $value) {
-      $this->getDb()->delete(static::$prefix . 'season_properties', array('objectId' => $season->ID, 'property_key' => $key));
+      $db->delete($db->getPrefix() . 'season_properties', array('objectId' => $season->ID, 'property_key' => $key));
       if ($value !== false) {
-        $this->getDb()->insert(static::$prefix . 'season_properties', array('objectId' => $season->ID, 'property_key' => $key, 'value' => $value,), array('%d', '%s', '%s'));
+        $db->insert($db->getPrefix() . 'season_properties', array('objectId' => $season->ID, 'property_key' => $key, 'value' => $value,), array('%d', '%s', '%s'));
       }
     }
+  }
+
+  /**
+   * @return Wordpress
+   * @deprecated use orm layer
+   */
+  private function getDb() {
+    return new Wordpress();
   }
 
 }

@@ -9,6 +9,7 @@
 namespace KKL\Ligatool\Model;
 
 use KKL\Ligatool\ServiceBroker;
+use KKL\Ligatool\Services\LeaguePropertyService;
 
 /**
  * @SWG\Definition(required={"code", "name"}, type="object")
@@ -107,7 +108,7 @@ class League extends KKLPropertyModel {
   }
 
   /**
-   * @return KKLModelService
+   * @return LeaguePropertyService
    */
   protected function getPropertyService() {
     return ServiceBroker::getLeaguePropertyService();

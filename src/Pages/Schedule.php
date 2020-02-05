@@ -29,7 +29,7 @@ class Schedule {
 
     $clubService = ServiceBroker::getClubService();
 
-    foreach ($schedule->matches as $match) {
+    foreach ($schedule->getMatches() as $match) {
       $home_club = $clubService->byId($match->home->club_id);
       $away_club = $clubService->byId($match->away->club_id);
       $match->home->link = LinkUtils::getLink('club', array('pathname' => $home_club->getShortName()));
@@ -59,7 +59,7 @@ class Schedule {
     $clubService = ServiceBroker::getClubService();
 
     foreach ($schedules as $schedule) {
-      foreach ($schedule->matches as $match) {
+      foreach ($schedule->getMatches() as $match) {
         $home_club = $clubService->byId($match->home->club_id);
         $away_club = $clubService->byId($match->away->club_id);
         $match->home->link = LinkUtils::getLink('clubs', array('pathname' => $home_club->getShortName()));
@@ -89,7 +89,7 @@ class Schedule {
 
       $schedule = $scheduleService->getScheduleForGameDay($day);
 
-      foreach ($schedule->matches as $match) {
+      foreach ($schedule->getMatches() as $match) {
         $home_club = $clubService->byId($match->home->club_id);
         $away_club = $clubService->byId($match->away->club_id);
         $match->home->link = LinkUtils::getLink('club', array('pathname' => $home_club->getShortName()));

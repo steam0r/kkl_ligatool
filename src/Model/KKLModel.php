@@ -3,6 +3,7 @@
 namespace KKL\Ligatool\Model;
 
 use KKL\Ligatool\DB\Manager;
+use Symlink\ORM\Exceptions\FailedToInsertException;
 use Symlink\ORM\Models\BaseModel;
 
 /**
@@ -28,23 +29,26 @@ abstract class KKLModel extends BaseModel {
    */
   protected $updated_at;
 
-  public function setId($id) {
-    $this->ID = $id;
-  }
-
-
   public function save() {
     $orm = Manager::getManager();
     if (!$this->getId()) {
       $orm->persist($this);
     }
-    $orm->flush();
+    try {
+      $orm->flush();
+    } catch (FailedToInsertException $e) {
+      error_log("FailedToInsertException: " . $e->getMessage());
+    }
   }
 
   public function delete() {
     $orm = Manager::getManager();
     $orm->remove($this);
-    $orm->flush();
+    try {
+      $orm->flush();
+    } catch (FailedToInsertException $e) {
+      error_log("FailedToInsertException: " . $e->getMessage());
+    }
   }
 
   /**

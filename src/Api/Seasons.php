@@ -3,6 +3,7 @@
 namespace KKL\Ligatool\Api;
 
 use KKL\Ligatool\DB;
+use KKL\Ligatool\Model\Team;
 use KKL\Ligatool\ServiceBroker;
 use stdClass;
 use WP_Error;
@@ -507,7 +508,7 @@ class Seasons extends Controller {
             $teamService = ServiceBroker::getTeamService();
             $teams = $teamService->byClub($awayClub->id);
             if ($teams && is_array($teams)) {
-              uasort($teams, function ($a, $b) {
+              uasort($teams, function (Team $a, Team $b) {
                 if ($a->getId() == $b->getId()) {
                   return 0;
                 }
@@ -515,7 +516,7 @@ class Seasons extends Controller {
               });
               if ($teams[0]) {
                 $prevAwayTeam = $teams[0];
-                if (array_key_exists('captain', $prevAwayTeam) && $prevHomeTeam->properties['captain']) {
+                if (array_key_exists('captain', $prevAwayTeam) && $prevAwayTeam->properties['captain']) {
                   $awayTeamProperties['captain'] = $prevAwayTeam->properties['captain'];
                 }
                 if (array_key_exists('vice_captain', $prevAwayTeam) && $prevAwayTeam->properties['vice_captain']) {

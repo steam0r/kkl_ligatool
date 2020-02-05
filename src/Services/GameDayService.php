@@ -117,7 +117,8 @@ class GameDayService extends KKLModelService {
   }
 
   /**
-   * @param GameDay $day
+   * @param $seasonId
+   * @param $position
    * @return GameDay|null
    */
   public function bySeasonAndPosition($seasonId, $position) {

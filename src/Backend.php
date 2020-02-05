@@ -424,12 +424,13 @@ class Backend {
       foreach ($delete as $key => $value) {
         $apiKey = $apiKeyService->byKey($key);
         if ($apiKey) {
-          $apiKey->delete();
+          $apiKeyService->delete($apiKey);
         }
       }
     } else {
       $name = $_REQUEST['api_key_name'];
-      $apiKey = new ApiKey();
+
+      $apiKey = $apiKeyService->getModel();
       $apiKey->setName($name);
 
       $key = uniqid('kkl_');
@@ -437,8 +438,7 @@ class Backend {
         $key = uniqid('kkl_');
       }
       $apiKey->setApiKey($key);
-      $apiKey->save();
-
+      $apiKeyService->createOrUpdate($apiKey);
     }
     $admin_url = admin_url('admin.php?page=kkl_ligatool_settings');
     wp_redirect($admin_url);
@@ -459,8 +459,7 @@ class Backend {
     $league->setActive(true);
     $league->setCode(__('league_template_code', 'kkl_ligatool'));
 
-    // TODO: handle save/update/remove via service, return new object, needs new inserted id...ffs
-    $league->save();
+    $league = $leagueService->createOrUpdate($league);
 
     // FIXME: setters for dates should take date objects
     $season = $seasonService->getModel();
@@ -469,34 +468,33 @@ class Backend {
     $season->setStartDate("1980-09-02 05:11:42");
     $season->setEndDate("1980-10-02 05:11:42");
     $season->setLeagueId($league->getId());
-    $season->save();
+    $season = $seasonService->createOrUpdate($season);
 
     $gameDay = $gameDayService->getModel();
     $gameDay->setSeasonId($season->getId());
     $gameDay->setNumber(1);
     $gameDay->setFixture("1980-09-02 05:11:42");
     $gameDay->setEnd("1980-09-09 05:11:42");
-    $gameDay->save();
+    $gameDay = $gameDayService->createOrUpdate($gameDay);
 
     $season->setCurrentGameDay($gameDay->getId());
-    $season->save();
+    $season = $seasonService->createOrUpdate($season);
     $league->setCurrentSeason($season->getId());
-    $league->save();
-
+    $leagueService->createOrUpdate($league);
 
     $teams = array();
     for ($i = 0; $i < 4; $i++) {
       $club = $clubService->getModel();
       $club->setName($i . ". FC Köln");
       $club->setShortName($i . "fck");
-      $club->save();
+      $club = $clubService->createOrUpdate($club);
 
       $team = $teamService->getModel();
       $team->setName($i . ". FC Köln");
       $team->setShortName($i . "fck");
       $team->setSeasonId($season->getId());
       $team->setClubId($club->getId());
-      $team->save();
+      $team = $teamService->createOrUpdate($team);
 
       $teams[] = $team;
 
@@ -506,13 +504,13 @@ class Backend {
     $match->setGameDayId($gameDay->getId());
     $match->setHomeTeam($teams[0]->getId());
     $match->setAwayTeam($teams[1]->getId());
-    $match->save();
+    $matchService->createOrUpdate($match);
 
     $match = $matchService->getModel();
     $match->setGameDayId($gameDay->getId());
     $match->setHomeTeam($teams[2]->getId());
     $match->setAwayTeam($teams[3]->getId());
-    $match->save();
+    $matchService->createOrUpdate($match);
 
     $admin_url = admin_url('admin.php?page=kkl_ligatool_matches');
     wp_redirect($admin_url);

@@ -69,11 +69,11 @@ class TeamService extends KKLModelService {
   }
 
   /**
-   * @param $code
+   * @param $id
    * @return Team[]
    */
-  public function byClub($code) {
-    return $this->find(new Where('club_id', $code, '='));
+  public function byClub($id) {
+    return $this->find(new Where('club_id', $id, '='));
   }
 
   /**
@@ -90,9 +90,10 @@ class TeamService extends KKLModelService {
    * @deprecated use orm
    */
   public function getCurrentTeamForClub($clubId) {
+    $db = $this->getDb();
     $teamPropertyService = ServiceBroker::getTeamPropertyService();
-    $sql = "SELECT * FROM " . static::$prefix . "teams WHERE club_id = '" . esc_sql($clubId) . "' ORDER BY ID DESC LIMIT 1";
-    $team = $this->getDb()->get_row($sql);
+    $sql = "SELECT * FROM " . $db->getPrefix() . "teams WHERE club_id = '" . esc_sql($clubId) . "' ORDER BY ID DESC LIMIT 1";
+    $team = $db->get_row($sql);
     $properties = $teamPropertyService->byTeam($team->ID);
     $team->properties = $properties;
 

@@ -87,14 +87,13 @@ class LocationAdminPage extends AdminPage {
 
   function save() {
 
-    $location = new Location();
-    $location->setId($_POST['id']);
+    $service = ServiceBroker::getLocationService();
+    $location = $service->getOrCreate($_POST['id']);
     $location->setTitle($_POST['title']);
     $location->setDescription($_POST['description']);
     $location->setLatitude($_POST['lat']);
     $location->setLongitude($_POST['lng']);
 
-    $service = ServiceBroker::getLocationService();
     return $service->createOrUpdate($location);
 
   }

@@ -42,12 +42,12 @@ class UpcomingGames extends WP_Widget {
     $league_id = $instance['league'];
     if (!$league_id) {
       $context = Plugin::getContext();
-      $league_id = $context['league']->ID;
+      $league_id = $context['league']->getId();
       if (!$league_id) {
         $team = $context['team'];
         if ($team) {
-          $current_team = $teamService->getCurrentTeamForClub($team->club_id);
-          $data = $gameService->getGamesForTeam($current_team->ID);
+          $current_team = $teamService->getCurrentTeamForClub($team->getClubId());
+          $data = $gameService->getGamesForTeam($current_team->getId());
           echo $this->tpl->render('widgets/upcoming_games.twig', array('schedule' => $data, 'display_result' => true));
         } else {
           $data = $gameService->getAllUpcomingGames();

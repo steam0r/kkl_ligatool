@@ -9,6 +9,8 @@
 namespace KKL\Ligatool\Services;
 
 
+use KKL\Ligatool\DB\Where;
+use KKL\Ligatool\DB\Wordpress;
 use KKL\Ligatool\Model\TeamProperty;
 use KKL\Ligatool\ServiceBroker;
 
@@ -58,7 +60,6 @@ class TeamPropertyService extends KKLModelService {
   }
 
   /**
-   * FIXME use orm
    * @param null $teamId
    * @return array
    */
@@ -83,5 +84,28 @@ class TeamPropertyService extends KKLModelService {
       }
     }
     return $properties;
+  }
+
+  /**
+   * @param $team
+   * @param $properties
+   * @deprecated use orm
+   */
+  public function setTeamProperties($team, $properties) {
+    $db = $this->getDb();
+    foreach ($properties as $key => $value) {
+      $db->delete($db->getPrefix() . 'team_properties', array('objectId' => $team->ID, 'property_key' => $key));
+      if ($value !== false) {
+        $db->insert($db->getPrefix() . 'team_properties', array('objectId' => $team->ID, 'property_key' => $key, 'value' => $value,), array('%d', '%s', '%s'));
+      }
+    }
+  }
+
+  /**
+   * @return Wordpress
+   * @deprecated use orm layer
+   */
+  private function getDb() {
+    return new Wordpress();
   }
 }

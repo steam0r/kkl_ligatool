@@ -36,7 +36,7 @@ class NewGameDay {
             if ($fixture < $now) {
               error_log("--- setting next day");
               $current_season->setCurrentGameDay($next_day->getId());
-              $current_season->save();
+              $seasonService->createOrUpdate($current_season);
             }
           }
         }

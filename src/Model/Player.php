@@ -9,6 +9,7 @@
 namespace KKL\Ligatool\Model;
 
 use KKL\Ligatool\ServiceBroker;
+use KKL\Ligatool\Services\PlayerPropertyService;
 
 /**
  * @SWG\Definition(required={"firstName"}, type="object")
@@ -306,7 +307,7 @@ class Player extends KKLPropertyModel {
 
 
   /**
-   * @return KKLModelService
+   * @return PlayerPropertyService
    */
   protected function getPropertyService() {
     return ServiceBroker::getPlayerPropertyService();

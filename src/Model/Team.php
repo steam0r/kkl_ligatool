@@ -9,6 +9,7 @@
 namespace KKL\Ligatool\Model;
 
 use KKL\Ligatool\ServiceBroker;
+use KKL\Ligatool\Services\TeamPropertyService;
 
 /**
  * @SWG\Definition(required={"name"}, type="object")
@@ -174,7 +175,7 @@ class Team extends KKLPropertyModel {
   }
 
   /**
-   * @return KKLModelService
+   * @return TeamPropertyService
    */
   protected function getPropertyService() {
     return ServiceBroker::getTeamPropertyService();

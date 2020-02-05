@@ -69,4 +69,18 @@ class Wordpress extends DB {
     // TODO: fill database with initial data, this needs every table under orm control
   }
 
+  /**
+   * @deprecated use orm
+   */
+  public function get_results($sql) {
+    return $this->getDb()->get_results($sql);
+  }
+
+  /**
+   * @deprecated use orm
+   */
+  public function prepare($sql, $args) {
+    return $this->getDb()->prepare($sql, $args);
+  }
+
 }

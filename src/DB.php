@@ -49,4 +49,11 @@ abstract class DB {
     return static::$orm;
   }
 
+  /**
+   * @return string
+   */
+  public function getPrefix() {
+    return static::$prefix;
+  }
+
 }

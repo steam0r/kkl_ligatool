@@ -23,6 +23,7 @@ use KKL\Ligatool\Services\PlayerPropertyService;
 use KKL\Ligatool\Services\PlayerService;
 use KKL\Ligatool\Services\RankingService;
 use KKL\Ligatool\Services\ScheduleService;
+use KKL\Ligatool\Services\ScoringService;
 use KKL\Ligatool\Services\SeasonPropertyService;
 use KKL\Ligatool\Services\SeasonService;
 use KKL\Ligatool\Services\SetService;
@@ -57,6 +58,7 @@ class ServiceBroker {
   private static $teamScoreService;
   private static $rankingService;
   private static $scheduleService;
+  private static $scoringService;
 
   /**
    * @param string $environment
@@ -86,6 +88,7 @@ class ServiceBroker {
       self::$teamScoreService = new TeamScoreService();
       self::$rankingService = new RankingService();
       self::$scheduleService = new ScheduleService();
+      self::$scoringService = new ScoringService();
     }
   }
 
@@ -248,6 +251,13 @@ class ServiceBroker {
    */
   public static function getScheduleService() {
     return self::$scheduleService;
+  }
+
+  /**
+   * @return ScoringService
+   */
+  public static function getScoringService() {
+    return self::$scoringService;
   }
 
 }

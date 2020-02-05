@@ -9,8 +9,10 @@
 namespace KKL\Ligatool\Services;
 
 
+use KKL\Ligatool\DB\Where;
 use KKL\Ligatool\DB\Wordpress;
 use KKL\Ligatool\Model\Game;
+use KKL\Ligatool\Model\Set;
 
 class GameService extends KKLModelService {
 
@@ -58,11 +60,20 @@ class GameService extends KKLModelService {
   }
 
   /**
+   * @param $set Set
+   * @return Game[]
+   */
+  public function bySet($set) {
+    return $this->find(new Where('set_id', $set->getId()));
+  }
+
+  /**
    * FIXME use orm
    * @return mixed
    */
   public function getAllUpcomingGames() {
 
+    $db = $this->getDb();
     $sql = "SELECT  m.id,
                         m.score_away,
                         m.fixture,
@@ -73,12 +84,12 @@ class GameService extends KKLModelService {
                         at.name AS awayname,
                         at.id AS awayid,
                         ht.id AS homeid
-                FROM    " . static::$prefix . "leagues AS l,
-                        " . static::$prefix . "seasons AS s,
-                        " . static::$prefix . "game_days AS gd,
-                        " . static::$prefix . "matches AS m,
-                        " . static::$prefix . "teams AS at,
-                        " . static::$prefix . "teams AS ht
+                FROM    " . $db->getPrefix() . "leagues AS l,
+                        " . $db->getPrefix() . "seasons AS s,
+                        " . $db->getPrefix() . "game_days AS gd,
+                        " . $db->getPrefix() . "matches AS m,
+                        " . $db->getPrefix() . "teams AS at,
+                        " . $db->getPrefix() . "teams AS ht
                 WHERE     s.id = l.current_season
                 AND     l.active = 1
                 AND     gd.id = s.current_game_day
@@ -86,7 +97,7 @@ class GameService extends KKLModelService {
                 AND     at.id = m.away_team
                 AND     ht.id = m.home_team ORDER BY l.name ASC";
 
-    return $this->getDb()->get_results($sql);
+    return $db->get_results($sql);
 
   }
 
@@ -97,6 +108,7 @@ class GameService extends KKLModelService {
    */
   public function getUpcomingGames($league_id) {
 
+    $db = $this->getDb();
     $sql = "SELECT 	m.id,
 						m.score_away,
 						m.fixture,
@@ -107,12 +119,12 @@ class GameService extends KKLModelService {
 						at.name AS awayname,
 						at.id AS awayid,
 						ht.id AS homeid
-				FROM 	" . static::$prefix . "leagues AS l,
-						" . static::$prefix . "seasons AS s,
-						" . static::$prefix . "game_days AS gd,
-						" . static::$prefix . "matches AS m,
-						" . static::$prefix . "teams AS at,
-						" . static::$prefix . "teams AS ht
+				FROM 	" . $db->getPrefix() . "leagues AS l,
+						" . $db->getPrefix() . "seasons AS s,
+						" . $db->getPrefix() . "game_days AS gd,
+						" . $db->getPrefix() . "matches AS m,
+						" . $db->getPrefix() . "teams AS at,
+						" . $db->getPrefix() . "teams AS ht
 				WHERE 	l.id = '%s'
 				AND 	s.id = l.current_season
 				AND 	gd.id = s.current_game_day
@@ -120,8 +132,8 @@ class GameService extends KKLModelService {
 				AND 	at.id = m.away_team
 				AND 	ht.id = m.home_team";
 
-    $query = $this->getDb()->prepare($sql, $league_id);
-    return $this->getDb()->get_results($query);
+    $query = $db->prepare($sql, $league_id);
+    return $db->get_results($query);
 
   }
 
@@ -132,6 +144,8 @@ class GameService extends KKLModelService {
    */
   public function getGamesForTeam($teamid) {
 
+    $db = $this->getDb();
+
     $sql = "SELECT  m.id,
                         m.score_away,
                         m.fixture,
@@ -141,18 +155,18 @@ class GameService extends KKLModelService {
                         at.name AS awayname,
                         at.id AS awayid,
                         ht.id AS homeid
-                FROM    " . static::$prefix . "game_days AS gd,
-                        " . static::$prefix . "matches AS m,
-                        " . static::$prefix . "teams AS at,
-                        " . static::$prefix . "teams AS ht
+                FROM    " . $db->getPrefix() . "game_days AS gd,
+                        " . $db->getPrefix() . "matches AS m,
+                        " . $db->getPrefix() . "teams AS at,
+                        " . $db->getPrefix() . "teams AS ht
                 WHERE   (m.home_team = '" . esc_sql($teamid) . "' OR m.away_team = '" . esc_sql($teamid) . "')
                 AND     m.game_day_id = gd.id
                 AND     at.id = m.away_team
                 AND     ht.id = m.home_team
                 ORDER BY m.fixture ASC";
 
-    $query = $this->getDb()->prepare($sql, array());
-    return $this->getDb()->get_results($query);
+    $query = $db->prepare($sql, array());
+    return $db->get_results($query);
 
   }
 
@@ -162,6 +176,7 @@ class GameService extends KKLModelService {
    */
   public function getAllGamesForNextGameday() {
 
+    $db = $this->getDb();
     $sql = "SELECT  m.id,
                         m.score_away,
                         m.fixture,
@@ -172,20 +187,20 @@ class GameService extends KKLModelService {
                         at.name AS awayname,
                         at.id AS awayid,
                         ht.id AS homeid
-                FROM    " . static::$prefix . "leagues AS l,
-                        " . static::$prefix . "matches AS m,
-                        " . static::$prefix . "teams AS at,
-                        " . static::$prefix . "teams AS ht
-                JOIN " . static::$prefix . "seasons AS s
-                JOIN " . static::$prefix . "game_days AS cgd ON cgd.id = s.current_game_day
-                JOIN " . static::$prefix . "game_days AS gd ON gd.season_id = s.id AND gd.number = (cgd.number + 1)
+                FROM    " . $db->getPrefix() . "leagues AS l,
+                        " . $db->getPrefix() . "matches AS m,
+                        " . $db->getPrefix() . "teams AS at,
+                        " . $db->getPrefix() . "teams AS ht
+                JOIN " . $db->getPrefix() . "seasons AS s
+                JOIN " . $db->getPrefix() . "game_days AS cgd ON cgd.id = s.current_game_day
+                JOIN " . $db->getPrefix() . "game_days AS gd ON gd.season_id = s.id AND gd.number = (cgd.number + 1)
                 WHERE   l.active = 1
                 AND     s.id = l.current_season
                 AND     m.game_day_id = gd.id
                 AND     at.id = m.away_team
                 AND     ht.id = m.home_team ORDER BY l.name ASC";
 
-    return $this->getDb()->get_results($sql);
+    return $db->get_results($sql);
 
   }
 

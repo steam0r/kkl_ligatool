@@ -9,6 +9,7 @@
 namespace KKL\Ligatool\Model;
 
 use KKL\Ligatool\ServiceBroker;
+use KKL\Ligatool\Services\TeamPlayerPropertyService;
 
 /**
  * @SWG\Definition(required={"code", "name"}, type="object")
@@ -43,7 +44,7 @@ class TeamPlayer extends KKLPropertyModel {
   protected $team_id;
 
   /**
-   * @return KKLModelService
+   * @return TeamPlayerPropertyService
    */
   protected function getPropertyService() {
     return ServiceBroker::getTeamPlayerPropertyService();

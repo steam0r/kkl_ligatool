@@ -6,11 +6,11 @@ use KKL\Ligatool\DB;
 use KKL\Ligatool\DB\OrderBy;
 use KKL\Ligatool\Model\GameDay;
 use KKL\Ligatool\Model\KKLModel;
-use KKL\Ligatool\Model\KKLModelService;
 use KKL\Ligatool\Model\League;
 use KKL\Ligatool\Model\Season;
 use KKL\Ligatool\Model\Team;
 use KKL\Ligatool\ServiceBroker;
+use KKL\Ligatool\Services\KKLModelService;
 use KKL\Ligatool\Template\Service;
 use Symlink\ORM\Exceptions\PropertyDoesNotExistException;
 use WP_List_Table;
@@ -209,7 +209,11 @@ abstract class ListTable extends WP_List_Table {
       return $this->teams;
     }
     $teamService = ServiceBroker::getTeamService();
-    $this->teams = $teamService->getAll();
+    $this->teams = [];
+    $teams = $teamService->getAll();
+    foreach ($teams as $team) {
+      $this->teams[$team->getId()] = $team;
+    }
     return $this->teams;
   }
 

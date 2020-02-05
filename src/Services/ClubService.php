@@ -64,4 +64,5 @@ class ClubService extends KKLModelService {
   public function byCode($code) {
     return $this->findOne(new Where('code', $code, '='));
   }
+
 }

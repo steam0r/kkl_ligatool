@@ -2,7 +2,6 @@
 
 namespace KKL\Ligatool\Widget;
 
-use KKL\Ligatool\DB;
 use KKL\Ligatool\Plugin;
 use KKL\Ligatool\ServiceBroker;
 use KKL\Ligatool\Template;
@@ -27,30 +26,29 @@ class UpcomingGames extends WP_Widget {
 
   public function widget($args, $instance) {
 
-    extract($args);
     $title = apply_filters('widget_title', $instance['title']);
 
-    echo $before_widget;
+    echo $args['before_widget'];
     if (!empty($title)) {
-      echo $before_title . $title . $after_title;
+      echo $args['before_title'] . $title . $args['after_title'];
     }
 
     $leagueService = ServiceBroker::getLeagueService();
-    $gameService = ServiceBroker::getGameService();
+    $matchService = ServiceBroker::getMatchService();
     $teamService = ServiceBroker::getTeamService();
 
     $league_id = $instance['league'];
     if (!$league_id) {
       $context = Plugin::getContext();
-      $league_id = $context['league']->getId();
+      $league_id = $context['league'];
       if (!$league_id) {
         $team = $context['team'];
         if ($team) {
           $current_team = $teamService->getCurrentTeamForClub($team->getClubId());
-          $data = $gameService->getGamesForTeam($current_team->getId());
+          $data = $matchService->getMatchesForTeam($current_team->getId());
           echo $this->tpl->render('widgets/upcoming_games.twig', array('schedule' => $data, 'display_result' => true));
         } else {
-          $data = $gameService->getAllUpcomingGames();
+          $data = $matchService->getAllUpcomingMatches();
           $games = array();
           $leagues = array();
           foreach ($data as $game) {
@@ -63,12 +61,12 @@ class UpcomingGames extends WP_Widget {
           }
         }
       } else {
-        $data = $gameService->getUpcomingGames($league_id);
+        $data = $matchService->getUpcomingMatches($league_id);
         echo $this->tpl->render('widgets/upcoming_games.twig', array('schedule' => $data));
       }
     }
 
-    echo $after_widget;
+    echo $args['after_widget'];
 
   }
 

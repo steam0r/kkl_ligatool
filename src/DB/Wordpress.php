@@ -65,10 +65,6 @@ class Wordpress extends DB {
     update_option(static::$VERSION_KEY, static::$VERSION);
   }
 
-  public function installWordpressData() {
-    // TODO: fill database with initial data, this needs every table under orm control
-  }
-
   /**
    * @deprecated use orm
    */

@@ -11,11 +11,11 @@ class SetMatchFixture extends Shortcode {
   public static function render($atts, $content, $tag) {
     $templateEngine = Template\Service::getTemplateEngine();
 
-    $gameService = ServiceBroker::getGameService();
+    $matchService = ServiceBroker::getMatchService();
     $leagueService = ServiceBroker::getLeagueService();
     $teamPropertyService = ServiceBroker::getTeamPropertyService();
 
-    $data = $gameService->getAllGamesForNextGameday();
+    $data = $matchService->getAllMatchesForNextGameday();
 
     $all_matches = array();
     foreach ($data as $game) {

@@ -8,7 +8,6 @@ use KKL\Ligatool\Template;
 
 class ContactList extends Shortcode {
 
-  // TODO: use orm
   public static function render($atts, $content, $tag) {
     $kkl_twig = Template\Service::getTemplateEngine();
 

@@ -9,8 +9,8 @@
 namespace KKL\Ligatool\Services;
 
 
+use KKL\Ligatool\DB\OrderBy;
 use KKL\Ligatool\DB\Where;
-use KKL\Ligatool\DB\Wordpress;
 use KKL\Ligatool\Model\Team;
 use KKL\Ligatool\ServiceBroker;
 
@@ -86,26 +86,21 @@ class TeamService extends KKLModelService {
 
   /**
    * @param $clubId
-   * @return mixed
-   * @deprecated use orm
+   * @return Team|null
    */
   public function getCurrentTeamForClub($clubId) {
-    $db = $this->getDb();
     $teamPropertyService = ServiceBroker::getTeamPropertyService();
-    $sql = "SELECT * FROM " . $db->getPrefix() . "teams WHERE club_id = '" . esc_sql($clubId) . "' ORDER BY ID DESC LIMIT 1";
-    $team = $db->get_row($sql);
-    $properties = $teamPropertyService->byTeam($team->ID);
-    $team->properties = $properties;
-
+    $teams = $this->find(
+      new Where('club_id', $clubId),
+      new OrderBy('ID', 'DESC')
+    );
+    $team = null;
+    if (!empty($teams)) {
+      $team = $teams[0];
+      $properties = $teamPropertyService->byTeam($team->getId());
+      $team->properties = $properties;
+    }
     return $team;
-  }
-
-  /**
-   * @return Wordpress
-   * @deprecated use orm layer
-   */
-  private function getDb() {
-    return new Wordpress();
   }
 
 }

@@ -11,10 +11,10 @@ class GameDayOverview extends Shortcode {
   public static function render($atts, $content, $tag) {
     $kkl_twig = Template\Service::getTemplateEngine();
 
-    $gameService = ServiceBroker::getGameService();
+    $matchService = ServiceBroker::getMatchService();
     $leagueService = ServiceBroker::getLeagueService();
 
-    $data = $gameService->getAllUpcomingGames();
+    $data = $matchService->getAllUpcomingMatches();
     $games = array();
     $leagues = array();
     foreach ($data as $game) {

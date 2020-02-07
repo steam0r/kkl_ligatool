@@ -158,10 +158,6 @@ class Plugin {
       $db,
       'installWordpressDatabase'
     ));
-    register_activation_hook(static::getPluginFile(), array(
-      $db,
-      'installWordpressData'
-    ));
 
     add_filter('query_vars', array(
       $this,

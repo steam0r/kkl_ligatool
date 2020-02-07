@@ -12,6 +12,7 @@ namespace KKL\Ligatool\Services;
 use KKL\Ligatool\DB\Where;
 use KKL\Ligatool\DB\Wordpress;
 use KKL\Ligatool\Model\Match;
+use KKL\Ligatool\ServiceBroker;
 
 class MatchService extends KKLModelService {
 
@@ -60,6 +61,130 @@ class MatchService extends KKLModelService {
 
   public function byGameDay($gameDayId) {
     return $this->find(new Where("game_day_id", $gameDayId, '='));
+  }
+
+
+  /**
+   * @return Match[]
+   */
+  public function getAllUpcomingMatches() {
+
+    $leagueService = ServiceBroker::getLeagueService();
+    $seasonService = ServiceBroker::getSeasonService();
+    $gameDayService = ServiceBroker::getGameDayService();
+    $matchService = ServiceBroker::getMatchService();
+    $teamService = ServiceBroker::getTeamService();
+
+    $activeLeagues = $leagueService->getActive();
+    $allMatches = [];
+    foreach ($activeLeagues as $activeLeague) {
+      $currentSeason = $seasonService->currentByLeague($activeLeague->getId());
+      $currentGameDay = $gameDayService->currentForSeason($currentSeason->getId());
+      $matches = $matchService->byGameDay($currentGameDay->getId());
+      foreach ($matches as $match) {
+        $home = $teamService->byId($match->getHomeTeam());
+        $away = $teamService->byId($match->getAwayTeam());
+        // TODO: use some kind of DTO
+        $match->homename = $home->getName();
+        $match->awayname = $away->getName();
+        $allMatches[] = $match;
+      }
+    }
+    return $allMatches;
+
+  }
+
+  /**
+   * @param $league_id
+   * @return Match[]
+   */
+  public function getUpcomingMatches($league_id) {
+
+    $leagueService = ServiceBroker::getLeagueService();
+    $seasonService = ServiceBroker::getSeasonService();
+    $gameDayService = ServiceBroker::getGameDayService();
+    $matchService = ServiceBroker::getMatchService();
+    $teamService = ServiceBroker::getTeamService();
+
+    $activeLeague = $leagueService->byId($league_id);
+    $allMatches = [];
+    $currentSeason = $seasonService->currentByLeague($activeLeague->getId());
+    $currentGameDay = $gameDayService->currentForSeason($currentSeason->getId());
+    $matches = $matchService->byGameDay($currentGameDay->getId());
+    foreach ($matches as $match) {
+      $home = $teamService->byId($match->getHomeTeam());
+      $away = $teamService->byId($match->getAwayTeam());
+      // TODO: use some kind of DTO
+      $match->homename = $home->getName();
+      $match->awayname = $away->getName();
+      $allMatches[] = $match;
+    }
+    return $allMatches;
+
+  }
+
+  /**
+   * @param $teamid
+   * @return Match[]
+   */
+  public function getMatchesForTeam($teamid) {
+
+    $homeMatches = $this->find(
+      new Where('home_team', $teamid)
+    );
+
+    $awayMatches = $this->find(
+      new Where('away_team', $teamid)
+    );
+
+    $matches = array_merge($homeMatches, $awayMatches);
+    $teamService = ServiceBroker::getTeamService();
+    $allMatches = [];
+    foreach ($matches as $match) {
+      $home = $teamService->byId($match->getHomeTeam());
+      $away = $teamService->byId($match->getAwayTeam());
+      // TODO: use some kind of DTO
+      $match->homename = $home->getName();
+      $match->awayname = $away->getName();
+      $allMatches[] = $match;
+    }
+    return $allMatches;
+  }
+
+
+  /**
+   * FIXME use orm
+   * @return mixed
+   * @deprecated use orm
+   */
+  public function getAllMatchesForNextGameday() {
+
+    $db = $this->getDb();
+    $sql = "SELECT  m.id,
+                        m.score_away,
+                        m.fixture,
+                        m.score_home,
+                        m.location,
+                        l.id AS league_id,
+                        ht.name AS homename,
+                        at.name AS awayname,
+                        at.id AS awayid,
+                        ht.id AS homeid
+                FROM    " . $db->getPrefix() . "leagues AS l,
+                        " . $db->getPrefix() . "matches AS m,
+                        " . $db->getPrefix() . "teams AS at,
+                        " . $db->getPrefix() . "teams AS ht
+                JOIN " . $db->getPrefix() . "seasons AS s
+                JOIN " . $db->getPrefix() . "game_days AS cgd ON cgd.id = s.current_game_day
+                JOIN " . $db->getPrefix() . "game_days AS gd ON gd.season_id = s.id AND gd.number = (cgd.number + 1)
+                WHERE   l.active = 1
+                AND     s.id = l.current_season
+                AND     m.game_day_id = gd.id
+                AND     at.id = m.away_team
+                AND     ht.id = m.home_team ORDER BY l.name ASC";
+
+    return $db->get_results($sql);
+
   }
 
   /**

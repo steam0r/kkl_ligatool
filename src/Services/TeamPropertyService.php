@@ -10,7 +10,7 @@ namespace KKL\Ligatool\Services;
 
 
 use KKL\Ligatool\DB\Where;
-use KKL\Ligatool\DB\Wordpress;
+use KKL\Ligatool\Model\Team;
 use KKL\Ligatool\Model\TeamProperty;
 use KKL\Ligatool\ServiceBroker;
 
@@ -60,6 +60,14 @@ class TeamPropertyService extends KKLModelService {
   }
 
   /**
+   * @param $key
+   * @return TeamProperty[]
+   */
+  public function byKey($key) {
+    return $this->find(new Where('property_key', $key));
+  }
+
+  /**
    * @param null $teamId
    * @return array
    */
@@ -87,25 +95,34 @@ class TeamPropertyService extends KKLModelService {
   }
 
   /**
-   * @param $team
-   * @param $properties
-   * @deprecated use orm
+   * @param $teamId
+   * @param $key
+   * @return TeamProperty|null
    */
-  public function setTeamProperties($team, $properties) {
-    $db = $this->getDb();
-    foreach ($properties as $key => $value) {
-      $db->delete($db->getPrefix() . 'team_properties', array('objectId' => $team->ID, 'property_key' => $key));
-      if ($value !== false) {
-        $db->insert($db->getPrefix() . 'team_properties', array('objectId' => $team->ID, 'property_key' => $key, 'value' => $value,), array('%d', '%s', '%s'));
-      }
-    }
+  public function byTeamAndKey($teamId, $key) {
+    return $this->findOne([
+      new Where('objectId', $teamId),
+      new Where('property_key', $key)
+    ]);
   }
 
   /**
-   * @return Wordpress
-   * @deprecated use orm layer
+   * @param Team $team
+   * @param array $properties
    */
-  private function getDb() {
-    return new Wordpress();
+  public function setTeamProperties($team, $properties) {
+    foreach ($properties as $key => $value) {
+      $prop = $this->byTeamAndKey($team->getId(), $key);
+      if ($prop) {
+        $prop->delete();
+      }
+      if ($value !== false) {
+        $newProp = new TeamProperty();
+        $newProp->setObjectId($team->getId());
+        $newProp->setPropertyKey($key);
+        $newProp->setValue($value);
+        $newProp->save();
+      }
+    }
   }
 }

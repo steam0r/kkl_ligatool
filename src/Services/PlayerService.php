@@ -10,7 +10,6 @@ namespace KKL\Ligatool\Services;
 
 
 use KKL\Ligatool\DB\Where;
-use KKL\Ligatool\DB\Wordpress;
 use KKL\Ligatool\Model\Player;
 use KKL\Ligatool\ServiceBroker;
 
@@ -96,67 +95,61 @@ class PlayerService extends KKLModelService {
   }
 
   /**
-   * @return array
-   * @deprecated use orm
+   * @return Player[]
    */
   public function getCaptainsContactData() {
-    $db = $this->getDb();
-    $sql = "SELECT " .
-      "p.first_name as first_name, p.last_name as last_name, p.email as email, p.phone as phone, " .
-      "t.name as team, t.short_name as team_short, " .
-      "l.name as league, l.code as league_short, loc.title as location " .
-      "FROM " . $db->getPrefix() . "team_properties AS tp " .
-      "JOIN " . $db->getPrefix() . "players AS p ON p.id = tp.value " .
-      "JOIN " . $db->getPrefix() . "teams AS t ON t.id = tp.objectId " .
-      "JOIN " . $db->getPrefix() . "seasons AS s ON s.id = t.season_id AND s.active = '1' " .
-      "JOIN " . $db->getPrefix() . "leagues AS l ON l.id = s.league_id " .
-      "LEFT JOIN " . $db->getPrefix() . "team_properties AS lp ON t.id = lp.objectId AND lp.property_key = 'location' " .
-      "LEFT JOIN " . $db->getPrefix() . "locations AS loc ON loc.id = lp.value " .
-      "WHERE tp.property_key = 'captain' ";
-    $data = $db->get_results($sql);
+
+    $teamPropertyService = ServiceBroker::getTeamPropertyService();
+    $teamService = ServiceBroker::getTeamService();
+    $seasonService = ServiceBroker::getSeasonService();
+    $playerService = ServiceBroker::getPlayerService();
+
+    $teamProperties = $teamPropertyService->byKey('captain');
     $captains = array();
-    foreach ($data as $d) {
+    foreach ($teamProperties as $teamProperty) {
+      $teamId = $teamProperty->getObjectId();
+      $team = $teamService->byId($teamId);
+      $season = $seasonService->byId($team->getSeasonId());
+      if ($season->isActive()) {
+        $captains[] = $playerService->byId($teamProperty->getValue());
+      }
+    }
+
+    foreach ($captains as $d) {
+      // TODO: use some kind of DTO
       $d->role = 'captain';
-      $captains[] = $d;
     }
 
     return $captains;
   }
 
   /**
-   * @return array
-   * @deprecated use orm
+   * @return Player[]
    */
   public function getViceCaptainsContactData() {
-    $db = $this->getDb();
-    $sql = "SELECT " .
-      "p.first_name as first_name, p.last_name as last_name, p.email as email, p.phone as phone, " .
-      "t.name as team, t.short_name as team_short, " .
-      "l.name as league, l.code as league_short, loc.title as location " .
-      "FROM " . $db->getPrefix() . "team_properties AS tp " .
-      "JOIN " . $db->getPrefix() . "players AS p ON p.id = tp.value " .
-      "JOIN " . $db->getPrefix() . "teams AS t ON t.id = tp.objectId " .
-      "JOIN " . $db->getPrefix() . "seasons AS s ON s.id = t.season_id AND s.active = '1' " .
-      "JOIN " . $db->getPrefix() . "leagues AS l ON l.id = s.league_id " .
-      "LEFT JOIN " . $db->getPrefix() . "team_properties AS lp ON t.id = lp.objectId AND lp.property_key = 'location' " .
-      "LEFT JOIN " . $db->getPrefix() . "locations AS loc ON loc.id = lp.value " .
-      "WHERE tp.property_key = 'vice_captain' ";
-    $data = $db->get_results($sql);
+
+    $teamPropertyService = ServiceBroker::getTeamPropertyService();
+    $teamService = ServiceBroker::getTeamService();
+    $seasonService = ServiceBroker::getSeasonService();
+    $playerService = ServiceBroker::getPlayerService();
+
+    $teamProperties = $teamPropertyService->byKey('vice_captain');
     $captains = array();
-    foreach ($data as $d) {
+    foreach ($teamProperties as $teamProperty) {
+      $teamId = $teamProperty->getObjectId();
+      $team = $teamService->byId($teamId);
+      $season = $seasonService->byId($team->getSeasonId());
+      if ($season->isActive()) {
+        $captains[] = $playerService->byId($teamProperty->getValue());
+      }
+    }
+
+    foreach ($captains as $d) {
+      // TODO: use some kind of DTO
       $d->role = 'vice_captain';
-      $captains[] = $d;
     }
 
     return $captains;
-  }
-
-  /**
-   * @return Wordpress
-   * @deprecated use orm layer
-   */
-  private function getDb() {
-    return new Wordpress();
   }
 
 }

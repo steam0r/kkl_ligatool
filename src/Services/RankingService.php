@@ -6,7 +6,6 @@ namespace KKL\Ligatool\Services;
 
 use Closure;
 use KKL\Ligatool\DB\Where;
-use KKL\Ligatool\DB\Wordpress;
 use KKL\Ligatool\Model\Match;
 use KKL\Ligatool\Model\Rank;
 use KKL\Ligatool\Model\Ranking;
@@ -238,6 +237,7 @@ class RankingService {
     $gameDayService = ServiceBroker::getGameDayService();
     $matchService = ServiceBroker::getMatchService();
     $teamService = ServiceBroker::getTeamService();
+    $teamScoreService = ServiceBroker::getTeamScoreService();
 
     $day = $gameDayService->byId($dayNumber);
     $prevDay = $gameDayService->getPrevious($day);
@@ -265,7 +265,7 @@ class RankingService {
         $rank->setTeamId($teamId);
         $rank->setRunning(true);
         if ($prevDay) {
-          $prevScore = $this->getTeamScoreForGameDay($teamId, $prevDay);
+          $prevScore = $teamScoreService->forTeamUntilGameDay($teamId, $prevDay);
           $rank->setScore($prevScore->score + $scorePlus);
           $rank->setWins($prevScore->score + $score->win);
           $rank->setLosses($prevScore->score + $score->loss);
@@ -376,65 +376,27 @@ class RankingService {
    */
   private function getGoalsForTeam($match, $team_id) {
 
-    $db = $this->getDb();
-    $sql = "SELECT sum(`goals_away`) AS goals_away, sum(goals_home) AS goals_home FROM " .
-      $db->getPrefix() . "matches AS m " .
-      "JOIN " . $db->getPrefix() . "sets AS s ON s.match_id = m.id " .
-      "JOIN " . $db->getPrefix() . "games AS g ON g.set_id = s.id " .
-      "WHERE m.id = " . esc_sql($match->getId());
+    $setService = ServiceBroker::getSetService();
+    $gameService = ServiceBroker::getGameService();
 
-    $score = $db->get_row($sql);
-    if (!$score) {
-      return 0;
+    $goalsAway = 0;
+    $goalsHome = 0;
+    $sets = $setService->byMatch($match);
+    foreach ($sets as $set) {
+      $games = $gameService->bySet($set);
+      foreach ($games as $game) {
+        $goalsAway += $game->getGoalsAway();
+        $goalsHome += $game->getGoalsHome();
+      }
     }
 
     if ($match->getHomeTeam() == $team_id) {
-      return $score->goals_home;
+      return $goalsHome;
     } elseif ($match->getAwayTeam() == $team_id) {
-      return $score->goals_away;
+      return $goalsAway;
     } else {
       return 0;
     }
   }
-
-  /**
-   * TODO: use orm
-   *
-   * @param $team_id
-   * @param $game_day_id
-   * @return mixed
-   */
-  private function getTeamScoreForGameDay($team_id, $game_day_id) {
-
-    $db = $this->getDb();
-    $gameDayService = ServiceBroker::getGameDayService();
-    $day = $gameDayService->byId($game_day_id);
-
-    $sql = "SELECT " .
-      "team_scores.team_id, " .
-      "sum(team_scores.score) as score, " .
-      "sum(team_scores.win) as wins, " .
-      "sum(team_scores.loss) as losses, " .
-      "sum(team_scores.draw) as draws, " .
-      "sum(team_scores.goalsFor) as goalsFor, " .
-      "sum(team_scores.goalsAgainst) as goalsAgainst " .
-      "FROM " . $db->getPrefix() . "game_days, " . "" . $db->getPrefix() . "team_scores  " .
-      "WHERE game_days.season_id='" . $day->getSeasonId() . "' " .
-      "AND game_days.number <= '" . $day->getNumber() . "' " .
-      "AND gameDay_id=game_days.id " .
-      "AND team_id=" . $team_id;
-
-    return $this->getDb()->get_row($sql);
-
-  }
-
-  /**
-   * @return Wordpress
-   * @deprecated use orm layer
-   */
-  private function getDb() {
-    return new Wordpress();
-  }
-
 
 }

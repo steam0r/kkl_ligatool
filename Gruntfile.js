@@ -43,6 +43,17 @@ module.exports = function (grunt){
       }
     },
 
+    phpunit: {
+      classes: {
+        dir: 'test/php/'
+      },
+      options: {
+        bin: 'vendor/bin/phpunit',
+        bootstrap: 'vendor/autoload.php',
+        colors: true
+      }
+    },
+
     // ===================================
     watch: {
       css: {
@@ -199,4 +210,6 @@ module.exports = function (grunt){
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-postcss');
   grunt.loadNpmTasks('grunt-sass');
+  grunt.loadNpmTasks('grunt-phpunit');
+
 };

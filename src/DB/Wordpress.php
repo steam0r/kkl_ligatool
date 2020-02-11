@@ -35,8 +35,6 @@ class Wordpress extends DB {
   public static $VERSION = "4";
 
   public function installWordpressDatabase() {
-    // $version = get_option(static::$VERSION_KEY);
-    // if ( !$version || $version < static::$VERSION ) {
     $mapper = Mapping::getMapper();
     $mapper->updateSchema(ApiKey::class);
     $mapper->updateSchema(Award::class);
@@ -63,20 +61,6 @@ class Wordpress extends DB {
     $mapper->updateSchema(TeamProperty::class);
     $mapper->updateSchema(TeamScore::class);
     update_option(static::$VERSION_KEY, static::$VERSION);
-  }
-
-  /**
-   * @deprecated use orm
-   */
-  public function get_results($sql) {
-    return $this->getDb()->get_results($sql);
-  }
-
-  /**
-   * @deprecated use orm
-   */
-  public function prepare($sql, $args) {
-    return $this->getDb()->prepare($sql, $args);
   }
 
 }

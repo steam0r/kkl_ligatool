@@ -9,7 +9,8 @@
 namespace KKL\Ligatool\Services;
 
 
-use KKL\Ligatool\DB\Wordpress;
+use KKL\Ligatool\DB\Where;
+use KKL\Ligatool\Model\Player;
 use KKL\Ligatool\Model\PlayerProperty;
 
 class PlayerPropertyService extends KKLModelService {
@@ -58,26 +59,35 @@ class PlayerPropertyService extends KKLModelService {
   }
 
   /**
-   * @param $player
-   * @param $properties
-   * @deprecated use orm
+   * @param $playerId
+   * @param $key
+   * @return PlayerProperty|null
    */
-  public function setPlayerProperties($player, $properties) {
-    $db = $this->getDb();
-    foreach ($properties as $key => $value) {
-      $db->delete($db->getPrefix() . 'player_properties', array('objectId' => $player->ID, 'property_key' => $key));
-      if ($value !== false) {
-        $db->insert($db->getPrefix() . 'player_properties', array('objectId' => $player->ID, 'property_key' => $key, 'value' => $value,), array('%d', '%s', '%s'));
-      }
-    }
+  public function byPlayerAndKey($playerId, $key) {
+    return $this->findOne([
+      new Where('objectId', $playerId),
+      new Where('property_key', $key)
+    ]);
   }
 
   /**
-   * @return Wordpress
-   * @deprecated use orm layer
+   * @param Player $player
+   * @param array $properties
    */
-  private function getDb() {
-    return new Wordpress();
+  public function setPlayerProperties($player, $properties) {
+    foreach ($properties as $key => $value) {
+      $prop = $this->byPlayerAndKey($player->getId(), $key);
+      if ($prop) {
+        $prop->delete();
+      }
+      if ($value !== false) {
+        $newProp = new PlayerProperty();
+        $newProp->setObjectId($player->getId());
+        $newProp->setPropertyKey($key);
+        $newProp->setValue($value);
+        $newProp->save();
+      }
+    }
   }
 
 }

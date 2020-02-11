@@ -8,6 +8,7 @@
 
 namespace KKL\Ligatool;
 
+use KKL\Ligatool\Mocks\LeagueServiceMock;
 use KKL\Ligatool\Services\ApiKeyService;
 use KKL\Ligatool\Services\AwardService;
 use KKL\Ligatool\Services\ClubPropertyService;
@@ -89,6 +90,8 @@ class ServiceBroker {
       self::$rankingService = new RankingService();
       self::$scheduleService = new ScheduleService();
       self::$scoringService = new ScoringService();
+    } else if (strtoupper($environment) === 'TEST') {
+      self::$leagueService = new LeagueServiceMock();
     }
   }
 

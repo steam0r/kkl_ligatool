@@ -18,7 +18,11 @@ class GameDayReminder {
 
   private static function getMatches($days_off) {
     $matchService = ServiceBroker::getMatchService();
-    return $matchService->reminderMatches($days_off);
+    try {
+      return $matchService->reminderMatches($days_off);
+    } catch (\Exception $e) {
+      return [];
+    }
   }
 
   private static function getTopMatches($matches) {

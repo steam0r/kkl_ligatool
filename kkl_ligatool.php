@@ -3,7 +3,7 @@
 Plugin Name: KKL Ligatool
 Plugin URI: https://www.kickerligakoeln.de
 Description: Integration of the KKL Database into Wordpress
-Version: 2.15.5
+Version: 2.15.10
 Author: Stephan Maihoefer / Benedikt Scherer
 Author URI: http://undev.de
 License: MIT
@@ -21,7 +21,9 @@ $kkl = new Plugin($pluginFile, $baseUrl, $basePath);
 $kkl->init();
 
 $myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
-  'https://ci.undev.de/releases/steam0r/kkl_ligatool/master/release.json',
+  'https://github.com/steam0r/kkl_ligatool/',
   __FILE__, //Full path to the main plugin file or functions.php.
-  'undev/polyshapes-wpplugin'
+  'kkl_ligatool'
 );
+$myUpdateChecker->getVcsApi()->enableReleaseAssets();
+

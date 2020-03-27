@@ -35,7 +35,7 @@ module.exports = function (grunt){
     postcss: {
       options: {
         processors: [
-          require('autoprefixer')({browsers: 'last 2 versions, safari 8'}) // add vendor prefixes
+          require('autoprefixer') // add vendor prefixes
         ]
       },
       dist: { // = distPortal

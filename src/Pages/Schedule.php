@@ -25,20 +25,39 @@ class Schedule {
   public function getSingleLeague($pageContext) {
     $schedules = array();
     $scheduleService = ServiceBroker::getScheduleService();
-    $schedule = $scheduleService->getScheduleForGameDay($pageContext['game_day']);
+    $gameDayService = ServiceBroker::getGameDayService();
+    $teamService = ServiceBroker::getTeamService();
+
+    $league = $pageContext['league'];
+    if(!$league) {
+      return [];
+    }
+
+    $season = $pageContext['season'] ? $pageContext['season'] : $league->getCurrentSeason();
+    $gameDayId = $pageContext['game_day'];
+    if($gameDayId) {
+      $gameDay = $gameDayService->byId($gameDayId);
+    }else{
+      $gameDay = $gameDayService->byId($season->getCurrentGameDay());
+    }
+
+    $schedule = $scheduleService->getScheduleForGameDay($gameDay);
 
     $clubService = ServiceBroker::getClubService();
 
     foreach ($schedule->getMatches() as $match) {
-      $home_club = $clubService->byId($match->home->club_id);
-      $away_club = $clubService->byId($match->away->club_id);
-      $match->home->link = LinkUtils::getLink('club', array('pathname' => $home_club->getShortName()));
-      $match->away->link = LinkUtils::getLink('club', array('pathname' => $away_club->getShortName()));
+      $homeTeam = $teamService->byId($match->getHomeTeam());
+      $awayTeam = $teamService->byId($match->getAwayTeam());
+
+      $home_club = $clubService->byId($homeTeam->getClubId());
+      $away_club = $clubService->byId($awayTeam->getClubId());
+      $homeTeam->link = LinkUtils::getLink('club', array('pathname' => $home_club->getShortName()));
+      $awayTeam->link = LinkUtils::getLink('club', array('pathname' => $away_club->getShortName()));
     }
 
     $schedule->link = LinkUtils::getLink('schedule', array(
-      'league' => $pageContext['league']->code,
-      'season' => date('Y', strtotime($pageContext['season']->start_date))
+      'league' => $league->getCode(),
+      'season' => date('Y', strtotime($season->getStartDate()))
     ));
 
     $schedules[] = $schedule;

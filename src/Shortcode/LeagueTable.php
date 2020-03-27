@@ -10,9 +10,10 @@ use KKL\Ligatool\Template;
 class LeagueTable extends Shortcode {
 
   public static function render($atts, $content, $tag) {
+
     $kkl_twig = Template\Service::getTemplateEngine();
 
-    $context = Plugin::getContext();
+    $context = Plugin::getUrlContext();
     $rankings = array();
 
     $rankingService = ServiceBroker::getRankingService();
@@ -20,20 +21,25 @@ class LeagueTable extends Shortcode {
     $clubService = ServiceBroker::getClubService();
     $seasonPropertyService = ServiceBroker::getSeasonPropertyService();
 
-    $ranking = $rankingService->getRankingForLeagueAndSeasonAndGameDay($context['league']->getId(), $context['season']->getId(), $context['game_day']->getNumber());
+    if ($context->getLeague() && $context->getSeason()) {
 
-    foreach ($ranking->getRanks() as $rank) {
-      $team = $teamService->byId($rank->getTeamId());
-      $club = $clubService->byId($team->getClubId());
-      // TODO: use some kind of DTO
-      $rank->team->link = Plugin::getLink('club', array('club' => $club->getShortName()));
-    }
+      $league = $context->getLeague();
+      $season = $context->getSeason();
+      $ranking = $rankingService->getRankingForLeagueAndSeasonAndGameDay($league->getId(), $season->getId(), $context['gameDayNumber']);
 
-    $properties = $seasonPropertyService->bySeason($context['season']->id);
-    if ($properties && array_key_exists('relegation_explanation', $properties)) {
-      $ranking->relegation_explanation = $properties['relegation_explanation'];
+      foreach ($ranking->getRanks() as $rank) {
+        $team = $teamService->byId($rank->getTeamId());
+        $club = $clubService->byId($team->getClubId());
+        // TODO: use some kind of DTO
+        $rank->team->link = Plugin::getLink('club', array('club' => $club->getShortName()));
+      }
+
+      $properties = $seasonPropertyService->bySeason($context['season']->id);
+      if ($properties && array_key_exists('relegation_explanation', $properties)) {
+        $ranking->relegation_explanation = $properties['relegation_explanation'];
+      }
+      $rankings[] = $ranking;
     }
-    $rankings[] = $ranking;
 
     return $kkl_twig->render(
       self::$TEMPLATE_PATH . '/ranking.twig',

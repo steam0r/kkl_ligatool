@@ -23,7 +23,7 @@ if (isset($wp_query->query_vars['json'])) {
 
   header('Content-Type: application/json');
 
-  $context = Plugin::getContext();
+  $context = Plugin::getUrlContext();
   $rankings = array();
 
   $output = array();

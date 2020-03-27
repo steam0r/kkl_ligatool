@@ -36,41 +36,45 @@ class UpcomingGames extends WP_Widget {
     $leagueService = ServiceBroker::getLeagueService();
     $matchService = ServiceBroker::getMatchService();
     $teamService = ServiceBroker::getTeamService();
+    $clubService = ServiceBroker::getClubService();
+
+    $context = Plugin::getUrlContext();
 
     $league_id = $instance['league'];
     if (!$league_id) {
-      $context = Plugin::getContext();
-      $league_id = $context['league'];
-      if (!$league_id) {
-        $team = $context['team'];
-        if ($team) {
-          $current_team = $teamService->getCurrentTeamForClub($team->getClubId());
+      $league = $leagueService->bySlug($context->getLeague()->getCode());
+      if (!$league) {
+        if ($context->getClub()->getShortName()) {
+          $club = $clubService->byCode($context->getClub()->getShortName());
+          $current_team = $teamService->getCurrentTeamForClub($club->getId());
           $data = $matchService->getMatchesForTeam($current_team->getId());
           echo $this->tpl->render('widgets/upcoming_games.twig', array('schedule' => $data, 'display_result' => true));
         } else {
           $data = $matchService->getAllUpcomingMatches();
-          $games = array();
+          $matches = array();
           $leagues = array();
-          foreach ($data as $game) {
-            $leagues[$game->league_id] = true;
-            $games[$game->league_id][] = $game;
+          foreach ($data as $match) {
+            $league = $leagueService->byGameDay($match->getGameDayId());
+            $leagues[$league->getId()] = $league;
+            $matches[$league->getId()][] = $match;
           }
-          foreach (array_keys($leagues) as $league_id) {
-            $league = $leagueService->byId($league_id);
-            echo $this->tpl->render('widgets/upcoming_games.twig', array('schedule' => $games[$league_id], 'league' => $league));
+          foreach ($leagues as $league) {
+            echo $this->tpl->render('widgets/upcoming_games.twig', array('schedule' => $matches[$league->getId()], 'league' => $league));
           }
         }
       } else {
-        $data = $matchService->getUpcomingMatches($league_id);
+        $data = $matchService->getUpcomingMatches($league->getId());
         echo $this->tpl->render('widgets/upcoming_games.twig', array('schedule' => $data));
       }
+    } else {
+      $data = $matchService->getUpcomingMatches($league_id);
+      echo $this->tpl->render('widgets/upcoming_games.twig', array('schedule' => $data));
     }
-
     echo $args['after_widget'];
-
   }
 
-  public function update($new_instance, $old_instance) {
+  public
+  function update($new_instance, $old_instance) {
     $instance = array();
     $instance['title'] = strip_tags($new_instance['title']);
     $instance['league'] = strip_tags($new_instance['league']);
@@ -78,7 +82,8 @@ class UpcomingGames extends WP_Widget {
     return $instance;
   }
 
-  public function form($instance) {
+  public
+  function form($instance) {
 
     $leagueService = ServiceBroker::getLeagueService();
     $leagues = $leagueService->getAll();

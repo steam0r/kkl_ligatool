@@ -3,6 +3,7 @@
 namespace KKL\Ligatool;
 
 use KKL\Ligatool\Backend\PageTemplater;
+use KKL\Ligatool\Model\UrlContext;
 use KKL\Ligatool\Shortcode\ClubDetail;
 use KKL\Ligatool\Shortcode\ContactList;
 use KKL\Ligatool\Shortcode\GameDayOverview;
@@ -28,26 +29,24 @@ class Plugin {
 
   private static $pluginPath;
 
-  private $db;
-
   private $pageTemplates = array(
     'contacts' => array(
-      'name' => 'KL Contactlist',
-      'filename' => 'kl_contact-list.php',
+      'name' => 'KKL Contactlist',
+      'filename' => 'kkl_contact-list.php',
       'page' => array(
         'matches' => array('')
       )
     ),
     'clubs' => array(
-      'name' => 'KL Teams',
-      'filename' => 'kl_teams.php',
+      'name' => 'KKL Teams',
+      'filename' => 'kkl_teams.php',
       'page' => array(
         'matches' => array('team_name')
       )
     ),
     'ranking' => array(
-      'name' => 'KL Ranking',
-      'filename' => 'kl_ranking.php',
+      'name' => 'KKL Ranking',
+      'filename' => 'kkl_ranking.php',
       'page' => array(
         'matches' => array(
           'league',
@@ -57,8 +56,8 @@ class Plugin {
       )
     ),
     'fixtures' => array(
-      'name' => 'KL Fixtures',
-      'filename' => 'kl_fixtures.php',
+      'name' => 'KKL Fixtures',
+      'filename' => 'kkl_fixtures.php',
       'page' => array(
         'matches' => array(
           'league',
@@ -76,12 +75,11 @@ class Plugin {
 
   }
 
-  public static function getContext() {
-    return self::$context;
-  }
-
-  public static function setContext($context) {
-    self::$context = $context;
+  /**
+   * @return UrlContext
+   */
+  public static function getUrlContext() {
+    return new UrlContext();
   }
 
   /**

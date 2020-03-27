@@ -18,7 +18,7 @@ class TableOverview extends Shortcode {
     $teamService = ServiceBroker::getTeamService();
     $clubService = ServiceBroker::getClubService();
 
-    $context = Plugin::getContext();
+    $context = Plugin::getUrlContext();
     $rankings = array();
     foreach ($leagueService->getActive() as $league) {
       $season = $seasonService->byId($league->getCurrentSeason());

@@ -3,6 +3,7 @@
 namespace KKL\Ligatool\Pages;
 
 
+use KKL\Ligatool\Plugin;
 use KKL\Ligatool\ServiceBroker;
 use KKL\Ligatool\Template;
 
@@ -28,8 +29,8 @@ class Pages {
       'league' => $league
     );
 
-    $season = $seasonService->byLeagueAndYear($output['league']->getId(), $year);
     if ($year) {
+      $season = $seasonService->byLeagueAndYear($output['league']->getId(), $year);
       $output['season'] = $season;
     } else {
       $output['season'] = $seasonService->byId($league->getCurrentSeason());
@@ -38,7 +39,7 @@ class Pages {
     if ($game_day) {
       $output['game_day'] = $gameDayService->bySeasonAndPosition($season->getId(), $game_day);
     } else {
-      $output['game_day'] = $gameDayService->byId($season->getCurrentGameDay());
+      $output['game_day'] = $gameDayService->byId($season);
     }
 
     return $output;
@@ -105,19 +106,18 @@ class Pages {
     $kkl_twig = Template\Service::getTemplateEngine();
     $teams = new Teams();
 
-    $team_name = get_query_var('team_name');
-
-    if ($team_name) {
+    $context = Plugin::getUrlContext();
+    if ($context->getTeam()) {
       $templateName = '/team-single.twig';
-      $templatContext = $teams->getSingleClub($team_name);
+      $templateContext = $teams->getSingleClub($context->getTeam()->getShortName());
     } else {
       $templateName = '/team-all.twig';
-      $templatContext = array(
+      $templateContext = array(
         'leagues' => $teams->getAllActiveTeams()
       );
     }
 
-    return $kkl_twig->render(self::TEMPLATE_PATH . $templateName, $templatContext);
+    return $kkl_twig->render(self::TEMPLATE_PATH . $templateName, $templateContext);
   }
 
 
@@ -129,13 +129,16 @@ class Pages {
     $ranking = new RankingPage();
     $schedule = new Schedule();
 
-    $league = get_query_var('league');
-    $season = get_query_var('season');
-    $game_day = get_query_var('game_day');
-
-    if ($league) {
+    $context = Plugin::getUrlContext();
+    if ($context->getLeague()) {
       $templateName = '/ranking-single.twig';
-      $pageContext = Pages::leagueContext($league, $season, $game_day);
+      $season = $context->getSeason();
+      $gameDay = $context->getGameDay();
+
+      $pageContext = Pages::leagueContext(
+        $context->getLeague()->getCode(),
+        $season ? $season->getYear() : null,
+        $gameDay ? $gameDay->getNumber() : null);
       $templateContext = array(
         'rankings' => $ranking->getSingleLeague($pageContext),
         'schedules' => $schedule->getSingleLeague($pageContext)
@@ -158,12 +161,18 @@ class Pages {
     $kkl_twig = Template\Service::getTemplateEngine();
     $schedule = new Schedule();
 
-    $league = get_query_var('league');
-    $season = get_query_var('season');
+    $context = Plugin::getUrlContext();
 
-    if ($league) {
+    if ($context->getLeague()) {
       $templateName = '/fixtures.twig';
-      $pageContext = Pages::leagueContext($league, $season);
+      $templateName = '/ranking-single.twig';
+      $season = $context->getSeason();
+      $gameDay = $context->getGameDay();
+
+      $pageContext = Pages::leagueContext(
+        $context->getLeague()->getCode(),
+        $season ? $season->getYear() : null,
+        $gameDay ? $gameDay->getNumber() : null);
       $templateContext = array(
         'schedules' => $schedule->getSeason($pageContext)
       );

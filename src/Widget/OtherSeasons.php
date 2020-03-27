@@ -32,8 +32,8 @@ class OtherSeasons extends WP_Widget {
 
     $league_id = $instance['league'];
     if (!$league_id) {
-      $context = Plugin::getContext();
-      $league = $context['league'];
+      $context = Plugin::getUrlContext();
+      $league = $context->getLeague();
     } else {
       $league = $leagueService->byId($league_id);
     }

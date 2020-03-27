@@ -18,7 +18,7 @@ class LeagueOverview extends Shortcode {
     $clubService = ServiceBroker::getClubService();
     $gameDayService = ServiceBroker::getGameDayService();
 
-    $context = Plugin::getContext();
+    $context = Plugin::getUrlContext();
     $all_leagues = $leagueService->getActive();
     $leagues = array();
     foreach ($all_leagues as $league) {

@@ -19,13 +19,25 @@ class RankingPage {
     $clubService = ServiceBroker::getClubService();
     $seasonService = ServiceBroker::getSeasonService();
     $rankingService = ServiceBroker::getRankingService();
+    $gameDayService = ServiceBroker::getGameDayService();
+
+    $league = $pageContext['league'];
+    if(!$league) {
+      return [];
+    }
+
+    $season = $pageContext['season'] ? $pageContext['season'] : $league->getCurrentSeason();
+    $gameDayNumber = $pageContext['game_day'];
+    if(!$gameDayNumber) {
+      $gameDayNumber = $gameDayService->byId($season->getCurrentGameDay())->getNumber();
+    }
 
     $ranking = new stdClass;
     $ranking->league = $pageContext['league'];
     $ranking->ranks = $rankingService->getRankingForLeagueAndSeasonAndGameDay(
-      $pageContext['league']->id,
-      $pageContext['season']->id,
-      $pageContext['game_day']->number
+      $league->getId(),
+      $season->getId(),
+      $gameDayNumber
     );
 
     foreach ($ranking->ranks as $rank) {

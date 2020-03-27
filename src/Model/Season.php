@@ -174,4 +174,11 @@ class Season extends KKLPropertyModel {
     return parent::getProperties();
   }
 
+  /**
+   * @return int
+   */
+  public function getYear() {
+    return intval(date('Y', strtotime($this->getStartDate())));
+  }
+
 }

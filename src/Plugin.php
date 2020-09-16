@@ -94,6 +94,9 @@ class Plugin {
     add_filter('query_vars', array($this, 'add_query_vars_filter'));
     
     add_action('init', array($this, 'add_rewrite_rules'));
+
+    add_shortcode('koelncup_table', array(KoelnClub::class, 'renderTable'));
+    add_shortcode('koelncup_games', array(KoelnClub::class, 'renderGames'));
     
     add_shortcode('league_table', array(Shortcodes::class, 'leagueTable'));
     add_shortcode('table_overview', array(Shortcodes::class, 'tableOverview'));

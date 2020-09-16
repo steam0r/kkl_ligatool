@@ -1,0 +1,36 @@
+<table class="table table-striped kkl-table gameday">
+    <thead>
+    <tr>
+        <th class="date">Datum</th>
+        <th class="home">Heim</th>
+        <th class="divider"></th>
+        <th class="guest">Gast</th>
+        <th class="score">Ergebnis</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    {% for match in schedules[0].matches %}
+        <tr>
+            <td class="date">
+                <span class="hidden-xs">{{ match.fixture|date('d.m.Y - H:i') }}</span>
+                <span class="visible-xs">{{ match.fixture|date('d.m.Y') }}</span>
+            </td>
+            <td class="home">{{ match.home.name }}</td>
+            <td class="divider">gg.</td>
+            <td class="guest">{{ match.away.name }}</td>
+            <td class="score">
+                {% if match.status != 3 and (match.score_home == false and match.score_away == false) %}
+                    -:-
+                {% else %}
+                    {{ match.score_home}}:{{ match.score_away }}
+                {% endif %}
+            </td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="5">Bisher sind noch keine Spiele registriert</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

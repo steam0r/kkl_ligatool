@@ -1,5 +1,24 @@
-<div class="wrap">
+<div class="wrap" style="position: relative">
     <div id="ligatool-backend-logo"
-         style="position: relative; width: 100%; height: 50vw; display: block; background-image: url({{ '/kkl_icon.svg'|imgSrc }}); background-repeat: no-repeat; background-position: center center; background-size: auto 70%;">
+         style="position: absolute; z-index: -1; width: 100%; height: 50vw; display: block; background-image: url({{ '/kkl_icon.svg'|imgSrc }}); background-repeat: no-repeat; background-position: center center; background-size: auto 70%;">
+    </div>
+
+    <div id="shortcodes">
+        <h1>Shortcodes</h1>
+        <p>In den Beiträgen und Seiten stehen durch dieses Plugin verschiedene Shortcodes zu Verfügung. Einfach
+            Shortcode in den Beitrag einfügen. Fertig.</p>
+
+        <article>
+            <h2>Köln Cup</h2>
+
+            <code>[koelncup_table]</code> - Darstellung der Tabelle<br/>
+            <code>[koelncup_games saison="ID" league="ID" game_day="ID"]</code> - Liste aller eingetragenen Spiele
+        </article>
+
+        <article>
+            <h2>Regulärer Spielbetrieb</h2>
+
+            tbc
+        </article>
     </div>
 </div>

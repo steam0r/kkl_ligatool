@@ -1,0 +1,35 @@
+{% for ranking in rankings %}
+    <table class="table kkl-table sortable ranking">
+        <thead>
+        <tr>
+            <th class="position">Platz</th>
+            <th class="team">Team</th>
+            <th class="games">Spiele</th>
+            <th class="visible-xs">g/u/v</th>
+            <th class="win hidden-xs">g.</th>
+            <th class="draw hidden-xs">u.</th>
+            <th class="loose hidden-xs">v.</th>
+            <th class="points">Punkte</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for rank in ranking.ranks %}
+            <tr class="">
+                <td>{{ rank.position }}</td>
+                <td>{{ rank.team.name }}</td>
+                <td>{{ rank.games }}</td>
+                <td class="visible-xs">{{ rank.wins }}/{{ rank.draws }}/{{ rank.losses }}</td>
+                <td class="hidden-xs">{{ rank.wins }}</td>
+                <td class="hidden-xs">{{ rank.draws }}</td>
+                <td class="hidden-xs">{{ rank.losses }}</td>
+                <td><strong>{{ rank.score }}</strong></td>
+            </tr>
+        {% else %}
+            <tr>
+                <td></td>
+                <td colspan="4">Bisher sind noch keine Spiele registriert</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endfor %}

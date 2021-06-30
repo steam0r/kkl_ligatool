@@ -46,7 +46,7 @@ class Teams {
       $seasonTeam->link = LinkUtils::getLink('clubs', array('pathname' => $club->getShortName()));
       $seasonTeam->schedule_link = LinkUtils::getLink(
         'schedule', array(
-          'league' => $seasonTeam->season->league->code,
+          'league' => $seasonTeam->season->league->getCode(),
           'season' => date(
             'Y', strtotime($seasonTeam->season->getStartDate())
           ),
@@ -80,18 +80,17 @@ class Teams {
 
     foreach ($leagueService->getActive() as $league) {
       $league->season = $seasonService->byId($league->getCurrentSeason());
-      $leagueService = ServiceBroker::getLeagueService();
-      $league->teams = $leagueService->bySeason($league->season->getId());
+      $league->teams = $teamService->forSeason($league->season->getId());
 
       foreach ($league->teams as $team) {
-        $club = $clubService->byId($team->club_id);
-        if (!$team->logo) {
-          $team->logo = $club->getLogo();
-          if (!$club->getLogo) {
-            $team->logo = "";
+        $club = $clubService->byId($team->getClubId());
+        if (!$team->getLogo()) {
+          $team->logoUrl = $club->getLogo();
+          if (!$club->getLogo()) {
+            $team->logoUrl = "";
           }
         } else {
-          $team->logo = "/images/team/" . $team->logo;
+          $team->logoUrl = "/images/team/" . $team->logoUrl;
         }
 
         $team->link = LinkUtils::getLink('club', array('pathname' => $club->getShortName()));

@@ -101,6 +101,7 @@ class Schedule {
     $seasonService = ServiceBroker::getSeasonService();
     $dayService = ServiceBroker::getGameDayService();
     $scheduleService = ServiceBroker::getScheduleService();
+    $teamService = ServiceBroker::getTeamService();
 
     foreach ($leagueService->getActive() as $league) {
       $season = $seasonService->byId($league->getCurrentSeason());
@@ -109,8 +110,11 @@ class Schedule {
       $schedule = $scheduleService->getScheduleForGameDay($day);
 
       foreach ($schedule->getMatches() as $match) {
-        $home_club = $clubService->byId($match->home->club_id);
-        $away_club = $clubService->byId($match->away->club_id);
+        $homeTeam = $teamService->byId($match->getHomeTeam());
+        $awayTeam = $teamService->byId($match->getAwayTeam());
+
+        $home_club = $clubService->byId($homeTeam->getClubId());
+        $away_club = $clubService->byId($awayTeam->getClubId());
         $match->home->link = LinkUtils::getLink('club', array('pathname' => $home_club->getShortName()));
         $match->away->link = LinkUtils::getLink('club', array('pathname' => $away_club->getShortName()));
       }

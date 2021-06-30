@@ -32,7 +32,7 @@ abstract class SwaggerModel {
   /**
    * @param mixed $id
    */
-  public function setId($id) {
+  public function setID($id) {
     $this->ID = $id;
   }
 

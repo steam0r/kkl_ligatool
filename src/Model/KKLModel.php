@@ -51,7 +51,11 @@ abstract class KKLModel extends BaseModel {
     }
   }
 
-  /**
+  public function setId($id) {
+	  $this->ID = $id;
+  }
+
+	/**
    * @return string
    */
   public function getCreatedAt() {

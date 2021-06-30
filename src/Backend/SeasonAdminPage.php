@@ -165,7 +165,7 @@ class SeasonAdminPage extends AdminPage {
     $start_date = date('Y-m-d H:i:s', strtotime(str_replace('-', '/', $_POST['start_date'])));
     $end_date = date('Y-m-d H:i:s', strtotime(str_replace('-', '/', $_POST['end_date'])));
 
-    $service = ServiceBroker::getPlayerService();
+    $service = ServiceBroker::getSeasonService();
     $season = $service->getOrCreate($_POST['id']);
     $season->setName($_POST['name']);
     $season->setStartDate($start_date);

@@ -5,6 +5,7 @@ namespace KKL\Ligatool\Backend;
 use KKL\Ligatool\DB\Where;
 use KKL\Ligatool\Model\Match;
 use KKL\Ligatool\ServiceBroker;
+use KKL\Ligatool\Services\SeasonService;
 
 class MatchListTable extends ListTable {
 
@@ -16,9 +17,21 @@ class MatchListTable extends ListTable {
     if ($this->get_current_game_day()) {
       return new Where("game_day_id", $this->get_current_game_day()->getId(), '=');
     } elseif ($this->get_current_season()) {
-      return "game_day_id = (SELECT current_game_day AS game_day_id FROM seasons WHERE id = '" . $this->get_current_season()->getId() . "')";
+    	$service = ServiceBroker::getSeasonService();
+    	$season = $service->byId($this->get_current_season()->getId());
+    	if($season) {
+    		return new Where("game_day_id", $season->getCurrentGameDay(), '=');
+	    }
     } elseif ($this->get_current_league()) {
-      return "game_day_id = (SELECT current_game_day AS game_day_id FROM seasons WHERE id = (SELECT current_season AS season_id FROM leagues WHERE id = '" . $this->get_current_league()->getId() . "'))";
+    	$leagueService = ServiceBroker::getLeagueService();
+    	$seasonService = ServiceBroker::getSeasonService();
+    	$league = $leagueService->byId($this->get_current_league()->getId());
+    	if($league) {
+    		$season = $seasonService->byId($league->getCurrentSeason());
+    		if($season) {
+    			return new Where("game_day_id", $season->getCurrentGameDay(), '=');
+		    }
+	    }
     }
     return null;
   }
@@ -28,7 +41,7 @@ class MatchListTable extends ListTable {
    * @return array $columns, the array of columns to use with the table
    */
   function get_display_columns() {
-    return $columns = array(
+    return array(
       'ID' => __('id', 'kkl-ligatool'),
       'game_day_id' => __('game_day', 'kkl-ligatool'),
       'home_team' => __('home_team', 'kkl-ligatool'),

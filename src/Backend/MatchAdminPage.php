@@ -164,7 +164,8 @@ class MatchAdminPage extends AdminPage {
       $matchService = ServiceBroker::getMatchService();
       $this->match = $matchService->byId($_GET['id']);
     } else {
-      $this->setItem(new Match());
+    	$this->match = new Match();
+      $this->setItem($this->match);
     }
     return $this->match;
   }
@@ -178,7 +179,8 @@ class MatchAdminPage extends AdminPage {
     $item = $this->get_item();
     if ($item) {
       $this->game_day = $gameDayService->byId($item->getGameDayId());
-    } elseif ($_GET['gameDayId']) {
+    }
+    if(!$this->game_day && $_GET['gameDayId']) {
       $this->game_day = $gameDayService->byId($_GET['gameDayId']);
     }
     return $this->game_day;
@@ -227,8 +229,8 @@ class MatchAdminPage extends AdminPage {
     $match->setHomeTeam($_POST['team_home']);
     $match->setAwayTeam($_POST['team_away']);
     $match->setLocation($_POST['location']);
-    $match->setGoalsHome($_POST['goals_home']);
-    $match->setGoalsAway($_POST['goals_away']);
+    if($_POST['goals_home']) $match->setGoalsHome($_POST['goals_home']);
+    if($_POST['goals_away']) $match->setGoalsAway($_POST['goals_away']);
     $match->setScoreHome($_POST['score_home']);
     $match->setScoreAway($_POST['score_away']);
     $match->setNotes($_POST['description']);
@@ -250,10 +252,10 @@ class MatchAdminPage extends AdminPage {
       $page = $page . "&id=" . $next_game;
     } elseif ($next_game && $next_game == 1) {
       $page = menu_page_url("kkl_matches_admin_page", false);
-      $page = $page . "&gameDayId=" . $this->match->game_day_id;
+      $page = $page . "&gameDayId=" . $this->match->getGameDayId();
     } else {
       $page = menu_page_url("kkl_ligatool_matches", false);
-      $page = $page . "&game_day_filter=" . $this->match->game_day_id;
+      $page = $page . "&game_day_filter=" . $this->match->getGameDayId();
     }
 
     wp_redirect($page);

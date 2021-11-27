@@ -123,7 +123,7 @@ class Backend {
         'button_text' => __('cards_noleague_action', 'kkl-ligatool')
       );
     }
-    echo $kkl_twig->render('admin/home.twig', array('cards' => $cards));
+    echo $kkl_twig->render('admin/home.twig', array('cards' => $cards, "shortcodes" => Plugin::getShortCodes()));
 
   }
 

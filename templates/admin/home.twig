@@ -1,18 +1,29 @@
 <div class="wrap">
     <div id="ligatool-backend-logo" style="position: relative; width: 100%; height: 50vw; display: block; background-image: url({{ '/kkl_icon.svg'|imgSrc }}); background-repeat: no-repeat; background-position: center center; background-size: auto 70%;">
         {% for card in cards %}
-        <div class="card {{ card.class }}">
-            <h1>{{ card.headline }}</h1>
-            <div class="content">
-                {{ card.content }}
+            <div class="card {{ card.class }}">
+                <h1>{{ card.headline }}</h1>
+                <div class="content">
+                    {{ card.content }}
+                </div>
+                {% if card.action %}
+                    <form method="POST" action="{{ card.action_url }}">
+                        <input type="submit" name="create" value="{{ card.button_text }}" class="button-primary">
+                        <input type="hidden" name="action" value="{{ card.action }}">
+                    </form>
+                {% endif %}
             </div>
-            {% if card.action %}
-            <form method="POST" action="{{ card.action_url }}">
-                <input type="submit" name="create" value="{{ card.button_text }}" class="button-primary">
-                <input type="hidden" name="action" value="{{ card.action }}">
-            </form>
-            {% endif %}
-        </div>
         {% endfor %}
+        <div id="shortcodes">
+            <h1>Shortcodes</h1>
+            <p>In den Beiträgen und Seiten stehen durch dieses Plugin verschiedene Shortcodes zu Verfügung. Einfach
+                Shortcode in den Beitrag einfügen. Fertig.</p>
+
+            {% for shortcode in shortcodes %}
+                <code>[{{ shortcode.name }}]</code> - {{ shortcode.description }}<br/>
+            {% endfor %}
+        </div>
     </div>
+
+
 </div>

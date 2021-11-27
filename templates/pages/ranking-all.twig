@@ -19,7 +19,7 @@
                     <h2>{{ ranking.league.name }}</h2>
                 {% endif %}
 
-                {% include '_partials/table_ranking.twig' %}
+                {% include '_partials/table_ranking.twig' with { 'ranking': ranking } %}
             </div>
         {% endfor %}
 

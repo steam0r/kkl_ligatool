@@ -5,3 +5,4 @@ node_modules/
 kkl_ligatool/
 target/
 release.json
+.DS_Store

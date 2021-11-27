@@ -19,7 +19,7 @@ class RankingService {
 
   public function getRankingModelForSeason($seasonId) {
     // TODO: maybe store this in database on a per season base, to make other sorting possible
-    return self::$RANKING_MODEL_SCORE_GAME_DIFF;
+    return static::$RANKING_MODEL_SCORE_GAME_DIFF;
   }
 
   /**
@@ -28,18 +28,16 @@ class RankingService {
    */
   public function getRankingModelSortingFunction($model) {
     switch ($model) {
-      case self::$RANKING_MODEL_SCORE_GAME_DIFF:
+      case static::$RANKING_MODEL_SCORE_GAME_DIFF:
       default:
-        $sortingFunction = function (array $unsorted) {
-          uasort($unsorted, function (Rank $first, Rank $second) {
-            if ($first->getScore() == $second->getScore()) {
-              if ($first->getGameDiff() == $second->getGameDiff()) {
-                return 0;
-              }
-              return ($first->getGameDiff() > $second->getGameDiff()) ? -1 : 1;
-            }
-            return ($first->getScore() > $second->getScore()) ? -1 : 1;
-          });
+        $sortingFunction = function (Rank $first, Rank $second) {
+	        if ($first->getScore() == $second->getScore()) {
+		        if ($first->getGameDiff() == $second->getGameDiff()) {
+			        return 1;
+		        }
+		        return ($first->getGameDiff() > $second->getGameDiff()) ? -1 : 1;
+	        }
+	        return ($first->getScore() > $second->getScore()) ? -1 : 1;
         };
         break;
     }
@@ -114,8 +112,9 @@ class RankingService {
     if ($live) {
       $ranks = $this->addLiveScores($ranks, $dayNumber);
     }
+
     $sortingFunction = $this->getRankingModelSortingFunction($this->getRankingModelForSeason($day->getSeasonId()));
-    $sortingFunction($ranks);
+	uasort($ranks, $sortingFunction);
 
     $original_size = count($ranks);
     $teams = $teamService->forSeason($seasonId);
@@ -254,39 +253,40 @@ class RankingService {
       $scores[$match->getAwayTeam()] = $this->getScoresForTeamAndMatch($match, $away);
     }
     foreach ($scores as $teamId => $score) {
+		$team = $teamService->byId($teamId);
       if (!$score->isFinal() && !($score->getGoalsFor() == 0 && $score->getGoalsAgainst() == 0)) {
         $scorePlus = 0;
-        if ($score->draw) {
+        if ($score->getDraw()) {
           $scorePlus = 1;
-        } elseif ($score->win) {
+        } elseif ($score->getWin()) {
           $scorePlus = 2;
         }
         $rank = new Rank();
         $rank->setTeamId($teamId);
         $rank->setRunning(true);
         if ($prevDay) {
-          $prevScore = $teamScoreService->forTeamUntilGameDay($teamId, $prevDay);
-          $rank->setScore($prevScore->score + $scorePlus);
-          $rank->setWins($prevScore->score + $score->win);
-          $rank->setLosses($prevScore->score + $score->loss);
-          $rank->setDraws($prevScore->score + $score->draw);
-          $rank->setGoalsFor($prevScore->score + $score->goalsFor);
-          $rank->setGoalsAgainst($prevScore->score + $score->goalsAgainst);
-          $rank->setGoalDiff($prevScore->score + ($score->goalsFor - $score->goalsAgainst));
-          $rank->setGamesFor($prevScore->score + $score->gamesFor);
-          $rank->setGamesAgainst($prevScore->score + $score->gamesAgainst);
-          $rank->setGameDiff($prevScore->score + ($score->gamesFor - $score->gamesAgainst));
+          $prevScore = $teamScoreService->forTeamUntilGameDay($team, $prevDay);
+          $rank->setScore($prevScore->getScore() + $scorePlus);
+          $rank->setWins($prevScore->getScore() + $score->getWin());
+          $rank->setLosses($prevScore->getScore() + $score->getLoss());
+          $rank->setDraws($prevScore->getScore() + $score->getDraw());
+          $rank->setGoalsFor($prevScore->getScore() + $score->getGoalsFor());
+          $rank->setGoalsAgainst($prevScore->getScore() + $score->getGoalsAgainst());
+          $rank->setGoalDiff($prevScore->getScore() + ($score->getGoalsAgainst() - $score->getGoalsAgainst()));
+          $rank->setGamesFor($prevScore->getScore() + $score->getGamesFor());
+          $rank->setGamesAgainst($prevScore->getScore() + $score->getGamesAgainst());
+          $rank->setGameDiff($prevScore->getScore() + ($score->getGamesFor() - $score->getGamesAgainst()));
         } else {
           $rank->setScore($scorePlus);
-          $rank->setWins($score->win);
-          $rank->setLosses($score->loss);
-          $rank->setDraws($score->draw);
-          $rank->setGoalsFor($score->goalsFor);
-          $rank->setGoalsAgainst($score->goalsAgainst);
-          $rank->setGoalDiff($score->goalsFor - $score->goalsAgainst);
-          $rank->setGamesFor($score->gamesFor);
-          $rank->setGamesAgainst($score->gamesAgainst);
-          $rank->setGameDiff($score->gamesFor - $score->gamesAgainst);
+          $rank->setWins($score->getWin());
+          $rank->setLosses($score->getLoss());
+          $rank->setDraws($score->getDraw());
+          $rank->setGoalsFor($score->getGamesFor());
+          $rank->setGoalsAgainst($score->getGoalsAgainst());
+          $rank->setGoalDiff($score->getGamesFor() - $score->getGoalsAgainst());
+          $rank->setGamesFor($score->getGamesFor());
+          $rank->setGamesAgainst($score->getGamesAgainst());
+          $rank->setGameDiff($score->getGamesFor() - $score->getGamesAgainst());
         }
         $ranking[] = $rank;
       }

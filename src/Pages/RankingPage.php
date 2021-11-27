@@ -73,25 +73,26 @@ class RankingPage {
       $season = $seasonService->byId($league->getCurrentSeason());
       $day = $gameDayService->byId($season->getCurrentGameDay());
 
-      $ranking = new stdClass;
-      $ranking->league = $league;
-      $ranking->ranks = $rankingService->getRankingForLeagueAndSeasonAndGameDay(
-        $league->getId(),
-        $season->getId(),
-        $day->getNumber()
-      );
+    $ranking = $rankingService->getRankingForLeagueAndSeasonAndGameDay(
+	    $league->getId(),
+	    $season->getId(),
+	    $day->getNumber()
+    );
 
+      $rankingDto = new stdClass;
+	  $rankingDto->league = $league;
+	  $rankingDto->ranks = $ranking->getRanks();
 
       $clubService = ServiceBroker::getClubService();
       $teamService = ServiceBroker::getTeamService();
 
-      foreach ($ranking->ranks as $rank) {
-        $team = $teamService->byId($rank->team_id);
-        $club = $clubService->byId($team->getId());
+      foreach ($rankingDto->ranks as $rank) {
+        $team = $teamService->byId($rank->getTeamId());
+        $club = $clubService->byId($team->getClubId());
         $rank->team->link = LinkUtils::getLink('club', array('pathname' => $club->getShortName()));
       }
 
-      $ranking->league->link = LinkUtils::getLink(
+	    $rankingDto->league->link = LinkUtils::getLink(
         'league', array(
           'league' => $league->getCode(),
           'season' => date('Y', strtotime($season->getStartDate())),

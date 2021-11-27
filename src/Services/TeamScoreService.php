@@ -9,6 +9,7 @@
 namespace KKL\Ligatool\Services;
 
 
+use KKL\Ligatool\DB\Where;
 use KKL\Ligatool\Model\GameDay;
 use KKL\Ligatool\Model\Team;
 use KKL\Ligatool\Model\TeamScore;
@@ -63,8 +64,11 @@ class TeamScoreService extends KKLModelService {
    * @param GameDay
    * @return TeamScore[]
    */
-  public function forTeamUntilGameDay($team, GameDay $day) {
-    return array();
+  public function forTeamUntilGameDay(Team $team, GameDay $day) {
+	  return $this->find([
+          new Where('team_id', $team->getId(), '='),
+          new Where('gameDay_id', $day->getId(), '<=')
+      ]);
   }
 
 }

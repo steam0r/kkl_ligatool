@@ -24,7 +24,7 @@ class Service {
    */
   public static function getTemplateEngine() {
     if (static::$engine == null) {
-      static::initTemplateEngine();
+      static::initTemplateEngine(true);
     }
 
     return static::$engine;

@@ -332,7 +332,7 @@ class Shortcodes {
 
     $templateEngine = Template\Service::getTemplateEngine();
     $db = new DB\Wordpress();
-    $data = $db->getAllGamesForNextGameday();
+    $data = $db->getAllGamesForCurrentGameday();
 
     $all_matches = array();
     foreach($data as $game) {

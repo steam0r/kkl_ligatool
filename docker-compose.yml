@@ -1,27 +1,30 @@
-wordpress:
-  image: wordpress:php5.6
-  links:
-    - wordpress_db:mysql
-  ports:
-    - 8080:80
-  environment:
-    WORDPRESS_DB_PASSWORD: db4wp
-  volumes:
-    - ./:/var/www/html/wp-content/plugins/kkl_ligatool
-    - ./scripts/docker_php_config.ini:/usr/local/etc/php/conf.d/uploads.ini
-    - ./scripts/.htaccess:/var/www/html/.htaccess
-wordpress_db:
-  image: mysql:5.6
-  ports:
-    - 3306:3306
-  environment:
-    MYSQL_ROOT_PASSWORD: db4wp
-phpmyadmin:
-  image: corbinu/docker-phpmyadmin
-  links:
-    - wordpress_db:mysql
-  ports:
-    - 8181:80
-  environment:
-    MYSQL_USERNAME: root
-    MYSQL_ROOT_PASSWORD: db4wp
+version: "3.8"
+
+services:
+  wordpress:
+    image: wordpress:php5.6
+    links:
+      - wordpress_db:mysql
+    ports:
+      - 8080:80
+    environment:
+      - WORDPRESS_DB_PASSWORD: db4wp
+    volumes:
+      - ./:/var/www/html/wp-content/plugins/kkl_ligatool
+      - ./scripts/docker_php_config.ini:/usr/local/etc/php/conf.d/uploads.ini
+      - ./scripts/.htaccess:/var/www/html/.htaccess
+  wordpress_db:
+    image: mysql:5.6
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD: db4wp
+  phpmyadmin:
+    image: corbinu/docker-phpmyadmin
+    links:
+      - wordpress_db:mysql
+    ports:
+      - 8181:80
+    environment:
+      - MYSQL_USERNAME: root
+      - MYSQL_ROOT_PASSWORD: db4wp

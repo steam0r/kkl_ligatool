@@ -332,6 +332,7 @@ CREATE TABLE `seasons` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `active` bit(1) NOT NULL,
+  `hide_in_overview` bit(1) DEFAULT 0,
   `end_date` datetime DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
   `start_date` datetime DEFAULT NULL,

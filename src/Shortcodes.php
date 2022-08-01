@@ -199,29 +199,31 @@ class Shortcodes {
     foreach($seasonTeams as $seasonTeam) {
       
       $seasonTeam->season = $db->getSeason($seasonTeam->season_id);
-      $seasonTeam->season->league = $db->getLeague($seasonTeam->season->league_id);
-      
-      $ranking = $db->getRankingForLeagueAndSeasonAndGameDay(
-        $seasonTeam->season->league_id, $seasonTeam->season->id, $seasonTeam->season->current_game_day
-      );
-      $position = 1;
-      foreach($ranking as $rank) {
-        if($rank->team_id == $seasonTeam->id) {
-          $seasonTeam->scores = $rank;
-          $seasonTeam->scores->position = $position;
-          break;
+      if (!$seasonTeam->season->hide_in_overview) {
+        $seasonTeam->season->league = $db->getLeague($seasonTeam->season->league_id);
+        
+        $ranking = $db->getRankingForLeagueAndSeasonAndGameDay(
+          $seasonTeam->season->league_id, $seasonTeam->season->id, $seasonTeam->season->current_game_day
+        );
+        $position = 1;
+        foreach($ranking as $rank) {
+          if($rank->team_id == $seasonTeam->id) {
+            $seasonTeam->scores = $rank;
+            $seasonTeam->scores->position = $position;
+            break;
+          }
+          $position++;
         }
-        $position++;
+
+        $seasonTeam->link = Plugin::getLink('club', array('club' => $contextClub->short_name));
+        $seasonTeam->schedule_link = Plugin::getLink(
+          'schedule', array('league' => $seasonTeam->season->league->code, 'season' => date(
+                      'Y', strtotime($seasonTeam->season->start_date)
+                    ), 'team'        => $seasonTeam->short_name)
+        );
+
+        $teams[$seasonTeam->id] = $seasonTeam;
       }
-
-      $seasonTeam->link = Plugin::getLink('club', array('club' => $contextClub->short_name));
-      $seasonTeam->schedule_link = Plugin::getLink(
-        'schedule', array('league' => $seasonTeam->season->league->code, 'season' => date(
-                    'Y', strtotime($seasonTeam->season->start_date)
-                  ), 'team'        => $seasonTeam->short_name)
-      );
-
-      $teams[$seasonTeam->id] = $seasonTeam;
     }
     
     $currentTeam = $db->getCurrentTeamForClub($contextClub->id);
@@ -332,7 +334,7 @@ class Shortcodes {
 
     $templateEngine = Template\Service::getTemplateEngine();
     $db = new DB\Wordpress();
-    $data = $db->getAllGamesForNextGameday();
+    $data = $db->getAllGamesForCurrentGameday();
 
     $all_matches = array();
     foreach($data as $game) {

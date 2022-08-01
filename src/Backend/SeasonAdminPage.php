@@ -39,6 +39,11 @@ class SeasonAdminPage extends AdminPage {
     if($this->errors && $_POST['active']) {
       $active_checked = true;
     }
+
+    $hide_in_overview_checked = ($season->hide_in_overview == 1);
+    if($this->errors && $_POST['hide_in_overview']) {
+      $hide_in_overview_checked = true;
+    }
     
     echo $this->form_table(
       array(array('type' => 'hidden', 'name' => 'id', 'value' => $season->id),
@@ -56,6 +61,8 @@ class SeasonAdminPage extends AdminPage {
                   'choices' => $day_options, 'selected' => $season->current_game_day),
             array('title'   => __('active', 'kkl-ligatool'), 'type' => 'checkbox', 'name' => 'active',
                   'checked' => $active_checked),
+            array('title'   => __('hide_in_overview', 'kkl-ligatool'), 'type' => 'checkbox', 'name' => 'hide_in_overview',
+                  'checked' => $hide_in_overview_checked),
             array('title'    => __('season_admin', 'kkl-ligatool'), 'type' => 'select', 'name' => 'season_admin',
                   'choices'  => $contact_options,
                   'selected' => ($this->errors) ? $_POST['season_admin'] : $season->properties['season_admin'],
@@ -102,6 +109,7 @@ class SeasonAdminPage extends AdminPage {
     $season->start_date = $start_date;
     $season->end_date = $end_date;
     $season->active = ($_POST['active']) ? 1 : 0;
+    $season->hide_in_overview = ($_POST['hide_in_overview']) ? 1 : 0;
     $season->current_game_day = $_POST['current_game_day'];
     $season->league_id = $_POST['league'];
     

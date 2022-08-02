@@ -18,6 +18,12 @@ class Season extends SwaggerModel {
    * @SWG\Property()
    */
   private $active;
+
+  /**
+   * @var boolean
+   * @SWG\Property()
+   */
+  private $hide_in_overview;
   
   /**
    * @var string
@@ -63,6 +69,20 @@ class Season extends SwaggerModel {
     $this->active = $active;
   }
   
+  /**
+   * @return bool
+   */
+  public function isHideInOverview() {
+    return $this->hide_in_overview;
+  }
+  
+  /**
+   * @param bool $active
+   */
+  public function setHideInOverview($hide_in_overview) {
+    $this->hide_in_overview = $hide_in_overview;
+  }
+
   /**
    * @return string
    */

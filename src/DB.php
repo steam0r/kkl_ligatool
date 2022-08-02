@@ -1242,10 +1242,11 @@ abstract class DB {
     $columns['start_date'] = $season->start_date;
     $columns['end_date'] = $season->end_date;
     $columns['active'] = $season->active;
+    $columns['hide_in_overview'] = $season->hide_in_overview;
     $columns['current_game_day'] = $season->current_game_day;
     $columns['league_id'] = $season->league_id;
     
-    $this->getDb()->update('seasons', $columns, array('id' => $season->id), array('%s', '%s', '%s', '%d', '%d', '%d',), array('%d'));
+    $this->getDb()->update('seasons', $columns, array('id' => $season->id), array('%s', '%s', '%s', '%d', '%d', '%d', '%d',), array('%d'));
     
     return $this->getSeason($season->id);
   }
@@ -1271,8 +1272,8 @@ abstract class DB {
   }
   
   public function createSeason($season) {
-    $values = array('name' => $season->name, 'start_date' => $season->start_date, 'end_date' => $season->end_date, 'active' => $season->active, 'current_game_day' => $season->current_game_day, 'league_id' => $season->league_id,);
-    $this->getDb()->insert('seasons', $values, array('%s', '%s', '%s', '%d', '%d', '%d'));
+    $values = array('name' => $season->name, 'start_date' => $season->start_date, 'end_date' => $season->end_date, 'active' => $season->active, 'hide_in_overview' => $season->hide_in_overview, 'current_game_day' => $season->current_game_day, 'league_id' => $season->league_id,);
+    $this->getDb()->insert('seasons', $values, array('%s', '%s', '%s', '%d', '%d', '%d', '%d'));
     
     return $this->getSeason($this->getDb()->insert_id);
   }

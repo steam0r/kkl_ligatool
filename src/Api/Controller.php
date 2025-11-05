@@ -21,13 +21,13 @@ use WP_REST_Response;
  * )
  */
 abstract class Controller extends WP_REST_Controller {
-  
+
   private $page = 1;
   private $per_page = 100;
   private $offset = 0;
   private $reservedQueryParams = array('fields', 'order', 'orderby', 'page', 'per_page', 'offset', 'embed',);
   private $privateFields = array('createdAt', 'updatedAt');
-  
+
   /**
    * @param WP_REST_Request $request
    * @param array           $items
@@ -36,23 +36,23 @@ abstract class Controller extends WP_REST_Controller {
    * @return WP_Error|WP_REST_Response
    */
   protected function getResponse($request, $items, $hideLinks = false) {
-    
+
     if(!$items || !is_array($items) || empty($items)) {
       return new WP_Error('not_found', 'Could not find any matching items for your request', array('status' => 404));
     } elseif(count($items) == 0) {
       return new WP_Error('not_found', 'Could not find any matching items for your request', array('status' => 404));
     }
-    
+
     $data = [];
     $preparedItems = array();
     foreach($items as $key => $item) {
       $preparedItems[$key] = $this->prepare_item_for_response($item, $request);
     }
-    
+
     foreach($this->filterItemsByRequest($request, $preparedItems) as $key => $item) {
       $data[$key] = $this->prepare_response_for_collection($item);
     }
-    
+
     $sortParam = $request->get_param('orderby');
     $orderParam = $request->get_param('order');
     if($sortParam) {
@@ -72,7 +72,7 @@ abstract class Controller extends WP_REST_Controller {
         }
       });
     }
-  
+
     $reqEmbeds = $request->get_param('embed');
     if($reqEmbeds) {
       $embeds = explode(',', $reqEmbeds);
@@ -107,7 +107,7 @@ abstract class Controller extends WP_REST_Controller {
     if(count($reducedItems) == 1) {
       $reducedItems = $reducedItems[0];
     }
-    
+
     //return a response or error based on some conditional
     $totalItems = count($reducedItems);
     if(is_array($reducedItems)) {
@@ -126,7 +126,7 @@ abstract class Controller extends WP_REST_Controller {
       $reducedItems = array_slice($reducedItems, $this->offset);
       $reducedItems = array_slice($reducedItems, ($this->per_page * ($this->page - 1)), $this->per_page);
       $totalPages = ceil($totalItems / $this->per_page);
-  
+
       if(!$hideLinks && (!$fieldsParam || strpos($fieldsParam, '_links') !== false)) {
         foreach($reducedItems as $key => $reducedItem) {
           if(is_object($reducedItem)) {
@@ -139,7 +139,7 @@ abstract class Controller extends WP_REST_Controller {
       if(!$hideLinks && (!$fieldsParam || strpos($fieldsParam, '_links') !== false)) {
         $reducedItems = $this->addLinks($reducedItems);
       }
-  
+
       $response = new WP_REST_Response($reducedItems, 200);
       $response->header('X-Total-Count', $totalItems);
       $response->header('X-Total-Pages', $totalPages);
@@ -162,11 +162,11 @@ abstract class Controller extends WP_REST_Controller {
         $this->offset = $reqOffset;
       }
       $totalPages = ceil($totalItems / $this->per_page);
-      
+
       if(!$hideLinks && (!$fieldsParam || strpos($fieldsParam, '_links') !== false)) {
         $reducedItems = $this->addLinks($reducedItems);
       }
-  
+
       $response = new WP_REST_Response($reducedItems, 200);
       $response->header('X-Total-Count', $totalItems);
       $response->header('X-Total-Pages', $totalPages);
@@ -178,9 +178,9 @@ abstract class Controller extends WP_REST_Controller {
     } else {
       return new WP_Error('code', __('message', 'text-domain'));
     }
-    
+
   }
-  
+
   /**
    * Prepare the item for the REST response
    *
@@ -192,13 +192,13 @@ abstract class Controller extends WP_REST_Controller {
   public function prepare_item_for_response($item, $request) {
     return $this->replaceKeys($item);
   }
-  
+
   private function replaceKeys($item) {
     if(is_array($item)) {
       $newItem = array();
       foreach($item as $key => $value) {
         $camelKey = $this->toCamelCase($key);
-        if(in_array($camelKey, $this->privateFields)) {
+        if($camelKey && in_array($camelKey, $this->privateFields)) {
           continue;
         }
         if(stripos($camelKey, "name") === false) {
@@ -212,7 +212,7 @@ abstract class Controller extends WP_REST_Controller {
       $newItem = new stdClass();
       foreach($item as $key => $value) {
         $camelKey = $this->toCamelCase($key);
-        if(in_array($camelKey, $this->privateFields)) {
+        if($camelKey && in_array($camelKey, $this->privateFields)) {
           continue;
         }
         if(stripos($camelKey, "name") === false) {
@@ -229,18 +229,18 @@ abstract class Controller extends WP_REST_Controller {
       return $item;
     }
   }
-  
+
   private function toCamelCase($string) {
     if('_embedded' != $string && '_links' != $string) {
       $str = str_replace('_', '', ucwords($string, '_'));
       $str = lcfirst($str);
-      
+
       return $str;
     }
-    
+
     return $string;
   }
-  
+
   /**
    * @param WP_REST_Request $request
    * @param array           $items
@@ -263,10 +263,10 @@ abstract class Controller extends WP_REST_Controller {
         $filtredItems[$key] = $item;
       }
     }
-    
+
     return $filtredItems;
   }
-  
+
   private function addLinks($item) {
     if(!is_object($item)) {
       return $item;
@@ -287,27 +287,27 @@ abstract class Controller extends WP_REST_Controller {
       $links[$key] = array('href' => $href, 'embeddable' => is_array($embeddable),);
     }
     $item->_links = $links;
-    
+
     return $item;
   }
-  
+
   protected function getFullBaseUrl() {
     return $this->getFullBaseUrlFor($this->getBaseName());
   }
-  
+
   protected function getFullBaseUrlFor($basename) {
     return get_site_url() . '/wp-json/' . $this->getNamespace() . '/' . $basename;
   }
-  
+
   public function getNamespace() {
     $version = 1;
     $namespace = 'kkl' . '/v' . $version;
-    
+
     return $namespace;
   }
-  
+
   protected abstract function getBaseName();
-  
+
   /**
    * @param WP_REST_Request $request
    * @return bool
@@ -323,11 +323,11 @@ abstract class Controller extends WP_REST_Controller {
     }
     return false;
   }
-  
+
   protected function getLinks($itemId) {
     return array();
   }
-  
+
   private function addEmbeddables($item, $wantedEmbeds) {
     $links = $this->getLinks($item->id);
     if(empty($links)) {
@@ -365,7 +365,7 @@ abstract class Controller extends WP_REST_Controller {
       }else{
         $preparedEmbed = $this->replaceKeys($thisEmbed);
       }
-    
+
       $embeddables[$wantedEmbed] = $preparedEmbed;
     }
     if(!empty($embeddables)) {

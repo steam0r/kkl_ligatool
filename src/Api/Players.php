@@ -7,7 +7,7 @@ use WP_REST_Request;
 use WP_REST_Server;
 
 class Players extends Controller {
-  
+
   public function register_routes() {
     register_rest_route(
       $this->getNamespace(), '/' . $this->getBaseName(),
@@ -17,21 +17,23 @@ class Players extends Controller {
     register_rest_route(
       $this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)',
       array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_player'),
-            'args'    => array('context'             => array('default' => 'view'),
-                               'permission_callback' => array($this, 'authenticate_api_key')))
+            'args'    => array('context'             => array('default' => 'view')),
+                               'permission_callback' => array($this, 'authenticate_api_key'))
     );
+
+
     register_rest_route(
       $this->getNamespace(), '/' . $this->getBaseName() . '/(?P<id>[\d]+)/properties',
       array('methods' => WP_REST_Server::READABLE, 'callback' => array($this, 'get_info_for_player'),
-            'args'    => array('context'             => array('default' => 'view'),
-                               'permission_callback' => array($this, 'authenticate_api_key')))
+            'args'    => array('context'             => array('default' => 'view')),
+                               'permission_callback' => array($this, 'authenticate_api_key'))
     );
   }
-  
+
   public function getBaseName() {
     return 'players';
   }
-  
+
   /**
    * @SWG\Get(
    *     path="/players",
@@ -49,7 +51,7 @@ class Players extends Controller {
     $items = $db->getPlayers();
     return $this->getResponse($request, $items);
   }
-  
+
   /**
    * @SWG\Get(
    *     path="/players/{playerId}",
@@ -74,7 +76,7 @@ class Players extends Controller {
     $items = array($db->getPlayer($request->get_param('id')));
     return $this->getResponse($request, $items);
   }
-  
+
   /**
    * @SWG\Get(
    *     path="/players/{playerId}/info",
@@ -99,10 +101,10 @@ class Players extends Controller {
     $items = $db->getPlayerProperties($request->get_param('id'));
     return $this->getResponse($request, $items);
   }
-  
+
   protected function getLinks($itemId) {
     return array("properties" => array("href"       => $this->getFullBaseUrl() . '/<id>/properties',
                                        "embeddable" => array("table" => "player_properties", "field" => "objectId")));
   }
-  
+
 }

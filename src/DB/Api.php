@@ -5,7 +5,7 @@ namespace KKL\Ligatool\DB;
 use KKL\Ligatool\DB;
 
 class Api extends DB {
-  
+
   public function getLeagueAdmins() {
     $sql = "SELECT p.* FROM players AS p " . "JOIN player_properties AS pp ON pp.objectId = p.id " . "AND pp.property_key = 'member_ligaleitung' " . "AND pp.value = 'true' " . "ORDER BY p.first_name, p.last_name ASC";
     $players = $this->getDb()->get_results($sql);
@@ -14,22 +14,22 @@ class Api extends DB {
     }
     return $players;
   }
-  
+
   public function getEmbeddable($table, $field, $id) {
     $sql = "SELECT * FROM " . esc_sql($table) . " WHERE " . esc_sql($field) . " = '" . esc_sql($id) . "'";
     return $this->getDb()->get_results($sql);
   }
-  
+
   public function getRankingForLeagueAndSeasonAndGameDay($leagueId, $seasonId, $dayNumber, $live = false) {
     $sql = "SELECT " . "team_scores.team_id, " . "sum(team_scores.score) as score, " . "sum(team_scores.win) as wins, " . "sum(team_scores.loss) as losses, " . "sum(team_scores.draw) as draws, " . "sum(team_scores.goalsFor) as goalsFor, " . "sum(team_scores.goalsAgainst) as goalsAgainst, " . "sum(team_scores.goalsFor - team_scores.goalsAgainst) as goalDiff, " . "sum(team_scores.gamesFor) as gamesFor, " . "sum(team_scores.gamesAgainst) as gamesAgainst, " . "sum(team_scores.gamesFor - team_scores.gamesAgainst) as gameDiff " . "FROM game_days, " . "team_scores  " . "WHERE game_days.season_id='" . esc_sql($seasonId) . "' " . "AND game_days.number <= '" . esc_sql($dayNumber) . "' " . "AND gameDay_id=game_days.id " . "GROUP BY team_id " . //      "ORDER BY score DESC, gameDiff DESC, goalDiff DESC, team_scores.goalsFor DESC";
       "ORDER BY score DESC, gameDiff DESC";
-    
+
     $ranking = $this->getDb()->get_results($sql);
-    
+
     if($live) {
       $ranking = $this->addLiveScores($ranking, $dayNumber);
     }
-    
+
     $original_size = count($ranking);
     $teams = $this->getTeamsForSeason($seasonId);
     if($original_size < count($teams)) {
@@ -114,31 +114,31 @@ class Api extends DB {
         }
       }
     }
-    
+
     $position = 0;
     $previousScore = 0;
     $previousGameDiff = 0;
     foreach($ranking as $rank) {
-      
+
       $position++;
-      
+
       $rank->team = $this->getTeam($rank->team_id);
       $rank->games = $rank->wins + $rank->losses + $rank->draws;
-      
+
       if(($previousScore == $rank->score) && ($previousGameDiff == $rank->gameDiff)) {
         $rank->shared_rank = true;
       }
-      
+
       $previousScore = $rank->score;
       $previousGameDiff = $rank->gameDiff;
       $rank->position = $position;
-      
+
     }
-    
+
     return $ranking;
-    
+
   }
-  
+
   private function addLiveScores($ranking, $dayNumber) {
     $day = $this->getGameDay($dayNumber);
     $prevDay = $this->getPreviousGameDay($day);
@@ -197,16 +197,16 @@ class Api extends DB {
       }
       return ($first->score > $second->score) ? -1 : 1;
     });
-    
+
     return $ranking;
   }
-  
+
   public function getScoresForTeamAndMatch($match, $team) {
-    
+
     $day = $this->getGameDay($match->game_day_id);
-    
+
     $sql = "SELECT " . "* " . "FROM " . "team_scores  " . "WHERE gameDay_id ='" . esc_sql($day->id) . "' " . "AND team_id = '" . esc_sql($team->id) . "';";
-    
+
     $score = $this->getDb()->get_row($sql);
     if($score == null) {
       $score = new \stdClass;
@@ -216,7 +216,7 @@ class Api extends DB {
     } else {
       $score->final = true;
     }
-    
+
     $score->win = 0;
     $score->draw = 0;
     $score->loss = 0;
@@ -225,7 +225,7 @@ class Api extends DB {
     $score->goalsAgainst = 0;
     $score->goalsFor = 0;
     $score->score = 0;
-    
+
     if($match->home_team == $team->id) {
       $score->goalsFor = $this->getGoalsForTeam($match, $match->home_team);
       $score->goalsAgainst = $this->getGoalsForTeam($match, $match->away_team);
@@ -242,7 +242,7 @@ class Api extends DB {
         $score->draw = 1;
       }
     }
-    
+
     if($match->away_team == $team->id) {
       $score->goalsFor = $this->getGoalsForTeam($match, $match->away_team);
       $score->goalsAgainst = $this->getGoalsForTeam($match, $match->home_team);
@@ -259,10 +259,10 @@ class Api extends DB {
         $score->draw = 1;
       }
     }
-    
+
     return $score;
   }
-  
+
   /**
    * @deprecated
    * @param $mail
@@ -290,5 +290,22 @@ class Api extends DB {
     $result = $this->getDb()->get_row($sql);
     return $result;
   }
-  
+
+	public function getTeamProperties($teamId) {
+		$sql = "SELECT * FROM team_properties WHERE objectId = '" . esc_sql($teamId) . "'";
+		$results = $this->getDb()->get_results($sql);
+		$properties = array();
+		foreach($results as $result) {
+			$properties[$result->property_key] = $result->value;
+			if($result->property_key == 'location') {
+				$location = $this->getLocation($result->value);
+				$properties['location_name'] = $location->title;
+				$properties['lat'] = $location->lat;
+				$properties['lng'] = $location->lng;
+			}
+		}
+
+		return $properties;
+	}
+
 }
